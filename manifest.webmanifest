@@ -1,0 +1,10 @@
+{
+  "name": "RAR App Beta",
+  "short_name": "RAR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f2f57",
+  "description": "Racehorse Analysis Rating Beta"
+}
