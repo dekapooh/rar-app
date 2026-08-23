@@ -1,4 +1,4 @@
-const CACHE_NAME = "rar-rc18-v1";
+const CACHE_NAME = "rar-rc19-v1";
 
 const APP_SHELL = [
   "./",
@@ -30,15 +30,11 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-
   event.respondWith(
     caches.match(event.request).then(cached =>
-      cached ||
-      fetch(event.request).then(response => {
+      cached || fetch(event.request).then(response => {
         const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache =>
-          cache.put(event.request, copy)
-        );
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return response;
       })
     )
