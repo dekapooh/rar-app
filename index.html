@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC24 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC25 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC24 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC25 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC24 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC25 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -546,15 +546,27 @@ main{padding-top:84px}
   .search-toolbar-rc23 .search-filter select{font-size:10px;padding-left:4px;padding-right:12px}
 }
 
+
+/* RC25 Ranking QA */
+.rank-qa-note{
+  margin:5px 2px 7px;
+  padding:5px 8px;
+  border-radius:8px;
+  background:#F5FAF7;
+  color:#557267;
+  font-size:9.5px;
+  line-height:1.35;
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC24</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC25</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC24 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC25 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -591,6 +603,7 @@ main{padding-top:84px}
 </div>
 <div id="rankHeader" class="rankheader"><div>ランク</div><div>総合ランク</div><div>募集馬</div><div>一口</div><div>点数</div></div>
   </div>
+  <div class="rank-qa-note">左＝Personal反映ランク ／ 右＝Official固定ランク</div>
   <div id="rankList" style="position:relative;z-index:1"></div>
 </section>
 
@@ -628,7 +641,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC24</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC25</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -848,7 +861,7 @@ const PLAN_RULES={
 function planRules(){return PLAN_RULES[state.plan]||PLAN_RULES.free}
 function planName(){return ({free:"FREE",light:"LIGHT",standard:"STANDARD",premium:"PREMIUM"})[state.plan]||"FREE"}
 function officialRankOf(no){
- const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"]);
+ const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
  const h=official.find(x=>x.no===no);
  return h?h.rank:null;
 }
@@ -875,7 +888,7 @@ function canViewHorseOfficial(no){
 function planEligibleHorses(){
  const rules=planRules();
  if(rules.rankLimit>=HORSES.length) return [...HORSES];
- const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"]);
+ const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
  const allowed=new Set(official.filter(h=>h.rank<=rules.rankLimit).map(h=>h.no));
  return HORSES.filter(h=>allowed.has(h.no));
 }
@@ -939,9 +952,25 @@ function syncPlanLocks(){
  if(p) p.textContent=planName();
  syncPriceFilterUI();
 }
-function scoreHorse(h,cats){return cats.reduce((a,k)=>a+Number(h[k]||0),0)+effectivePersonalPoint(h.no)}
-function competitionRanks(arr,cats){
-  const scored=arr.map(h=>({...h,selectedScore:scoreHorse(h,cats)}));
+function rankingPersonalPoint(no,cats){
+ if(state.plan==="standard"){
+   return cats.reduce((a,k)=>a+categoryPoint(no,k),0);
+ }
+ if(state.plan==="premium"){
+   return cats.reduce((a,k)=>{
+     if(k==="roi") return a+categoryPoint(no,"roi");
+     return a+(SMALL_META[k]||[]).reduce((s,[smallKey])=>s+smallPoint(no,smallKey),0);
+   },0);
+ }
+ // FREE/LIGHT use a single horse-level Personal Point, so it cannot be split by category.
+ return effectivePersonalPoint(no);
+}
+function scoreHorse(h,cats,includePersonal=true){
+ const official=cats.reduce((a,k)=>a+Number(h[k]||0),0);
+ return official+(includePersonal?rankingPersonalPoint(h.no,cats):0);
+}
+function competitionRanks(arr,cats,includePersonal=true){
+  const scored=arr.map(h=>({...h,selectedScore:scoreHorse(h,cats,includePersonal)}));
   const unique=[...new Set(scored.map(x=>x.selectedScore))].sort((a,b)=>b-a);
   const rankMap=new Map(unique.map(s=>[s,1+scored.filter(x=>x.selectedScore>s).length]));
   return scored.map(x=>({...x,rank:rankMap.get(x.selectedScore)})).sort((a,b)=>a.rank-b.rank||a.no-b.no);
@@ -980,7 +1009,7 @@ function renderRanking(){
    list.innerHTML=`<div class="empty">${msg}</div>`;
    return;
  }
- const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"]);
+ const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
  const officialRankMap=new Map(official.map(x=>[x.no,x.rank]));
  const visibleRanked=ranked;
  list.innerHTML=visibleRanked.map((h,i)=>`<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
