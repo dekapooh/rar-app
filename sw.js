@@ -1,4 +1,4 @@
-const CACHE_NAME = "rar-rc28-v2";
+const CACHE_NAME = "rar-rc29-v1";
 
 const APP_SHELL = [
   "./",

@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC28 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC29 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC28 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC29 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC28 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC29 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -650,15 +650,62 @@ main{padding-top:84px}
   #ranking .price-filter-bar input{width:51px!important}
 }
 
+
+/* RC29 ranking row redesign */
+.rankheader{
+  grid-template-columns:38px 38px minmax(0,1fr) 78px!important;
+  gap:5px!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+.rankrow{
+  grid-template-columns:38px 38px minmax(0,1fr) 78px!important;
+  gap:5px!important;
+  padding:10px 0!important;
+}
+.rankrow .ranknum{
+  width:28px!important;height:28px!important;font-size:13px!important;justify-self:center;
+}
+.rank-horse-info{
+  min-width:0;display:grid;grid-template-rows:auto auto auto;row-gap:2px;
+}
+.rank-info-top,.rank-info-bottom{
+  display:flex;justify-content:space-between;align-items:center;gap:6px;min-width:0;
+}
+.rank-info-top{font-size:10px;color:var(--muted);line-height:1.2}
+.rank-info-no{flex:0 0 auto;font-weight:850;color:#315E43}
+.rank-info-official{margin-left:auto;white-space:nowrap;text-align:right}
+.rank-horse-name{
+  min-width:0;font-weight:850;font-size:14.5px;line-height:1.22;color:var(--text);
+  overflow-wrap:anywhere;word-break:break-word;
+}
+.rank-horse-name.long{font-size:13px;letter-spacing:-.15px}
+.rank-info-bottom{font-size:10.5px;line-height:1.2}
+.rank-info-suffix{flex:0 0 auto;color:var(--muted)}
+.rank-info-price{margin-left:auto;white-space:nowrap;text-align:right;font-weight:850;color:var(--text)}
+.rankrow>.score{
+  align-self:center;text-align:right;white-space:nowrap;font-size:17px;min-width:0;
+}
+.rankrow>.score small{display:inline;font-size:9px}
+@media(max-width:390px){
+  .rankheader,.rankrow{grid-template-columns:34px 34px minmax(0,1fr) 72px!important;gap:3px!important}
+  .rankrow .ranknum{width:26px!important;height:26px!important;font-size:12px!important}
+  .rank-horse-name{font-size:14px}
+  .rank-horse-name.long{font-size:12.5px}
+  .rank-info-top{font-size:9.5px}
+  .rank-info-bottom{font-size:10px}
+  .rankrow>.score{font-size:16px}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC28</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC29</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC28 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC29 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -694,7 +741,7 @@ main{padding-top:84px}
   <label>上限 <input id="maxSharePrice" type="number" min="0" step="0.1" placeholder="なし"><small>万円</small></label>
   <button id="clearPriceFilter" class="btn secondary" style="padding:6px 9px;font-size:10px">クリア</button>
 </div>
-<div id="rankHeader" class="rankheader"><div>ランク</div><div>総合ランク</div><div>募集馬</div><div>一口</div><div>点数</div></div>
+<div id="rankHeader" class="rankheader"><div>ランク</div><div>総合</div><div>募集馬</div><div style="text-align:right">点数</div></div>
   </div>
   <div class="rank-qa-note">左＝Personal反映ランク ／ 右＝Official固定ランク</div>
   <div id="rankList" style="position:relative;z-index:1"></div>
@@ -734,7 +781,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC28</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC29</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -1120,12 +1167,26 @@ function renderRanking(){
  const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
  const officialRankMap=new Map(official.map(x=>[x.no,x.rank]));
  const visibleRanked=ranked;
- list.innerHTML=visibleRanked.map((h,i)=>`<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
+ list.innerHTML=visibleRanked.map((h,i)=>{
+ const baseName=String(h.name||"").replace(/の25$/,"");
+ const longClass=baseName.length>=12?" long":"";
+ return `<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
  <div class="ranknum">${h.rank}</div>
  <div class="ranknum">${officialRankMap.get(h.no)}</div>
- <div><div class="hname">No.${h.no} ${h.name}</div><div class="hmeta">${h.sex}｜Official ${Number(h.total).toFixed(1)}</div></div>
- <div class="hmeta" style="text-align:right;font-weight:800;color:var(--text)">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</div>
- <div class="score ${effectivePersonalPoint(h.no)>0?'personal-adjusted':(effectivePersonalPoint(h.no)<0?'personal-negative':'')}">${h.selectedScore.toFixed(1)}<small> / ${max}</small></div></div>`).join("");
+ <div class="rank-horse-info">
+   <div class="rank-info-top">
+     <span class="rank-info-no">No.${h.no}</span>
+     <span class="rank-info-official">${h.sex}｜Official ${Number(h.total).toFixed(1)}</span>
+   </div>
+   <div class="rank-horse-name${longClass}">${baseName}</div>
+   <div class="rank-info-bottom">
+     <span class="rank-info-suffix">の25</span>
+     <span class="rank-info-price">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</span>
+   </div>
+ </div>
+ <div class="score ${effectivePersonalPoint(h.no)>0?'personal-adjusted':(effectivePersonalPoint(h.no)<0?'personal-negative':'')}">${h.selectedScore.toFixed(1)}<small> / ${max}</small></div>
+ </div>`;
+ }).join("");
 }
 function syncCategoryStyles(){
  document.querySelectorAll(".cat").forEach(x=>x.closest(".toggle").classList.toggle("selected",x.checked));
