@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC31 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC32 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC31 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC32 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC31 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC32 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1030,15 +1030,115 @@ main{padding-top:84px}
   gap:7px!important;
 }
 
+
+/* =========================================================
+   RC32 — STANDARD compact labels + Personal rank polish
+   ========================================================= */
+
+/* STANDARD labels shortened and Personal score kept in bottom row */
+#officialCard.standard-layout .std-score-row{
+  min-height:23px;
+}
+#officialCard.standard-layout .std-score-row .row-label{
+  font-size:8.5px;
+  font-weight:800;
+  letter-spacing:.1px;
+  color:#7A877F;
+  white-space:nowrap;
+}
+#officialCard.standard-layout .std-score-row.personal-row{
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  min-height:24px;
+  padding-top:3px;
+}
+#officialCard.standard-layout .std-score-row.personal-row .personal-after{
+  display:inline!important;
+  position:static!important;
+  float:none!important;
+  margin:0!important;
+  min-width:0!important;
+  text-align:right!important;
+  font-size:12px!important;
+  font-weight:900!important;
+}
+#officialCard.standard-layout .std-score-row.official-row b{
+  margin-left:auto;
+}
+#officialCard.standard-layout .personal-tools{
+  min-height:29px;
+}
+@media(max-width:390px){
+  #officialCard.standard-layout .std-score-row .row-label{font-size:7.5px}
+  #officialCard.standard-layout .std-score-row.personal-row .personal-after{font-size:10.5px!important}
+}
+
+/* Personal rank: clean shield/medallion style, less decorative ambiguity */
+.rank-emblem.personal{
+  width:34px;height:34px;
+  border-radius:11px 11px 15px 15px!important;
+  clip-path:polygon(50% 0,90% 15%,100% 58%,78% 100%,22% 100%,0 58%,10% 15%)!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:0 3px 7px rgba(34,58,46,.18), inset 0 1px 0 rgba(255,255,255,.55)!important;
+  font-size:13px!important;
+  font-weight:950!important;
+}
+.rank-emblem.personal:before,
+.rank-emblem.personal:after{display:none!important}
+
+.rank-emblem.personal.medal-1{
+  background:linear-gradient(145deg,#FFE57B 0%,#D5A61B 52%,#8F6800 100%)!important;
+  color:#fff!important;
+  box-shadow:0 3px 9px rgba(155,115,7,.28), inset 0 0 0 2px rgba(255,255,255,.38)!important;
+}
+.rank-emblem.personal.medal-2{
+  background:linear-gradient(145deg,#F7FAFC 0%,#BBC4CB 52%,#7B8790 100%)!important;
+  color:#fff!important;
+  box-shadow:0 3px 8px rgba(96,108,116,.22), inset 0 0 0 2px rgba(255,255,255,.42)!important;
+}
+.rank-emblem.personal.medal-3{
+  background:linear-gradient(145deg,#E7B27E 0%,#B16E34 52%,#743F1C 100%)!important;
+  color:#fff!important;
+  box-shadow:0 3px 8px rgba(121,71,27,.23), inset 0 0 0 2px rgba(255,255,255,.34)!important;
+}
+.rank-emblem.personal.medal-4,
+.rank-emblem.personal.medal-5{
+  background:linear-gradient(145deg,#D7E8B9,#83B85F)!important;
+  color:#174D37!important;
+  box-shadow:0 2px 6px rgba(68,113,78,.18), inset 0 0 0 1px rgba(255,255,255,.5)!important;
+}
+.rank-emblem.personal.medal-mid{
+  background:linear-gradient(145deg,#CFE9DA,#45A978)!important;
+  color:#fff!important;
+  box-shadow:0 2px 6px rgba(39,116,81,.18), inset 0 0 0 1px rgba(255,255,255,.4)!important;
+}
+.rank-emblem.personal.plain{
+  width:30px!important;height:30px!important;
+  clip-path:none!important;
+  border-radius:9px!important;
+  background:#fff!important;color:#5A6961!important;
+  border:1px solid #DDE6E1!important;
+  box-shadow:none!important;
+}
+
+/* Tiny tier accents for top three */
+.rank-badge-wrap .rank-emblem.personal.medal-1,
+.rank-badge-wrap .rank-emblem.personal.medal-2,
+.rank-badge-wrap .rank-emblem.personal.medal-3{
+  position:relative;
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC31</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC32</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC31 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC32 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1114,7 +1214,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC31</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC32</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -1232,31 +1332,31 @@ main{padding-top:84px}
     <div class="detail-grid">
       <div class="metric">
         <div class="std-metric-head"><span class="std-title">潜在</span><span id="dPotRankSlot" class="metric-rank-slot"></span></div>
-        <div class="std-score-row official-row"><span>Official</span><b id="dPot"></b></div>
+        <div class="std-score-row official-row"><span class="row-label">Off.</span><b id="dPot"></b></div>
         <span id="dPotAdj" class="personal-delta"></span>
         <div id="stdPotTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('potential',-1)">−</button><button onclick="adjustCategoryPoint('potential',1)">＋</button></div>
-        <div class="std-score-row personal-row"><span>Personal</span><span id="dPotAfter" class="personal-after"></span></div>
+        <div class="std-score-row personal-row"><span class="row-label">Per.</span><span id="dPotAfter" class="personal-after"></span></div>
       </div>
       <div class="metric">
         <div class="std-metric-head"><span class="std-title">血統</span><span id="dPedRankSlot" class="metric-rank-slot"></span></div>
-        <div class="std-score-row official-row"><span>Official</span><b id="dPed"></b></div>
+        <div class="std-score-row official-row"><span class="row-label">Off.</span><b id="dPed"></b></div>
         <span id="dPedAdj" class="personal-delta"></span>
         <div id="stdPedTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('pedigree',-1)">−</button><button onclick="adjustCategoryPoint('pedigree',1)">＋</button></div>
-        <div class="std-score-row personal-row"><span>Personal</span><span id="dPedAfter" class="personal-after"></span></div>
+        <div class="std-score-row personal-row"><span class="row-label">Per.</span><span id="dPedAfter" class="personal-after"></span></div>
       </div>
       <div class="metric">
         <div class="std-metric-head"><span class="std-title">夢</span><span id="dDreamRankSlot" class="metric-rank-slot"></span></div>
-        <div class="std-score-row official-row"><span>Official</span><b id="dDream"></b></div>
+        <div class="std-score-row official-row"><span class="row-label">Off.</span><b id="dDream"></b></div>
         <span id="dDreamAdj" class="personal-delta"></span>
         <div id="stdDreamTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('dream',-1)">−</button><button onclick="adjustCategoryPoint('dream',1)">＋</button></div>
-        <div class="std-score-row personal-row"><span>Personal</span><span id="dDreamAfter" class="personal-after"></span></div>
+        <div class="std-score-row personal-row"><span class="row-label">Per.</span><span id="dDreamAfter" class="personal-after"></span></div>
       </div>
       <div class="metric">
         <div class="std-metric-head"><span class="std-title">ROI</span><span id="dRoiRankSlot" class="metric-rank-slot"></span></div>
-        <div class="std-score-row official-row"><span>Official</span><b id="dRoi"></b></div>
+        <div class="std-score-row official-row"><span class="row-label">Off.</span><b id="dRoi"></b></div>
         <span id="dRoiAdj" class="personal-delta"></span>
         <div id="stdRoiTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('roi',-1)">−</button><button onclick="adjustCategoryPoint('roi',1)">＋</button></div>
-        <div class="std-score-row personal-row"><span>Personal</span><span id="dRoiAfter" class="personal-after"></span></div>
+        <div class="std-score-row personal-row"><span class="row-label">Per.</span><span id="dRoiAfter" class="personal-after"></span></div>
       </div>
     </div>
     <div class="summary"><span>RAR総合</span><strong id="dTotal"></strong></div>
