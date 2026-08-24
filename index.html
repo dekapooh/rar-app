@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC21 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC22 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC21 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC22 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -404,15 +404,65 @@ main{padding-top:84px}
   .nav button{border-radius:11px}
 }
 
+
+/* RC22 Search upgrade */
+.search-filters-rc22{margin-top:-3px}
+.search-clear-btn{
+  border:1px solid #D5E2DB;
+  border-radius:10px;
+  background:linear-gradient(#fff,#F8FBF9);
+  color:#0F4A35;
+  font-size:11px;
+  font-weight:800;
+  padding:7px 8px;
+  min-height:34px;
+}
+.search-clear-btn:active{transform:translateY(1px)}
+.search-active{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin:2px 0 7px;
+}
+.search-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid #B9D6C7;
+  background:#F0F8F4;
+  color:#0F4A35;
+  font-size:10px;
+  font-weight:800;
+}
+.search-result{
+  border-radius:12px;
+  margin:0 -2px;
+  padding:12px 6px;
+}
+.search-result:active{background:#F4F9F6}
+.search-result .score{font-variant-numeric:tabular-nums}
+.search-result .price-tag{
+  display:inline-block;
+  margin-left:5px;
+  padding:1px 5px;
+  border-radius:999px;
+  background:#F6F1DF;
+  color:#8B6A05;
+  font-size:9px;
+  font-weight:800;
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC21</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC22</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC21 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC22 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -472,8 +522,31 @@ main{padding-top:84px}
     </label>
     <label class="search-check"><input id="searchFav" type="checkbox"> ☆のみ</label>
   </div>
+
+  <div class="search-filters search-filters-rc22">
+    <label class="search-filter">
+      <select id="searchSurface">
+        <option value="">芝・ダートすべて</option>
+        <option value="turf">芝向き</option>
+        <option value="dirt">ダート向き</option>
+        <option value="both">芝ダート両方</option>
+      </select>
+    </label>
+    <label class="search-filter">
+      <select id="searchPrice">
+        <option value="">一口価格すべて</option>
+        <option value="lt8">8万円未満</option>
+        <option value="8to12">8〜12万円</option>
+        <option value="12to20">12〜20万円</option>
+        <option value="gte20">20万円以上</option>
+      </select>
+    </label>
+    <button id="clearSearchFilters" class="search-clear-btn" type="button">条件クリア</button>
+  </div>
+
+  <div id="searchActive" class="search-active"></div>
   <div id="searchMeta" class="search-meta"></div>
-  <div class="note" id="searchPlanNote">検索は全募集馬を対象。評価点の表示範囲は契約プランに準拠します。</div>
+  <div class="note" id="searchPlanNote">検索対象は全82頭。募集馬名・No.・父・母に加え、性別・芝/ダート・一口価格で絞り込めます。評価点の表示範囲は契約プランに準拠します。</div>
   <div id="searchResults"></div>
 </section>
 
@@ -483,7 +556,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC21</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC22</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -954,12 +1027,20 @@ function openMyPageSettings(){
 }
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
 
+function surfaceStrength(v){
+ const s=String(v||"");
+ if(s.includes("◎")) return 2;
+ if(s.includes("○")) return 1;
+ return 0;
+}
 function renderSearch(){
  const q=(document.getElementById("searchInput").value||"").trim().toLowerCase();
  const sex=document.getElementById("searchSex").value;
  const rules=planRules();
  const status=rules.canOpenFilter ? document.getElementById("searchStatus").value : "";
  const favOnly=rules.canFavoriteFilter && document.getElementById("searchFav").checked;
+ const surface=document.getElementById("searchSurface")?.value||"";
+ const priceBand=document.getElementById("searchPrice")?.value||"";
 
  let xs=HORSES.filter(h=>{
    const textHit=!q || String(h.no)===q || String(h.no).includes(q) ||
@@ -967,15 +1048,42 @@ function renderSearch(){
    const sexHit=!sex || h.sex===sex;
    const statusHit=!status || (status==="open" ? !h.full : h.full);
    const favHit=!favOnly || !!state.favorites[h.no];
-   return textHit && sexHit && statusHit && favHit;
+
+   const turf=surfaceStrength(h.turf);
+   const dirt=surfaceStrength(h.dirt);
+   const surfaceHit=!surface ||
+     (surface==="turf" && turf>0 && turf>=dirt) ||
+     (surface==="dirt" && dirt>0 && dirt>=turf) ||
+     (surface==="both" && turf>0 && dirt>0);
+
+   const sp=Number(h.sharePrice||0);
+   const priceHit=!priceBand ||
+     (priceBand==="lt8" && sp<8) ||
+     (priceBand==="8to12" && sp>=8 && sp<=12) ||
+     (priceBand==="12to20" && sp>12 && sp<20) ||
+     (priceBand==="gte20" && sp>=20);
+
+   return textHit && sexHit && statusHit && favHit && surfaceHit && priceHit;
  });
+
+ // No surprise sort: keep catalog No. order for search results.
+ xs.sort((a,b)=>a.no-b.no);
+
+ const chips=[];
+ if(q) chips.push(`検索：${q}`);
+ if(sex) chips.push(sex==="牡"?"牡のみ":"牝のみ");
+ if(status) chips.push(status==="open"?"募集中":"満口");
+ if(favOnly) chips.push("お気に入り");
+ if(surface) chips.push({turf:"芝向き",dirt:"ダート向き",both:"芝・ダート両方"}[surface]);
+ if(priceBand) chips.push({lt8:"8万円未満","8to12":"8〜12万円","12to20":"12〜20万円",gte20:"20万円以上"}[priceBand]);
+ document.getElementById("searchActive").innerHTML=chips.map(x=>`<span class="search-chip">${x}</span>`).join("");
 
  document.getElementById("searchMeta").textContent=`${xs.length}頭表示`;
  document.getElementById("searchResults").innerHTML=xs.map(h=>`<div class="search-result" onclick="openHorse(${h.no},'search')">
    <div class="ranknum">${h.no}</div>
    <div>
      <div class="hname">${h.name}${state.favorites[h.no]?' ★':''}${state.excluded[h.no]?' <span class="excluded-note">除外</span>':''}</div>
-     <div class="hmeta">${h.sex}｜${h.full?'満口':'募集中'}｜${h.sire} × ${h.dam}</div>
+     <div class="hmeta">${h.sex}｜${h.full?'満口':'募集中'}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
    </div>
    <div class="score">${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}<small>${canViewHorseOfficial(h.no)?" Official":" PLAN"}</small></div>
  </div>`).join("") || '<div class="empty">該当する募集馬がありません</div>';
@@ -984,6 +1092,17 @@ document.getElementById("searchInput").addEventListener("input",renderSearch);
 document.getElementById("searchSex").addEventListener("change",renderSearch);
 document.getElementById("searchStatus").addEventListener("change",renderSearch);
 document.getElementById("searchFav").addEventListener("change",renderSearch);
+document.getElementById("searchSurface").addEventListener("change",renderSearch);
+document.getElementById("searchPrice").addEventListener("change",renderSearch);
+document.getElementById("clearSearchFilters").addEventListener("click",()=>{
+ document.getElementById("searchInput").value="";
+ document.getElementById("searchSex").value="";
+ if(!document.getElementById("searchStatus").disabled) document.getElementById("searchStatus").value="";
+ if(!document.getElementById("searchFav").disabled) document.getElementById("searchFav").checked=false;
+ document.getElementById("searchSurface").value="";
+ document.getElementById("searchPrice").value="";
+ renderSearch();
+});
 
 function usedPoints(){
  if(state.plan==="standard") return Object.values(state.categoryPoints).flatMap(o=>Object.values(o||{})).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
