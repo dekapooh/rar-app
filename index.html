@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC30 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC31 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC30 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC31 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC30 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC31 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -825,15 +825,220 @@ main{padding-top:84px}
  .rankheader,.rankrow{grid-template-columns:38px 38px minmax(0,1fr) 72px!important;gap:3px!important}
 }
 
+
+/* =========================================================
+   RC31 — Emblem polish / Strong Point mark / Compact Standard UI
+   ========================================================= */
+
+/* Personal rank: prominent arch medal system */
+.rank-emblem.personal{
+  width:34px;height:34px;border-radius:50% 50% 44% 44%;
+  border:2px solid rgba(255,255,255,.85);
+  outline:2px solid var(--medal-edge,#D4AF37);
+  box-shadow:
+    0 3px 8px rgba(63,53,20,.18),
+    inset 0 1px 0 rgba(255,255,255,.72),
+    inset 0 -4px 8px rgba(0,0,0,.08);
+  clip-path:none!important;
+  font-size:13px;
+}
+.rank-emblem.personal:before{
+  content:"";
+  position:absolute;
+  left:50%;top:-7px;transform:translateX(-50%);
+  width:25px;height:12px;
+  border:3px solid var(--medal-edge,#D4AF37);
+  border-bottom:0;
+  border-radius:18px 18px 0 0;
+  opacity:.95;
+}
+.rank-emblem.personal:after{
+  content:"";
+  position:absolute;
+  left:50%;top:-3px;transform:translateX(-50%);
+  width:8px;height:8px;border-radius:50%;
+  background:var(--medal-edge,#D4AF37);
+  box-shadow:0 1px 2px rgba(0,0,0,.18);
+}
+.rank-emblem.personal.medal-1{
+  --medal-edge:#E0B92E;
+  background:linear-gradient(145deg,#FFF2A0 0%,#D8A91E 48%,#A97805 100%)!important;
+  color:#fff!important;
+}
+.rank-emblem.personal.medal-2{
+  --medal-edge:#AEB7BF;
+  background:linear-gradient(145deg,#F7FAFC 0%,#B9C1C8 50%,#7E8A94 100%)!important;
+  color:#fff!important;
+}
+.rank-emblem.personal.medal-3{
+  --medal-edge:#B9793D;
+  background:linear-gradient(145deg,#F0C090 0%,#B9783C 50%,#7A431E 100%)!important;
+  color:#fff!important;
+}
+.rank-emblem.personal.medal-4,
+.rank-emblem.personal.medal-5{
+  --medal-edge:#BFA43A;
+  background:linear-gradient(145deg,#EAF6D2,#83B95E)!important;
+  color:#184C37!important;
+}
+.rank-emblem.personal.medal-mid{
+  --medal-edge:#5AA980;
+  background:linear-gradient(145deg,#DFF2E7,#4FB17D)!important;
+  color:#fff!important;
+  border-radius:45% 45% 38% 38%;
+}
+.rank-emblem.personal.plain{
+  width:30px;height:30px;outline:0;border:1px solid #DCE6E0;
+}
+.rank-emblem.personal.plain:before,
+.rank-emblem.personal.plain:after{display:none}
+
+/* Official rank: intentionally two sizes smaller, dark RAR green base */
+.rank-badge-wrap.official-wrap{width:25px;height:30px}
+.rank-emblem.official{
+  width:23px;height:23px!important;
+  min-width:23px;min-height:23px;
+  font-size:9.5px!important;
+  border-radius:8px;
+  border:1px solid rgba(216,165,38,.72);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(15,61,46,.13);
+  clip-path:none!important;
+}
+.rank-emblem.official.top3:before{
+  content:"◆";top:-6px;font-size:7px;color:#D8A526;
+}
+.rank-emblem.official.top3,
+.rank-emblem.official.top5{width:24px!important;height:24px!important}
+.rank-emblem.official.mid{
+  border-radius:7px;
+}
+.rank-emblem.official.plain{
+  width:22px!important;height:22px!important;font-size:9px!important;
+  border-radius:7px!important;background:#fff!important;color:#627069!important;
+  border-color:#E3EAE6!important;
+}
+.rank-emblem.official.plain:before{display:none}
+
+/* Ranking column balance: Personal strong, Official compact */
+.rankheader,.rankrow{
+  grid-template-columns:43px 27px minmax(0,1fr) 76px!important;
+  gap:4px!important;
+}
+.rankheader .rank-col-official{font-size:9px}
+.rankheader .rank-col-official small{font-size:7px}
+@media(max-width:390px){
+  .rankheader,.rankrow{
+    grid-template-columns:41px 25px minmax(0,1fr) 72px!important;
+    gap:3px!important;
+  }
+}
+
+/* Strong Point mark: only tied highest Official score gets this */
+.strong-point-mark{
+  width:22px;height:22px;display:grid;place-items:center;
+  border-radius:50% 50% 46% 46%;
+  background:linear-gradient(145deg,#FFF8C9,#D8A526);
+  color:#0F4A35;border:1px solid #C89B1D;
+  box-shadow:0 2px 5px rgba(132,101,15,.18),inset 0 1px 0 rgba(255,255,255,.75);
+  font-size:11px;font-weight:950;
+}
+.strong-point-mark:before{content:"✦"}
+.strong-point-mark.small{width:20px;height:20px;font-size:9px}
+.metric-rank-slot,.small-rank-slot{display:grid;place-items:center}
+
+/* STANDARD: exact compact 4-row card */
+#officialCard.standard-layout .detail-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:5px!important;
+}
+#officialCard.standard-layout .metric{
+  padding:7px 6px!important;
+  border-radius:12px;
+  min-width:0;
+}
+.std-metric-head,
+.std-score-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:4px;
+  min-width:0;
+}
+.std-metric-head{
+  min-height:23px;
+  padding-bottom:3px;
+}
+.std-metric-head .std-title{
+  font-size:11px;font-weight:850;color:#40544B;white-space:nowrap;
+}
+.std-score-row{
+  min-height:25px;
+  font-size:9px;color:#75837C;
+}
+.std-score-row b{
+  font-size:13px!important;
+  line-height:1!important;
+  color:#25342E;
+  white-space:nowrap;
+}
+#officialCard.standard-layout .personal-tools{
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between!important;
+  margin:2px 0!important;
+  gap:4px!important;
+}
+#officialCard.standard-layout .personal-tools button{
+  width:27px!important;height:27px!important;
+  padding:0!important;border-radius:8px!important;
+  font-size:16px!important;
+}
+#officialCard.standard-layout .personal-delta{display:none!important}
+#officialCard.standard-layout .personal-after{
+  display:inline!important;
+  margin:0!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  white-space:nowrap;
+}
+#officialCard.standard-layout .std-score-row.personal-row{
+  min-height:24px;
+  border-top:1px solid rgba(202,216,208,.52);
+  margin-top:2px;
+  padding-top:3px;
+}
+@media(max-width:390px){
+  #officialCard.standard-layout .detail-grid{gap:3px!important}
+  #officialCard.standard-layout .metric{padding:6px 4px!important}
+  .std-metric-head .std-title{font-size:10px}
+  .std-score-row{font-size:8px}
+  .std-score-row b{font-size:11.5px!important}
+  #officialCard.standard-layout .personal-after{font-size:11px!important}
+  #officialCard.standard-layout .personal-tools button{width:25px!important;height:25px!important}
+}
+
+/* Non-standard category cards still use the same structure cleanly */
+#officialCard:not(.standard-layout) .std-metric-head{margin-bottom:4px}
+#officialCard:not(.standard-layout) .std-score-row.official-row span:first-child,
+#officialCard:not(.standard-layout) .std-score-row.personal-row span:first-child{display:none}
+#officialCard:not(.standard-layout) .std-score-row.official-row b{font-size:18px}
+#officialCard:not(.standard-layout) .std-score-row.personal-row{display:none}
+
+/* PREMIUM small item left marker lane stays reserved */
+#premiumSmallOfficial .small-row{
+  grid-template-columns:28px minmax(0,1fr) auto auto auto!important;
+  gap:7px!important;
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC30</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC31</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC30 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC31 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -909,7 +1114,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC30</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC31</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -1026,24 +1231,32 @@ main{padding-top:84px}
     <h3>Official <span id="officialAccessNote" class="plan-badge" style="display:none"></span></h3>
     <div class="detail-grid">
       <div class="metric">
-        <div class="metric-title-row"><span>潜在</span><span id="dPotRankSlot" class="metric-rank-slot"></span></div>
-        <span>潜在能力</span><b id="dPot"></b><span id="dPotAdj" class="personal-delta"></span><span id="dPotAfter" class="personal-after"></span>
+        <div class="std-metric-head"><span class="std-title">潜在</span><span id="dPotRankSlot" class="metric-rank-slot"></span></div>
+        <div class="std-score-row official-row"><span>Official</span><b id="dPot"></b></div>
+        <span id="dPotAdj" class="personal-delta"></span>
         <div id="stdPotTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('potential',-1)">−</button><button onclick="adjustCategoryPoint('potential',1)">＋</button></div>
+        <div class="std-score-row personal-row"><span>Personal</span><span id="dPotAfter" class="personal-after"></span></div>
       </div>
       <div class="metric">
-        <div class="metric-title-row"><span>血統</span><span id="dPedRankSlot" class="metric-rank-slot"></span></div>
-        <span>血統</span><b id="dPed"></b><span id="dPedAdj" class="personal-delta"></span><span id="dPedAfter" class="personal-after"></span>
+        <div class="std-metric-head"><span class="std-title">血統</span><span id="dPedRankSlot" class="metric-rank-slot"></span></div>
+        <div class="std-score-row official-row"><span>Official</span><b id="dPed"></b></div>
+        <span id="dPedAdj" class="personal-delta"></span>
         <div id="stdPedTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('pedigree',-1)">−</button><button onclick="adjustCategoryPoint('pedigree',1)">＋</button></div>
+        <div class="std-score-row personal-row"><span>Personal</span><span id="dPedAfter" class="personal-after"></span></div>
       </div>
       <div class="metric">
-        <div class="metric-title-row"><span>夢</span><span id="dDreamRankSlot" class="metric-rank-slot"></span></div>
-        <span>夢</span><b id="dDream"></b><span id="dDreamAdj" class="personal-delta"></span><span id="dDreamAfter" class="personal-after"></span>
+        <div class="std-metric-head"><span class="std-title">夢</span><span id="dDreamRankSlot" class="metric-rank-slot"></span></div>
+        <div class="std-score-row official-row"><span>Official</span><b id="dDream"></b></div>
+        <span id="dDreamAdj" class="personal-delta"></span>
         <div id="stdDreamTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('dream',-1)">−</button><button onclick="adjustCategoryPoint('dream',1)">＋</button></div>
+        <div class="std-score-row personal-row"><span>Personal</span><span id="dDreamAfter" class="personal-after"></span></div>
       </div>
       <div class="metric">
-        <div class="metric-title-row"><span>ROI</span><span id="dRoiRankSlot" class="metric-rank-slot"></span></div>
-        <span>ROI</span><b id="dRoi"></b><span id="dRoiAdj" class="personal-delta"></span><span id="dRoiAfter" class="personal-after"></span>
+        <div class="std-metric-head"><span class="std-title">ROI</span><span id="dRoiRankSlot" class="metric-rank-slot"></span></div>
+        <div class="std-score-row official-row"><span>Official</span><b id="dRoi"></b></div>
+        <span id="dRoiAdj" class="personal-delta"></span>
         <div id="stdRoiTools" class="personal-tools" style="display:none"><button onclick="adjustCategoryPoint('roi',-1)">−</button><button onclick="adjustCategoryPoint('roi',1)">＋</button></div>
+        <div class="std-score-row personal-row"><span>Personal</span><span id="dRoiAfter" class="personal-after"></span></div>
       </div>
     </div>
     <div class="summary"><span>RAR総合</span><strong id="dTotal"></strong></div>
@@ -1545,6 +1758,22 @@ function competitionRankForValues(items,valueGetter,targetNo){
  const higher=new Set(items.map(h=>Number(valueGetter(h))).filter(v=>v>targetValue));
  return 1+higher.size;
 }
+
+function isCategoryTopScore(no,key){
+ const h=HORSES.find(x=>x.no===no);
+ if(!h)return false;
+ const top=Math.max(...HORSES.map(x=>Number(x[key]||0)));
+ return Number(h[key]||0)===top;
+}
+function isSmallTopScore(no,key){
+ const h=HORSES.find(x=>x.no===no);
+ if(!h)return false;
+ const top=Math.max(...HORSES.map(x=>Number((x.small||{})[key]||0)));
+ return Number((h.small||{})[key]||0)===top;
+}
+function strongPointMarkHTML(small=false){
+ return `<span class="strong-point-mark${small?" small":""}" title="Strong Point"></span>`;
+}
 function categoryOfficialRank(no,key){
  return competitionRankForValues(HORSES,h=>Number(h[key]||0),no);
 }
@@ -1572,12 +1801,27 @@ function rankGradient(rank,type){
 function rankEmblemHTML(rank,type){
  const r=Number(rank);
  if(!Number.isFinite(r))return "";
- if(r>20)return `<div class="rank-badge-wrap"><span class="rank-emblem plain">${r}</span></div>`;
+
+ if(type==="personal"){
+   if(r>20){
+     return `<div class="rank-badge-wrap"><span class="rank-emblem personal plain">${r}</span></div>`;
+   }
+   let cls="medal-mid";
+   if(r===1)cls="medal-1";
+   else if(r===2)cls="medal-2";
+   else if(r===3)cls="medal-3";
+   else if(r===4)cls="medal-4";
+   else if(r===5)cls="medal-5";
+   return `<div class="rank-badge-wrap"><span class="rank-emblem personal ${cls}">${r}</span></div>`;
+ }
+
+ if(r>20){
+   return `<div class="rank-badge-wrap official-wrap"><span class="rank-emblem official plain">${r}</span></div>`;
+ }
  const tier=r<=3?"top3":(r<=5?"top5":"mid");
- const bg=rankGradient(r,type);
- const fg=(r<=8)?"#fff":"#174D37";
- const border=type==="official"?"rgba(15,74,53,.45)":"#D6B33D";
- return `<div class="rank-badge-wrap"><span class="rank-emblem ${type} ${tier}" style="--rank-bg:${bg};--rank-fg:${fg};--rank-border:${border}">${r}</span></div>`;
+ const bg=rankGradient(r,"official");
+ const fg=r<=8?"#fff":"#174D37";
+ return `<div class="rank-badge-wrap official-wrap"><span class="rank-emblem official ${tier}" style="--rank-bg:${bg};--rank-fg:${fg};--rank-border:rgba(216,165,38,.72)">${r}</span></div>`;
 }
 function categoryPoint(no,key){return Number((state.categoryPoints[no]||{})[key]||0)}
 function smallPoint(no,key){return Number((state.smallPoints[no]||{})[key]||0)}
@@ -1644,9 +1888,9 @@ function renderPremiumSmallOfficial(){
      const base=currentHorse.small[key];
      const adj=smallPoint(currentHorse.no,key);
      const resultClass=adj>0?"positive":(adj<0?"negative":"");
-     const rank=smallOfficialRank(currentHorse.no,key);
+     const isStrong=isSmallTopScore(currentHorse.no,key);
      return `<div class="small-row">
-       <span class="small-rank-slot">${top5Badge(rank,true)}</span>
+       <span class="small-rank-slot">${isStrong?strongPointMarkHTML(true):""}</span>
        <div class="small-content"><b>${label}</b><div class="base">Official ${base}/${max}</div></div>
        <button onclick="adjustSmallPoint('${key}',-1)">−</button>
        <b class="small-after ${resultClass}">${base+adj}</b>
@@ -1657,10 +1901,10 @@ function renderPremiumSmallOfficial(){
  const roiBase=Number(currentHorse.roi);
  const roiAdj=categoryPoint(currentHorse.no,"roi");
  const roiClass=roiAdj>0?"positive":(roiAdj<0?"negative":"");
- const roiRank=categoryOfficialRank(currentHorse.no,"roi");
+ const roiStrong=isCategoryTopScore(currentHorse.no,"roi");
  html+=`<div class="small-group-title">ROI</div>
    <div class="small-row">
-     <span class="small-rank-slot">${top5Badge(roiRank,true)}</span>
+     <span class="small-rank-slot">${roiStrong?strongPointMarkHTML(true):""}</span>
      <div class="small-content"><b>ROI</b><div class="base">Official ${roiBase}/25</div></div>
      <button onclick="adjustCategoryPoint('roi',-1)">−</button>
      <b class="small-after ${roiClass}">${(roiBase+roiAdj).toFixed(1)}</b>
@@ -1685,9 +1929,8 @@ function renderPersonalPointUI(){
  for(const [key,id] of Object.entries(categoryRankSlots)){
    const slot=document.getElementById(id);
    if(!slot)continue;
-   const showCategoryBadge=state.plan!=="premium";
-   const rank=categoryOfficialRank(no,key);
-   slot.innerHTML=showCategoryBadge?top5Badge(rank,false):"";
+   const eligible=state.plan==="light" || state.plan==="standard";
+   slot.innerHTML=(eligible && isCategoryTopScore(no,key))?strongPointMarkHTML(false):"";
  }
 
  const showStd=state.plan==="standard";
@@ -1712,7 +1955,7 @@ function renderPersonalPointUI(){
    if(!el)continue;
    if(state.plan==="standard"){
      el.style.display="block";
-     el.textContent=`${(base+adj).toFixed(1)}/${max}`;
+     el.textContent=`${Number(base+adj).toFixed(1).replace(".0","")}/${max}`;
      el.classList.toggle("positive",adj>0);
      el.classList.toggle("negative",adj<0);
    }else if(state.plan==="premium" && adj!==0){
