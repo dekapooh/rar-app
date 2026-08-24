@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC27 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC28 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC27 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC28 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC27 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC28 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -610,15 +610,55 @@ main{padding-top:84px}
   color:#315E43;
 }
 
+
+/* =========================================================
+   RC28 usability batch
+   ========================================================= */
+.rank-reset-btn{
+  width:30px;height:30px;border:1px solid #BCD0C4;border-radius:9px;
+  background:#fff;color:#0F4A35;font-size:16px;font-weight:900;
+}
+#ranking .rank-top-sticky{padding-top:2px;padding-bottom:3px}
+#ranking .rank-title-row{margin-bottom:3px}
+#ranking .controls{gap:4px;margin-bottom:3px}
+#ranking .summary{min-height:27px;margin:2px 0 3px;padding:3px 7px}
+#ranking .price-filter-bar{
+  flex-wrap:nowrap!important;gap:4px!important;padding:5px 2px!important;overflow:hidden;
+}
+#ranking .price-filter-bar .price-filter-label{display:none}
+#ranking .price-filter-bar label{gap:2px!important;white-space:nowrap}
+#ranking .price-filter-bar input{width:58px!important;padding:4px 5px!important}
+#ranking #clearPriceFilter{padding:5px 7px!important}
+#ranking .rankheader{padding-top:4px;padding-bottom:4px}
+
+.detail-top-nav{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.detail-prevnext{display:flex;gap:6px}
+.detail-prevnext .btn{padding:9px 12px;font-size:11px}
+.detail-jumpbar{
+  position:sticky;top:70px;z-index:24;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+  padding:6px 0 8px;background:rgba(255,255,255,.97);
+  backdrop-filter:blur(8px);
+}
+.detail-jumpbar button{
+  border:1px solid #C8D9D0;border-radius:999px;background:#F8FBF9;color:#174D37;
+  padding:7px 4px;font-size:10.5px;font-weight:850;
+}
+@media(max-width:390px){
+  .detail-jumpbar{top:66px}
+  .detail-prevnext .btn{padding:8px 9px}
+  #ranking .price-filter-bar input{width:51px!important}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC27</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC28</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC27 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC28 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -635,9 +675,10 @@ main{padding-top:84px}
   <div class="rank-top-sticky">
     <div class="rank-title-row">
       <div class="section-title">ランキング</div>
-      <div style="display:flex;align-items:center;gap:8px">
+      <div style="display:flex;align-items:center;gap:6px">
         <label class="slim-filter"><input id="favoritesOnly" type="checkbox"> ☆のみ</label>
         <label class="slim-filter"><input id="excludeFull" type="checkbox"> 満口除外</label>
+        <button id="resetRankFilters" class="rank-reset-btn" type="button">↻</button>
       </div>
     </div>
     <div class="controls">
@@ -693,7 +734,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC27</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC28</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -765,7 +806,13 @@ main{padding-top:84px}
 </section>
 
 <section id="detail" class="screen">
-  <div><button class="btn secondary" onclick="goBack()">← 戻る</button></div>
+  <div class="detail-top-nav">
+    <button class="btn secondary" onclick="goBack()">← 戻る</button>
+    <div class="detail-prevnext">
+      <button id="detailPrevHorse" class="btn secondary" type="button">‹ 前</button>
+      <button id="detailNextHorse" class="btn secondary" type="button">次 ›</button>
+    </div>
+  </div>
   <div class="card" style="margin-top:12px">
     <div class="detail-actions">
       <button id="detailFav" class="detail-action fav-action" type="button">☆ お気に入り</button>
@@ -775,7 +822,13 @@ main{padding-top:84px}
     <h2 id="detailName" style="margin:8px 0 4px"></h2>
     <div id="detailBasic" class="note"></div>
   </div>
-  <div class="card">
+  <div class="detail-jumpbar">
+    <button type="button" onclick="jumpDetail('detailBasicCard')">基本</button>
+    <button type="button" onclick="jumpDetail('officialCard')">Official</button>
+    <button type="button" onclick="jumpDetail('detailFitCard')">適性</button>
+    <button type="button" onclick="jumpDetail('detailMemoCard')">メモ</button>
+  </div>
+  <div class="card" id="detailBasicCard">
     <h3>基本情報</h3>
     <div class="detail-basic-grid">
       <div class="metric birth-wide"><span>生年月日</span><b id="dBirth"></b></div>
@@ -838,7 +891,7 @@ main{padding-top:84px}
       <div id="premiumSmallList"></div>
     </div>
   </div>
-  <div class="card">
+  <div class="card" id="detailFitCard">
     <h3>各種適性</h3>
     <div class="fit-grid">
       <div class="fit-item"><span>芝適性</span><b id="dTurf"></b></div>
@@ -862,7 +915,7 @@ main{padding-top:84px}
     <input id="dRegisteredName" class="horse-name-input" type="text" maxlength="30" placeholder="正式馬名を登録">
     <div class="note" style="margin-top:5px">出資確定馬は世代別に残す想定。正式馬名は決定後に登録できます。</div>
   </div>
-  <div class="card">
+  <div class="card" id="detailMemoCard">
     <h3>Personal Memo <span class="badge green">非公開</span></h3>
     <textarea id="memoBox" placeholder="思い入れ、気になる点、抽選事情など自由に…"></textarea>
     <button class="btn" style="margin-top:8px" onclick="saveMemo()">保存</button>
@@ -1088,6 +1141,16 @@ document.getElementById("excludeFull").addEventListener("change",()=>{
 });
 document.getElementById("favoritesOnly").addEventListener("change",()=>{
  if(!planRules().canFavoriteFilter){document.getElementById("favoritesOnly").checked=false;return}
+ renderRanking();
+});
+document.getElementById("resetRankFilters").addEventListener("click",()=>{
+ state.rankBase={potential:true,pedigree:true,dream:true,roi:true};
+ state.filterBase={favoritesOnly:false,excludeFull:false};
+ state.priceRange={min:"",max:""};
+ saveState();
+ applyRankBase();
+ syncBaseControls();
+ syncPriceFilterUI();
  renderRanking();
 });
 document.getElementById("compareFavoritesBtn").addEventListener("click",openFavoriteCompare);
@@ -1432,6 +1495,29 @@ function syncInvestedGeneration(){
  sel.innerHTML=years.length?years.map(y=>`<option value="${y}">${y}年産</option>`).join(""):'<option value="">登録なし</option>';
  if(current && years.includes(Number(current))) sel.value=current;
 }
+function jumpDetail(id){
+ const el=document.getElementById(id);
+ if(!el)return;
+ const headerOffset=126;
+ const y=el.getBoundingClientRect().top+window.pageYOffset-headerOffset;
+ window.scrollTo({top:y,behavior:"smooth"});
+}
+function browseHorse(delta){
+ if(!currentHorse)return;
+ const nextNo=currentHorse.no+delta;
+ if(nextNo<1 || nextNo>HORSES.length)return;
+ openHorse(nextNo,previousScreen||"ranking");
+ window.scrollTo({top:0,behavior:"instant"});
+}
+function syncDetailBrowseButtons(){
+ const prev=document.getElementById("detailPrevHorse");
+ const next=document.getElementById("detailNextHorse");
+ if(!prev||!next||!currentHorse)return;
+ prev.disabled=currentHorse.no<=1;
+ next.disabled=currentHorse.no>=HORSES.length;
+ prev.onclick=()=>browseHorse(-1);
+ next.onclick=()=>browseHorse(1);
+}
 function openHorse(no,from){
  previousScreen=from||"ranking"; currentHorse=HORSES.find(h=>h.no===no); if(!currentHorse)return;
  document.getElementById("detailNo").textContent="No."+currentHorse.no;
@@ -1499,6 +1585,7 @@ function openHorse(no,from){
    exBtn.classList.toggle("active",!!state.excluded[no]);
    renderRanking();updateMyPage();syncPlanLocks(); if(document.getElementById("compare").classList.contains("active"))renderFavoriteCompare();
  };
+ syncDetailBrowseButtons();
  showScreen("detail");
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 }
@@ -1582,7 +1669,11 @@ function updateMyPage(){
      return h && horseBirthYear(h)===y;
    });
  }
- nos.sort((a,b)=>a-b);
+ if(myPageView==="points"){
+   nos.sort((a,b)=>Math.abs(effectivePersonalPoint(b))-Math.abs(effectivePersonalPoint(a)) || a-b);
+ }else{
+   nos.sort((a,b)=>a-b);
+ }
 
  const list=document.getElementById("myList");
  if(!nos.length){
