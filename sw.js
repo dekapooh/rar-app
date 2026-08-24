@@ -1,4 +1,4 @@
-const CACHE_NAME = "rar-rc29-v1";
+const CACHE_NAME = "rar-rc30-v1";
 
 const APP_SHELL = [
   "./",
@@ -10,20 +10,14 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
+      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
     )
   );
   self.clients.claim();
@@ -31,11 +25,9 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-
   const request = event.request;
   const url = new URL(request.url);
 
-  // HTML / navigation: network first so a newly deployed RC is visible immediately.
   if (request.mode === "navigate" || url.pathname.endsWith("/index.html")) {
     event.respondWith(
       fetch(request)
@@ -49,7 +41,6 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Static assets: cache first.
   event.respondWith(
     caches.match(request).then(cached =>
       cached || fetch(request).then(response => {
