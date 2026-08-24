@@ -1,11 +1,12 @@
-const CACHE_NAME = "rar--v1";
+const CACHE_NAME = "rar-rc28-v2";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icon-192.png",
-  "./icon-512.png","./hero-rc21.png"
+  "./icon-512.png",
+  "./hero-rc21.png"
 ];
 
 self.addEventListener("install", event => {
@@ -30,11 +31,30 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // HTML / navigation: network first so a newly deployed RC is visible immediately.
+  if (request.mode === "navigate" || url.pathname.endsWith("/index.html")) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+          return response;
+        })
+        .catch(() => caches.match(request).then(r => r || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  // Static assets: cache first.
   event.respondWith(
-    caches.match(event.request).then(cached =>
-      cached || fetch(event.request).then(response => {
+    caches.match(request).then(cached =>
+      cached || fetch(request).then(response => {
         const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         return response;
       })
     )
