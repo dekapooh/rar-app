@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC34 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC35 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC34 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC35 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC34 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC35 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1162,15 +1162,62 @@ main{padding-top:84px}
 .rc34-fit-note{text-align:right;margin-top:6px;font-size:8px;color:#95a199}
 @media(max-width:390px){.rc34-fit-grid{gap:6px!important}.rc34-fit-grid .fit-item{padding:9px!important}.rc34-fit-grid .fit-item b{font-size:12px!important}.rc34-target b{font-size:13px}}
 
+
+/* =========================================================
+   RC35 — Personal Memo
+   1000 chars / auto grow / counter
+   ========================================================= */
+#detailMemoCard #memoBox{
+  width:100%;
+  min-height:94px;
+  height:auto;
+  overflow-y:hidden;
+  resize:none;
+  line-height:1.6;
+  font-size:13px;
+  padding:11px 12px;
+  border:1px solid #D9E4DE;
+  border-radius:13px;
+  background:#fff;
+}
+#detailMemoCard #memoBox:focus{
+  outline:none;
+  border-color:#78AA92;
+  box-shadow:0 0 0 2px rgba(42,148,97,.08);
+}
+.memo-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:7px;
+}
+.memo-counter{
+  font-size:10px;
+  color:#8A9790;
+  font-variant-numeric:tabular-nums;
+}
+.memo-counter.near-limit{
+  color:#B47A13;
+  font-weight:850;
+}
+.memo-counter.at-limit{
+  color:#C23D3D;
+  font-weight:900;
+}
+.memo-save-btn{
+  padding:9px 16px!important;
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC34</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC35</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC34 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC35 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1246,7 +1293,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC34</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC35</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -1442,8 +1489,11 @@ main{padding-top:84px}
   </div>
   <div class="card" id="detailMemoCard">
     <h3>Personal Memo <span class="badge green">非公開</span></h3>
-    <textarea id="memoBox" placeholder="思い入れ、気になる点、抽選事情など自由に…"></textarea>
-    <button class="btn" style="margin-top:8px" onclick="saveMemo()">保存</button>
+    <textarea id="memoBox" maxlength="1000" rows="4" placeholder="思い入れ、気になる点、抽選事情など自由に…"></textarea>
+    <div class="memo-footer">
+      <span id="memoCountText" class="memo-counter">0 / 1000</span>
+      <button class="btn memo-save-btn" onclick="saveMemo()">保存</button>
+    </div>
   </div>
 </section>
 </main>
@@ -1773,7 +1823,12 @@ function showScreen(id){
 }
 function openMyPageView(view){
  myPageView=view;
- document.querySelectorAll(".kpi[data-myview]").forEach(b=>b.classList.toggle("active",b.dataset.myview===view));
+ 
+const memoBoxEl=document.getElementById("memoBox");
+if(memoBoxEl){
+ memoBoxEl.addEventListener("input",updateMemoUI);
+}
+document.querySelectorAll(".kpi[data-myview]").forEach(b=>b.classList.toggle("active",b.dataset.myview===view));
  showScreen("mypage");
 }
 function openMyPageSettings(){
@@ -2173,7 +2228,9 @@ function openHorse(no,from){
  document.getElementById("dInvested").checked=!!state.invested[currentHorse.no];
  document.getElementById("dRegisteredName").value=state.registeredNames[currentHorse.no]||"";
  renderPersonalPointUI();
- document.getElementById("memoBox").value=state.memos[no]||"";
+ const memoBox=document.getElementById("memoBox");
+ memoBox.value=state.memos[no]||"";
+ updateMemoUI();
  const favBtn=document.getElementById("detailFav");
  favBtn.textContent=state.favorites[no]?"★ お気に入り":"☆ お気に入り";
  favBtn.classList.toggle("active",!!state.favorites[no]);
@@ -2246,10 +2303,37 @@ function resetCurrentHorsePoints(){
  updateMyPage();
  if(document.getElementById("compare")?.classList.contains("active")) renderFavoriteCompare();
 }
+function autoGrowMemo(){
+ const box=document.getElementById("memoBox");
+ if(!box)return;
+ box.style.height="auto";
+ box.style.height=Math.max(94,box.scrollHeight)+"px";
+}
+function updateMemoCounter(){
+ const box=document.getElementById("memoBox");
+ const counter=document.getElementById("memoCountText");
+ if(!box||!counter)return;
+ const len=box.value.length;
+ counter.textContent=`${len} / 1000`;
+ counter.classList.toggle("near-limit",len>=900 && len<1000);
+ counter.classList.toggle("at-limit",len>=1000);
+}
+function updateMemoUI(){
+ autoGrowMemo();
+ updateMemoCounter();
+}
 function saveMemo(){
- if(!currentHorse)return; const v=document.getElementById("memoBox").value.trim();
- if(v)state.memos[currentHorse.no]=v; else delete state.memos[currentHorse.no];
- saveState(); alert("メモを保存しました");
+ if(!currentHorse)return;
+ const box=document.getElementById("memoBox");
+ if(!box)return;
+ const v=box.value.slice(0,1000);
+ box.value=v;
+ if(v.trim())state.memos[currentHorse.no]=v;
+ else delete state.memos[currentHorse.no];
+ saveState();
+ updateMemoUI();
+ updateMyPage();
+ alert("メモを保存しました");
 }
 let myPageView="favorites";
 function updateMyPage(){
