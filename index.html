@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC33 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC34 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC33 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC34 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC33 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC34 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1149,15 +1149,28 @@ main{padding-top:84px}
 .rankheader,.rankrow{grid-template-columns:43px 26px minmax(0,1fr) 76px!important;gap:4px!important}
 @media(max-width:390px){.rankheader,.rankrow{grid-template-columns:41px 24px minmax(0,1fr) 72px!important;gap:3px!important}}
 
+
+/* RC34 Suitability UI */
+.rc34-fit-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.rc34-fit-grid .fit-item{min-width:0;padding:10px 11px!important;border-radius:13px!important;background:linear-gradient(145deg,#fff,#f7fbf8)!important;border:1px solid #dce8e1!important}
+.rc34-fit-grid .fit-item span{font-size:9px!important;color:#78877f!important;font-weight:850!important}
+.rc34-fit-grid .fit-item b{display:block;margin-top:4px;font-size:13px!important;line-height:1.35;color:#173e30!important;overflow-wrap:anywhere}
+.rc34-category{grid-column:1/-1!important}
+.rc34-target{margin-top:8px;padding:11px 12px;border-radius:14px;border:1px solid #c8ded2;background:linear-gradient(135deg,#f8fcf9,#eaf5ee)}
+.rc34-target span{display:block;font-size:9px;font-weight:900;color:#6b7558;margin-bottom:4px}
+.rc34-target b{display:block;font-size:14px;line-height:1.4;font-weight:950;color:#0f4a35;overflow-wrap:anywhere}
+.rc34-fit-note{text-align:right;margin-top:6px;font-size:8px;color:#95a199}
+@media(max-width:390px){.rc34-fit-grid{gap:6px!important}.rc34-fit-grid .fit-item{padding:9px!important}.rc34-fit-grid .fit-item b{font-size:12px!important}.rc34-target b{font-size:13px}}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC33</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC34</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC33 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC34 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1233,7 +1246,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC33</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC34</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
@@ -1404,17 +1417,18 @@ main{padding-top:84px}
   </div>
   <div class="card" id="detailFitCard">
     <h3>各種適性</h3>
-    <div class="fit-grid">
+    <div class="fit-grid rc34-fit-grid">
       <div class="fit-item"><span>芝適性</span><b id="dTurf"></b></div>
       <div class="fit-item"><span>ダート適性</span><b id="dDirt"></b></div>
       <div class="fit-item"><span>距離適性</span><b id="dDistance"></b></div>
-      <div class="fit-item"><span>カテゴリ</span><b id="dCategory"></b></div>
-      <div class="fit-item" style="grid-column:1 / -1"><span>成長傾向</span><b id="dGrowth"></b></div>
+      <div class="fit-item"><span>成長傾向</span><b id="dGrowth"></b></div>
+      <div class="fit-item rc34-category"><span>カテゴリ</span><b id="dCategory"></b></div>
     </div>
-  </div>
-  <div class="card">
-    <h3>狙いレース</h3>
-    <div id="dTargets" class="detail-text"></div>
+    <div class="rc34-target">
+      <span>◆ 主要狙い</span>
+      <b id="dTargets"></b>
+    </div>
+    <div class="rc34-fit-note">RAR Official 適性データ</div>
   </div>
   <div class="card">
     <h3>ひとことコメント</h3>
