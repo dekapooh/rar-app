@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC20 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC21 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -240,15 +240,179 @@ header{
 .section-title,.home-section-title{color:#183B2B}
 .home-section-title span,.topic-meta,.note{color:#738078}
 
+
+/* =========================================================
+   RAR β Ver.1.0 RC21 — FINAL HOME VISUAL
+   Visual changes only. RC20 data / scoring / app logic unchanged.
+   Approved direction: white+green+gold header, catalog-style hero,
+   premium green bottom navigation, brighter Personal Point green.
+   ========================================================= */
+
+:root{
+  --rar-deep:#0F4A35;
+  --rar-deep2:#075039;
+  --rar-gold:#D9AE2B;
+  --rar-white:#FAFCF8;
+  --personal-bright:#27D56F;
+}
+
+/* Approved light header */
+header{
+  height:74px;
+  padding:9px 18px 10px;
+  background:
+    radial-gradient(circle at 0% 50%, rgba(39,213,111,.10), transparent 34%),
+    linear-gradient(90deg,#FAFCF8 0%,#FFFFFF 62%,#FAFCF8 100%);
+  color:var(--rar-deep);
+  border-bottom:2px solid var(--rar-gold);
+  box-shadow:0 3px 12px rgba(15,74,53,.10);
+  text-align:left;
+}
+header::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-2px;
+  height:8px;
+  border-bottom:2px solid var(--rar-gold);
+  border-radius:0 0 50% 50%;
+  pointer-events:none;
+}
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  color:var(--rar-deep);
+  font-size:24px;
+  line-height:1;
+  letter-spacing:.08em;
+  font-weight:900;
+}
+.brand::before{
+  content:"";
+  width:18px;height:17px;
+  display:inline-block;
+  border:4px solid var(--rar-gold);
+  border-top-color:transparent;
+  border-radius:0 0 12px 12px;
+  transform:rotate(180deg);
+  box-sizing:border-box;
+}
+.sub{
+  margin-top:5px;
+  color:#173E31;
+  opacity:1;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+
+/* account for taller fixed header */
+main{padding-top:84px}
+
+/* Approved hero is used as a single visual so text/horse/background keep the exact layout. */
+.home-hero-natural{
+  min-height:0!important;
+  height:auto!important;
+  aspect-ratio:1024 / 490;
+  margin:0 0 15px;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background-image:url("./hero-rc21.png")!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  box-shadow:none!important;
+}
+.home-hero-natural > *{display:none!important}
+
+/* Premium white content spacing */
+#home .home-section-title{
+  position:relative;
+  margin:15px 5px 10px;
+  padding-left:13px;
+  font-size:17px;
+  color:var(--rar-deep);
+}
+#home .home-section-title::before{
+  content:"";
+  position:absolute;
+  left:0;top:1px;bottom:1px;
+  width:4px;
+  border-radius:4px;
+  background:linear-gradient(#F1CF61,#C89613);
+}
+.topic-card{
+  border:1px solid #D9E5DE;
+  border-left:2px solid #79B69A;
+  border-radius:15px;
+  box-shadow:0 3px 12px rgba(15,74,53,.035);
+  padding:13px 14px;
+}
+.topic-card .topic-meta{color:#259568;font-weight:800}
+
+/* Bright Personal Point accent — intentionally more visible than Official. */
+.score.personal-adjusted,
+.personal-summary strong.positive,
+.small-after.positive,
+.metric .personal-after.positive,
+.compare-value.positive{
+  color:var(--personal-bright)!important;
+  text-shadow:0 0 8px rgba(39,213,111,.10);
+}
+
+/* Approved premium bottom navigation */
+.nav{
+  height:72px;
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+  gap:6px;
+  background:linear-gradient(100deg,#073C2B 0%,#0A583C 52%,#07432F 100%);
+  border-top:2px solid var(--rar-gold);
+  box-shadow:0 -5px 18px rgba(15,61,46,.16);
+}
+.nav button{
+  position:relative;
+  background:transparent;
+  color:#FFFFFF;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:13px;
+  font-size:10px;
+  font-weight:800;
+  transition:.15s;
+}
+.nav button span{
+  color:#FFFFFF;
+  font-size:21px;
+}
+.nav button.active{
+  background:linear-gradient(135deg,rgba(212,175,55,.13),rgba(255,255,255,.02));
+  color:#FFD44C;
+  border:1.5px solid #E1B52F;
+  box-shadow:inset 0 0 0 1px rgba(225,181,47,.12),0 0 10px rgba(225,181,47,.10);
+}
+.nav button.active span{color:#FFD44C;filter:drop-shadow(0 0 4px rgba(255,212,76,.22))}
+
+/* Keep detail/rank/search screens safely below the new header. */
+.rank-top-sticky{top:70px}
+
+/* Small-screen tuning */
+@media(max-width:390px){
+  header{height:70px;padding-left:15px}
+  main{padding-top:80px}
+  .brand{font-size:22px}
+  .sub{font-size:9.5px}
+  .nav{gap:4px;padding-left:5px;padding-right:5px}
+  .nav button{border-radius:11px}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC20</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC21</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC20 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC21 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -319,7 +483,7 @@ header{
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC20</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC21</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>

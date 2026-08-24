@@ -1,11 +1,11 @@
-const CACHE_NAME = "rar-rc20-v1";
+const CACHE_NAME = "rar-rc21-v1";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png","./hero-rc21.png"
 ];
 
 self.addEventListener("install", event => {
