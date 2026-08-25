@@ -161,7 +161,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC61 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC62 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -246,7 +246,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC61 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC62 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -481,7 +481,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC61 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC62 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1444,11 +1444,11 @@ main{padding-top:84px}
 </head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC61</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC62</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC61 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC62 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1524,7 +1524,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC61</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC62</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1714,7 +1714,7 @@ main{padding-top:84px}
     <details class="backup-help" id="appDiagnostics">
       <summary>アプリ診断</summary>
       <div class="backup-help-body">
-        <div id="diagBuild">Build：β Ver.1.0 RC61</div>
+        <div id="diagBuild">Build：β Ver.1.0 RC62</div>
         <div id="diagMode">表示モード：確認中</div>
         <div id="diagSW">更新機能：確認中</div>
         <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div><div id="diagProfile">LOCAL ID：確認中</div><div>Backup Schema：1</div><div id="diagSnapshot">復元保護：確認中</div><div id="diagQuota">保存容量：確認中</div><div id="diagPersist">保存保護：確認中</div><div id="diagReady">β公開準備：確認中</div><div id="diagBilling">課金：β版では無効</div><div id="diagDataHealth">Personalデータ：確認中</div>
@@ -1891,12 +1891,12 @@ main{padding-top:84px}
       <b id="dTargets"></b>
     </div>
     <div class="rc34-fit-note">RAR Official 適性データ</div>
-    <div id="dFitLock" class="detail-access-lock" style="display:none">🔒 適性データはLIGHT以上の対象馬で閲覧できます。</div>
+    <div id="dFitLock" class="detail-access-lock" style="display:none">🔒 この機能は現在のプランではご利用いただけません。</div>
   </div>
   <div class="card" id="detailCommentCard">
     <h3>ひとことコメント</h3>
     <div id="dComment" class="detail-text"></div>
-    <div id="dCommentLock" class="detail-access-lock" style="display:none">🔒 この馬のコメントは契約プランの閲覧対象外です。</div>
+    <div id="dCommentLock" class="detail-access-lock" style="display:none">🔒 この機能は現在のプランではご利用いただけません。</div>
   </div>
   <div class="card" id="investmentCard">
     <div class="investment-head">
@@ -1916,7 +1916,7 @@ main{padding-top:84px}
       </div>
     </div>
     <div class="note investment-note">出資馬は生年ごとにマイページへ保存。正式馬名は後から変更できます。</div>
-    <div id="dInvestmentLock" class="detail-access-lock" style="display:none">🔒 出資登録・正式馬名は契約プランの閲覧対象馬で利用できます。</div>
+    <div id="dInvestmentLock" class="detail-access-lock" style="display:none">🔒 この機能は現在のプランではご利用いただけません。</div>
   </div>
   <div class="card" id="detailMemoCard">
     <h3>Personal Memo <span class="badge green">非公開</span> <span class="plan-badge">FREE</span></h3>
@@ -2046,7 +2046,7 @@ function buildBackupPayload(){
    app:"RAR",
    format:"rar-personal-backup",
    version:1,    backupSchema:1,
-   build:"β Ver.1.0 RC61",
+   build:"β Ver.1.0 RC62",
    localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
    data
@@ -2220,8 +2220,11 @@ function syncPlanLocks(){
  const cmp=document.getElementById("compareFavoritesBtn");
  if(cmp){
    const favCount=Object.keys(state.favorites||{}).filter(k=>state.favorites[k] && !state.excluded[k]).length;
-   cmp.disabled=!rules.canFavoriteFilter || favCount===0;
-   cmp.title=!rules.canFavoriteFilter?"STANDARD以上で利用できます":(favCount===0?"比較できるお気に入り馬がありません":"お気に入り馬を比較");
+   const compareLocked=!rules.canFavoriteFilter || favCount===0;
+   cmp.disabled=compareLocked;
+   cmp.classList.toggle("locked-control",compareLocked);
+   cmp.setAttribute("aria-disabled",compareLocked?"true":"false");
+   cmp.title=!rules.canFavoriteFilter?"この機能は現在のプランではご利用いただけません。":(favCount===0?"比較できるお気に入り馬がありません":"お気に入り馬を比較");
  }
  const p=document.getElementById("currentPlanName");
  if(p) p.textContent=planName();
@@ -2360,7 +2363,7 @@ function toggleFinalist(no){
  syncPlanLocks();
 }
 function openFavoriteCompare(){
- if(!planRules().canFavoriteFilter)return;
+ if(!planRules().canFavoriteFilter){alert("🔒 この機能は現在のプランではご利用いただけません。");return;}
  previousScreen="ranking";
  renderFavoriteCompare();
  showScreen("compare");
@@ -2996,7 +2999,7 @@ function syncInvestmentUI(){
 }
 function saveRegisteredName(){
  if(!currentHorse)return;
- if(!canUseHorseManagedFeatures(currentHorse.no)){alert("この馬の正式馬名登録は契約プランの対象外です");return;}
+ if(!canUseHorseManagedFeatures(currentHorse.no)){alert("🔒 この機能は現在のプランではご利用いただけません。");return;}
  const no=currentHorse.no;
  const el=document.getElementById("dRegisteredName");
  if(!el)return;
@@ -3172,7 +3175,7 @@ document.querySelectorAll(".base-filter").forEach(x=>x.addEventListener("change"
 }));
 document.getElementById("dInvested").addEventListener("change",e=>{
  if(!currentHorse)return;
- if(!canUseHorseManagedFeatures(currentHorse.no)){e.target.checked=false;alert("この馬の出資登録は契約プランの対象外です");return;}
+ if(!canUseHorseManagedFeatures(currentHorse.no)){e.target.checked=false;alert("🔒 この機能は現在のプランではご利用いただけません。");return;}
  const no=currentHorse.no;
  if(e.target.checked){
    state.invested[no]=true;
