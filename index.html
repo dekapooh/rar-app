@@ -161,7 +161,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC51 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC60 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -246,7 +246,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC51 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC60 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -481,7 +481,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC51 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC60 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1430,13 +1430,13 @@ main{padding-top:84px}
 .restore-preview{margin-top:8px;padding:10px;border-radius:12px;border:1px solid #cfe2d7;background:#f7fbf8}.restore-preview-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.restore-preview-head b{font-size:10.5px;color:#174d37}.restore-preview-head span{font-size:8px;font-weight:900;color:#61766b;padding:2px 6px;border-radius:999px;background:#eef4f0}.restore-preview-grid{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:9px;color:#718078}.restore-preview-grid b{color:#24372e;text-align:right}
 </style>
 </head>
-<body>
+<body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC51</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC60</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC51 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC60 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1512,7 +1512,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC51</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC60</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1562,7 +1562,108 @@ main{padding-top:84px}
     </div>
     <div class="backup-picker-note">このIDは個人情報ではなく、将来の移行時に端末データを区別するための識別子です。</div>
   </div>
-  <div class="card" id="dataManagementCard">
+  <div class="card" id="betaTestCard">
+  <div class="data-manage-head">
+    <div>
+      <h3 style="margin:0">β通しテスト</h3>
+      <div class="note" style="margin-top:3px">各プランの主要画面を順番に確認します。Personalデータは変更しません。</div>
+    </div>
+    <span class="local-save-badge">TEST</span>
+  </div>
+  <div class="backup-scope" style="margin-top:9px"><b>① FREE</b><span>ランキング・検索・閲覧制限</span></div>
+  <div class="backup-scope" style="margin-top:7px"><b>② LIGHT</b><span>TOP30・Personal Point上限・募集中抽出</span></div>
+  <div class="backup-scope" style="margin-top:7px"><b>③ STANDARD</b><span>全82頭・4大項目・Personal機能・お気に入り抽出</span></div>
+  <div class="backup-scope" style="margin-top:7px"><b>④ PREMIUM</b><span>全82頭・小項目表示・上位Personal機能</span></div>
+  <div class="backup-scope" style="margin-top:7px"><b>⑤ 共通</b><span>出資管理・メモ・バックアップ／復元・PWA更新・オフライン</span></div>
+</div>
+<div class="card" id="betaStatusCard">
+  <div class="data-manage-head">
+    <div>
+      <h3 style="margin:0">β版ステータス</h3>
+      <div class="note" style="margin-top:3px">現在の実装範囲を確認できます。</div>
+    </div>
+    <span class="local-save-badge">CORE READY</span>
+  </div>
+  <div class="backup-scope" style="margin-top:9px">
+    <b>実装済み</b>
+    <span>82頭Official・ランキング・検索・Personal機能・出資管理・メモ・LOCAL保存・バックアップ／復元・PWA更新・自己診断</span>
+  </div>
+  <div class="backup-scope" style="margin-top:7px">
+    <b>β公開前</b>
+    <span>全プラン通しテスト・表示最終調整・公開情報の確定</span>
+  </div>
+  <div class="backup-scope" style="margin-top:7px">
+    <b>β公開後</b>
+    <span>アカウント・クラウド同期・実課金・ストア公開など</span>
+  </div>
+</div>
+<div class="card" id="planSpecCard">
+  <div class="data-manage-head">
+    <div>
+      <h3 style="margin:0">プラン機能（β仕様）</h3>
+      <div class="note" style="margin-top:3px">現在はβテスト用。購入・課金は行われません。</div>
+    </div>
+    <span class="local-save-badge">NO BILLING</span>
+  </div>
+  <div class="backup-scope" style="margin-top:9px">
+    <b>FREE</b><span>Official TOP10を閲覧</span>
+  </div>
+  <div class="backup-scope" style="margin-top:7px">
+    <b>LIGHT</b><span>Official TOP30＋カスタム機能</span>
+  </div>
+  <div class="backup-scope" style="margin-top:7px">
+    <b>STANDARD</b><span>全82頭＋Personal Point等の拡張機能</span>
+  </div>
+  <div class="backup-scope" style="margin-top:7px">
+    <b>PREMIUM</b><span>全82頭＋上位Personal機能（開発中を含む）</span>
+  </div>
+  <div class="backup-picker-note">正式版では購入前に、価格・請求周期・自動更新・解約方法・各プランの提供機能を明示します。</div>
+</div>
+<div class="card" id="publicInfoCard">
+  <div class="data-manage-head">
+    <div>
+      <h3 style="margin:0">RARについて・各種情報</h3>
+      <div class="note" style="margin-top:3px">β版の利用条件とデータの取り扱い</div>
+    </div>
+    <span class="local-save-badge">BETA</span>
+  </div>
+  <div class="backup-scope" style="margin-top:9px">
+    <b>β版について</b>
+    <span>RARは募集馬選びをサポートする分析ツールです。評価・順位は将来の競走成績や出資成果を保証するものではありません。</span>
+  </div>
+  <div class="backup-scope" style="margin-top:9px">
+    <b>Personalデータ</b>
+    <span>現在のβ版ではPersonal Point・お気に入り・最終候補・除外馬・出資馬・正式馬名・メモ・ランキング表示設定をこの端末に保存します。機種変更やアプリ削除に備え、バックアップ機能をご利用ください。</span>
+  </div>
+  <details class="public-info-details" style="margin-top:10px">
+    <summary><b>免責事項</b></summary>
+    <div class="note" style="margin-top:8px">RARの評価は情報分析を目的とした参考情報です。競走成績、賞金、出資金の回収その他の結果を保証するものではありません。最終的な出資判断は利用者ご自身で行ってください。</div>
+  </details>
+  <details class="public-info-details" style="margin-top:10px">
+    <summary><b>プライバシー</b></summary>
+    <div class="note" style="margin-top:8px">現β版のPersonalデータは端末内保存を基本とします。将来、ログイン同期・クラウド保存・分析サービス等を導入する場合は、実際のデータ取扱いに合わせてプライバシーポリシーを更新します。</div>
+  </details>
+  <details class="public-info-details" style="margin-top:10px">
+    <summary><b>利用規約・お問い合わせ</b></summary>
+    <div class="note" style="margin-top:8px">正式公開前に運営者情報・問い合わせ先・利用規約・料金条件を確定し、この画面から確認できるようにします。</div>
+  </details>
+</div>
+<div class="card" id="recoveryGuideCard">
+  <details class="backup-help">
+    <summary>データに異常が出たとき</summary>
+    <div class="backup-help-body">
+      <b>① アプリ診断を確認</b><br>
+      「Personalデータ：要確認」と表示された場合は、まず現在の画面を閉じずに状態を確認してください。<br><br>
+      <b>② バックアップがある場合</b><br>
+      データ管理の「復元」から正常だったバックアップを選択できます。復元前のデータは自動退避されます。<br><br>
+      <b>③ 復元を間違えた場合</b><br>
+      「復元を取り消す」から直前のPersonalデータへ戻せます。<br><br>
+      <b>④ バックアップがない場合</b><br>
+      データを勝手に初期化せず、正式β公開後のお問い合わせ窓口へ相談できる設計にします。
+    </div>
+  </details>
+</div>
+<div class="card" id="dataManagementCard">
     <div class="data-manage-head">
       <div>
         <h3 style="margin:0">データ管理</h3>
@@ -1601,10 +1702,10 @@ main{padding-top:84px}
     <details class="backup-help" id="appDiagnostics">
       <summary>アプリ診断</summary>
       <div class="backup-help-body">
-        <div id="diagBuild">Build：β Ver.1.0 RC51</div>
+        <div id="diagBuild">Build：β Ver.1.0 RC60</div>
         <div id="diagMode">表示モード：確認中</div>
         <div id="diagSW">更新機能：確認中</div>
-        <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div><div id="diagProfile">LOCAL ID：確認中</div><div>Backup Schema：1</div><div id="diagSnapshot">復元保護：確認中</div><div id="diagQuota">保存容量：確認中</div><div id="diagPersist">保存保護：確認中</div>
+        <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div><div id="diagProfile">LOCAL ID：確認中</div><div>Backup Schema：1</div><div id="diagSnapshot">復元保護：確認中</div><div id="diagQuota">保存容量：確認中</div><div id="diagPersist">保存保護：確認中</div><div id="diagReady">β公開準備：確認中</div><div id="diagBilling">課金：β版では無効</div><div id="diagDataHealth">Personalデータ：確認中</div>
       </div>
     </details>
     <details class="backup-help">
@@ -1923,7 +2024,7 @@ function buildBackupPayload(){
    app:"RAR",
    format:"rar-personal-backup",
    version:1,    backupSchema:1,
-   build:"β Ver.1.0 RC51",
+   build:"β Ver.1.0 RC60",
    localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
    data
@@ -3069,6 +3170,25 @@ async function requestPersistentStorage(){
  }catch(e){console.warn("Persistent storage request failed",e);}
  return false;
 }
+function updateConnectivityUI(){
+ const banner=document.getElementById("offlineBanner");
+ if(banner)banner.style.display=navigator.onLine?"none":"block";
+}
+function checkPersonalDataHealth(){
+ try{
+   const raw=localStorage.getItem("rarBetaState");
+   if(!raw)return {ok:true,label:"正常（初期状態）"};
+   const parsed=JSON.parse(raw);
+   if(!parsed || typeof parsed!=="object")return {ok:false,label:"要確認"};
+   const objectKeys=["favorites","invested","memos","points","categoryPoints","smallPoints"];
+   for(const key of objectKeys){
+     if(parsed[key]!=null && (typeof parsed[key]!=="object" || Array.isArray(parsed[key])))return {ok:false,label:`要確認（${key}）`};
+   }
+   return {ok:true,label:"正常"};
+ }catch(e){
+   return {ok:false,label:"要確認（読込エラー）"};
+ }
+}
 async function updateAppDiagnostics(){
  const mode=document.getElementById("diagMode");
  const swEl=document.getElementById("diagSW");
@@ -3078,6 +3198,8 @@ async function updateAppDiagnostics(){
  const snapshot=document.getElementById("diagSnapshot");
  const quota=document.getElementById("diagQuota");
  const persist=document.getElementById("diagPersist");
+ const ready=document.getElementById("diagReady");
+ const dataHealth=document.getElementById("diagDataHealth");
  if(mode)mode.textContent=`表示モード：${window.matchMedia("(display-mode: standalone)").matches ? "アプリ(PWA)" : "ブラウザ"}`;
  if(swEl){
    if(!("serviceWorker" in navigator))swEl.textContent="更新機能：未対応";
@@ -3098,6 +3220,20 @@ async function updateAppDiagnostics(){
        persist.textContent=`保存保護：${isPersisted ? "有効" : "標準"}`;
      }else persist.textContent="保存保護：端末標準";
    }catch{persist.textContent="保存保護：確認できません";}
+ }
+ if(dataHealth){
+   const health=checkPersonalDataHealth();
+   dataHealth.textContent=`Personalデータ：${health.label}`;
+ }
+ if(ready){
+   const ok=
+     !!document.getElementById("exportBackupBtn") &&
+     !!document.getElementById("importBackupBtn") &&
+     typeof renderRanking==="function" &&
+     typeof renderSearch==="function" &&
+     typeof updateMyPage==="function" &&
+     HORSES.length===82;
+   ready.textContent=`β公開準備：${ok ? "CORE OK／RC60実機テスト" : "要確認"}`;
  }
  if(quota){
    try{
@@ -3139,7 +3275,7 @@ function undoLastRestore(){
  localStorage.removeItem("rarPreRestoreSnapshot");
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();renderRanking();renderSearch();updateMyPage();
  if(currentHorse)openHorse(currentHorse.no,previousScreen||"mypage");
- syncUndoRestoreButton();updateAppDiagnostics();
+ syncUndoRestoreButton();updateAppDiagnostics(); updateConnectivityUI();
  alert("直前の復元を取り消しました");
 }
 
@@ -3165,7 +3301,7 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
 });
 
 applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
-window.addEventListener("online",updateAppDiagnostics); window.addEventListener("offline",updateAppDiagnostics);
+window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
 <script>
