@@ -161,7 +161,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC60 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC61 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -246,7 +246,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC60 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC61 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -481,7 +481,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC60 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC61 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1428,15 +1428,27 @@ main{padding-top:84px}
 }
 
 .restore-preview{margin-top:8px;padding:10px;border-radius:12px;border:1px solid #cfe2d7;background:#f7fbf8}.restore-preview-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.restore-preview-head b{font-size:10.5px;color:#174d37}.restore-preview-head span{font-size:8px;font-weight:900;color:#61766b;padding:2px 6px;border-radius:999px;background:#eef4f0}.restore-preview-grid{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:9px;color:#718078}.restore-preview-grid b{color:#24372e;text-align:right}
+
+/* RC61 — Detail access control */
+.detail-access-lock{
+  margin-top:8px;padding:12px;border-radius:12px;
+  background:#F6F8F7;border:1px solid #DDE6E1;
+  color:#68776F;font-size:10.5px;font-weight:800;line-height:1.55;text-align:center
+}
+.detail-locked-content{display:none!important}
+#investmentCard.access-locked #investConfirmLabel,
+#investmentCard.access-locked .registered-name-wrap,
+#investmentCard.access-locked .investment-note{display:none!important}
+
 </style>
 </head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC60</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC61</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC60 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC61 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1512,7 +1524,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC60</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC61</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1702,7 +1714,7 @@ main{padding-top:84px}
     <details class="backup-help" id="appDiagnostics">
       <summary>アプリ診断</summary>
       <div class="backup-help-body">
-        <div id="diagBuild">Build：β Ver.1.0 RC60</div>
+        <div id="diagBuild">Build：β Ver.1.0 RC61</div>
         <div id="diagMode">表示モード：確認中</div>
         <div id="diagSW">更新機能：確認中</div>
         <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div><div id="diagProfile">LOCAL ID：確認中</div><div>Backup Schema：1</div><div id="diagSnapshot">復元保護：確認中</div><div id="diagQuota">保存容量：確認中</div><div id="diagPersist">保存保護：確認中</div><div id="diagReady">β公開準備：確認中</div><div id="diagBilling">課金：β版では無効</div><div id="diagDataHealth">Personalデータ：確認中</div>
@@ -1879,10 +1891,12 @@ main{padding-top:84px}
       <b id="dTargets"></b>
     </div>
     <div class="rc34-fit-note">RAR Official 適性データ</div>
+    <div id="dFitLock" class="detail-access-lock" style="display:none">🔒 適性データはLIGHT以上の対象馬で閲覧できます。</div>
   </div>
-  <div class="card">
+  <div class="card" id="detailCommentCard">
     <h3>ひとことコメント</h3>
     <div id="dComment" class="detail-text"></div>
+    <div id="dCommentLock" class="detail-access-lock" style="display:none">🔒 この馬のコメントは契約プランの閲覧対象外です。</div>
   </div>
   <div class="card" id="investmentCard">
     <div class="investment-head">
@@ -1902,9 +1916,10 @@ main{padding-top:84px}
       </div>
     </div>
     <div class="note investment-note">出資馬は生年ごとにマイページへ保存。正式馬名は後から変更できます。</div>
+    <div id="dInvestmentLock" class="detail-access-lock" style="display:none">🔒 出資登録・正式馬名は契約プランの閲覧対象馬で利用できます。</div>
   </div>
   <div class="card" id="detailMemoCard">
-    <h3>Personal Memo <span class="badge green">非公開</span></h3>
+    <h3>Personal Memo <span class="badge green">非公開</span> <span class="plan-badge">FREE</span></h3>
     <textarea id="memoBox" maxlength="1000" rows="4" placeholder="思い入れ、気になる点、抽選事情など自由に…"></textarea>
     <div class="memo-footer">
       <span id="memoCountText" class="memo-counter">0 / 1000</span>
@@ -1987,6 +2002,13 @@ function canViewHorseOfficial(no){
  const rank=officialRankOf(no);
  return rank!==null && rank<=planRules().rankLimit;
 }
+function canViewHorseSuitability(no){
+ return state.plan!=="free" && canViewHorseOfficial(no);
+}
+function canUseHorseManagedFeatures(no){
+ return canViewHorseOfficial(no);
+}
+
 function planEligibleHorses(){
  const rules=planRules();
  if(rules.rankLimit>=HORSES.length) return [...HORSES];
@@ -2024,7 +2046,7 @@ function buildBackupPayload(){
    app:"RAR",
    format:"rar-personal-backup",
    version:1,    backupSchema:1,
-   build:"β Ver.1.0 RC60",
+   build:"β Ver.1.0 RC61",
    localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
    data
@@ -2807,15 +2829,32 @@ function openHorse(no,from){
  if(canOfficial && !planRules().canCategoryScores){oan.style.display="inline-block";oan.textContent="総合のみ";}
  else if(!canOfficial){oan.style.display="inline-block";oan.textContent=`${planName()}対象外`;}
  else {oan.style.display="none";oan.textContent="";}
- document.getElementById("dTurf").textContent=currentHorse.turf||"－";
- document.getElementById("dDirt").textContent=currentHorse.dirt||"－";
- document.getElementById("dDistance").textContent=currentHorse.distance||"－";
- document.getElementById("dCategory").textContent=currentHorse.category||"－";
- document.getElementById("dGrowth").textContent=currentHorse.growth||"－";
- document.getElementById("dTargets").textContent=currentHorse.targets||"－";
- document.getElementById("dComment").textContent=currentHorse.comment||"－";
- document.getElementById("dInvested").checked=!!state.invested[currentHorse.no];
- document.getElementById("dRegisteredName").value=state.registeredNames[currentHorse.no]||"";
+ const canFit=canViewHorseSuitability(currentHorse.no);
+ const fitCard=document.getElementById("detailFitCard");
+ const fitLock=document.getElementById("dFitLock");
+ fitCard?.querySelector(".rc34-fit-grid")?.classList.toggle("detail-locked-content",!canFit);
+ fitCard?.querySelector(".rc34-target")?.classList.toggle("detail-locked-content",!canFit);
+ fitCard?.querySelector(".rc34-fit-note")?.classList.toggle("detail-locked-content",!canFit);
+ if(fitLock)fitLock.style.display=canFit?"none":"block";
+ document.getElementById("dTurf").textContent=canFit?(currentHorse.turf||"－"):"";
+ document.getElementById("dDirt").textContent=canFit?(currentHorse.dirt||"－"):"";
+ document.getElementById("dDistance").textContent=canFit?(currentHorse.distance||"－"):"";
+ document.getElementById("dCategory").textContent=canFit?(currentHorse.category||"－"):"";
+ document.getElementById("dGrowth").textContent=canFit?(currentHorse.growth||"－"):"";
+ document.getElementById("dTargets").textContent=canFit?(currentHorse.targets||"－"):"";
+
+ const canManaged=canUseHorseManagedFeatures(currentHorse.no);
+ const comment=document.getElementById("dComment");
+ const commentLock=document.getElementById("dCommentLock");
+ if(comment){comment.textContent=canManaged?(currentHorse.comment||"－"):"";comment.style.display=canManaged?"block":"none";}
+ if(commentLock)commentLock.style.display=canManaged?"none":"block";
+
+ const investmentCard=document.getElementById("investmentCard");
+ const investmentLock=document.getElementById("dInvestmentLock");
+ investmentCard?.classList.toggle("access-locked",!canManaged);
+ if(investmentLock)investmentLock.style.display=canManaged?"none":"block";
+ document.getElementById("dInvested").checked=canManaged && !!state.invested[currentHorse.no];
+ document.getElementById("dRegisteredName").value=canManaged?(state.registeredNames[currentHorse.no]||""):"";
  syncInvestmentUI();
  renderPersonalPointUI();
  const memoBox=document.getElementById("memoBox");
@@ -2931,7 +2970,8 @@ let myPageView="favorites";
 function syncInvestmentUI(){
  if(!currentHorse)return;
  const no=currentHorse.no;
- const invested=!!state.invested[no];
+ const allowed=canUseHorseManagedFeatures(no);
+ const invested=allowed && !!state.invested[no];
  const box=document.getElementById("dInvested");
  const label=document.getElementById("investConfirmLabel");
  const nameInput=document.getElementById("dRegisteredName");
@@ -2939,13 +2979,13 @@ function syncInvestmentUI(){
  const status=document.getElementById("investStateText");
  const nameState=document.getElementById("registeredNameState");
  const count=document.getElementById("registeredNameCount");
- if(box)box.checked=invested;
+ if(box){box.checked=invested;box.disabled=!allowed;}
  if(label)label.classList.toggle("active",invested);
  if(gen)gen.textContent=`${horseBirthYear(currentHorse)}年産`;
  if(status)status.textContent=invested?"マイページの出資馬に保存済み":"チェックすると出資馬として保存";
  if(nameInput){
-   nameInput.disabled=!invested;
-   nameInput.placeholder=invested?"正式馬名を登録":"出資確定後に登録できます";
+   nameInput.disabled=!allowed || !invested;
+   nameInput.placeholder=!allowed?"契約プラン対象外":(invested?"正式馬名を登録":"出資確定後に登録できます");
  }
  const name=String((state.registeredNames||{})[no]||"");
  if(count)count.textContent=`${nameInput?nameInput.value.length:name.length} / 30`;
@@ -2956,6 +2996,7 @@ function syncInvestmentUI(){
 }
 function saveRegisteredName(){
  if(!currentHorse)return;
+ if(!canUseHorseManagedFeatures(currentHorse.no)){alert("この馬の正式馬名登録は契約プランの対象外です");return;}
  const no=currentHorse.no;
  const el=document.getElementById("dRegisteredName");
  if(!el)return;
@@ -3131,6 +3172,7 @@ document.querySelectorAll(".base-filter").forEach(x=>x.addEventListener("change"
 }));
 document.getElementById("dInvested").addEventListener("change",e=>{
  if(!currentHorse)return;
+ if(!canUseHorseManagedFeatures(currentHorse.no)){e.target.checked=false;alert("この馬の出資登録は契約プランの対象外です");return;}
  const no=currentHorse.no;
  if(e.target.checked){
    state.invested[no]=true;
