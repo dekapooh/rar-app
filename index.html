@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC36 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC37 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC36 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC37 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC36 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC37 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1210,33 +1210,138 @@ main{padding-top:84px}
 }
 
 
-/* RC36 Invested horse management */
-.investment-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.generation-badge{flex:0 0 auto;padding:4px 8px;border-radius:999px;background:#EDF6F0;color:#2D6B4F;border:1px solid #CFE2D7;font-size:9px;font-weight:900}
-#investmentCard .invest-confirm{margin-top:0;padding:10px 11px;background:#F8FBF9;border-color:#D8E4DE;transition:.16s}
-#investmentCard .invest-confirm.active{background:linear-gradient(135deg,#EEF8F2,#E4F3E9);border-color:#9FCAB3}
+/* =========================================================
+   RC36 — Invested horse / registered name management
+   ========================================================= */
+.investment-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px
+}
+.generation-badge{
+  flex:0 0 auto;padding:4px 8px;border-radius:999px;
+  background:#EDF6F0;color:#2D6B4F;border:1px solid #CFE2D7;
+  font-size:9px;font-weight:900
+}
+#investmentCard .invest-confirm{
+  margin-top:0;padding:10px 11px;background:#F8FBF9;
+  border-color:#D8E4DE;transition:.16s
+}
+#investmentCard .invest-confirm.active{
+  background:linear-gradient(135deg,#EEF8F2,#E4F3E9);
+  border-color:#9FCAB3
+}
 #investmentCard .invest-confirm input{width:20px;height:20px;flex:0 0 auto}
 #investmentCard .invest-confirm span{display:flex;flex-direction:column;gap:1px}
 #investmentCard .invest-confirm b{font-size:12px;color:#21362D}
 #investmentCard .invest-confirm small{font-size:9px;font-weight:700;color:#85928B}
-.registered-name-wrap{margin-top:10px}.registered-name-wrap>label{display:block;font-size:9px;font-weight:900;color:#66766E;margin:0 0 4px 2px}
-#investmentCard .horse-name-input{margin-top:0}#investmentCard .horse-name-input:disabled{background:#F5F7F6;color:#98A29D;border-color:#E2E8E5}
-.registered-name-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 2px 0;font-size:8.5px;color:#8A9790}
-.registered-name-foot .saved{color:#2D7A55;font-weight:850}.investment-note{margin-top:8px!important}
-.invested-generation-title{display:flex;align-items:center;justify-content:space-between;padding:8px 2px 5px;border-bottom:1px solid #DDE7E2;font-size:11px;font-weight:950;color:#174D37}
-.invested-name-main{font-weight:900;font-size:14px;line-height:1.3}.invested-recruit-name{display:block;margin-top:2px;font-size:9px;color:#7F8D86;font-weight:700}
-.myhorse-row.invested-row{grid-template-columns:34px minmax(0,1fr) 62px;padding:11px 2px}.myhorse-row.invested-row .ranknum{width:29px;height:29px;font-size:11px;background:#EDF5F0;color:#285D46}
+.registered-name-wrap{margin-top:10px}
+.registered-name-wrap>label{
+  display:block;font-size:9px;font-weight:900;color:#66766E;margin:0 0 4px 2px
+}
+#investmentCard .horse-name-input{margin-top:0}
+#investmentCard .horse-name-input:disabled{
+  background:#F5F7F6;color:#98A29D;border-color:#E2E8E5
+}
+.registered-name-foot{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  margin:4px 2px 0;font-size:8.5px;color:#8A9790
+}
+.registered-name-foot .saved{color:#2D7A55;font-weight:850}
+.investment-note{margin-top:8px!important}
+
+/* My page invested view */
+.invested-generation-title{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 2px 5px;border-bottom:1px solid #DDE7E2;
+  font-size:11px;font-weight:950;color:#174D37
+}
+.invested-name-main{font-weight:900;font-size:14px;line-height:1.3}
+.invested-recruit-name{
+  display:block;margin-top:2px;font-size:9px;color:#7F8D86;font-weight:700
+}
+.myhorse-row.invested-row{
+  grid-template-columns:34px minmax(0,1fr) 62px;
+  padding:11px 2px
+}
+.myhorse-row.invested-row .ranknum{
+  width:29px;height:29px;font-size:11px;background:#EDF5F0;color:#285D46
+}
 .invested-official-pending{color:#8B9891;font-weight:750}
+
+
+/* =========================================================
+   RC37 — My Page polish + memo first-render fix
+   ========================================================= */
+#mypage>.section-title{margin-bottom:8px}
+#mypage .plan-card{
+  background:linear-gradient(145deg,#FBFDFC,#F5FAF7);
+  border-color:#D9E6DF;
+}
+.mypage-storage-note{
+  display:inline-block;margin-top:6px;padding:3px 7px;border-radius:999px;
+  background:#EDF5F0;color:#5F786B;font-size:8.5px;font-weight:800;
+}
+#mypage .kpis{gap:6px!important;margin-top:9px}
+#mypage .kpi{
+  min-height:57px;padding:7px 4px!important;border-radius:12px!important;
+  background:#F8FAF9;border-color:#DDE7E2;
+}
+#mypage .kpi b{font-size:18px!important;line-height:1.05}
+#mypage .kpi span{font-size:9px;font-weight:850}
+#mypage .kpi.active{
+  background:linear-gradient(145deg,#0F4A35,#216B4E)!important;
+  border-color:#0F4A35!important;
+  box-shadow:0 3px 8px rgba(15,74,53,.15)
+}
+#mypage .card.personal{padding:11px 12px!important}
+#mypage .card.personal h3{margin-bottom:5px}
+#mypage #baseControls{gap:4px!important}
+#mypage #baseControls .toggle{min-height:31px}
+.my-list-card{padding:10px 12px 6px!important}
+.my-list-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:0 1px 8px;border-bottom:1px solid #E4ECE7;
+}
+.my-list-head>div{display:flex;align-items:baseline;gap:7px}
+.my-list-head #myViewEyebrow{
+  font-size:8px;font-weight:900;letter-spacing:.08em;color:#9AA59F
+}
+.my-list-head #myViewTitle{
+  font-size:13px;color:#1A392C
+}
+.my-view-count{
+  padding:3px 7px;border-radius:999px;background:#EEF5F1;color:#527060;
+  font-size:9px;font-weight:900
+}
+#mypage .myhorse-row{padding-top:10px;padding-bottom:10px}
+#mypage .memo-preview{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  white-space:pre-wrap;
+  line-height:1.35;
+  font-size:9.5px;
+  color:#75847C;
+  margin-top:3px;
+}
+#investedGenerationWrap,#favoriteCompareBar{
+  box-shadow:none!important;
+  border-color:#DEE8E3!important;
+  background:#FBFDFC!important;
+}
+
+/* Ensure memo height is correct after hidden detail screen becomes visible */
+#detailMemoCard #memoBox{transition:height .08s ease}
 
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC36</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC37</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC36 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC37 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1312,8 +1417,9 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC36</div>
-  <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div></div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC37</div>
+  <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
+  <div class="mypage-storage-note">保存先：この端末</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
     <div class="kpi" data-myview="finalists"><b id="finalistCount">0</b><span>最終候補</span></div>
@@ -1363,7 +1469,14 @@ main{padding-top:84px}
       <button id="compareFavoritesBtn" class="btn" type="button">比較する</button>
     </div>
   </div>
-  <div class="card">
+  <div class="card my-list-card">
+    <div class="my-list-head">
+      <div>
+        <span id="myViewEyebrow">MY LIST</span>
+        <b id="myViewTitle">お気に入り</b>
+      </div>
+      <span id="myViewCount" class="my-view-count">0頭</span>
+    </div>
     <div id="myList"></div>
   </div>
   <div id="favList" class="hidden"></div>
@@ -2184,6 +2297,9 @@ function renderPersonalPointUI(){
  totalEl.classList.toggle("negative",totalAdj<0);
  renderPremiumSmallOfficial();
 }
+function escapeHTML(v){
+ return String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+}
 function horseBirthYear(h){return Number(String(h.birth).slice(0,4))}
 function investedNos(){
  return Object.keys(state.invested).filter(k=>state.invested[k]).map(Number);
@@ -2296,6 +2412,7 @@ function openHorse(no,from){
  };
  syncDetailBrowseButtons();
  showScreen("detail");
+ requestAnimationFrame(()=>requestAnimationFrame(updateMemoUI));
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 }
 function goBack(){showScreen(previousScreen)}
@@ -2372,23 +2489,42 @@ let myPageView="favorites";
 
 function syncInvestmentUI(){
  if(!currentHorse)return;
- const no=currentHorse.no, invested=!!state.invested[no];
- const box=document.getElementById("dInvested"), label=document.getElementById("investConfirmLabel"), nameInput=document.getElementById("dRegisteredName"), gen=document.getElementById("dGenerationBadge"), status=document.getElementById("investStateText"), nameState=document.getElementById("registeredNameState"), count=document.getElementById("registeredNameCount");
+ const no=currentHorse.no;
+ const invested=!!state.invested[no];
+ const box=document.getElementById("dInvested");
+ const label=document.getElementById("investConfirmLabel");
+ const nameInput=document.getElementById("dRegisteredName");
+ const gen=document.getElementById("dGenerationBadge");
+ const status=document.getElementById("investStateText");
+ const nameState=document.getElementById("registeredNameState");
+ const count=document.getElementById("registeredNameCount");
  if(box)box.checked=invested;
  if(label)label.classList.toggle("active",invested);
  if(gen)gen.textContent=`${horseBirthYear(currentHorse)}年産`;
  if(status)status.textContent=invested?"マイページの出資馬に保存済み":"チェックすると出資馬として保存";
- if(nameInput){nameInput.disabled=!invested;nameInput.placeholder=invested?"正式馬名を登録":"出資確定後に登録できます";}
+ if(nameInput){
+   nameInput.disabled=!invested;
+   nameInput.placeholder=invested?"正式馬名を登録":"出資確定後に登録できます";
+ }
  const name=String((state.registeredNames||{})[no]||"");
  if(count)count.textContent=`${nameInput?nameInput.value.length:name.length} / 30`;
- if(nameState){nameState.textContent=!invested?"出資確定後に登録できます":(name?"保存済み":"馬名決定後に登録できます");nameState.classList.toggle("saved",invested && !!name);}
+ if(nameState){
+   nameState.textContent=!invested?"出資確定後に登録できます":(name?"保存済み":"馬名決定後に登録できます");
+   nameState.classList.toggle("saved",invested && !!name);
+ }
 }
 function saveRegisteredName(){
  if(!currentHorse)return;
- const no=currentHorse.no, el=document.getElementById("dRegisteredName"); if(!el)return;
- const v=el.value.slice(0,30).trim(); el.value=v;
- if(v)state.registeredNames[no]=v; else delete state.registeredNames[no];
- saveState(); syncInvestmentUI(); updateMyPage();
+ const no=currentHorse.no;
+ const el=document.getElementById("dRegisteredName");
+ if(!el)return;
+ const v=el.value.slice(0,30).trim();
+ el.value=v;
+ if(v)state.registeredNames[no]=v;
+ else delete state.registeredNames[no];
+ saveState();
+ syncInvestmentUI();
+ updateMyPage();
 }
 function updateMyPage(){
  const favNos=Object.keys(state.favorites).filter(k=>state.favorites[k]);
@@ -2439,6 +2575,22 @@ function updateMyPage(){
    nos.sort((a,b)=>a-b);
  }
 
+ const viewMeta={
+   favorites:["MY LIST","お気に入り"],
+   finalists:["MY LIST","最終候補"],
+   excluded:["MY LIST","除外馬"],
+   invested:["MY HORSES","出資馬"],
+   points:["PERSONAL","± Point"],
+   memos:["PERSONAL","メモ"]
+ };
+ const [eyebrow,title]=viewMeta[myPageView]||["MY LIST","一覧"];
+ const viewEyebrow=document.getElementById("myViewEyebrow");
+ const viewTitle=document.getElementById("myViewTitle");
+ const viewCount=document.getElementById("myViewCount");
+ if(viewEyebrow)viewEyebrow.textContent=eyebrow;
+ if(viewTitle)viewTitle.textContent=title;
+ if(viewCount)viewCount.textContent=`${nos.length}頭`;
+
  const list=document.getElementById("myList");
  if(!nos.length){
    const msg=myPageView==="favorites"?"お気に入り馬はまだありません":
@@ -2453,19 +2605,37 @@ function updateMyPage(){
  if(myPageView==="invested"){
    let lastYear=null;
    list.innerHTML=nos.map(no=>{
-     const h=HORSES.find(x=>x.no===no), officialName=state.registeredNames[no]||"", year=horseBirthYear(h);
-     const countYear=nos.filter(n=>{const x=HORSES.find(hh=>hh.no===n);return x&&horseBirthYear(x)===year}).length;
-     const heading=year!==lastYear?`<div class="invested-generation-title"><span>${year}年産</span><span>${countYear}頭</span></div>`:""; lastYear=year;
+     const h=HORSES.find(x=>x.no===no);
+     const officialName=state.registeredNames[no]||"";
+     const year=horseBirthYear(h);
+     const heading=year!==lastYear?`<div class="invested-generation-title"><span>${year}年産</span><span>${nos.filter(n=>{const x=HORSES.find(hh=>hh.no===n);return x&&horseBirthYear(x)===year}).length}頭</span></div>`:"";
+     lastYear=year;
      const main=officialName?officialName:`<span class="invested-official-pending">正式馬名 未登録</span>`;
      const right=canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒";
-     return `${heading}<div class="myhorse-row invested-row" onclick="openHorse(${h.no},'mypage')"><div class="ranknum">${h.no}</div><div><div class="invested-name-main">${main}</div><span class="invested-recruit-name">${h.name}｜${h.sex}</span></div><div class="score">${right}</div></div>`;
+     return `${heading}<div class="myhorse-row invested-row" onclick="openHorse(${h.no},'mypage')">
+       <div class="ranknum">${h.no}</div>
+       <div>
+         <div class="invested-name-main">${main}</div>
+         <span class="invested-recruit-name">${h.name}｜${h.sex}</span>
+       </div>
+       <div class="score">${right}</div>
+     </div>`;
    }).join("");
  }else{
    list.innerHTML=nos.map(no=>{
-     const h=HORSES.find(x=>x.no===no), point=effectivePersonalPoint(no), memo=state.memos[no]||"";
-     const right=myPageView==="points"?`${point>0?"+":""}${point} pt`:(canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
-     const sub=myPageView==="memos"?memo:`${h.sex}｜${h.full?"満口":"募集中"}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
-     return `<div class="myhorse-row" onclick="openHorse(${h.no},'mypage')"><div class="ranknum">${h.no}</div><div><div class="hname">${h.name}${state.favorites[no]?" ★":""}${state.finalists[no]?' <span class="finalist-badge">最終候補</span>':""}${state.excluded[no]?' <span class="excluded-note">除外</span>':""}</div><div class="myhorse-note">${sub}</div></div><div class="score ${point>0?'personal-adjusted':(point<0?'personal-negative':'')}">${right}</div></div>`;
+     const h=HORSES.find(x=>x.no===no);
+     const point=effectivePersonalPoint(no);
+     const memo=state.memos[no]||"";
+     let right=myPageView==="points" ? `${point>0?"+":""}${point} pt` : (canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
+     const normalSub=`${h.sex}｜${h.full?"満口":"募集中"}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
+     const subHtml=myPageView==="memos"
+       ? `<div class="memo-preview">${escapeHTML(memo)}</div>`
+       : `<div class="myhorse-note">${normalSub}</div>`;
+     return `<div class="myhorse-row" onclick="openHorse(${h.no},'mypage')">
+       <div class="ranknum">${h.no}</div>
+       <div><div class="hname">${h.name}${state.favorites[no]?" ★":""}${state.finalists[no]?' <span class="finalist-badge">最終候補</span>':""}${state.excluded[no]?' <span class="excluded-note">除外</span>':""}</div>${subHtml}</div>
+       <div class="score ${point>0?'personal-adjusted':(point<0?'personal-negative':'')}">${right}</div>
+     </div>`;
    }).join("");
  }
 }
@@ -2519,14 +2689,34 @@ document.querySelectorAll(".base-filter").forEach(x=>x.addEventListener("change"
  renderRanking();
 }));
 document.getElementById("dInvested").addEventListener("change",e=>{
- if(!currentHorse)return; const no=currentHorse.no;
- if(e.target.checked){state.invested[no]=true;saveState();syncInvestmentUI();updateMyPage();return;}
- if(!confirm(`${currentHorse.name}を出資馬から外しますか？\n登録済みの正式馬名は消さずに保持します。`)){e.target.checked=true;syncInvestmentUI();return;}
- delete state.invested[no]; saveState(); syncInvestmentUI(); updateMyPage();
+ if(!currentHorse)return;
+ const no=currentHorse.no;
+ if(e.target.checked){
+   state.invested[no]=true;
+   saveState();
+   syncInvestmentUI();
+   updateMyPage();
+   return;
+ }
+ if(!confirm(`${currentHorse.name}を出資馬から外しますか？\n登録済みの正式馬名は消さずに保持します。`)){
+   e.target.checked=true;
+   syncInvestmentUI();
+   return;
+ }
+ delete state.invested[no];
+ saveState();
+ syncInvestmentUI();
+ updateMyPage();
 });
 document.getElementById("dRegisteredName").addEventListener("input",e=>{
- if(!currentHorse)return; const count=document.getElementById("registeredNameCount"); if(count)count.textContent=`${e.target.value.length} / 30`;
- const nameState=document.getElementById("registeredNameState"); if(nameState){nameState.textContent=e.target.value.trim()?"入力中…":"馬名決定後に登録できます";nameState.classList.remove("saved");}
+ if(!currentHorse)return;
+ const count=document.getElementById("registeredNameCount");
+ if(count)count.textContent=`${e.target.value.length} / 30`;
+ const nameState=document.getElementById("registeredNameState");
+ if(nameState){
+   nameState.textContent=e.target.value.trim()?"入力中…":"馬名決定後に登録できます";
+   nameState.classList.remove("saved");
+ }
 });
 document.getElementById("dRegisteredName").addEventListener("change",saveRegisteredName);
 document.getElementById("dRegisteredName").addEventListener("blur",saveRegisteredName);
