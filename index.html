@@ -161,7 +161,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC44 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC51 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -246,7 +246,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC44 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC51 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -481,7 +481,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC44 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC51 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1427,15 +1427,16 @@ main{padding-top:84px}
   color:#174f3c;font-weight:800
 }
 
+.restore-preview{margin-top:8px;padding:10px;border-radius:12px;border:1px solid #cfe2d7;background:#f7fbf8}.restore-preview-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.restore-preview-head b{font-size:10.5px;color:#174d37}.restore-preview-head span{font-size:8px;font-weight:900;color:#61766b;padding:2px 6px;border-radius:999px;background:#eef4f0}.restore-preview-grid{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:9px;color:#718078}.restore-preview-grid b{color:#24372e;text-align:right}
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC44</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC51</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC44 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC51 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1511,7 +1512,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC44</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC51</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1547,6 +1548,20 @@ main{padding-top:84px}
     </div>
     <div class="note">※1項目以上選択してください。設定はこの端末に保存されます。</div>
   </div>
+  <div class="card" id="accountReadyCard">
+    <div class="data-manage-head">
+      <div>
+        <h3 style="margin:0">アカウント準備</h3>
+        <div class="note" style="margin-top:3px">現在はLOCAL保存。将来のログイン同期に備えて端末データを識別します。</div>
+      </div>
+      <span class="local-save-badge">LOCAL ONLY</span>
+    </div>
+    <div class="backup-scope" style="margin-top:9px">
+      <b>この端末のPersonalデータID</b>
+      <span id="localProfileId">未作成</span>
+    </div>
+    <div class="backup-picker-note">このIDは個人情報ではなく、将来の移行時に端末データを区別するための識別子です。</div>
+  </div>
   <div class="card" id="dataManagementCard">
     <div class="data-manage-head">
       <div>
@@ -1562,6 +1577,9 @@ main{padding-top:84px}
       <button id="importBackupBtn" class="btn secondary data-manage-btn" type="button">
         <span>⇧</span><b>復元</b><small>バックアップを読み込む</small>
       </button>
+      <button id="undoRestoreBtn" class="btn secondary data-manage-btn" type="button" style="display:none">
+        <span>↶</span><b>復元を取り消す</b><small>復元前のデータへ戻す</small>
+      </button>
     </div>
     <input id="backupFileInput" type="file" hidden>
     <div class="backup-scope">
@@ -1570,19 +1588,30 @@ main{padding-top:84px}
     </div>
     <div class="backup-picker-note">復元では「ダウンロード」内の <b>RAR_backup_〜</b> ファイルを選択してください。</div>
     <div id="backupFileResult" class="backup-file-result"></div>
-    <div id="backupStatus" class="backup-status">バックアップ未実行</div>
+    <div id="backupStatus" class="backup-status">バックアップ未実行</div><div id="restorePreview" class="restore-preview" style="display:none">
+  <div class="restore-preview-head"><b>復元内容の確認</b><span id="restorePreviewSchema">Schema 1</span></div>
+  <div class="restore-preview-grid">
+    <span>作成日時</span><b id="restorePreviewDate">—</b>
+    <span>お気に入り</span><b id="restorePreviewFav">0</b>
+    <span>出資馬</span><b id="restorePreviewInvested">0</b>
+    <span>メモ</span><b id="restorePreviewMemo">0</b>
+    <span>Point設定馬</span><b id="restorePreviewPoint">0</b>
+  </div>
+</div>
     <details class="backup-help" id="appDiagnostics">
       <summary>アプリ診断</summary>
       <div class="backup-help-body">
-        <div id="diagBuild">Build：β Ver.1.0 RC44</div>
+        <div id="diagBuild">Build：β Ver.1.0 RC51</div>
         <div id="diagMode">表示モード：確認中</div>
         <div id="diagSW">更新機能：確認中</div>
-        <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div>
+        <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div><div id="diagProfile">LOCAL ID：確認中</div><div>Backup Schema：1</div><div id="diagSnapshot">復元保護：確認中</div><div id="diagQuota">保存容量：確認中</div><div id="diagPersist">保存保護：確認中</div>
       </div>
     </details>
     <details class="backup-help">
       <summary>バックアップが見つからないとき</summary>
       <div class="backup-help-body">
+        <b>データ保護について</b><br>
+        端末保存は自動保護を試みますが、機種変更・アプリ削除などに備えて定期的なバックアップを推奨します。<br><br>
         <b>基本の保存先</b><br>
         Androidでは通常「ダウンロード」に保存されます。<br><br>
         <b>一覧に表示されない場合</b><br>
@@ -1866,6 +1895,21 @@ function planEligibleHorses(){
 }
 
 
+
+function ensureLocalProfileId(){
+ let id=localStorage.getItem("rarLocalProfileId");
+ if(!id){
+   const rand=()=>Math.random().toString(36).slice(2,8).toUpperCase();
+   id=`RAR-${Date.now().toString(36).toUpperCase()}-${rand()}`;
+   localStorage.setItem("rarLocalProfileId",id);
+ }
+ return id;
+}
+function renderLocalProfileId(){
+ const el=document.getElementById("localProfileId");
+ if(el)el.textContent=ensureLocalProfileId();
+}
+
 const BACKUP_KEYS=[
  "points","categoryPoints","smallPoints",
  "memos","favorites","finalists","excluded",
@@ -1878,8 +1922,9 @@ function buildBackupPayload(){
  return {
    app:"RAR",
    format:"rar-personal-backup",
-   version:1,
-   build:"β Ver.1.0 RC44",
+   version:1,    backupSchema:1,
+   build:"β Ver.1.0 RC51",
+   localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
    data
  };
@@ -1916,14 +1961,20 @@ function exportBackup(){
 }
 function validateBackupPayload(payload){
  if(!payload || typeof payload!=="object")return false;
+ if(payload.app && payload.app!=="RAR")return false;
  if(payload.format!=="rar-personal-backup")return false;
- if(Number(payload.version)!==1)return false;
+ const schema=Number(payload.backupSchema||payload.version||1);
+ if(!Number.isFinite(schema)||schema<1)return false;
+ if(schema>1){alert("このバックアップは新しいRARで作成されています。アプリを更新してください");return false;}
  if(!payload.data || typeof payload.data!=="object")return false;
  return true;
 }
 function normalizeBackupObject(v){
  return v && typeof v==="object" && !Array.isArray(v) ? v : {};
 }
+function countObjectTruthy(obj){return Object.values(obj||{}).filter(Boolean).length}
+function countPointHorses(data){const set=new Set();for(const k of Object.keys(data.points||{}))if(Number(data.points[k]||0)!==0)set.add(k);for(const [k,obj] of Object.entries(data.categoryPoints||{}))if(Object.values(obj||{}).some(v=>Number(v)!==0))set.add(k);for(const [k,obj] of Object.entries(data.smallPoints||{}))if(Object.values(obj||{}).some(v=>Number(v)!==0))set.add(k);return set.size;}
+function showRestorePreview(payload){const box=document.getElementById("restorePreview");if(!box)return;const data=payload.data||{},dt=payload.exportedAt?new Date(payload.exportedAt):null;const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};set("restorePreviewSchema",`Schema ${Number(payload.backupSchema||payload.version||1)}`);set("restorePreviewDate",dt&&!Number.isNaN(dt.getTime())?dt.toLocaleString("ja-JP"):"不明");set("restorePreviewFav",countObjectTruthy(data.favorites));set("restorePreviewInvested",countObjectTruthy(data.invested));set("restorePreviewMemo",countObjectTruthy(data.memos));set("restorePreviewPoint",countPointHorses(data));box.style.display="block";}
 async function restoreBackupFile(file){
  if(!file)return;
  try{
@@ -1944,7 +1995,20 @@ async function restoreBackupFile(file){
      alert("RARの対応バックアップファイルではありません");
      return;
    }
-   if(!confirm("このバックアップで現在のPersonalデータを上書きします。\n復元前のデータは失われます。よろしいですか？"))return;
+   showRestorePreview(payload);
+   const previewDate=payload.exportedAt?new Date(payload.exportedAt).toLocaleString("ja-JP"):"日時不明";
+   if(!confirm(`復元内容を確認しました。\n${previewDate} のバックアップで現在のPersonalデータを上書きします。\n復元前のデータは失われます。よろしいですか？`))return;
+
+   // RC48: 復元直前のPersonalデータを自動退避。誤復元時の救済用。
+   try{
+     const preRestore=buildBackupPayload();
+     preRestore.reason="pre-restore-auto-snapshot";
+     localStorage.setItem("rarPreRestoreSnapshot",JSON.stringify(preRestore));
+   }catch(snapshotErr){
+     console.error("Pre-restore snapshot failed",snapshotErr);
+     alert("復元前の安全バックアップを作成できませんでした。復元を中止します。");
+     return;
+   }
 
    const keepPlan=state.plan;
    BACKUP_KEYS.forEach(k=>{
@@ -1972,6 +2036,7 @@ async function restoreBackupFile(file){
        : "復元が完了しました";
      s.className="backup-status ok";
    }
+   syncUndoRestoreButton();
    alert("Personalデータを復元しました");
  }catch(err){
    console.error(err);
@@ -1979,7 +2044,8 @@ async function restoreBackupFile(file){
  }
 }
 
-function saveState(){localStorage.setItem("rarBetaState",JSON.stringify(state)); updateMyPage();}
+function saveState(){
+ if(!localStorage.getItem("rarPersistAsked")){localStorage.setItem("rarPersistAsked","1");requestPersistentStorage();}localStorage.setItem("rarBetaState",JSON.stringify(state)); updateMyPage();}
 function selectedCats(){return [...document.querySelectorAll(".cat:checked")].map(x=>x.value)}
 function applyRankBase(){
  const rules=planRules();
@@ -2995,11 +3061,23 @@ document.getElementById("dRegisteredName").addEventListener("input",e=>{
 document.getElementById("dRegisteredName").addEventListener("change",saveRegisteredName);
 document.getElementById("dRegisteredName").addEventListener("blur",saveRegisteredName);
 
+async function requestPersistentStorage(){
+ try{
+   if(navigator.storage && navigator.storage.persist){
+     return await navigator.storage.persist();
+   }
+ }catch(e){console.warn("Persistent storage request failed",e);}
+ return false;
+}
 async function updateAppDiagnostics(){
  const mode=document.getElementById("diagMode");
  const swEl=document.getElementById("diagSW");
  const storage=document.getElementById("diagStorage");
  const network=document.getElementById("diagNetwork");
+ const profile=document.getElementById("diagProfile");
+ const snapshot=document.getElementById("diagSnapshot");
+ const quota=document.getElementById("diagQuota");
+ const persist=document.getElementById("diagPersist");
  if(mode)mode.textContent=`表示モード：${window.matchMedia("(display-mode: standalone)").matches ? "アプリ(PWA)" : "ブラウザ"}`;
  if(swEl){
    if(!("serviceWorker" in navigator))swEl.textContent="更新機能：未対応";
@@ -3011,6 +3089,26 @@ async function updateAppDiagnostics(){
    }
  }
  if(network)network.textContent=`通信状態：${navigator.onLine ? "オンライン" : "オフライン"}`;
+ if(profile)profile.textContent=`LOCAL ID：${ensureLocalProfileId()}`;
+ if(snapshot)snapshot.textContent=`復元保護：${localStorage.getItem("rarPreRestoreSnapshot") ? "退避データあり" : "待機中"}`;
+ if(persist){
+   try{
+     if(navigator.storage && navigator.storage.persisted){
+       const isPersisted=await navigator.storage.persisted();
+       persist.textContent=`保存保護：${isPersisted ? "有効" : "標準"}`;
+     }else persist.textContent="保存保護：端末標準";
+   }catch{persist.textContent="保存保護：確認できません";}
+ }
+ if(quota){
+   try{
+     if(navigator.storage && navigator.storage.estimate){
+       const est=await navigator.storage.estimate();
+       const used=Number(est.usage||0), total=Number(est.quota||0);
+       const mb=n=>(n/1024/1024).toFixed(n>=10*1024*1024?0:1);
+       quota.textContent=total?`保存容量：約${mb(used)}MB / ${mb(total)}MB`:`保存容量：約${mb(used)}MB使用`;
+     }else quota.textContent="保存容量：端末側で確認";
+   }catch{quota.textContent="保存容量：確認できません";}
+ }
  if(storage){
    try{
      const probe="rarStorageProbe";
@@ -3022,9 +3120,33 @@ async function updateAppDiagnostics(){
 
 const exportBackupBtn=document.getElementById("exportBackupBtn");
 const importBackupBtn=document.getElementById("importBackupBtn");
+const undoRestoreBtn=document.getElementById("undoRestoreBtn");
+function syncUndoRestoreButton(){
+ const btn=document.getElementById("undoRestoreBtn");
+ if(btn)btn.style.display=localStorage.getItem("rarPreRestoreSnapshot")?"":"none";
+}
+function undoLastRestore(){
+ const raw=localStorage.getItem("rarPreRestoreSnapshot");
+ if(!raw){alert("取り消せる復元データはありません");syncUndoRestoreButton();return;}
+ let payload;
+ try{payload=JSON.parse(raw);}catch(e){alert("退避データを読み込めません");return;}
+ if(!validateBackupPayload(payload)){alert("退避データの形式を確認できません");return;}
+ if(!confirm("直前の復元前のPersonalデータへ戻します。よろしいですか？"))return;
+ const keepPlan=state.plan;
+ BACKUP_KEYS.forEach(k=>{state[k]=normalizeBackupObject(payload.data[k]);});
+ state.plan=keepPlan;
+ localStorage.setItem("rarBetaState",JSON.stringify(state));
+ localStorage.removeItem("rarPreRestoreSnapshot");
+ applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();renderRanking();renderSearch();updateMyPage();
+ if(currentHorse)openHorse(currentHorse.no,previousScreen||"mypage");
+ syncUndoRestoreButton();updateAppDiagnostics();
+ alert("直前の復元を取り消しました");
+}
+
 const backupFileInput=document.getElementById("backupFileInput");
 if(exportBackupBtn)exportBackupBtn.addEventListener("click",exportBackup);
 if(importBackupBtn)importBackupBtn.addEventListener("click",()=>backupFileInput?.click());
+if(undoRestoreBtn)undoRestoreBtn.addEventListener("click",undoLastRestore);
 if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
  const file=e.target.files?.[0];
  if(!file)return;
@@ -3042,7 +3164,7 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
  e.target.value="";
 });
 
-applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics();
+applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
 window.addEventListener("online",updateAppDiagnostics); window.addEventListener("offline",updateAppDiagnostics);
 </script>
 
