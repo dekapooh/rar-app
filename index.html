@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC39 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC40 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC39 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC40 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC39 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC40 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1385,15 +1385,28 @@ main{padding-top:84px}
   .data-manage-btn{min-height:60px!important;padding:8px 7px!important}
 }
 
+
+/* RC40 Android backup picker fix */
+.backup-picker-note{
+  margin-top:6px;
+  padding:7px 8px;
+  border-radius:9px;
+  background:#FFF9E8;
+  border:1px solid #F0DCA7;
+  color:#806A2D;
+  font-size:8.5px;
+  line-height:1.45;
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC39</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC40</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC39 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC40 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1469,7 +1482,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC39</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC40</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1521,11 +1534,12 @@ main{padding-top:84px}
         <span>⇧</span><b>復元</b><small>バックアップを読み込む</small>
       </button>
     </div>
-    <input id="backupFileInput" type="file" accept=".json,application/json" hidden>
+    <input id="backupFileInput" type="file" hidden>
     <div class="backup-scope">
       <b>バックアップ対象</b>
       <span>Personal Point・お気に入り・最終候補・除外馬・出資馬・正式馬名・メモ・ランキング表示設定</span>
     </div>
+    <div class="backup-picker-note">復元では「ダウンロード」内の RAR_backup_〜 ファイルを選択してください。</div>
     <div id="backupStatus" class="backup-status">バックアップ未実行</div>
   </div>
   <div id="investedGenerationWrap" class="card" style="display:none;padding:10px 12px">
@@ -1810,7 +1824,7 @@ function buildBackupPayload(){
    app:"RAR",
    format:"rar-personal-backup",
    version:1,
-   build:"β Ver.1.0 RC39",
+   build:"β Ver.1.0 RC40",
    exportedAt:new Date().toISOString(),
    data
  };
@@ -1852,8 +1866,19 @@ function normalizeBackupObject(v){
 async function restoreBackupFile(file){
  if(!file)return;
  try{
-   const text=await file.text();
-   const payload=JSON.parse(text);
+   const raw=await file.text();
+   const text=String(raw||"").replace(/^\uFEFF/,"").trim();
+   if(!text){
+     alert("選択したファイルが空です");
+     return;
+   }
+   let payload;
+   try{
+     payload=JSON.parse(text);
+   }catch(parseErr){
+     alert("JSON形式のバックアップではありません。RAR_backup_〜 のファイルを選んでください");
+     return;
+   }
    if(!validateBackupPayload(payload)){
      alert("RARの対応バックアップファイルではありません");
      return;
@@ -2916,6 +2941,12 @@ if(exportBackupBtn)exportBackupBtn.addEventListener("click",exportBackup);
 if(importBackupBtn)importBackupBtn.addEventListener("click",()=>backupFileInput?.click());
 if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
  const file=e.target.files?.[0];
+ if(!file)return;
+ const s=document.getElementById("backupStatus");
+ if(s){
+   s.textContent=`選択：${file.name}`;
+   s.className="backup-status warn";
+ }
  await restoreBackupFile(file);
  e.target.value="";
 });
