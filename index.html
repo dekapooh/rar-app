@@ -157,7 +157,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC38 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC39 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +242,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC38 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC39 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +477,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC38 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC39 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1333,15 +1333,67 @@ main{padding-top:84px}
 /* Ensure memo height is correct after hidden detail screen becomes visible */
 #detailMemoCard #memoBox{transition:height .08s ease}
 
+
+/* =========================================================
+   RC39 — Local Backup / Restore
+   ========================================================= */
+#dataManagementCard{background:linear-gradient(145deg,#fff,#f9fcfa)}
+.data-manage-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px
+}
+.local-save-badge{
+  flex:0 0 auto;padding:4px 7px;border-radius:999px;
+  background:#EEF5F1;color:#577064;border:1px solid #D9E6DF;
+  font-size:8px;font-weight:950;letter-spacing:.08em
+}
+.data-manage-actions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;margin-top:10px
+}
+.data-manage-btn{
+  min-height:64px!important;padding:9px 8px!important;
+  display:grid!important;grid-template-columns:22px 1fr;
+  grid-template-rows:auto auto;column-gap:6px;align-items:center;
+  text-align:left!important
+}
+.data-manage-btn>span{
+  grid-row:1/3;font-size:20px;font-weight:900
+}
+.data-manage-btn>b{
+  font-size:12px;line-height:1.1
+}
+.data-manage-btn>small{
+  font-size:8.5px;font-weight:700;opacity:.7
+}
+.backup-scope{
+  margin-top:9px;padding:8px 9px;border-radius:11px;
+  background:#F6F9F7;border:1px solid #E2EAE5
+}
+.backup-scope b{
+  display:block;font-size:9px;color:#51685D;margin-bottom:3px
+}
+.backup-scope span{
+  display:block;font-size:8.5px;line-height:1.45;color:#7E8B84
+}
+.backup-status{
+  margin-top:6px;text-align:right;font-size:8.5px;color:#929E98
+}
+.backup-status.ok{color:#2E7C57;font-weight:800}
+.backup-status.warn{color:#B06E18;font-weight:800}
+@media(max-width:390px){
+  .data-manage-actions{gap:6px}
+  .data-manage-btn{min-height:60px!important;padding:8px 7px!important}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC38</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC39</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC38 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC39 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1417,7 +1469,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC38</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC39</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1452,6 +1504,29 @@ main{padding-top:84px}
       <div class="toggle" style="visibility:hidden" aria-hidden="true"></div>
     </div>
     <div class="note">※1項目以上選択してください。設定はこの端末に保存されます。</div>
+  </div>
+  <div class="card" id="dataManagementCard">
+    <div class="data-manage-head">
+      <div>
+        <h3 style="margin:0">データ管理</h3>
+        <div class="note" style="margin-top:3px">Personalデータはこの端末に保存されています。</div>
+      </div>
+      <span class="local-save-badge">LOCAL</span>
+    </div>
+    <div class="data-manage-actions">
+      <button id="exportBackupBtn" class="btn data-manage-btn" type="button">
+        <span>⇩</span><b>バックアップ</b><small>JSONを書き出す</small>
+      </button>
+      <button id="importBackupBtn" class="btn secondary data-manage-btn" type="button">
+        <span>⇧</span><b>復元</b><small>バックアップを読み込む</small>
+      </button>
+    </div>
+    <input id="backupFileInput" type="file" accept=".json,application/json" hidden>
+    <div class="backup-scope">
+      <b>バックアップ対象</b>
+      <span>Personal Point・お気に入り・最終候補・除外馬・出資馬・正式馬名・メモ・ランキング表示設定</span>
+    </div>
+    <div id="backupStatus" class="backup-status">バックアップ未実行</div>
   </div>
   <div id="investedGenerationWrap" class="card" style="display:none;padding:10px 12px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -1719,6 +1794,103 @@ function planEligibleHorses(){
  const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
  const allowed=new Set(official.filter(h=>h.rank<=rules.rankLimit).map(h=>h.no));
  return HORSES.filter(h=>allowed.has(h.no));
+}
+
+
+const BACKUP_KEYS=[
+ "points","categoryPoints","smallPoints",
+ "memos","favorites","finalists","excluded",
+ "invested","registeredNames",
+ "rankBase","filterBase","priceRange"
+];
+function buildBackupPayload(){
+ const data={};
+ BACKUP_KEYS.forEach(k=>{data[k]=structuredClone(state[k]??{});});
+ return {
+   app:"RAR",
+   format:"rar-personal-backup",
+   version:1,
+   build:"β Ver.1.0 RC39",
+   exportedAt:new Date().toISOString(),
+   data
+ };
+}
+function backupFileName(){
+ const d=new Date();
+ const p=n=>String(n).padStart(2,"0");
+ return `RAR_backup_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.json`;
+}
+function exportBackup(){
+ try{
+   const payload=buildBackupPayload();
+   const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement("a");
+   a.href=url;
+   a.download=backupFileName();
+   document.body.appendChild(a);
+   a.click();
+   a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),1000);
+   const s=document.getElementById("backupStatus");
+   if(s){s.textContent="バックアップを書き出しました";s.className="backup-status ok";}
+ }catch(err){
+   console.error(err);
+   alert("バックアップの作成に失敗しました");
+ }
+}
+function validateBackupPayload(payload){
+ if(!payload || typeof payload!=="object")return false;
+ if(payload.format!=="rar-personal-backup")return false;
+ if(Number(payload.version)!==1)return false;
+ if(!payload.data || typeof payload.data!=="object")return false;
+ return true;
+}
+function normalizeBackupObject(v){
+ return v && typeof v==="object" && !Array.isArray(v) ? v : {};
+}
+async function restoreBackupFile(file){
+ if(!file)return;
+ try{
+   const text=await file.text();
+   const payload=JSON.parse(text);
+   if(!validateBackupPayload(payload)){
+     alert("RARの対応バックアップファイルではありません");
+     return;
+   }
+   if(!confirm("このバックアップで現在のPersonalデータを上書きします。\n復元前のデータは失われます。よろしいですか？"))return;
+
+   const keepPlan=state.plan;
+   BACKUP_KEYS.forEach(k=>{
+     state[k]=normalizeBackupObject(payload.data[k]);
+   });
+   state.plan=keepPlan; // 契約プランはバックアップ対象外
+   localStorage.setItem("rarBetaState",JSON.stringify(state));
+
+   applyRankBase();
+   syncBaseControls();
+   syncPlanLocks();
+   syncPriceFilterUI();
+   renderRanking();
+   renderSearch();
+   updateMyPage();
+   if(currentHorse){
+     openHorse(currentHorse.no,previousScreen||"mypage");
+   }
+
+   const s=document.getElementById("backupStatus");
+   if(s){
+     const dt=payload.exportedAt ? new Date(payload.exportedAt) : null;
+     s.textContent=dt && !Number.isNaN(dt.getTime())
+       ? `復元完了：${dt.toLocaleString("ja-JP")}のバックアップ`
+       : "復元が完了しました";
+     s.className="backup-status ok";
+   }
+   alert("Personalデータを復元しました");
+ }catch(err){
+   console.error(err);
+   alert("バックアップファイルを読み込めませんでした");
+ }
 }
 
 function saveState(){localStorage.setItem("rarBetaState",JSON.stringify(state)); updateMyPage();}
@@ -2736,6 +2908,18 @@ document.getElementById("dRegisteredName").addEventListener("input",e=>{
 });
 document.getElementById("dRegisteredName").addEventListener("change",saveRegisteredName);
 document.getElementById("dRegisteredName").addEventListener("blur",saveRegisteredName);
+
+const exportBackupBtn=document.getElementById("exportBackupBtn");
+const importBackupBtn=document.getElementById("importBackupBtn");
+const backupFileInput=document.getElementById("backupFileInput");
+if(exportBackupBtn)exportBackupBtn.addEventListener("click",exportBackup);
+if(importBackupBtn)importBackupBtn.addEventListener("click",()=>backupFileInput?.click());
+if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
+ const file=e.target.files?.[0];
+ await restoreBackupFile(file);
+ e.target.value="";
+});
+
 applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage();
 </script>
 
