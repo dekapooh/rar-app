@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0F3D2E">
 <link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>RAR App β Prototype Ver.0.1</title>
 <style>
 :root{--navy:#0f2f57;--blue:#1e5b9f;--pale:#eef5fb;--gold:#d8a526;--green:#2a9461;--text:#172033;--muted:#6b778c;--line:#dbe4ee;}
@@ -157,7 +161,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC40 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC44 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -242,7 +246,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC40 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC44 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -477,7 +481,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC40 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC44 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1398,15 +1402,40 @@ main{padding-top:84px}
   line-height:1.45;
 }
 
+
+/* RC41 Backup UX + FAQ */
+.backup-file-result{
+  margin-top:7px;padding:9px 10px;border-radius:10px;
+  background:#eef8f2;border:1px solid #cfe4d6;color:#174f3c;
+  font-size:10px;line-height:1.45;display:none;
+}
+.backup-file-result.show{display:block}
+.backup-file-result b{display:block;font-size:11px;margin-bottom:2px;overflow-wrap:anywhere}
+.backup-help{
+  margin-top:8px;border:1px solid #d9e2dc;border-radius:11px;background:#fff;overflow:hidden
+}
+.backup-help summary{
+  list-style:none;cursor:pointer;padding:10px 11px;font-weight:800;font-size:10.5px;color:#174f3c
+}
+.backup-help summary::-webkit-details-marker{display:none}
+.backup-help summary:after{content:"＋";float:right}
+.backup-help[open] summary:after{content:"−"}
+.backup-help-body{padding:0 11px 11px;font-size:9.5px;line-height:1.65;color:#5f6964}
+.backup-help-body b{color:#174f3c}
+.backup-help-code{
+  display:inline-block;padding:1px 6px;border-radius:6px;background:#f2f5f3;
+  color:#174f3c;font-weight:800
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC40</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC44</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC40 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC44 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1482,9 +1511,9 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC40</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC44</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
-  <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
+  <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
     <div class="kpi" data-myview="finalists"><b id="finalistCount">0</b><span>最終候補</span></div>
@@ -1539,8 +1568,31 @@ main{padding-top:84px}
       <b>バックアップ対象</b>
       <span>Personal Point・お気に入り・最終候補・除外馬・出資馬・正式馬名・メモ・ランキング表示設定</span>
     </div>
-    <div class="backup-picker-note">復元では「ダウンロード」内の RAR_backup_〜 ファイルを選択してください。</div>
+    <div class="backup-picker-note">復元では「ダウンロード」内の <b>RAR_backup_〜</b> ファイルを選択してください。</div>
+    <div id="backupFileResult" class="backup-file-result"></div>
     <div id="backupStatus" class="backup-status">バックアップ未実行</div>
+    <details class="backup-help" id="appDiagnostics">
+      <summary>アプリ診断</summary>
+      <div class="backup-help-body">
+        <div id="diagBuild">Build：β Ver.1.0 RC44</div>
+        <div id="diagMode">表示モード：確認中</div>
+        <div id="diagSW">更新機能：確認中</div>
+        <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div>
+      </div>
+    </details>
+    <details class="backup-help">
+      <summary>バックアップが見つからないとき</summary>
+      <div class="backup-help-body">
+        <b>基本の保存先</b><br>
+        Androidでは通常「ダウンロード」に保存されます。<br><br>
+        <b>一覧に表示されない場合</b><br>
+        復元のファイル選択画面で右上の検索を押し、
+        <span class="backup-help-code">RAR_backup</span> と検索してください。<br><br>
+        <b>ファイル名の例</b><br>
+        <span class="backup-help-code">RAR_backup_20260825_1119.json</span><br><br>
+        ※RARのPersonalデータのみを復元します。Officialデータと契約プランは変更しません。
+      </div>
+    </details>
   </div>
   <div id="investedGenerationWrap" class="card" style="display:none;padding:10px 12px">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -1748,7 +1800,10 @@ let state;
 try{
  state=JSON.parse(localStorage.getItem("rarBetaState")||"{}");
 }catch(e){
+ const raw=localStorage.getItem("rarBetaState");
+ if(raw) localStorage.setItem("rarBetaState_corrupt_backup",raw);
  state={};
+ console.error("RAR state parse failed; corrupt state preserved.",e);
 }
 if(!state.points || typeof state.points!=="object") state.points={};
 if(!state.memos || typeof state.memos!=="object") state.memos={};
@@ -1824,7 +1879,7 @@ function buildBackupPayload(){
    app:"RAR",
    format:"rar-personal-backup",
    version:1,
-   build:"β Ver.1.0 RC40",
+   build:"β Ver.1.0 RC44",
    exportedAt:new Date().toISOString(),
    data
  };
@@ -1839,15 +1894,21 @@ function exportBackup(){
    const payload=buildBackupPayload();
    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
    const url=URL.createObjectURL(blob);
+   const filename=backupFileName();
    const a=document.createElement("a");
    a.href=url;
-   a.download=backupFileName();
+   a.download=filename;
    document.body.appendChild(a);
    a.click();
    a.remove();
    setTimeout(()=>URL.revokeObjectURL(url),1000);
+   const r=document.getElementById("backupFileResult");
+   if(r){
+     r.innerHTML=`<b>${filename}</b>保存先：通常は「ダウンロード」<br>見つからない場合は復元画面で「RAR_backup」と検索`;
+     r.className="backup-file-result show";
+   }
    const s=document.getElementById("backupStatus");
-   if(s){s.textContent="バックアップを書き出しました";s.className="backup-status ok";}
+   if(s){s.textContent="バックアップの書き出しを開始しました";s.className="backup-status ok";}
  }catch(err){
    console.error(err);
    alert("バックアップの作成に失敗しました");
@@ -2934,6 +2995,31 @@ document.getElementById("dRegisteredName").addEventListener("input",e=>{
 document.getElementById("dRegisteredName").addEventListener("change",saveRegisteredName);
 document.getElementById("dRegisteredName").addEventListener("blur",saveRegisteredName);
 
+async function updateAppDiagnostics(){
+ const mode=document.getElementById("diagMode");
+ const swEl=document.getElementById("diagSW");
+ const storage=document.getElementById("diagStorage");
+ const network=document.getElementById("diagNetwork");
+ if(mode)mode.textContent=`表示モード：${window.matchMedia("(display-mode: standalone)").matches ? "アプリ(PWA)" : "ブラウザ"}`;
+ if(swEl){
+   if(!("serviceWorker" in navigator))swEl.textContent="更新機能：未対応";
+   else{
+     try{
+       const reg=await navigator.serviceWorker.getRegistration("./");
+       swEl.textContent=`更新機能：${reg ? "有効" : "登録待ち"}`;
+     }catch{swEl.textContent="更新機能：確認できません";}
+   }
+ }
+ if(network)network.textContent=`通信状態：${navigator.onLine ? "オンライン" : "オフライン"}`;
+ if(storage){
+   try{
+     const probe="rarStorageProbe";
+     localStorage.setItem(probe,"1"); localStorage.removeItem(probe);
+     storage.textContent="端末保存：正常";
+   }catch{storage.textContent="端末保存：利用できません";}
+ }
+}
+
 const exportBackupBtn=document.getElementById("exportBackupBtn");
 const importBackupBtn=document.getElementById("importBackupBtn");
 const backupFileInput=document.getElementById("backupFileInput");
@@ -2947,17 +3033,35 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
    s.textContent=`選択：${file.name}`;
    s.className="backup-status warn";
  }
+ const r=document.getElementById("backupFileResult");
+ if(r){
+   r.innerHTML=`<b>選択ファイル：${file.name}</b>RARバックアップ形式を確認して復元します。`;
+   r.className="backup-file-result show";
+ }
  await restoreBackupFile(file);
  e.target.value="";
 });
 
-applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage();
+applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics();
+window.addEventListener("online",updateAppDiagnostics); window.addEventListener("offline",updateAppDiagnostics);
 </script>
 
 <script>
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(console.error);
+  window.addEventListener("load", async () => {
+    try{
+      const reg=await navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"});
+      // 起動時に最新版SWを確認。古い画面へ張り付く事故を減らす。
+      reg.update().catch(()=>{});
+      let refreshing=false;
+      navigator.serviceWorker.addEventListener("controllerchange",()=>{
+        if(refreshing)return;
+        refreshing=true;
+        location.reload();
+      });
+    }catch(err){
+      console.error("Service Worker registration failed",err);
+    }
   });
 }
 </script>
