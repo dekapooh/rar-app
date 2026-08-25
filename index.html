@@ -161,7 +161,7 @@ main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .finalist-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#eef9f3;color:var(--green);font-size:9px;font-weight:900}
 
 /* =========================================================
-   RAR β Ver.1.0 RC62 — C改 Racing Green Edition
+   RAR β Ver.1.0 RC63 — C改 Racing Green Edition
    VISUAL OVERRIDE ONLY: scoring/data/ranking logic untouched
    ========================================================= */
 :root{
@@ -246,7 +246,7 @@ header{
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC62 — FINAL HOME VISUAL
+   RAR β Ver.1.0 RC63 — FINAL HOME VISUAL
    Visual changes only. RC20 data / scoring / app logic unchanged.
    Approved direction: white+green+gold header, catalog-style hero,
    premium green bottom navigation, brighter Personal Point green.
@@ -481,7 +481,7 @@ main{padding-top:84px}
 
 
 /* =========================================================
-   RAR β Ver.1.0 RC62 — UI / OPERABILITY QA BATCH
+   RAR β Ver.1.0 RC63 — UI / OPERABILITY QA BATCH
    Data, Official scores, Personal formulas and ranking math untouched.
    ========================================================= */
 
@@ -1440,15 +1440,19 @@ main{padding-top:84px}
 #investmentCard.access-locked .registered-name-wrap,
 #investmentCard.access-locked .investment-note{display:none!important}
 
+
+/* RC63: full generic Official lock notice */
+#officialAccessNote:not(:empty){display:block!important;margin-top:10px;width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #d9e1dc;border-radius:12px;background:#f6f8f6;color:#68756f;font-size:13px;line-height:1.45;text-align:center;}
+#officialAccessNote.compact-note{display:inline-block!important;width:auto;margin:0 0 0 6px;padding:3px 8px;border:0;border-radius:999px;font-size:11px;line-height:1.2;}
 </style>
 </head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC62</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC63</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
-      <div class="eyebrow">RAR β Ver.1.0 RC62 · Racehorse Analysis Rating</div>
+      <div class="eyebrow">RAR β Ver.1.0 RC63 · Racehorse Analysis Rating</div>
       <div class="home-kicker">自由に　シンプルに</div>
       <h1>募集馬選びをスマートに</h1>
       <div class="home-lead">募集馬選びをアシストする RAR</div>
@@ -1524,7 +1528,7 @@ main{padding-top:84px}
   <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
-  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC62</div>
+  </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC63</div>
   <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
   <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
@@ -1714,7 +1718,7 @@ main{padding-top:84px}
     <details class="backup-help" id="appDiagnostics">
       <summary>アプリ診断</summary>
       <div class="backup-help-body">
-        <div id="diagBuild">Build：β Ver.1.0 RC62</div>
+        <div id="diagBuild">Build：β Ver.1.0 RC63</div>
         <div id="diagMode">表示モード：確認中</div>
         <div id="diagSW">更新機能：確認中</div>
         <div id="diagStorage">端末保存：確認中</div><div id="diagNetwork">通信状態：確認中</div><div id="diagProfile">LOCAL ID：確認中</div><div>Backup Schema：1</div><div id="diagSnapshot">復元保護：確認中</div><div id="diagQuota">保存容量：確認中</div><div id="diagPersist">保存保護：確認中</div><div id="diagReady">β公開準備：確認中</div><div id="diagBilling">課金：β版では無効</div><div id="diagDataHealth">Personalデータ：確認中</div>
@@ -2046,7 +2050,7 @@ function buildBackupPayload(){
    app:"RAR",
    format:"rar-personal-backup",
    version:1,    backupSchema:1,
-   build:"β Ver.1.0 RC62",
+   build:"β Ver.1.0 RC63",
    localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
    data
@@ -2829,9 +2833,9 @@ function openHorse(no,from){
  document.getElementById("dRoi").textContent=canCategories?currentHorse.roi+"/25":"🔒";
  document.getElementById("dTotal").textContent=canOfficial?Number(currentHorse.total).toFixed(1):"🔒";
  const oan=document.getElementById("officialAccessNote");
- if(canOfficial && !planRules().canCategoryScores){oan.style.display="inline-block";oan.textContent="総合のみ";}
- else if(!canOfficial){oan.style.display="inline-block";oan.textContent=`${planName()}対象外`;}
- else {oan.style.display="none";oan.textContent="";}
+ if(canOfficial && !planRules().canCategoryScores){oan.style.display="inline-block";oan.textContent="総合のみ";oan.classList.add("compact-note");}
+ else if(!canOfficial){oan.style.display="inline-block";oan.textContent="🔒 この機能は現在のプランではご利用いただけません。";oan.classList.remove("compact-note");}
+ else {oan.style.display="none";oan.textContent="";oan.classList.remove("compact-note");}
  const canFit=canViewHorseSuitability(currentHorse.no);
  const fitCard=document.getElementById("detailFitCard");
  const fitLock=document.getElementById("dFitLock");
