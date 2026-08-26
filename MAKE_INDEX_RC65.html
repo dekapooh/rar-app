@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAR RC65 index.html Maker</title>
+<style>
+body{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:#f5f7f5;color:#173e31;margin:0;padding:24px}
+.wrap{max-width:680px;margin:auto;background:white;border:1px solid #d7e0da;border-radius:18px;padding:22px}
+h1{font-size:22px;margin-top:0}.btn{width:100%;padding:15px;border:0;border-radius:13px;background:#0f4a35;color:white;font-weight:800;font-size:16px}
+.note{font-size:13px;line-height:1.7;color:#64746b}.ok{color:#147a4a;font-weight:800}.err{color:#b42318;font-weight:800}
+code{word-break:break-all}
+</style>
+</head>
+<body><div class="wrap">
+<h1>RAR β Ver.1.0 RC65</h1>
+<p>現在のGitHub main（RC64）の <code>index.html</code> を取得し、RC65のブランド変更だけを適用した新しい <code>index.html</code> を作ります。</p>
+<button class="btn" id="make">RC65 index.html を作成</button>
+<p id="status" class="note">採点・82頭データ・ランキング・Personal・プラン仕様には触れません。</p>
+</div>
+<script>
+const RAW="https://raw.githubusercontent.com/dekapooh/rar-app/main/index.html";
+const OVERRIDE=`
+/* =========================================================
+   RAR β Ver.1.0 RC65 — FINAL BRANDING
+   Branding/version only. Scoring/data/ranking/storage logic untouched.
+   ========================================================= */
+.brand{gap:6px!important}
+.brand::before{
+  content:""!important;
+  width:32px!important;
+  height:28px!important;
+  display:inline-block!important;
+  border:0!important;
+  border-radius:0!important;
+  transform:none!important;
+  box-sizing:border-box!important;
+  background:url("./brand-horse-rc65.png") center/contain no-repeat!important;
+  flex:0 0 auto!important;
+}
+.home-hero-natural{
+  background-image:url("./hero-rc65.png")!important;
+}
+`;
+document.getElementById("make").addEventListener("click",async()=>{
+  const s=document.getElementById("status");
+  try{
+    s.textContent="GitHub main の RC64 index.html を取得中…";
+    const r=await fetch(RAW+"?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok) throw new Error("取得失敗 HTTP "+r.status);
+    let t=await r.text();
+    if(!t.includes("β Ver.1.0 RC64")) throw new Error("RC64のindex.htmlを確認できません。mainが既に更新されている可能性があります。");
+    t=t.replaceAll("β Ver.1.0 RC64","β Ver.1.0 RC65");
+    t=t.replaceAll("./hero-rc21.png","./hero-rc65.png");
+    if(!t.includes("</style>")) throw new Error("</style> が見つかりません。");
+    t=t.replace("</style>",OVERRIDE+"\n</style>");
+    const b=new Blob([t],{type:"text/html;charset=utf-8"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(b);
+    a.download="index.html";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    s.className="note ok";
+    s.textContent="完成！ダウンロードされた index.html を、ZIP内の3ファイルと一緒にGitHubへアップロードしてください。";
+  }catch(e){
+    s.className="note err";
+    s.textContent="作成できませんでした："+e.message;
+  }
+});
+</script></body></html>
