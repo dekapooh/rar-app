@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc65-final-v2";
+const CACHE_NAME="rar-rc65-final-v3";
 const APP_SHELL=[
   "./",
   "./index.html",
