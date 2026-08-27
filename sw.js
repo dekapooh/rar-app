@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v2";
+const CACHE_NAME="rar-rc66-public-beta-v3";
 const APP_SHELL=[
   "./",
   "./index.html",
@@ -59,6 +59,10 @@ function makeRC66(html){
     .replace(
       'if(!state.points || typeof state.points!=="object") state.points={};',
       'state.plan="standard";\nif(!state.points || typeof state.points!=="object") state.points={};'
+    )
+    .replace(
+      'state.plan="premium"; // BETA: 全機能確認用。正式リリース時は契約プラン判定へ戻す',
+      'state.plan="standard"; // PUBLIC BETA: STANDARD相当を無料開放'
     );
   if(out.includes("</style>")){
     out=out.replace("</style>",RC66_BRAND_CSS+`\n
