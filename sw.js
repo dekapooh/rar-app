@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v5";
+const CACHE_NAME="rar-rc66-public-beta-v6";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
 ];
@@ -33,14 +33,39 @@ function makeRC66(html){
   out=out.replace(/"full":false/g,'"full":true');
   out=out.replace(/("no":(?:13|22|38|51),(?:(?!\},\{"no":).)*?"full":)true/g,'$1false');
 
+  // Public Beta利用条件・問い合わせ先を確定。
+  out=out.replace(
+    '<details class="public-info-details" style="margin-top:10px">\n    <summary><b>利用規約・お問い合わせ</b></summary>\n    <div class="note" style="margin-top:8px">正式公開前に運営者情報・問い合わせ先・利用規約・料金条件を確定し、この画面から確認できるようにします。</div>\n  </details>',
+    `<details class="public-info-details" style="margin-top:10px">
+    <summary><b>RAR Public Beta 利用条件</b></summary>
+    <div class="note" style="margin-top:8px;line-height:1.7">
+      RAR Public Betaは正式公開前の試用版です。Public Beta期間中は無料で利用でき、アカウント登録・ログイン・招待コードは不要です。<br><br>
+      β版のため、不具合・表示崩れ・予期しない動作が発生する場合があります。機能・仕様・表示内容は予告なく変更される場合があります。<br><br>
+      RARの評価・順位・分析内容は、将来の競走成績、賞金、出資成果を保証するものではありません。最終的な出資判断は利用者ご自身で行ってください。<br><br>
+      Personal Point・お気に入り・メモ等のPersonalデータは現在この端末内に保存されます。端末変更、ブラウザデータ削除、アプリ削除等によりデータが失われる可能性があります。必要に応じてバックアップ機能をご利用ください。<br><br>
+      正式版へのデータ引き継ぎは現時点では保証していません。Public Betaの終了時期および正式版の公開時期は未定です。
+    </div>
+  </details>
+  <details class="public-info-details" style="margin-top:10px">
+    <summary><b>お問い合わせ</b></summary>
+    <div class="note" style="margin-top:8px;line-height:1.7">不具合・表示の問題・使いにくい点・改善要望・その他Public Betaに関するお問い合わせは、下の「お問い合わせ・不具合・改善要望」から専用フォームへお送りください。</div>
+  </details>`
+  );
+
   if(!out.includes('id="publicBetaFeedbackCard"')){
     out=out.replace('<div class="card" id="recoveryGuideCard">',`<div class="card feedback-card" id="publicBetaFeedbackCard">
-  <div class="feedback-card-head"><div><h3 style="margin:0">不具合・改善要望</h3><div class="note" style="margin-top:3px">RAR Public Beta フィードバック</div></div><span class="local-save-badge">FEEDBACK</span></div>
-  <div class="feedback-card-copy">不具合・表示の問題・使いにくい点・改善してほしい点がありましたら、専用フォームからお知らせください。</div>
-  <a class="feedback-form-btn" href="https://forms.gle/hPBRuoabfCfbDczq5" target="_blank" rel="noopener noreferrer">不具合・改善要望を送る</a>
+  <div class="feedback-card-head"><div><h3 style="margin:0">お問い合わせ・不具合・改善要望</h3><div class="note" style="margin-top:3px">RAR Public Beta フィードバック</div></div><span class="local-save-badge">FEEDBACK</span></div>
+  <div class="feedback-card-copy">不具合・表示の問題・使いにくい点・改善してほしい点・その他Public Betaに関するお問い合わせがありましたら、専用フォームからお知らせください。</div>
+  <a class="feedback-form-btn" href="https://forms.gle/hPBRuoabfCfbDczq5" target="_blank" rel="noopener noreferrer">お問い合わせ・不具合・改善要望を送る</a>
 </div>
 <div class="card" id="recoveryGuideCard">`);
+  }else{
+    out=out
+      .replace('<h3 style="margin:0">不具合・改善要望</h3>','<h3 style="margin:0">お問い合わせ・不具合・改善要望</h3>')
+      .replace('不具合・表示の問題・使いにくい点・改善してほしい点がありましたら、専用フォームからお知らせください。','不具合・表示の問題・使いにくい点・改善してほしい点・その他Public Betaに関するお問い合わせがありましたら、専用フォームからお知らせください。')
+      .replace('>不具合・改善要望を送る</a>','>お問い合わせ・不具合・改善要望を送る</a>');
   }
+
   const cleanup=`
 /* RC66 Public Beta user-facing cleanup */
 #betaTestCard,#betaStatusCard,#planSpecCard{display:none!important;}
