@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v9-admin-pwa";
+const CACHE_NAME="rar-rc66-public-beta-v10-admin-direct";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
 ];
@@ -135,12 +135,28 @@ self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET") return;
   const req=event.request; const url=new URL(req.url);
 
-  // 管理者PWAインストール専用ページは変換せず、そのまま返す。
+  // v10: /admin.html 自体を管理者画面として直接レンダリング。
+  // query parameterや別PWAのstart_urlに依存しない。
   if(url.pathname.endsWith("/admin.html")){
-    event.respondWith(fetch(req,{cache:"no-store"}).catch(()=>new Response(
-      "RAR ADMIN installer requires network access.",
-      {status:503,headers:{"content-type":"text/plain; charset=utf-8"}}
-    )));
+    event.respondWith((async()=>{
+      try{
+        const network=await fetch("./index.html",{cache:"no-store"});
+        if(!network.ok) throw new Error("HTTP "+network.status);
+        const raw=await network.text();
+        const rendered=makeAdminRC66(raw)
+          .replace('<link rel="manifest" href="./manifest.webmanifest">','')
+          .replace('<meta name="mobile-web-app-capable" content="yes">','')
+          .replace('<meta name="apple-mobile-web-app-capable" content="yes">','');
+        const headers=new Headers(network.headers);
+        headers.set("content-type","text/html; charset=utf-8");
+        headers.set("cache-control","no-store");
+        return new Response(rendered,{status:200,headers});
+      }catch(e){
+        return new Response("RAR ADMIN requires network access.",{
+          status:503,headers:{"content-type":"text/plain; charset=utf-8"}
+        });
+      }
+    })());
     return;
   }
 
