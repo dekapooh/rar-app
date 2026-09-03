@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v7-admin";
+const CACHE_NAME="rar-rc66-public-beta-v9-admin-pwa";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
 ];
@@ -90,10 +90,8 @@ function makeAdminRC66(html){
     .replace('β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭',
              '管理者確認モード：FREE / LIGHT / STANDARD / PREMIUM の表示・挙動を切り替えて確認できます。公開Public Betaとは別の内部確認画面です。');
 
-  // ADMIN起動時はPREMIUMを初期値にする。プランセレクタで他プランへ切替可能。
-  out=out
-    .replace('if(!state.points || typeof state.points!=="object") state.points={};',
-             'state.plan="premium";\nif(!state.points || typeof state.points!=="object") state.points={};');
+  // ADMIN: Public Beta側のSTANDARD強制を適用せず、元のプラン切替を利用。
+  // 初回は本体既定のPREMIUM、以後は管理者が選択したstate.planを保持する。
 
   // 最新募集状況は公開βと同じ状態に同期。
   out=out.replace(/"full":false/g,'"full":true');
@@ -117,6 +115,17 @@ function makeAdminRC66(html){
   if(out.includes("<main>")){
     out=out.replace("<main>",'<main><div id="adminModeBanner">ADMIN / INTERNAL <span>公開βとは別の管理者確認モード</span></div>');
   }
+  const adminSync=`<script>
+window.__RAR_ADMIN_MODE__=true;
+window.addEventListener("DOMContentLoaded",()=>{
+  const sel=document.getElementById("betaPlanSelect");
+  if(sel){
+    sel.style.display="inline-block";
+    sel.removeAttribute("aria-hidden");
+  }
+});
+<\/script>`;
+  out=out.replace("</body>",adminSync+"</body>");
   return out;
 }
 
@@ -125,6 +134,16 @@ self.addEventListener("activate",event=>{event.waitUntil((async()=>{const keys=a
 self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET") return;
   const req=event.request; const url=new URL(req.url);
+
+  // 管理者PWAインストール専用ページは変換せず、そのまま返す。
+  if(url.pathname.endsWith("/admin.html")){
+    event.respondWith(fetch(req,{cache:"no-store"}).catch(()=>new Response(
+      "RAR ADMIN installer requires network access.",
+      {status:503,headers:{"content-type":"text/plain; charset=utf-8"}}
+    )));
+    return;
+  }
+
   if(req.mode==="navigate" || url.pathname.endsWith("/index.html")){
     event.respondWith((async()=>{
       const isAdmin=url.searchParams.get("rar_admin")==="1";
