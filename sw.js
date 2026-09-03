@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v6";
+const CACHE_NAME="rar-rc66-public-beta-v7-admin";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
 ];
@@ -75,13 +75,81 @@ function makeRC66(html){
   else if(out.includes("</head>")) out=out.replace("</head>","<style>"+RC66_BRAND_CSS+cleanup+"</style></head>");
   return out;
 }
+
+function makeAdminRC66(html){
+  let out=html
+    .replaceAll("β Ver.1.0 RC64","β Ver.1.0 RC66")
+    .replaceAll("RAR β Ver.1.0 RC64","RAR β Ver.1.0 RC66")
+    .replaceAll("β Ver.1.0 RC65","β Ver.1.0 RC66")
+    .replaceAll("RAR β Ver.1.0 RC65","RAR β Ver.1.0 RC66");
+
+  // ADMIN: 公開βとは別の内部確認モード。元のプラン切替UIを残す。
+  out=out
+    .replace('<div class="plan-card"><span class="plan-badge">BETA ACCESS</span> <b id="currentPlanName">PREMIUM</b>',
+             '<div class="plan-card"><span class="plan-badge">ADMIN / INTERNAL</span> <b id="currentPlanName">PREMIUM</b>')
+    .replace('β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭',
+             '管理者確認モード：FREE / LIGHT / STANDARD / PREMIUM の表示・挙動を切り替えて確認できます。公開Public Betaとは別の内部確認画面です。');
+
+  // ADMIN起動時はPREMIUMを初期値にする。プランセレクタで他プランへ切替可能。
+  out=out
+    .replace('if(!state.points || typeof state.points!=="object") state.points={};',
+             'state.plan="premium";\nif(!state.points || typeof state.points!=="object") state.points={};');
+
+  // 最新募集状況は公開βと同じ状態に同期。
+  out=out.replace(/"full":false/g,'"full":true');
+  out=out.replace(/("no":(?:13|22|38|51),(?:(?!\},\{"no":).)*?"full":)true/g,'$1false');
+
+  const adminCss=`
+/* RC66 ADMIN / INTERNAL */
+#adminModeBanner{
+  position:sticky;top:56px;z-index:39;
+  margin:0 -14px 12px;padding:8px 14px;
+  background:#7f1d1d;color:#fff;
+  font-size:11px;font-weight:900;letter-spacing:.04em;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+#adminModeBanner span{opacity:.82;font-weight:700;margin-left:7px}
+#betaPlanSelect{display:inline-block!important;}
+`;
+  if(out.includes("</style>")) out=out.replace("</style>",RC66_BRAND_CSS+adminCss+"\n</style>");
+  else if(out.includes("</head>")) out=out.replace("</head>","<style>"+RC66_BRAND_CSS+adminCss+"</style></head>");
+
+  if(out.includes("<main>")){
+    out=out.replace("<main>",'<main><div id="adminModeBanner">ADMIN / INTERNAL <span>公開βとは別の管理者確認モード</span></div>');
+  }
+  return out;
+}
+
 self.addEventListener("install",event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE_NAME);await Promise.allSettled(APP_SHELL.map(url=>cache.add(url)));})());self.skipWaiting();});
 self.addEventListener("activate",event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)));await self.clients.claim();})());});
 self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET") return;
   const req=event.request; const url=new URL(req.url);
   if(req.mode==="navigate" || url.pathname.endsWith("/index.html")){
-    event.respondWith((async()=>{try{const network=await fetch(req,{cache:"no-store"});if(!network.ok) throw new Error("HTTP "+network.status);const raw=await network.text();const rc66=makeRC66(raw);const headers=new Headers(network.headers);headers.set("content-type","text/html; charset=utf-8");const response=new Response(rc66,{status:network.status,statusText:network.statusText,headers});const cache=await caches.open(CACHE_NAME);cache.put("./index.html",response.clone()).catch(()=>{});return response;}catch(e){return (await caches.match("./index.html")) || new Response("Offline",{status:503,headers:{"content-type":"text/plain; charset=utf-8"}});}})());return;
+    event.respondWith((async()=>{
+      const isAdmin=url.searchParams.get("rar_admin")==="1";
+      try{
+        const network=await fetch(req,{cache:"no-store"});
+        if(!network.ok) throw new Error("HTTP "+network.status);
+        const raw=await network.text();
+        const rendered=isAdmin ? makeAdminRC66(raw) : makeRC66(raw);
+        const headers=new Headers(network.headers);
+        headers.set("content-type","text/html; charset=utf-8");
+        const response=new Response(rendered,{status:network.status,statusText:network.statusText,headers});
+        // 管理者表示はPublic Betaのoffline cacheへ混ぜない。
+        if(!isAdmin){
+          const cache=await caches.open(CACHE_NAME);
+          cache.put("./index.html",response.clone()).catch(()=>{});
+        }
+        return response;
+      }catch(e){
+        // 管理者モードは内部確認用のため、ネットワーク必須。
+        if(isAdmin){
+          return new Response("RAR ADMIN requires network access.",{status:503,headers:{"content-type":"text/plain; charset=utf-8"}});
+        }
+        return (await caches.match("./index.html")) || new Response("Offline",{status:503,headers:{"content-type":"text/plain; charset=utf-8"}});
+      }
+    })());return;
   }
   if(url.origin===self.location.origin){event.respondWith((async()=>{const cached=await caches.match(req);if(cached) return cached;try{const response=await fetch(req);if(response && response.ok){const cache=await caches.open(CACHE_NAME);cache.put(req,response.clone()).catch(()=>{});}return response;}catch{return new Response("",{status:504});}})());}
 });
