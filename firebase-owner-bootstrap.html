@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RAR Owner Bootstrap</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color-scheme:dark;background:#101214;color:#f5f5f5}
+body{margin:0;padding:24px}.wrap{max-width:680px;margin:auto}.card{background:#1b1e21;border:1px solid #333;border-radius:16px;padding:18px;margin:14px 0}
+button{font:inherit;border:0;border-radius:12px;padding:12px 16px;cursor:pointer}.primary{background:#ff8a00;color:#111;font-weight:700}.muted{color:#aaa}.hidden{display:none}
+code{display:block;word-break:break-all;background:#0d0f11;padding:12px;border-radius:10px;margin:10px 0}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>RAR Owner Bootstrap</h1>
+<p class="muted">初回OWNER登録用。RAR本体のデータ表示・変更は行いません。</p>
+<section id="signin" class="card"><h2>1. Googleログイン</h2><button id="signInBtn" class="primary">Googleでログイン</button></section>
+<section id="result" class="card hidden"><h2>2. Firebase UID</h2><p>ログイン成功。このUIDをFirestoreの <code>adminUsers/{uid}</code> にOWNERとして1回だけ登録します。</p><code id="uidText"></code><button id="copyUidBtn">UIDをコピー</button><button id="signOutBtn">ログアウト</button></section>
+<section id="error" class="card hidden"><h2>エラー</h2><pre id="errorText"></pre></section>
+</main>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',
+  authDomain: 'rar-project-5a27e.firebaseapp.com',
+  projectId: 'rar-project-5a27e',
+  storageBucket: 'rar-project-5a27e.firebasestorage.app',
+  messagingSenderId: '574526681741',
+  appId: '1:574526681741:web:a5da958e5babc1c16c68c4'
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const $ = (id) => document.getElementById(id);
+
+function showError(error) {
+  $('errorText').textContent = error?.message || String(error);
+  $('error').classList.remove('hidden');
+}
+
+$('signInBtn').onclick = () => signInWithPopup(auth, provider).catch(showError);
+$('signOutBtn').onclick = () => signOut(auth).catch(showError);
+$('copyUidBtn').onclick = async () => {
+  await navigator.clipboard.writeText($('uidText').textContent || '');
+  $('copyUidBtn').textContent = 'コピー済み';
+};
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    $('signin').classList.remove('hidden');
+    $('result').classList.add('hidden');
+    return;
+  }
+  $('uidText').textContent = user.uid;
+  $('signin').classList.add('hidden');
+  $('result').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
