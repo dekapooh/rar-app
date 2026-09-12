@@ -1961,6 +1961,7 @@ main{padding-top:84px}
 const HORSES=[];
 const MAX={potential:30,pedigree:20,dream:20,roi:30};
 const SCORE_MODES=["median","official","expected"];
+const RAR_V2_SMALL_POINT_KEYS=new Set(["scale_frame","rear","trunk","front","mother","sibling","sibling_winup","nicks"]);
 const SCORE_MODE_LABELS={median:"中央値",official:"公式",expected:"期待値"};
 const RAR_DATA_API="https://rar-project-5a27e.web.app/v1/consumer-data/current";
 const RAR_DATA_FALLBACK="./data/rar-data-reference-v1.json";
@@ -2049,6 +2050,13 @@ if(!state.registeredNames || typeof state.registeredNames!=="object") state.regi
 if(!state.priceRange || typeof state.priceRange!=="object") state.priceRange={min:"",max:""};
 if(!state.categoryPoints || typeof state.categoryPoints!=="object") state.categoryPoints={};
 if(!state.smallPoints || typeof state.smallPoints!=="object") state.smallPoints={};
+// Reference v1 changed the additive small-item contract. Keep only keys that
+// still exist so legacy beta Personal Points cannot become invisible budget.
+for(const [horseNo,obj] of Object.entries(state.smallPoints)){
+  if(!obj || typeof obj!=="object"){delete state.smallPoints[horseNo];continue;}
+  for(const key of Object.keys(obj))if(!RAR_V2_SMALL_POINT_KEYS.has(key))delete obj[key];
+  if(!Object.keys(obj).length)delete state.smallPoints[horseNo];
+}
 if(!SCORE_MODES.includes(state.dreamMode)) state.dreamMode="official";
 if(!SCORE_MODES.includes(state.roiMode)) state.roiMode="official";
 const PLAN_RULES={
@@ -2463,9 +2471,11 @@ function renderFavoriteCompare(){
    wrap.innerHTML='<div class="empty">比較できるお気に入り馬がありません</div>';
    return;
  }
+ const modeLabel="表示総合（夢:"+scoreModeText("dream")+" / ROI:"+scoreModeText("roi")+"）";
  const rows=[
+   [modeLabel, h=>displayTotal(h).toFixed(1), h=>""],
    ["Official総合", h=>Number(h.total).toFixed(1), h=>""],
-   ["Personal反映", h=>(Number(h.total)+effectivePersonalPoint(h.no)).toFixed(1), h=>effectivePersonalPoint(h.no)>0?"positive":(effectivePersonalPoint(h.no)<0?"negative":"")],
+   ["Personal反映", h=>(displayTotal(h)+effectivePersonalPoint(h.no)).toFixed(1), h=>effectivePersonalPoint(h.no)>0?"positive":(effectivePersonalPoint(h.no)<0?"negative":"")],
    ["一口価格", h=>`${Number(h.sharePrice).toFixed(1).replace(".0","")}万円`, h=>""],
    ["芝適性", h=>h.turf||"－", h=>""],
    ["ダート適性", h=>h.dirt||"－", h=>""],
@@ -2598,9 +2608,9 @@ document.getElementById("clearSearchFilters").addEventListener("click",()=>{
 function usedPoints(){
  if(state.plan==="standard") return Object.values(state.categoryPoints).flatMap(o=>Object.values(o||{})).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
  if(state.plan==="premium"){
-   const smallUsed=Object.values(state.smallPoints).flatMap(o=>Object.values(o||{})).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
-   const roiUsed=Object.values(state.categoryPoints).reduce((a,o)=>a+Math.abs(Number((o||{}).roi)||0),0);
-   return smallUsed+roiUsed;
+   const smallUsed=Object.values(state.smallPoints).reduce((sum,obj)=>sum+Object.entries(obj||{}).reduce((a,[key,v])=>a+(RAR_V2_SMALL_POINT_KEYS.has(key)?Math.abs(Number(v)||0):0),0),0);
+   const scenarioUsed=Object.values(state.categoryPoints).reduce((a,o)=>a+Math.abs(Number((o||{}).dream)||0)+Math.abs(Number((o||{}).roi)||0),0);
+   return smallUsed+scenarioUsed;
  }
  return Object.values(state.points).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
 }
