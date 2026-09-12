@@ -1,0 +1,73 @@
+name: RAR Reference V1 App QA
+
+on:
+  push:
+    branches:
+      - feature/reference-v1-data-separation-20260912
+    paths:
+      - 'index.html'
+      - 'sw.js'
+      - 'data/rar-data-reference-v1.json'
+      - '.github/workflows/reference-v1-app-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Reference v1 dataset
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('data/rar-data-reference-v1.json').read_text(encoding='utf-8'))
+          assert p['schema_version']=='rar-app-data-v2'
+          assert p['record_count']==82 and len(p['records'])==82
+          assert p['score_allocation']=={'potential':30,'pedigree':20,'dream':20,'investment':30}
+          assert p['score_modes']==['median','official','expected']
+          assert sorted(r['officialRank'] for r in p['records'])==list(range(1,83))
+          for r in p['records']:
+              sm=r['small']
+              assert abs(sm['scale_frame']+sm['rear']+sm['trunk']+sm['front']-r['potential'])<1e-9
+              assert abs(sm['mother']+sm['sibling']+sm['sibling_winup']+sm['nicks']-r['pedigree'])<1e-9
+              assert abs(r['potential']+r['pedigree']+r['dream']+r['investment']-r['total'])<1e-9
+              assert set(r['scenarios']['dream'])=={'median','official','expected'}
+              assert set(r['scenarios']['investment'])=={'median','official','expected'}
+          print('REFERENCE_V1_DATA=PASS 82/82')
+          PY
+      - name: Extract and syntax-check application scripts
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          assert 'const HORSES=[{' not in s
+          assert 'const HORSES=[];' in s
+          assert 'const MAX={potential:30,pedigree:20,dream:20,roi:30};' in s
+          assert 'RAR_DATA_API=' in s and '/v1/consumer-data/current' in s
+          assert s.count('data-score-mode="dream"')==2
+          assert s.count('data-score-mode="roi"')==2
+          assert '"scale_frame","スケール/フレーム",6' in s
+          assert '"nicks","NICKS",10' in s
+          scripts=re.findall(r'<script[^>]*>(.*?)</script>',s,re.S)
+          assert scripts
+          for i,body in enumerate(scripts):
+              Path(f'/tmp/rar-app-{i}.js').write_text(body,encoding='utf-8')
+          print('APP_STATIC_CONTRACT=PASS scripts=',len(scripts))
+          PY
+          for f in /tmp/rar-app-*.js; do node --check "$f"; done
+      - name: Validate service worker data fallback
+        run: |
+          node --check sw.js
+          grep -Fq './data/rar-data-reference-v1.json' sw.js
+          echo 'SERVICE_WORKER=PASS'
