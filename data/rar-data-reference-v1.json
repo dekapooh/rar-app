@@ -970,7 +970,7 @@
       "total_price_yen": 40000000,
       "sharePrice": 8,
       "price": 4000,
-      "full": false,
+      "full": true,
       "height": 154,
       "chest": 171,
       "cannon": 19.6,
@@ -1690,7 +1690,7 @@
       "total_price_yen": 50000000,
       "sharePrice": 10,
       "price": 5000,
-      "full": false,
+      "full": true,
       "height": 152.5,
       "chest": 176,
       "cannon": 19,
@@ -2410,7 +2410,7 @@
       "total_price_yen": 35000000,
       "sharePrice": 7,
       "price": 3500,
-      "full": false,
+      "full": true,
       "height": 153,
       "chest": 172,
       "cannon": 20.4,
@@ -2770,7 +2770,7 @@
       "total_price_yen": 25000000,
       "sharePrice": 5,
       "price": 2500,
-      "full": false,
+      "full": true,
       "height": 160.5,
       "chest": 177,
       "cannon": 19.4,
@@ -3778,7 +3778,7 @@
       "total_price_yen": 55000000,
       "sharePrice": 11,
       "price": 5500,
-      "full": false,
+      "full": true,
       "height": 150.5,
       "chest": 174,
       "cannon": 19,
@@ -5578,7 +5578,7 @@
       "total_price_yen": 28000000,
       "sharePrice": 5.6,
       "price": 2800,
-      "full": false,
+      "full": true,
       "height": 154.5,
       "chest": 175,
       "cannon": 19.3,
@@ -5923,5 +5923,12 @@
       "manager_status": "VALIDATED_REFERENCE",
       "evidence_hash": "8ab67a4982d8dbafb8543b6779d6e60d5dcc7b66aae9787074c9b5e8911725df"
     }
+  ],
+  "recruitment_status_as_of": "2026-08-28",
+  "open_recruitment_numbers": [
+    13,
+    22,
+    38,
+    51
   ]
 }
