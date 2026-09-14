@@ -490,8 +490,53 @@
       if(roiAdj) roiAdj.textContent="";
       const roiTools=document.getElementById("stdRoiTools");
       if(roiTools) roiTools.style.display="none";
+      const personalTotal=document.getElementById("dPersonalTotal");
+      if(personalTotal && !personalTotal.textContent.includes("暫定")){
+        personalTotal.textContent=personalTotal.textContent+"（暫定）";
+      }
     }
     decoratePremiumSmallOfficial();
+  }
+
+  function decorateSearch(){
+    if(typeof HORSES==="undefined") return;
+    document.querySelectorAll(".search-result").forEach(row=>{
+      const no=Number(row.querySelector(".ranknum")?.textContent||0);
+      const h=currentHorseForNo(no);
+      if(!h?.ivHold) return;
+      const small=row.querySelector(".score small");
+      if(small) small.textContent=" 暫定 /70";
+    });
+  }
+
+  function decorateMyPage(){
+    document.querySelectorAll(".myhorse-row").forEach(row=>{
+      const no=Number(row.querySelector(".ranknum")?.textContent||0);
+      const h=currentHorseForNo(no);
+      if(!h?.ivHold) return;
+      const note=row.querySelector(".myhorse-note");
+      if(note && note.textContent.includes("総合")){
+        note.textContent=note.textContent.replace(/総合\s+([0-9.]+)/,"暫定 $1/70");
+      }
+      const score=row.querySelector(".score");
+      if(score && !score.textContent.includes("pt") && !score.textContent.includes("🔒") && !score.querySelector("small")){
+        const small=document.createElement("small");
+        small.textContent=" /70";
+        score.appendChild(small);
+      }
+    });
+  }
+
+  function decorateFavoriteCompare(){
+    const wrap=document.getElementById("compareWrap");
+    if(!wrap) return;
+    wrap.querySelectorAll(".compare-label").forEach(label=>{
+      if(label.textContent==="Official総合") label.textContent="暫定総合 /70";
+      if(label.textContent==="Personal反映") label.textContent="Personal反映（暫定）";
+    });
+    wrap.querySelectorAll(".compare-rank").forEach(el=>{
+      if(el.textContent.includes("総合ランク")) el.textContent=el.textContent.replace("総合ランク","暫定ランク");
+    });
   }
 
   function wrapPersonalFunctions(){
@@ -507,6 +552,23 @@
       };
       wrapped.__rarV2Wrapped=true;
       window.effectivePersonalPoint=wrapped;
+    }
+
+    if(typeof window.usedPoints==="function" && !window.usedPoints.__rarV2Wrapped){
+      const original=window.usedPoints;
+      const wrapped=function(){
+        let value=Number(original.apply(this,arguments)||0);
+        const hold=typeof HORSES!=="undefined" && Array.isArray(HORSES) && HORSES.some(h=>h.ivHold);
+        if(hold && (state?.plan==="standard" || state?.plan==="premium")){
+          const legacyIvUsed=Object.values(state?.categoryPoints||{}).reduce(
+            (sum,obj)=>sum+Math.abs(Number((obj||{}).roi)||0),0
+          );
+          value-=legacyIvUsed;
+        }
+        return Math.max(0,value);
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.usedPoints=wrapped;
     }
 
     if(typeof window.categoryPersonalPoint==="function" && !window.categoryPersonalPoint.__rarV2Wrapped){
@@ -584,10 +646,44 @@
       const wrapped=function(){
         const result=original.apply(this,arguments);
         decorateDetail(typeof currentHorse!=="undefined"?currentHorse:null);
+        decoratePersonalUi();
         return result;
       };
       wrapped.__rarV2Wrapped=true;
       window.openHorse=wrapped;
+    }
+
+    if(typeof window.renderSearch==="function" && !window.renderSearch.__rarV2Wrapped){
+      const original=window.renderSearch;
+      const wrapped=function(){
+        const result=original.apply(this,arguments);
+        decorateSearch();
+        return result;
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.renderSearch=wrapped;
+    }
+
+    if(typeof window.updateMyPage==="function" && !window.updateMyPage.__rarV2Wrapped){
+      const original=window.updateMyPage;
+      const wrapped=function(){
+        const result=original.apply(this,arguments);
+        decorateMyPage();
+        return result;
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.updateMyPage=wrapped;
+    }
+
+    if(typeof window.renderFavoriteCompare==="function" && !window.renderFavoriteCompare.__rarV2Wrapped){
+      const original=window.renderFavoriteCompare;
+      const wrapped=function(){
+        const result=original.apply(this,arguments);
+        decorateFavoriteCompare();
+        return result;
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.renderFavoriteCompare=wrapped;
     }
   }
 
