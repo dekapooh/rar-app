@@ -1535,8 +1535,8 @@ body{padding-top:28px}
 
 <section id="mypage" class="screen">
   <div class="section-title">マイページ</div>
-  <div class="plan-card"><span class="plan-badge">BETA ACCESS</span> <b id="currentPlanName">PREMIUM</b>
-  <select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">
+  <div class="plan-card"><span class="plan-badge">PREMIUM PREVIEW</span> <b id="currentPlanName">PREMIUM</b>
+  <select id="betaPlanSelect" class="search-filter" style="display:none;margin-left:8px;max-width:135px" aria-hidden="true">
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
   </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC64</div>
@@ -3176,12 +3176,9 @@ document.querySelectorAll(".kpi[data-myview]").forEach(btn=>btn.addEventListener
  updateMyPage();
 }));
 document.getElementById("investedGeneration").addEventListener("change",updateMyPage);
-document.getElementById("betaPlanSelect").addEventListener("change",e=>{
- state.plan=e.target.value;
- saveState(); applyRankBase(); syncBaseControls(); syncPlanLocks(); syncPriceFilterUI(); renderRanking(); renderSearch(); updateMyPage();
- if(currentHorse)renderPersonalPointUI();
-});
-document.getElementById("betaPlanSelect").value=state.plan;
+const previewPlanSelect=document.getElementById("betaPlanSelect");
+state.plan="premium";
+if(previewPlanSelect) previewPlanSelect.value="premium";
 document.getElementById("resetPersonalPoints").addEventListener("click",()=>{
  const hasWhole=Object.values(state.points||{}).some(v=>Number(v)!==0);
  const hasCategory=Object.values(state.categoryPoints||{}).some(obj=>Object.values(obj||{}).some(v=>Number(v)!==0));
