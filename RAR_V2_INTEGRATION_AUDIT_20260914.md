@@ -124,3 +124,35 @@ For full Official RAR v2 completion:
 6. Execute real PWA/cache smoke.
 7. Final integration-vs-main diff review.
 8. Promote to `main`.
+
+## Builder -> RAR transfer audit update
+
+Transfer contract: `RAR_BUILDER_TO_APP_TRANSFER_20260914`
+
+### Static transfer audit — PASS
+
+Verified after the first actual Builder -> RAR integration write:
+
+- Builder payload: `dekapooh/RAR:builder_app/web/rar-v2-summaries.json`
+- App payload: `dekapooh/rar-app:rar-v2-summaries.json`
+- Git blob SHA on both sides: `897a035c63980ed621abff3ae6307d1bed159ed3`
+- row count: 82
+- unique recruitment numbers 1..82: PASS
+- transfer contract ID rows: 82/82
+- `roi_iv_status=HOLD`: 82/82
+- Official RAR /100 null while IV is HOLD: 82/82
+- Dream Official = (Middle + High Career) / 2: PASS
+- provisional /70 = Potential + Pedigree + Dream: PASS
+- PWA cache key bumped to `rar-rc66-public-beta-v14-rar-v2-builder-sync`
+- `rar-v2-summaries.json` remains in the service-worker app shell
+
+The current integration branch is ahead of public `main`; no transfer in this audit writes to public `main`.
+
+### Still not run
+
+- real browser/device smoke
+- real Service Worker offline/cache runtime smoke
+- full Builder pytest after the transfer-generator addition
+
+Therefore this PASS applies only to the static Builder-to-App transfer contract. It does not change the existing NO-GO for Official RAR /100 public release while the numeric ROI Prize Generator config remains HOLD.
+
