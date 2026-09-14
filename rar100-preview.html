@@ -1456,7 +1456,16 @@ main{padding-top:84px}
 #rar100PreviewBanner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(520px,100%);z-index:9999;background:#7f1d1d;color:#fff;padding:7px 12px;text-align:center;font-size:11px;font-weight:900;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 #rar100PreviewBanner+ #app header{top:28px}
 body{padding-top:28px}
-</style><style>
+</style>
+<style>
+.rank-scenario-controls{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:5px 0 4px}
+.rank-scenario-group{display:grid;grid-template-columns:auto 1fr 1.25fr;gap:3px;align-items:center;border:1px solid #dde6e1;border-radius:9px;padding:4px;background:#f8fbf9}
+.rank-scenario-label{font-size:8.5px;font-weight:900;color:#476056;padding:0 2px}
+.rank-scenario-group button{border:1px solid #ccd8d1;background:#fff;color:#51675d;border-radius:7px;padding:4px 2px;font-size:8px;font-weight:850;line-height:1.15;cursor:pointer}
+.rank-scenario-group button.active{background:#174d37;color:#fff;border-color:#174d37}
+.rank-info-scenarios{font-size:8.5px;color:#63766d;line-height:1.35;margin-top:2px;white-space:normal}
+</style>
+<style>
 .rar-scenario-toggle{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:6px 0 4px}
 .rar-scenario-toggle button{border:1px solid #ccd8d1;background:#fff;color:#51675d;border-radius:8px;padding:5px 3px;font-size:8.5px;font-weight:850;line-height:1.15;cursor:pointer}
 .rar-scenario-toggle button.active{background:#174d37;color:#fff;border-color:#174d37}
@@ -1496,6 +1505,18 @@ body{padding-top:28px}
       <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="pedigree" checked><span>血統</span></span><span class="toggle-max">/20</span></label>
       <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="dream" checked><span>夢</span></span><span class="toggle-max">/20</span></label>
       <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="roi" checked><span>IV</span></span><span class="toggle-max">/30</span></label>
+    </div>
+    <div class="rank-scenario-controls">
+      <div class="rank-scenario-group">
+        <span class="rank-scenario-label">Dream</span>
+        <button id="rankDreamMiddle" type="button" onclick="setDreamScenario('middle')">Middle</button>
+        <button id="rankDreamHigh" type="button" onclick="setDreamScenario('high')">High Career</button>
+      </div>
+      <div class="rank-scenario-group">
+        <span class="rank-scenario-label">IV</span>
+        <button id="rankIvMiddle" type="button" onclick="setIvScenario('middle')">Middle</button>
+        <button id="rankIvHigh" type="button" onclick="setIvScenario('high')">High Career</button>
+      </div>
     </div>
     <div class="summary"><span class="badge">SELECT</span><div id="selectionText" class="selection-inline"></div><div><strong id="maxScore">100</strong><small>点満点</small></div></div>
     <div id="priceFilterBar" class="price-filter-bar">
@@ -1984,16 +2005,32 @@ function ivFromRoiPct(value){
 }
 let dreamScenario="middle";
 let ivScenario="middle";
-function setDreamScenario(value){dreamScenario=value==="high"?"high":"middle";renderScenarioSelectors()}
-function setIvScenario(value){ivScenario=value==="high"?"high":"middle";renderScenarioSelectors()}
+function syncScenarioButtons(){
+ const ids=[
+   ["dreamScenarioMiddle",dreamScenario==="middle"],["dreamScenarioHigh",dreamScenario==="high"],
+   ["ivScenarioMiddle",ivScenario==="middle"],["ivScenarioHigh",ivScenario==="high"],
+   ["rankDreamMiddle",dreamScenario==="middle"],["rankDreamHigh",dreamScenario==="high"],
+   ["rankIvMiddle",ivScenario==="middle"],["rankIvHigh",ivScenario==="high"]
+ ];
+ for(const [id,on] of ids)document.getElementById(id)?.classList.toggle("active",on);
+}
+function setDreamScenario(value){
+ dreamScenario=value==="high"?"high":"middle";
+ if(typeof state==="object" && state){state.dreamScenario=dreamScenario;sessionStorage.setItem("rarBetaState",JSON.stringify(state));}
+ syncScenarioButtons();
+ renderScenarioSelectors();
+ if(typeof renderRanking==="function")renderRanking();
+}
+function setIvScenario(value){
+ ivScenario=value==="high"?"high":"middle";
+ if(typeof state==="object" && state){state.ivScenario=ivScenario;sessionStorage.setItem("rarBetaState",JSON.stringify(state));}
+ syncScenarioButtons();
+ renderScenarioSelectors();
+ if(typeof renderRanking==="function")renderRanking();
+}
 function renderScenarioSelectors(){
+ syncScenarioButtons();
  if(!currentHorse)return;
- const dm=document.getElementById("dreamScenarioMiddle"),dh=document.getElementById("dreamScenarioHigh");
- const im=document.getElementById("ivScenarioMiddle"),ih=document.getElementById("ivScenarioHigh");
- dm?.classList.toggle("active",dreamScenario==="middle");
- dh?.classList.toggle("active",dreamScenario==="high");
- im?.classList.toggle("active",ivScenario==="middle");
- ih?.classList.toggle("active",ivScenario==="high");
  const dreamValue=dreamScenario==="middle"?currentHorse.dreamMiddle:currentHorse.dreamHigh;
  const dreamLabel=dreamScenario==="middle"?"Middle":"High Career";
  const dreamOut=document.getElementById("dDreamScenario");
@@ -2034,6 +2071,8 @@ if(!state.registeredNames || typeof state.registeredNames!=="object") state.regi
 if(!state.priceRange || typeof state.priceRange!=="object") state.priceRange={min:"",max:""};
 if(!state.categoryPoints || typeof state.categoryPoints!=="object") state.categoryPoints={};
 if(!state.smallPoints || typeof state.smallPoints!=="object") state.smallPoints={};
+if(state.dreamScenario==="middle" || state.dreamScenario==="high") dreamScenario=state.dreamScenario; else state.dreamScenario=dreamScenario;
+if(state.ivScenario==="middle" || state.ivScenario==="high") ivScenario=state.ivScenario; else state.ivScenario=ivScenario;
 const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914_R2";
 if(state.scoreArchitecture!==SCORE_ARCHITECTURE){
   state.categoryPoints={};
@@ -2050,7 +2089,7 @@ const PLAN_RULES={
 function planRules(){return PLAN_RULES[state.plan]||PLAN_RULES.free}
 function planName(){return ({free:"FREE",light:"LIGHT",standard:"STANDARD",premium:"PREMIUM"})[state.plan]||"FREE"}
 function officialRankOf(no){
- const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
+ const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false,false);
  const h=official.find(x=>x.no===no);
  return h?h.rank:null;
 }
@@ -2084,7 +2123,7 @@ function canUseHorseManagedFeatures(no){
 function planEligibleHorses(){
  const rules=planRules();
  if(rules.rankLimit>=HORSES.length) return [...HORSES];
- const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
+ const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false,false);
  const allowed=new Set(official.filter(h=>h.rank<=rules.rankLimit).map(h=>h.no));
  return HORSES.filter(h=>allowed.has(h.no));
 }
@@ -2323,12 +2362,21 @@ function rankingPersonalPoint(no,cats){
  // FREE/LIGHT use a single horse-level Personal Point, so it cannot be split by category.
  return effectivePersonalPoint(no);
 }
-function scoreHorse(h,cats,includePersonal=true){
- const official=cats.reduce((a,k)=>a+Number(h[k]||0),0);
+function categoryScoreForRanking(h,key,useScenario=true){
+ if(!useScenario)return Number(h[key]||0);
+ if(key==="dream")return Number(dreamScenario==="high"?h.dreamHigh:h.dreamMiddle);
+ if(key==="roi"){
+   const roiPct=Number(ivScenario==="high"?h.roiHighPct:h.roiMiddlePct);
+   return ivFromRoiPct(roiPct);
+ }
+ return Number(h[key]||0);
+}
+function scoreHorse(h,cats,includePersonal=true,useScenario=true){
+ const official=cats.reduce((a,k)=>a+categoryScoreForRanking(h,k,useScenario),0);
  return official+(includePersonal?rankingPersonalPoint(h.no,cats):0);
 }
-function competitionRanks(arr,cats,includePersonal=true){
-  const scored=arr.map(h=>({...h,selectedScore:scoreHorse(h,cats,includePersonal)}));
+function competitionRanks(arr,cats,includePersonal=true,useScenario=true){
+  const scored=arr.map(h=>({...h,selectedScore:scoreHorse(h,cats,includePersonal,useScenario)}));
   const unique=[...new Set(scored.map(x=>x.selectedScore))].sort((a,b)=>b-a);
   const rankMap=new Map(unique.map(s=>[s,1+scored.filter(x=>x.selectedScore>s).length]));
   return scored.map(x=>({...x,rank:rankMap.get(x.selectedScore)})).sort((a,b)=>a.rank-b.rank||a.no-b.no);
@@ -2337,8 +2385,9 @@ function renderRanking(){
  const cats=selectedCats(); const list=document.getElementById("rankList");
  if(!cats.length){list.innerHTML='<div class="empty">1項目以上選択してください</div>';document.getElementById("maxScore").textContent="0";document.getElementById("selectionText").textContent="";return}
  const max=cats.reduce((a,k)=>a+MAX[k],0); document.getElementById("maxScore").textContent=max;
- const labels={potential:"潜在",pedigree:"血統",dream:"夢",roi:"IV"};
+ const labels={potential:"潜在",pedigree:"血統",dream:`夢(${dreamScenario==="high"?"High":"Middle"})`,roi:`IV(${ivScenario==="high"?"High":"Middle"})`};
  document.getElementById("selectionText").textContent=cats.map(k=>labels[k]).join("＋");
+ syncScenarioButtons();
  const rules=planRules();
  let base=planEligibleHorses();
  if(rules.canOpenFilter && document.getElementById("excludeFull").checked){
@@ -2367,7 +2416,7 @@ function renderRanking(){
    list.innerHTML=`<div class="empty">${msg}</div>`;
    return;
  }
- const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false);
+ const official=competitionRanks(HORSES,["potential","pedigree","dream","roi"],false,false);
  const officialRankMap=new Map(official.map(x=>[x.no,x.rank]));
  const visibleRanked=ranked;
  list.innerHTML=visibleRanked.map((h,i)=>{
@@ -2385,6 +2434,10 @@ function renderRanking(){
    <div class="rank-info-bottom">
      <span class="rank-info-suffix">の25</span>
      <span class="rank-info-price">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</span>
+   </div>
+   <div class="rank-info-scenarios">
+     Dream M ${fmt1(h.dreamMiddle)} / H ${fmt1(h.dreamHigh)}
+     ｜ IV M ${fmt1(ivFromRoiPct(h.roiMiddlePct))} / H ${fmt1(ivFromRoiPct(h.roiHighPct))}
    </div>
  </div>
  <div class="score ${effectivePersonalPoint(h.no)>0?'personal-adjusted':(effectivePersonalPoint(h.no)<0?'personal-negative':'')}">${h.selectedScore.toFixed(1)}<small> / ${max}</small></div>
@@ -3439,7 +3492,7 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
  e.target.value="";
 });
 
-applyRankBase(); syncBaseControls(); syncPlanLocks(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
+applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
