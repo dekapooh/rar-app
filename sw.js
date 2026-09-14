@@ -135,6 +135,23 @@ self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET") return;
   const req=event.request; const url=new URL(req.url);
 
+  // RAR /100 owner preview: render the preview HTML as-is.
+  // Do not apply Public Beta STANDARD transformation or cache it as production index.
+  if(url.pathname.endsWith("/rar100-preview.html")){
+    event.respondWith((async()=>{
+      try{
+        const network=await fetch(req,{cache:"no-store"});
+        if(!network.ok) throw new Error("HTTP "+network.status);
+        return network;
+      }catch(e){
+        return new Response("RAR /100 preview requires network access.",{
+          status:503,headers:{"content-type":"text/plain; charset=utf-8"}
+        });
+      }
+    })());
+    return;
+  }
+
   // v10: /admin.html 自体を管理者画面として直接レンダリング。
   // query parameterや別PWAのstart_urlに依存しない。
   if(url.pathname.endsWith("/admin.html")){
