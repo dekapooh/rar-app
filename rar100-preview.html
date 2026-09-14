@@ -1458,6 +1458,16 @@ main{padding-top:84px}
 body{padding-top:28px}
 </style>
 <style>
+.base-scenario-settings{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.base-scenario-item{border:1px solid #dbe5df;border-radius:10px;padding:7px;background:#f8fbf9}
+.base-scenario-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:10px;color:#40584d}
+.base-scenario-head b{font-size:10.5px}
+.base-scenario-head span{font-size:9px;color:#7b8d84}
+.base-scenario-buttons{display:grid;grid-template-columns:1fr 1.2fr;gap:4px}
+.base-scenario-buttons button{border:1px solid #ccd8d1;background:#fff;color:#51675d;border-radius:8px;padding:6px 3px;font-size:8.5px;font-weight:850;line-height:1.15;cursor:pointer}
+.base-scenario-buttons button.active{background:#174d37;color:#fff;border-color:#174d37}
+</style>
+<style>
 .rank-scenario-controls{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:5px 0 4px}
 .rank-scenario-group{display:grid;grid-template-columns:auto 1fr 1.25fr;gap:3px;align-items:center;border:1px solid #dde6e1;border-radius:9px;padding:4px;background:#f8fbf9}
 .rank-scenario-label{font-size:8.5px;font-weight:900;color:#476056;padding:0 2px}
@@ -1594,12 +1604,28 @@ body{padding-top:28px}
       <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="pedigree"><span>血統</span></span><span class="toggle-max">/20</span></label>
       <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="dream"><span>夢</span></span><span class="toggle-max">/20</span></label>
       <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="roi"><span>IV</span></span><span class="toggle-max">/30</span></label>
-      <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="favoritesOnly"><span>お気に</span></span><span class="toggle-max"></span></label>
-      <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="excludeFull"><span>募集中</span></span><span class="toggle-max"></span></label>
-      <div class="toggle" style="visibility:hidden" aria-hidden="true"></div>
-      <div class="toggle" style="visibility:hidden" aria-hidden="true"></div>
     </div>
-    <div class="note">※1項目以上選択してください。設定はこの端末に保存されます。</div>
+    <div class="base-scenario-settings">
+      <div class="base-scenario-item">
+        <div class="base-scenario-head"><b>Dream 標準値</b><span>/20</span></div>
+        <div class="base-scenario-buttons">
+          <button id="baseDreamMiddle" type="button" onclick="setBaseDreamScenario('middle')">Middle</button>
+          <button id="baseDreamHigh" type="button" onclick="setBaseDreamScenario('high')">High Career</button>
+        </div>
+      </div>
+      <div class="base-scenario-item">
+        <div class="base-scenario-head"><b>IV 標準値</b><span>/30</span></div>
+        <div class="base-scenario-buttons">
+          <button id="baseIvMiddle" type="button" onclick="setBaseIvScenario('middle')">Middle</button>
+          <button id="baseIvHigh" type="button" onclick="setBaseIvScenario('high')">High Career</button>
+        </div>
+      </div>
+    </div>
+    <div class="controls base-filter-row" style="grid-template-columns:repeat(2,1fr);margin-top:6px">
+      <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="favoritesOnly"><span>お気に入り</span></span><span class="toggle-max"></span></label>
+      <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="excludeFull"><span>募集中のみ</span></span><span class="toggle-max"></span></label>
+    </div>
+    <div class="note">※Dream / IVのMiddle・High Careerもここで選んだ値があなたの標準設定になります。</div>
   </div>
   <div class="card" id="accountReadyCard">
     <div class="data-manage-head">
@@ -2014,19 +2040,39 @@ function syncScenarioButtons(){
  ];
  for(const [id,on] of ids)document.getElementById(id)?.classList.toggle("active",on);
 }
+function syncBaseScenarioButtons(){
+ if(!state || !state.rankBaseScenario)return;
+ const ids=[
+   ["baseDreamMiddle",state.rankBaseScenario.dream==="middle"],["baseDreamHigh",state.rankBaseScenario.dream==="high"],
+   ["baseIvMiddle",state.rankBaseScenario.iv==="middle"],["baseIvHigh",state.rankBaseScenario.iv==="high"]
+ ];
+ for(const [id,on] of ids)document.getElementById(id)?.classList.toggle("active",on);
+}
 function setDreamScenario(value){
  dreamScenario=value==="high"?"high":"middle";
- if(typeof state==="object" && state){state.dreamScenario=dreamScenario;sessionStorage.setItem("rarBetaState",JSON.stringify(state));}
  syncScenarioButtons();
  renderScenarioSelectors();
  if(typeof renderRanking==="function")renderRanking();
 }
 function setIvScenario(value){
  ivScenario=value==="high"?"high":"middle";
- if(typeof state==="object" && state){state.ivScenario=ivScenario;sessionStorage.setItem("rarBetaState",JSON.stringify(state));}
  syncScenarioButtons();
  renderScenarioSelectors();
  if(typeof renderRanking==="function")renderRanking();
+}
+function setBaseDreamScenario(value){
+ if(!state.rankBaseScenario)state.rankBaseScenario={dream:"middle",iv:"middle"};
+ state.rankBaseScenario.dream=value==="high"?"high":"middle";
+ dreamScenario=state.rankBaseScenario.dream;
+ saveState();
+ syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
+}
+function setBaseIvScenario(value){
+ if(!state.rankBaseScenario)state.rankBaseScenario={dream:"middle",iv:"middle"};
+ state.rankBaseScenario.iv=value==="high"?"high":"middle";
+ ivScenario=state.rankBaseScenario.iv;
+ saveState();
+ syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
 }
 function renderScenarioSelectors(){
  syncScenarioButtons();
@@ -2071,8 +2117,18 @@ if(!state.registeredNames || typeof state.registeredNames!=="object") state.regi
 if(!state.priceRange || typeof state.priceRange!=="object") state.priceRange={min:"",max:""};
 if(!state.categoryPoints || typeof state.categoryPoints!=="object") state.categoryPoints={};
 if(!state.smallPoints || typeof state.smallPoints!=="object") state.smallPoints={};
-if(state.dreamScenario==="middle" || state.dreamScenario==="high") dreamScenario=state.dreamScenario; else state.dreamScenario=dreamScenario;
-if(state.ivScenario==="middle" || state.ivScenario==="high") ivScenario=state.ivScenario; else state.ivScenario=ivScenario;
+if(!state.rankBaseScenario || typeof state.rankBaseScenario!=="object"){
+ state.rankBaseScenario={
+   dream:(state.dreamScenario==="middle"||state.dreamScenario==="high")?state.dreamScenario:"middle",
+   iv:(state.ivScenario==="middle"||state.ivScenario==="high")?state.ivScenario:"middle"
+ };
+}
+if(state.rankBaseScenario.dream!=="middle" && state.rankBaseScenario.dream!=="high")state.rankBaseScenario.dream="middle";
+if(state.rankBaseScenario.iv!=="middle" && state.rankBaseScenario.iv!=="high")state.rankBaseScenario.iv="middle";
+dreamScenario=state.rankBaseScenario.dream;
+ivScenario=state.rankBaseScenario.iv;
+delete state.dreamScenario;
+delete state.ivScenario;
 const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914_R2";
 if(state.scoreArchitecture!==SCORE_ARCHITECTURE){
   state.categoryPoints={};
@@ -2286,7 +2342,11 @@ function applyRankBase(){
  document.querySelectorAll(".cat").forEach(x=>{x.checked=rules.canCategoryToggle ? !!state.rankBase[x.value] : true});
  document.getElementById("favoritesOnly").checked=rules.canFavoriteFilter && !!state.filterBase.favoritesOnly;
  document.getElementById("excludeFull").checked=rules.canOpenFilter && !!state.filterBase.excludeFull;
+ dreamScenario=state.rankBaseScenario?.dream==="high"?"high":"middle";
+ ivScenario=state.rankBaseScenario?.iv==="high"?"high":"middle";
  syncCategoryStyles();
+ syncScenarioButtons();
+ syncBaseScenarioButtons();
  syncPlanLocks();
 }
 function syncBaseControls(){
@@ -2298,6 +2358,7 @@ function syncBaseControls(){
    x.checked=!!state.filterBase[x.value];
    x.closest(".base-filter-toggle").classList.toggle("selected",x.checked);
  });
+ syncBaseScenarioButtons();
 }
 function syncPlanLocks(){
  const rules=planRules();
@@ -3492,7 +3553,7 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
  e.target.value="";
 });
 
-applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
+applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syncBaseScenarioButtons(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
