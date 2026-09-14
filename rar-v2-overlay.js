@@ -1,6 +1,7 @@
 (function(){
   "use strict";
 
+  const SUMMARY_URL="./rar-v2-summaries.json";
   const POTENTIAL_URL="./silk_2026_potential_beta49_recovered_v1.json";
   const PEDIGREE_URL="./silk_2026_pedigree_v1.json";
   const FACTS_URL="./silk_2026_facts_v1.json";
@@ -155,13 +156,42 @@
     return response.json();
   }
 
+  function validateSummaryRows(rows){
+    if(!Array.isArray(rows) || rows.length!==82) return false;
+    const nos=rows.map(row=>Number(row.no));
+    if(new Set(nos).size!==82) return false;
+    for(let no=1;no<=82;no++) if(!nos.includes(no)) return false;
+    return rows.every(row=>
+      isFiniteNumber(row.potential_official)
+      && Number(row.potential_official)>=0
+      && Number(row.potential_official)<=30
+      && isFiniteNumber(row.pedigree_official)
+      && Number(row.pedigree_official)>=0
+      && Number(row.pedigree_official)<=20
+      && isFiniteNumber(row.dream_middle)
+      && isFiniteNumber(row.dream_high_career)
+      && isFiniteNumber(row.dream_official)
+      && Math.abs(Number(row.dream_official)-((Number(row.dream_middle)+Number(row.dream_high_career))/2))<1e-9
+    );
+  }
+
   async function loadRows(){
+    try{
+      const rows=await fetchJson(SUMMARY_URL);
+      if(validateSummaryRows(rows)) return {rows,source:"rar-v2-summaries.json"};
+      console.warn("RAR v2 static summary failed contract validation; using deterministic fallback");
+    }catch(err){
+      console.info("RAR v2 static summary unavailable; using deterministic fallback",err);
+    }
+
     const [potentialDoc,pedigreeDoc,factsDoc]=await Promise.all([
       fetchJson(POTENTIAL_URL),
       fetchJson(PEDIGREE_URL),
       fetchJson(FACTS_URL)
     ]);
-    return buildDreamRows(potentialDoc,pedigreeDoc,factsDoc);
+    const rows=buildDreamRows(potentialDoc,pedigreeDoc,factsDoc);
+    if(!validateSummaryRows(rows)) throw new Error("RAR v2 deterministic fallback failed validation");
+    return {rows,source:"runtime_fallback"};
   }
 
   function setMetricTitle(id,title){
@@ -397,6 +427,146 @@
     });
   }
 
+  function currentHorseForNo(no){
+    if(typeof HORSES==="undefined" || !Array.isArray(HORSES)) return null;
+    return HORSES.find(h=>Number(h.no)===Number(no))||null;
+  }
+
+  function enforceIvHoldControls(){
+    const hold=typeof HORSES!=="undefined" && Array.isArray(HORSES) && HORSES.some(h=>h.ivHold);
+    if(!hold) return;
+    document.querySelectorAll('.cat[value="roi"],.base-cat[value="roi"]').forEach(input=>{
+      input.checked=false;
+      input.disabled=true;
+      input.closest(".toggle,.base-toggle")?.classList.add("rar-v2-iv-hold");
+    });
+  }
+
+  function decoratePremiumSmallOfficial(){
+    const h=typeof currentHorse!=="undefined"?currentHorse:null;
+    const list=document.getElementById("premiumSmallList");
+    if(!h || !list) return;
+
+    const titles=[...list.querySelectorAll(".small-group-title")];
+    const roiTitle=titles.find(el=>el.textContent.trim()==="ROI" || el.textContent.trim()==="IV");
+    if(roiTitle){
+      let node=roiTitle;
+      while(node){
+        const next=node.nextSibling;
+        node.remove();
+        node=next;
+      }
+    }
+
+    const title=document.createElement("div");
+    title.className="small-group-title";
+    title.textContent="IV";
+    list.appendChild(title);
+
+    const note=document.createElement("div");
+    note.className="note";
+    if(h.ivHold){
+      note.textContent="IV /30：数値Config HOLD中。旧ROI Personal Pointは保存したまま、ランキング・Personal合計・操作から除外しています。";
+      note.classList.add("rar-v2-hold-value");
+    }else{
+      note.textContent="IVは採点小項目を持たないため、大項目単位でPersonal調整。";
+    }
+    list.appendChild(note);
+  }
+
+  function decoratePersonalUi(){
+    const h=typeof currentHorse!=="undefined"?currentHorse:null;
+    if(!h) return;
+
+    const dreamAfter=document.getElementById("dDreamAfter");
+    if(dreamAfter && dreamAfter.textContent) dreamAfter.textContent=dreamAfter.textContent.replace(/\/25$/,"/20");
+
+    if(h.ivHold){
+      const roiSlot=document.getElementById("dRoiRankSlot");
+      if(roiSlot) roiSlot.innerHTML="";
+      const roiAfter=document.getElementById("dRoiAfter");
+      if(roiAfter){roiAfter.style.display="none";roiAfter.textContent="";}
+      const roiAdj=document.getElementById("dRoiAdj");
+      if(roiAdj) roiAdj.textContent="";
+      const roiTools=document.getElementById("stdRoiTools");
+      if(roiTools) roiTools.style.display="none";
+    }
+    decoratePremiumSmallOfficial();
+  }
+
+  function wrapPersonalFunctions(){
+    if(typeof window.effectivePersonalPoint==="function" && !window.effectivePersonalPoint.__rarV2Wrapped){
+      const original=window.effectivePersonalPoint;
+      const wrapped=function(no){
+        let value=Number(original.apply(this,arguments)||0);
+        const h=currentHorseForNo(no);
+        if(h?.ivHold && (state?.plan==="standard" || state?.plan==="premium")){
+          value-=Number((state?.categoryPoints?.[no]||{}).roi||0);
+        }
+        return value;
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.effectivePersonalPoint=wrapped;
+    }
+
+    if(typeof window.categoryPersonalPoint==="function" && !window.categoryPersonalPoint.__rarV2Wrapped){
+      const original=window.categoryPersonalPoint;
+      const wrapped=function(no,key){
+        const h=currentHorseForNo(no);
+        if(key==="roi" && h?.ivHold) return 0;
+        return original.apply(this,arguments);
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.categoryPersonalPoint=wrapped;
+    }
+
+    if(typeof window.adjustCategoryPoint==="function" && !window.adjustCategoryPoint.__rarV2Wrapped){
+      const original=window.adjustCategoryPoint;
+      const wrapped=function(key){
+        const h=typeof currentHorse!=="undefined"?currentHorse:null;
+        if(key==="roi" && h?.ivHold) return;
+        return original.apply(this,arguments);
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.adjustCategoryPoint=wrapped;
+    }
+
+    if(typeof window.renderPremiumSmallOfficial==="function" && !window.renderPremiumSmallOfficial.__rarV2Wrapped){
+      const original=window.renderPremiumSmallOfficial;
+      const wrapped=function(){
+        const result=original.apply(this,arguments);
+        decoratePremiumSmallOfficial();
+        return result;
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.renderPremiumSmallOfficial=wrapped;
+    }
+
+    if(typeof window.renderPersonalPointUI==="function" && !window.renderPersonalPointUI.__rarV2Wrapped){
+      const original=window.renderPersonalPointUI;
+      const wrapped=function(){
+        const result=original.apply(this,arguments);
+        decoratePersonalUi();
+        return result;
+      };
+      wrapped.__rarV2Wrapped=true;
+      window.renderPersonalPointUI=wrapped;
+    }
+
+    for(const fnName of ["syncPlanLocks","applyRankBase"]){
+      const fn=window[fnName];
+      if(typeof fn==="function" && !fn.__rarV2Wrapped){
+        const wrapped=function(){
+          const result=fn.apply(this,arguments);
+          enforceIvHoldControls();
+          return result;
+        };
+        wrapped.__rarV2Wrapped=true;
+        window[fnName]=wrapped;
+      }
+    }
+  }
+
   function wrapRenderers(){
     if(typeof window.renderRanking==="function" && !window.renderRanking.__rarV2Wrapped){
       const original=window.renderRanking;
@@ -423,8 +593,11 @@
 
   async function applyRarV2(){
     let rows;
+    let source;
     try{
-      rows=await loadRows();
+      const loaded=await loadRows();
+      rows=loaded.rows;
+      source=loaded.source;
     }catch(err){
       console.error("RAR v2 runtime source load failed",err);
       window.RAR_V2_OVERLAY={active:false,error:String(err)};
@@ -453,7 +626,9 @@
     const ivHold=HORSES.some(h=>h.ivHold);
     updateCategoryLabels(ivHold);
     ensureStatusBanner(ivHold);
+    wrapPersonalFunctions();
     wrapRenderers();
+    enforceIvHoldControls();
 
     window.RAR_V2_SUMMARIES=rows;
     window.RAR_V2_OVERLAY={
@@ -466,13 +641,17 @@
       dreamSpecId:DREAM_SPEC_ID,
       scoreSpecId:RAR_SCORE_SPEC_ID,
       roiHoldSpecId:ivHold?ROI_HOLD_SPEC_ID:null,
-      roiScenarios:["MIDDLE","HIGH_CAREER"]
+      roiScenarios:["MIDDLE","HIGH_CAREER"],
+      source
     };
 
     if(typeof window.renderRanking==="function") window.renderRanking();
     if(typeof window.renderSearch==="function") window.renderSearch();
     if(typeof window.updateMyPage==="function") window.updateMyPage();
-    if(typeof currentHorse!=="undefined" && currentHorse) decorateDetail(currentHorse);
+    if(typeof currentHorse!=="undefined" && currentHorse){
+      if(typeof window.renderPersonalPointUI==="function") window.renderPersonalPointUI();
+      decorateDetail(currentHorse);
+    }
   }
 
   window.applyRarV2=applyRarV2;
