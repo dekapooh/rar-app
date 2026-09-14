@@ -3,10 +3,12 @@ name: RAR100 branch audit
 on:
   push:
     branches:
+      - main
       - rar100-integration-20260915
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
+      - "rar100-preview.html"
       - "sw.js"
       - "rar-v2-summaries.json"
   workflow_dispatch:
@@ -24,11 +26,21 @@ jobs:
         run: |
           python - <<'PY'
           import json,re,pathlib,math
-          s=pathlib.Path("index.html").read_text(encoding="utf-8")
+          candidates=[pathlib.Path("rar100-preview.html"),pathlib.Path("index.html")]
+          target=next((p for p in candidates if p.exists() and "RAR100_30_20_20_30_20260914_R2" in p.read_text(encoding="utf-8")),None)
+          assert target, "RAR100 target not found"
+          s=target.read_text(encoding="utf-8")
           m=re.search(r"const HORSES=(\[.*?\]);\n",s,re.S)
           assert m, "HORSES not found"
           horses=json.loads(m.group(1))
           assert len(horses)==82
+          anchors=[(0,0),(10,1),(20,2),(30,3),(40,4),(50,5),(60,6),(70,7),(80,8),(90,9),(100,10),(120,11),(140,12),(160,13),(180,14),(200,15),(250,16),(300,17),(350,18),(400,19),(450,20),(500,21),(600,22),(700,23),(800,24),(900,25),(1000,26),(1500,27),(2000,28),(2500,29),(3000,30)]
+          def iv(x):
+              if x<=0:return 0
+              if x>=3000:return 30
+              for (x0,y0),(x1,y1) in zip(anchors,anchors[1:]):
+                  if x<=x1:return y0+(x-x0)*(y1-y0)/(x1-x0)
+              return 30
           for h in horses:
               assert h["rarStatus"]=="FROZEN_FINAL"
               total=h["potential"]+h["pedigree"]+h["dream"]+h["ivOfficial"]
@@ -36,22 +48,30 @@ jobs:
               assert abs((h["dreamMiddle"]+h["dreamHigh"])/2-h["dream"])<1e-8, h["no"]
               roi=h["prizeOfficialYen"]/(h["price"]*10000)*100
               assert abs(roi-h["roiOfficialPct"])<1e-6, h["no"]
-          assert 'dream:25,roi:25' not in s
+              assert abs(iv(h["roiOfficialPct"])-h["ivOfficial"])<1e-8, h["no"]
+          assert 'dreamScenarioMiddle' in s and 'dreamScenarioHigh' in s
+          assert 'ivScenarioMiddle' in s and 'ivScenarioHigh' in s
+          assert 'function renderScenarioSelectors()' in s
+          assert 'const fmt1=v=>Number(v).toFixed(1);' in s
           assert 'currentHorse.dream+"/25"' not in s
           assert 'currentHorse.roi+"/25"' not in s
-          assert 'RAR100_30_20_20_30_20260914_R2' in s
-          print("RAR100 static audit PASS: 82/82")
+          print(f"RAR100 preview audit PASS: {target} 82/82")
           PY
       - name: JavaScript syntax audit
         run: |
           python - <<'PY'
           import re,pathlib
-          s=pathlib.Path("index.html").read_text(encoding="utf-8")
-          blocks=re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>",s,re.S|re.I)
-          assert blocks
-          for i,b in enumerate(blocks):
-              pathlib.Path(f"/tmp/rar-script-{i}.js").write_text(b,encoding="utf-8")
-          print(f"extracted {len(blocks)} script blocks")
+          paths=[pathlib.Path("index.html")]
+          if pathlib.Path("rar100-preview.html").exists(): paths.append(pathlib.Path("rar100-preview.html"))
+          count=0
+          for p in paths:
+              s=p.read_text(encoding="utf-8")
+              blocks=re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>",s,re.S|re.I)
+              assert blocks
+              for i,b in enumerate(blocks):
+                  pathlib.Path(f"/tmp/rar-script-{count}.js").write_text(b,encoding="utf-8")
+                  count+=1
+          print(f"extracted {count} script blocks")
           PY
           for f in /tmp/rar-script-*.js; do node --check "$f"; done
       - name: Service worker syntax audit
