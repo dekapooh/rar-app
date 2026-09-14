@@ -1980,7 +1980,7 @@ if(!state.registeredNames || typeof state.registeredNames!=="object") state.regi
 if(!state.priceRange || typeof state.priceRange!=="object") state.priceRange={min:"",max:""};
 if(!state.categoryPoints || typeof state.categoryPoints!=="object") state.categoryPoints={};
 if(!state.smallPoints || typeof state.smallPoints!=="object") state.smallPoints={};
-const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914";
+const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914_R2";
 if(state.scoreArchitecture!==SCORE_ARCHITECTURE){
   state.categoryPoints={};
   state.smallPoints={};
@@ -2262,7 +2262,7 @@ function rankingPersonalPoint(no,cats){
  }
  if(state.plan==="premium"){
    return cats.reduce((a,k)=>{
-     if(k==="roi") return a+categoryPoint(no,"roi");
+     if(k==="dream" || k==="roi") return a+categoryPoint(no,k);
      return a+(SMALL_META[k]||[]).reduce((s,[smallKey])=>s+smallPoint(no,smallKey),0);
    },0);
  }
@@ -2546,8 +2546,8 @@ function usedPoints(){
  if(state.plan==="standard") return Object.values(state.categoryPoints).flatMap(o=>Object.values(o||{})).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
  if(state.plan==="premium"){
    const smallUsed=Object.values(state.smallPoints).flatMap(o=>Object.values(o||{})).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
-   const roiUsed=Object.values(state.categoryPoints).reduce((a,o)=>a+Math.abs(Number((o||{}).roi)||0),0);
-   return smallUsed+roiUsed;
+   const directUsed=Object.values(state.categoryPoints).reduce((a,o)=>a+Math.abs(Number((o||{}).dream)||0)+Math.abs(Number((o||{}).roi)||0),0);
+   return smallUsed+directUsed;
  }
  return Object.values(state.points).reduce((a,v)=>a+Math.abs(Number(v)||0),0);
 }
@@ -2560,8 +2560,7 @@ function pointLimitLabel(){return Number.isFinite(pointLimit())?pointLimit()+"pt
 const CATEGORY_LABELS={potential:"潜在",pedigree:"血統",dream:"夢",roi:"IV"};
 const SMALL_META={
  potential:[["scale_frame","Scale / Frame",6],["rear","Rear",10],["trunk","Trunk",8],["front","Front",6]],
- pedigree:[["mother","母実績",3],["sibling","兄姉/近親",3],["sibling_winup","勝上率",4],["nicks","ニックス",10]],
- dream:[["dream_middle","Middle",20],["dream_high","High Career",20]]
+ pedigree:[["mother","母実績",3],["sibling","兄姉/近親",3],["sibling_winup","勝上率",4],["nicks","ニックス",10]]
 };
 
 function competitionRankForValues(items,valueGetter,targetNo){
@@ -2628,14 +2627,14 @@ function effectivePersonalPoint(no){
  if(state.plan==="standard") return Object.values(state.categoryPoints[no]||{}).reduce((a,v)=>a+Number(v||0),0);
  if(state.plan==="premium"){
    const smallTotal=Object.values(state.smallPoints[no]||{}).reduce((a,v)=>a+Number(v||0),0);
-   return smallTotal+categoryPoint(no,"roi");
+   return smallTotal+categoryPoint(no,"dream")+categoryPoint(no,"roi");
  }
  return Number(state.points[no]||0);
 }
 function categoryPersonalPoint(no,key){
  if(state.plan==="standard") return categoryPoint(no,key);
  if(state.plan==="premium"){
-   if(key==="roi") return categoryPoint(no,"roi");
+   if(key==="dream" || key==="roi") return categoryPoint(no,key);
    return (SMALL_META[key]||[]).reduce((a,[smallKey])=>a+smallPoint(no,smallKey),0);
  }
  return 0;
@@ -2652,7 +2651,7 @@ function canApplyPersonalBudget(oldValue,newValue){
 }
 function adjustCategoryPoint(key,delta){
  if(!currentHorse)return;
- const allowed=state.plan==="standard" || (state.plan==="premium" && key==="roi");
+ const allowed=state.plan==="standard" || (state.plan==="premium" && (key==="dream" || key==="roi"));
  if(!allowed)return;
  const no=currentHorse.no, obj=state.categoryPoints[no]||(state.categoryPoints[no]={});
  const old=Number(obj[key]||0);
@@ -2697,7 +2696,7 @@ function renderPremiumSmallOfficial(){
  }
  wrap.style.display="block";
  let html="";
- for(const catKey of ["potential","pedigree","dream"]){
+ for(const catKey of ["potential","pedigree"]){
    html+=`<div class="small-group-title">${CATEGORY_LABELS[catKey]}</div>`;
    html+=SMALL_META[catKey].map(([key,label,max])=>{
      const base=currentHorse.small[key];
@@ -2713,6 +2712,19 @@ function renderPremiumSmallOfficial(){
      </div>`;
    }).join("");
  }
+ const dreamBase=Number(currentHorse.dream);
+ const dreamAdj=categoryPoint(currentHorse.no,"dream");
+ const dreamClass=dreamAdj>0?"positive":(dreamAdj<0?"negative":"");
+ const dreamStrong=isCategoryTopScore(currentHorse.no,"dream");
+ html+=`<div class="small-group-title">夢</div>
+   <div class="small-row">
+     <span class="small-rank-slot">${dreamStrong?strongPointMarkHTML(true):""}</span>
+     <div class="small-content"><b>Dream Official</b><div class="base">Official ${dreamBase}/20｜Middle ${Number(currentHorse.dreamMiddle).toFixed(2).replace(/0+$/,"").replace(/\.$/,"")}｜High ${Number(currentHorse.dreamHigh).toFixed(2).replace(/0+$/,"").replace(/\.$/,"")}</div></div>
+     <button onclick="adjustCategoryPoint('dream',-1)">−</button>
+     <b class="small-after ${dreamClass}">${(dreamBase+dreamAdj).toFixed(1)}</b>
+     <button onclick="adjustCategoryPoint('dream',1)">＋</button>
+   </div>
+   <div class="note">Dream OfficialはMiddleとHigh Careerの平均値のため、大項目単位で −2〜＋2。</div>`;
  const roiBase=Number(currentHorse.roi);
  const roiAdj=categoryPoint(currentHorse.no,"roi");
  const roiClass=roiAdj>0?"positive":(roiAdj<0?"negative":"");
@@ -2720,12 +2732,12 @@ function renderPremiumSmallOfficial(){
  html+=`<div class="small-group-title">IV</div>
    <div class="small-row">
      <span class="small-rank-slot">${roiStrong?strongPointMarkHTML(true):""}</span>
-     <div class="small-content"><b>IV</b><div class="base">Official ${roiBase}/30</div></div>
+     <div class="small-content"><b>IV</b><div class="base">Official ${roiBase}/30｜ROI ${Number(currentHorse.roiOfficialPct).toFixed(2).replace(/0+$/,"").replace(/\.$/,"")}%</div></div>
      <button onclick="adjustCategoryPoint('roi',-1)">−</button>
      <b class="small-after ${roiClass}">${(roiBase+roiAdj).toFixed(1)}</b>
      <button onclick="adjustCategoryPoint('roi',1)">＋</button>
    </div>
-   <div class="note">IVは採点小項目を持たないため、大項目単位で −2〜＋2。</div>`;
+   <div class="note">IVはROIから算出するため、大項目単位で −2〜＋2。</div>`;
  list.innerHTML=html;
 }
 function renderPersonalPointUI(){
