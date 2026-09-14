@@ -1,0 +1,6 @@
+{
+  "contract": "RAR_SCORE_ARCHITECTURE_FROZEN_20260914",
+  "note": "Integration placeholder. Replace with an array of per-horse Engine payloads plus recruitment no before enabling overlay.",
+  "required_join_key": "no",
+  "rows": []
+}
