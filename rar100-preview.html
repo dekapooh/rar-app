@@ -1528,6 +1528,7 @@ body{padding-top:28px}
         <button id="rankIvHigh" type="button" onclick="setIvScenario('high')">High Career</button>
       </div>
     </div>
+    <div class="note" style="font-size:9px;margin:2px 2px 4px">Middle＋High Careerを両方選択するとOfficialで集計します。</div>
     <div class="summary"><span class="badge">SELECT</span><div id="selectionText" class="selection-inline"></div><div><strong id="maxScore">100</strong><small>点満点</small></div></div>
     <div id="priceFilterBar" class="price-filter-bar">
   <span class="price-filter-label">一口価格</span>
@@ -1625,7 +1626,7 @@ body{padding-top:28px}
       <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="favoritesOnly"><span>お気に入り</span></span><span class="toggle-max"></span></label>
       <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="excludeFull"><span>募集中のみ</span></span><span class="toggle-max"></span></label>
     </div>
-    <div class="note">※Dream / IVのMiddle・High Careerもここで選んだ値があなたの標準設定になります。</div>
+    <div class="note">※Middleのみ＝Middle、High Careerのみ＝High Career、両方選択＝Official。ここで選んだ状態があなたの標準設定になります。</div>
   </div>
   <div class="card" id="accountReadyCard">
     <div class="data-manage-head">
@@ -2029,47 +2030,67 @@ function ivFromRoiPct(value){
  }
  return 30;
 }
-let dreamScenario="middle";
-let ivScenario="middle";
+let dreamScenario="official";
+let ivScenario="official";
+function scenarioButtonOn(mode,side){return mode==="official" || mode===side}
+function nextScenarioMode(current,clicked){
+ if(current==="official")return clicked==="middle"?"high":"middle";
+ if(current===clicked)return current;
+ return "official";
+}
+function normalizeScenarioMode(value){return value==="middle"||value==="high"||value==="official"?value:"official"}
+function scenarioLabel(value){return value==="official"?"Official":(value==="high"?"High Career":"Middle")}
 function syncScenarioButtons(){
  const ids=[
-   ["dreamScenarioMiddle",dreamScenario==="middle"],["dreamScenarioHigh",dreamScenario==="high"],
-   ["ivScenarioMiddle",ivScenario==="middle"],["ivScenarioHigh",ivScenario==="high"],
-   ["rankDreamMiddle",dreamScenario==="middle"],["rankDreamHigh",dreamScenario==="high"],
-   ["rankIvMiddle",ivScenario==="middle"],["rankIvHigh",ivScenario==="high"]
+   ["dreamScenarioMiddle",scenarioButtonOn(dreamScenario,"middle")],["dreamScenarioHigh",scenarioButtonOn(dreamScenario,"high")],
+   ["ivScenarioMiddle",scenarioButtonOn(ivScenario,"middle")],["ivScenarioHigh",scenarioButtonOn(ivScenario,"high")],
+   ["rankDreamMiddle",scenarioButtonOn(dreamScenario,"middle")],["rankDreamHigh",scenarioButtonOn(dreamScenario,"high")],
+   ["rankIvMiddle",scenarioButtonOn(ivScenario,"middle")],["rankIvHigh",scenarioButtonOn(ivScenario,"high")]
  ];
- for(const [id,on] of ids)document.getElementById(id)?.classList.toggle("active",on);
+ for(const [id,on] of ids){
+   const el=document.getElementById(id);
+   el?.classList.toggle("active",on);
+   el?.setAttribute("aria-pressed",on?"true":"false");
+ }
 }
 function syncBaseScenarioButtons(){
  if(!state || !state.rankBaseScenario)return;
+ const d=normalizeScenarioMode(state.rankBaseScenario.dream);
+ const i=normalizeScenarioMode(state.rankBaseScenario.iv);
  const ids=[
-   ["baseDreamMiddle",state.rankBaseScenario.dream==="middle"],["baseDreamHigh",state.rankBaseScenario.dream==="high"],
-   ["baseIvMiddle",state.rankBaseScenario.iv==="middle"],["baseIvHigh",state.rankBaseScenario.iv==="high"]
+   ["baseDreamMiddle",scenarioButtonOn(d,"middle")],["baseDreamHigh",scenarioButtonOn(d,"high")],
+   ["baseIvMiddle",scenarioButtonOn(i,"middle")],["baseIvHigh",scenarioButtonOn(i,"high")]
  ];
- for(const [id,on] of ids)document.getElementById(id)?.classList.toggle("active",on);
+ for(const [id,on] of ids){
+   const el=document.getElementById(id);
+   el?.classList.toggle("active",on);
+   el?.setAttribute("aria-pressed",on?"true":"false");
+ }
 }
 function setDreamScenario(value){
- dreamScenario=value==="high"?"high":"middle";
+ dreamScenario=nextScenarioMode(dreamScenario,value==="high"?"high":"middle");
  syncScenarioButtons();
  renderScenarioSelectors();
  if(typeof renderRanking==="function")renderRanking();
 }
 function setIvScenario(value){
- ivScenario=value==="high"?"high":"middle";
+ ivScenario=nextScenarioMode(ivScenario,value==="high"?"high":"middle");
  syncScenarioButtons();
  renderScenarioSelectors();
  if(typeof renderRanking==="function")renderRanking();
 }
 function setBaseDreamScenario(value){
- if(!state.rankBaseScenario)state.rankBaseScenario={dream:"middle",iv:"middle"};
- state.rankBaseScenario.dream=value==="high"?"high":"middle";
+ if(!state.rankBaseScenario)state.rankBaseScenario={dream:"official",iv:"official"};
+ const clicked=value==="high"?"high":"middle";
+ state.rankBaseScenario.dream=nextScenarioMode(normalizeScenarioMode(state.rankBaseScenario.dream),clicked);
  dreamScenario=state.rankBaseScenario.dream;
  saveState();
  syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
 }
 function setBaseIvScenario(value){
- if(!state.rankBaseScenario)state.rankBaseScenario={dream:"middle",iv:"middle"};
- state.rankBaseScenario.iv=value==="high"?"high":"middle";
+ if(!state.rankBaseScenario)state.rankBaseScenario={dream:"official",iv:"official"};
+ const clicked=value==="high"?"high":"middle";
+ state.rankBaseScenario.iv=nextScenarioMode(normalizeScenarioMode(state.rankBaseScenario.iv),clicked);
  ivScenario=state.rankBaseScenario.iv;
  saveState();
  syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
@@ -2077,15 +2098,19 @@ function setBaseIvScenario(value){
 function renderScenarioSelectors(){
  syncScenarioButtons();
  if(!currentHorse)return;
- const dreamValue=dreamScenario==="middle"?currentHorse.dreamMiddle:currentHorse.dreamHigh;
- const dreamLabel=dreamScenario==="middle"?"Middle":"High Career";
+ const dreamValue=dreamScenario==="official"?currentHorse.dream:(dreamScenario==="high"?currentHorse.dreamHigh:currentHorse.dreamMiddle);
  const dreamOut=document.getElementById("dDreamScenario");
- if(dreamOut)dreamOut.textContent=`${dreamLabel} ${fmt1(dreamValue)}/20`;
- const roiValue=ivScenario==="middle"?currentHorse.roiMiddlePct:currentHorse.roiHighPct;
- const ivValue=ivFromRoiPct(roiValue);
- const ivLabel=ivScenario==="middle"?"Middle":"High Career";
+ if(dreamOut)dreamOut.textContent=`${scenarioLabel(dreamScenario)} ${fmt1(dreamValue)}/20`;
+ let roiValue,ivValue;
+ if(ivScenario==="official"){
+   roiValue=currentHorse.roiOfficialPct;
+   ivValue=currentHorse.ivOfficial;
+ }else{
+   roiValue=ivScenario==="high"?currentHorse.roiHighPct:currentHorse.roiMiddlePct;
+   ivValue=ivFromRoiPct(roiValue);
+ }
  const ivOut=document.getElementById("dIvScenario");
- if(ivOut)ivOut.textContent=`${ivLabel} ${fmt1(ivValue)}/30｜ROI ${fmt1(roiValue)}%`;
+ if(ivOut)ivOut.textContent=`${scenarioLabel(ivScenario)} ${fmt1(ivValue)}/30｜ROI ${fmt1(roiValue)}%`;
 }
 const MAX={potential:30,pedigree:20,dream:20,roi:30};
 let currentHorse=null, previousScreen="mypage";
@@ -2119,12 +2144,12 @@ if(!state.categoryPoints || typeof state.categoryPoints!=="object") state.catego
 if(!state.smallPoints || typeof state.smallPoints!=="object") state.smallPoints={};
 if(!state.rankBaseScenario || typeof state.rankBaseScenario!=="object"){
  state.rankBaseScenario={
-   dream:(state.dreamScenario==="middle"||state.dreamScenario==="high")?state.dreamScenario:"middle",
-   iv:(state.ivScenario==="middle"||state.ivScenario==="high")?state.ivScenario:"middle"
+   dream:(state.dreamScenario==="middle"||state.dreamScenario==="high")?state.dreamScenario:"official",
+   iv:(state.ivScenario==="middle"||state.ivScenario==="high")?state.ivScenario:"official"
  };
 }
-if(state.rankBaseScenario.dream!=="middle" && state.rankBaseScenario.dream!=="high")state.rankBaseScenario.dream="middle";
-if(state.rankBaseScenario.iv!=="middle" && state.rankBaseScenario.iv!=="high")state.rankBaseScenario.iv="middle";
+state.rankBaseScenario.dream=normalizeScenarioMode(state.rankBaseScenario.dream);
+state.rankBaseScenario.iv=normalizeScenarioMode(state.rankBaseScenario.iv);
 dreamScenario=state.rankBaseScenario.dream;
 ivScenario=state.rankBaseScenario.iv;
 delete state.dreamScenario;
@@ -2342,8 +2367,8 @@ function applyRankBase(){
  document.querySelectorAll(".cat").forEach(x=>{x.checked=rules.canCategoryToggle ? !!state.rankBase[x.value] : true});
  document.getElementById("favoritesOnly").checked=rules.canFavoriteFilter && !!state.filterBase.favoritesOnly;
  document.getElementById("excludeFull").checked=rules.canOpenFilter && !!state.filterBase.excludeFull;
- dreamScenario=state.rankBaseScenario?.dream==="high"?"high":"middle";
- ivScenario=state.rankBaseScenario?.iv==="high"?"high":"middle";
+ dreamScenario=normalizeScenarioMode(state.rankBaseScenario?.dream);
+ ivScenario=normalizeScenarioMode(state.rankBaseScenario?.iv);
  syncCategoryStyles();
  syncScenarioButtons();
  syncBaseScenarioButtons();
@@ -2425,8 +2450,12 @@ function rankingPersonalPoint(no,cats){
 }
 function categoryScoreForRanking(h,key,useScenario=true){
  if(!useScenario)return Number(h[key]||0);
- if(key==="dream")return Number(dreamScenario==="high"?h.dreamHigh:h.dreamMiddle);
+ if(key==="dream"){
+   if(dreamScenario==="official")return Number(h.dream);
+   return Number(dreamScenario==="high"?h.dreamHigh:h.dreamMiddle);
+ }
  if(key==="roi"){
+   if(ivScenario==="official")return Number(h.ivOfficial);
    const roiPct=Number(ivScenario==="high"?h.roiHighPct:h.roiMiddlePct);
    return ivFromRoiPct(roiPct);
  }
@@ -2446,7 +2475,7 @@ function renderRanking(){
  const cats=selectedCats(); const list=document.getElementById("rankList");
  if(!cats.length){list.innerHTML='<div class="empty">1項目以上選択してください</div>';document.getElementById("maxScore").textContent="0";document.getElementById("selectionText").textContent="";return}
  const max=cats.reduce((a,k)=>a+MAX[k],0); document.getElementById("maxScore").textContent=max;
- const labels={potential:"潜在",pedigree:"血統",dream:`夢(${dreamScenario==="high"?"High":"Middle"})`,roi:`IV(${ivScenario==="high"?"High":"Middle"})`};
+ const labels={potential:"潜在",pedigree:"血統",dream:`夢(${dreamScenario==="official"?"Official":(dreamScenario==="high"?"High":"Middle")})`,roi:`IV(${ivScenario==="official"?"Official":(ivScenario==="high"?"High":"Middle")})`};
  document.getElementById("selectionText").textContent=cats.map(k=>labels[k]).join("＋");
  syncScenarioButtons();
  const rules=planRules();
