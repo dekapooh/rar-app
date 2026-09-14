@@ -1,7 +1,7 @@
-const CACHE_NAME="rar-rc66-public-beta-v12-rar-v2-integration";
+const CACHE_NAME="rar-rc66-public-beta-v13-rar-v2-integration";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png",
-  "./rar-v2-overlay.js?v=20260914-r3",
+  "./rar-v2-overlay.js?v=20260914-r4",
   "./rar-v2-summaries.json",
   "./silk_2026_potential_beta49_recovered_v1.json",
   "./silk_2026_pedigree_v1.json",
