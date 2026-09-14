@@ -106,3 +106,25 @@ Still required before public `main`:
 5. Explicit merge/promotion decision
 
 The numeric ROI/IV config is a separate data calibration gate. It does not require redesign of the app integration architecture.
+
+## Builder -> RAR transfer activated
+
+The integration branch now receives its 82-horse score summary from the Builder-side transfer artifact:
+
+- Builder source: `dekapooh/RAR` / `career-sim-v22-latest-spec`
+- Builder payload: `builder_app/web/rar-v2-summaries.json`
+- App target: `rar-v2-summaries.json`
+- Payload Git blob SHA on both sides: `897a035c63980ed621abff3ae6307d1bed159ed3`
+- Transfer contract: `RAR_BUILDER_TO_APP_TRANSFER_20260914`
+- Current state: `PROVISIONAL_70_IV_HOLD`
+
+The transferred payload contains Potential /30, Pedigree /20 and FROZEN Dream /20. ROI/IV fields remain null while the Prize Generator numeric configuration is HOLD, so Official RAR /100 remains unavailable.
+
+The Builder-side Pedigree roster is a documented byte-identical migration copy of the 82-row PASS roster. Its JSON declares a historical `data/confirmed/silk_2026_pedigree_binding_v1.csv` source path, but that CSV is not present on the current Builder branch. This provenance gap is retained explicitly rather than reconstructed or guessed.
+
+After the Builder payload sync, the integration PWA cache was bumped to `rar-rc66-public-beta-v14-rar-v2-builder-sync` so a future deployed integration preview will not intentionally retain the prior cached summary.
+
+`rar-builder-transfer-manifest.json` records the cross-repository transfer provenance.
+
+This does not mean the integration branch has been publicly deployed. Public `main` remains unchanged, and real browser/PWA runtime smoke tests remain outstanding.
+
