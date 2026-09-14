@@ -25,7 +25,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 2,
@@ -53,7 +56,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 3,
@@ -81,7 +87,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 4,
@@ -109,7 +118,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 5,
@@ -137,7 +149,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 6,
@@ -165,7 +180,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 7,
@@ -193,7 +211,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 8,
@@ -221,7 +242,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 9,
@@ -249,7 +273,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 10,
@@ -277,7 +304,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 11,
@@ -305,7 +335,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 12,
@@ -333,7 +366,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 13,
@@ -361,7 +397,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 14,
@@ -389,7 +428,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 15,
@@ -417,7 +459,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 16,
@@ -445,7 +490,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 17,
@@ -473,7 +521,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 18,
@@ -501,7 +552,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 19,
@@ -529,7 +583,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 20,
@@ -557,7 +614,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 21,
@@ -585,7 +645,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 22,
@@ -613,7 +676,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 23,
@@ -641,7 +707,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 24,
@@ -669,7 +738,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 25,
@@ -697,7 +769,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 26,
@@ -725,7 +800,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 27,
@@ -753,7 +831,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 28,
@@ -781,7 +862,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 29,
@@ -809,7 +893,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 30,
@@ -837,7 +924,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 31,
@@ -865,7 +955,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 32,
@@ -893,7 +986,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 33,
@@ -921,7 +1017,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 34,
@@ -949,7 +1048,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 35,
@@ -977,7 +1079,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 36,
@@ -1005,7 +1110,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 37,
@@ -1033,7 +1141,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 38,
@@ -1061,7 +1172,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 39,
@@ -1089,7 +1203,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 40,
@@ -1117,7 +1234,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 41,
@@ -1145,7 +1265,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 42,
@@ -1173,7 +1296,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 43,
@@ -1201,7 +1327,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 44,
@@ -1229,7 +1358,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 45,
@@ -1257,7 +1389,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 46,
@@ -1285,7 +1420,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 47,
@@ -1313,7 +1451,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 48,
@@ -1341,7 +1482,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 49,
@@ -1369,7 +1513,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 50,
@@ -1397,7 +1544,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 51,
@@ -1425,7 +1575,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 52,
@@ -1453,7 +1606,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 53,
@@ -1481,7 +1637,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 54,
@@ -1509,7 +1668,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 55,
@@ -1537,7 +1699,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 56,
@@ -1565,7 +1730,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 57,
@@ -1593,7 +1761,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 58,
@@ -1621,7 +1792,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 59,
@@ -1649,7 +1823,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 60,
@@ -1677,7 +1854,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 61,
@@ -1705,7 +1885,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 62,
@@ -1733,7 +1916,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 63,
@@ -1761,7 +1947,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 64,
@@ -1789,7 +1978,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 65,
@@ -1817,7 +2009,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 66,
@@ -1845,7 +2040,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 67,
@@ -1873,7 +2071,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 68,
@@ -1901,7 +2102,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 69,
@@ -1929,7 +2133,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 70,
@@ -1957,7 +2164,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 71,
@@ -1985,7 +2195,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 72,
@@ -2013,7 +2226,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 73,
@@ -2041,7 +2257,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 74,
@@ -2069,7 +2288,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 75,
@@ -2097,7 +2319,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 76,
@@ -2125,7 +2350,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 77,
@@ -2153,7 +2381,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 78,
@@ -2181,7 +2412,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 79,
@@ -2209,7 +2443,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 80,
@@ -2237,7 +2474,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 81,
@@ -2265,7 +2505,10 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   },
   {
     "no": 82,
@@ -2293,6 +2536,9 @@
     "dream_spec_id": "RAR_DREAM_FROZEN_FINAL_20260914",
     "investment_value_spec_id": "RAR_INVESTMENT_VALUE_FROZEN_20260914",
     "investment_value_spec_revision": 2,
-    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914"
+    "roi_hold_spec_id": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "builder_transfer_contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+    "builder_payload_status": "PROVISIONAL_70_IV_HOLD",
+    "builder_catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
   }
 ]
