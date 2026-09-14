@@ -1,0 +1,33 @@
+{
+  "contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+  "status": "PROVISIONAL_70_IV_HOLD",
+  "source": {
+    "repository": "dekapooh/RAR",
+    "branch": "career-sim-v22-latest-spec",
+    "head_commit": "f4831c34cd1e85c5e6419fa1740a4a902649e273",
+    "payload_path": "builder_app/web/rar-v2-summaries.json",
+    "payload_git_blob_sha": "897a035c63980ed621abff3ae6307d1bed159ed3"
+  },
+  "target": {
+    "repository": "dekapooh/rar-app",
+    "branch": "integration/rar-v2-score-contract-20260914",
+    "payload_path": "rar-v2-summaries.json",
+    "payload_git_blob_sha": "897a035c63980ed621abff3ae6307d1bed159ed3"
+  },
+  "catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec",
+  "row_count": 82,
+  "score_state": {
+    "potential_30": "TRANSFERRED",
+    "pedigree_20": "TRANSFERRED",
+    "dream_20": "TRANSFERRED",
+    "investment_value_30": "HOLD",
+    "official_rar_100": "HOLD_DEPENDENCY_IV"
+  },
+  "pwa_cache_after_sync": "rar-rc66-public-beta-v14-rar-v2-builder-sync",
+  "public_main_modified": false,
+  "notes": [
+    "Target payload is byte-identical to Builder payload.",
+    "Pedigree 82-row bootstrap copy is documented on the Builder side; its historical declared binding CSV is absent from the current Builder branch.",
+    "This manifest does not imply public deployment or browser/PWA runtime smoke PASS."
+  ]
+}
