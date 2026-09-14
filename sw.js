@@ -1,6 +1,10 @@
-const CACHE_NAME="rar-rc66-public-beta-v10-admin-direct";
+const CACHE_NAME="rar-rc66-public-beta-v11-rar-v2-integration";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png",
+  "./rar-v2-overlay.js?v=20260914-r2",
+  "./silk_2026_potential_beta49_recovered_v1.json",
+  "./silk_2026_pedigree_v1.json",
+  "./silk_2026_facts_v1.json"
 ];
 const RC66_BRAND_CSS=`
 /* RAR RC66 PUBLIC BETA FINAL */
