@@ -5,8 +5,5 @@
   },
   "firestore": {
     "rules": "rar-beta-release/firestore.rules"
-  },
-  "storage": {
-    "rules": "rar-beta-release/storage.rules"
   }
 }

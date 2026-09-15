@@ -31,13 +31,19 @@ jobs:
             'id="submitMeasureInput"',
             'id="submitOwnerBtn"',
             "Ownerに送信",
+            "NO_PDF_PERSISTENCE",
+            "PDF本体は保存しません",
             "消去しますがよろしいですか？",
             "start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total)",
           ]
           missing=[x for x in required if x not in html]
           if missing:
             raise SystemExit("Missing release contract: "+repr(missing))
-          print("RAR beta release contract PASS")
+          forbidden=["firebase-storage.js","uploadBytes(","getStorage(","storageRef("]
+          leaked=[x for x in forbidden if x in html]
+          if leaked:
+            raise SystemExit("Storage dependency remains: "+repr(leaked))
+          print("RAR beta release contract PASS｜NO_PDF_PERSISTENCE")
           PY
       - name: JavaScript syntax check
         run: |
@@ -78,6 +84,6 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
         run: |
           firebase deploy \
-            --only hosting,firestore:rules,storage \
+            --only hosting,firestore:rules \
             --project rar-project-5a27e \
             --config rar-beta-release/firebase.json

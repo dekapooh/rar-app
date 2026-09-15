@@ -6,7 +6,7 @@
 <section id="denied" class="card hidden"><h2>RARβ利用権限なし</h2><button id="logout2">ログアウト</button></section>
 <section id="builder" class="hidden"><div class="card"><strong id="who"></strong><p class="muted">RARβ 認証済み</p><button id="logout3">ログアウト</button></div>
 <div id="contributorWorkspace" class="hidden">
-<div class="card"><h2>OwnerへPDF提出</h2><p>公式募集カタログPDFと公式測尺PDFの2ファイルを添付してOwnerへ提出します。採点はOwner側で行います。</p>
+<div class="card"><h2>Ownerへ採点依頼</h2><p>公式募集カタログPDFと公式測尺PDFをこの端末内で照合します。PDF本体は保存せず、検証情報だけをOwnerへ送信します。採点はOwner側で行います。</p>
 <div class="source-grid">
   <div class="source-box"><h3>募集カタログ</h3><label class="filebtn" for="submitCatalogInput">カタログPDFを選ぶ</label><input id="submitCatalogInput" type="file" accept="application/pdf,.pdf" class="hidden"><p id="submitCatalogName" class="small muted">未選択</p></div>
   <div class="source-box"><h3>測尺</h3><label class="filebtn" for="submitMeasureInput">測尺PDFを選ぶ</label><input id="submitMeasureInput" type="file" accept="application/pdf,.pdf" class="hidden"><p id="submitMeasureName" class="small muted">未選択</p></div>
@@ -15,7 +15,7 @@
 </div>
 </div>
 <div id="ownerWorkspace" class="hidden">
-<div class="card"><h2>協力者からの提出PDF</h2><p class="muted">協力者が「Ownerに送信」で提出したカタログPDFと測尺PDFです。</p><div class="score-actions"><button id="reloadOwnerSubmissions" type="button">再読み込み</button></div><div id="ownerSubmissions" class="small" style="margin-top:12px">読み込み中…</div></div>
+<div class="card"><h2>協力者からの採点依頼</h2><p class="muted">PDF本体は保存していません。協力者端末で照合済みのSHA-256・ページ数・測尺照合結果を受信し、Ownerが10頭ずつ手動採点します。</p><div class="score-actions"><button id="reloadOwnerSubmissions" type="button">再読み込み</button></div><div id="ownerSubmissions" class="small" style="margin-top:12px">読み込み中…</div></div>
 <div class="card"><h2>1. 採点ソースPDF</h2><p>公式募集カタログPDFと公式測尺PDFの2ファイルを選択してください。両方の照合が完了すると採点できます。</p>
 <div class="source-grid">
   <div class="source-box"><h3>募集カタログ</h3><label class="filebtn" for="pdfInput">カタログPDFを選ぶ</label><input id="pdfInput" type="file" accept="application/pdf,.pdf" class="hidden"><div class="grid small" style="margin-top:12px"><strong>状態</strong><span id="intakeStatus">未選択</span><strong>ファイル</strong><span id="fileName">—</span><strong>ページ数</strong><span id="pageCount">—</span><strong>SHA-256</strong><span id="sha" class="mono">—</span><strong>年度</strong><span id="yearResult">—</span><strong>Profile</strong><span id="profileResult">—</span></div></div>
@@ -37,11 +37,10 @@
 import{initializeApp}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import{getAuth,GoogleAuthProvider,onAuthStateChanged,signInWithPopup,signOut}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import{collection,deleteDoc,doc,getDoc,getDocs,getFirestore,setDoc}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
-import{deleteObject,getDownloadURL,getStorage,ref as storageRef,uploadBytes}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-storage.js';
 import*as pdfjsLib from'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
-const cfg={apiKey:'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',authDomain:'rar-project-5a27e.firebaseapp.com',projectId:'rar-project-5a27e',storageBucket:'rar-project-5a27e.firebasestorage.app',messagingSenderId:'574526681741',appId:'1:574526681741:web:a5da958e5babc1c16c68c4'};
-const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10;
+const cfg={apiKey:'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',authDomain:'rar-project-5a27e.firebaseapp.com',projectId:'rar-project-5a27e',messagingSenderId:'574526681741',appId:'1:574526681741:web:a5da958e5babc1c16c68c4'};
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10;
 let catalogContext=null,measurementContext=null,scoringSources=null,scoredRows=[],nextScoreStart=1,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null;
 const IV_ANCHORS=[[0,0],[10,1],[20,2],[30,3],[40,4],[50,5],[60,6],[70,7],[80,8],[90,9],[100,10],[120,11],[140,12],[160,13],[180,14],[200,15],[250,16],[300,17],[350,18],[400,19],[450,20],[500,21],[600,22],[700,23],[800,24],[900,25],[1000,26],[1500,27],[2000,28],[2500,29],[3000,30]];
 function show(id){for(const x of['signin','pending','denied','builder'])$(x).classList.add('hidden');$(id).classList.remove('hidden');$('err').classList.add('hidden')}
@@ -51,12 +50,7 @@ async function ensureProfile(u){const r=doc(db,'users',u.uid),s=await getDoc(r),
 async function access(u){await ensureProfile(u);try{const a=await getDoc(doc(db,'adminUsers',u.uid));if(a.exists()&&a.data()?.status==='ACTIVE')return{state:'APPROVED',role:'OWNER'}}catch{}const z=await getDoc(doc(db,'builderAuthorizations',u.uid));if(z.exists()){const s=String(z.data()?.status||'');if(s==='APPROVED'||s==='ACTIVE')return{state:'APPROVED',role:String(z.data()?.role||'CONTRIBUTOR')};if(s==='REVOKED'||s==='SUSPENDED')return{state:'DENIED'}}const ar=doc(db,'builderApplications',u.uid),as=await getDoc(ar);if(as.exists()){const s=String(as.data()?.status||'');if(s==='APPROVED')return{state:'APPROVED',role:'CONTRIBUTOR'};if(s==='REJECTED'||s==='WITHDRAWN')return{state:'DENIED'}}else{const t=now();await setDoc(ar,{rar_user_id:u.uid,status:'PENDING',display_ref:u.displayName||u.email||u.uid,requested_at:t,updated_at:t})}return{state:'PENDING'}}
 async function sha256(buffer){const h=await crypto.subtle.digest('SHA-256',buffer);return[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
 function validPdfFile(file){return !!file&&file.size>0&&file.size<=30*1024*1024&&(file.type==='application/pdf'||/\.pdf$/i.test(file.name))}
-function refreshOwnerSubmit(){const ready=validPdfFile(submitCatalogFile)&&validPdfFile(submitMeasureFile);$('submitOwnerBtn').disabled=!ready;$('submitOwnerStatus').className=ready?'ready':'disabled-note';$('submitOwnerStatus').textContent=ready?'提出準備完了':'PDFを2種類選択してください'}
-async function deleteStorageIfPresent(path){
- if(!path)return;
- try{await deleteObject(storageRef(storage,path))}
- catch(e){if(e?.code!=='storage/object-not-found')throw e}
-}
+function refreshOwnerSubmit(){const ready=validPdfFile(submitCatalogFile)&&validPdfFile(submitMeasureFile);$('submitOwnerBtn').disabled=!ready;$('submitOwnerStatus').className=ready?'ready':'disabled-note';$('submitOwnerStatus').textContent=ready?'提出準備完了｜PDF本体は保存しません':'PDFを2種類選択してください'}
 function requestDeleteSubmission(record){
  pendingDeleteSubmission=record;
  $('deleteSubmissionLabel').textContent=(record.contributor_ref||record.rar_user_id||'Contributor')+'｜'+(record.submitted_at||'');
@@ -66,57 +60,63 @@ async function confirmDeleteSubmission(){
  const record=pendingDeleteSubmission;if(!record)return;
  $('deleteSubmissionYes').disabled=true;$('deleteSubmissionNo').disabled=true;
  try{
-  await Promise.all([
-   deleteStorageIfPresent(record.catalog?.storage_path),
-   deleteStorageIfPresent(record.measurements?.storage_path)
-  ]);
   await deleteDoc(doc(db,'builderSubmissions',record.id));
   pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
   await loadOwnerSubmissions();
  }catch(e){fail(e)}
  finally{$('deleteSubmissionYes').disabled=false;$('deleteSubmissionNo').disabled=false}
 }
+function useSubmissionForScoring(record){
+ const c=record.catalog||{},m=record.measurements||{};
+ if(c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70)throw new Error('この採点依頼はRARβのSilk 2026照合条件を満たしていません');
+ clearScoreResult();scoringSources=null;
+ catalogContext={filename:c.original_name||'catalog.pdf',hash:c.sha256,pages:Number(c.page_count),batch:'submission-'+record.id,known:true};
+ measurementContext={filename:m.original_name||'measurements.pdf',hash:m.sha256||'',pages:Number(m.page_count||0),coverage:Number(m.name_coverage||0),headerOk:!!m.header_ok,ok:true,buffer:null};
+ $('fileName').textContent=catalogContext.filename;$('pageCount').textContent=catalogContext.pages;$('sha').textContent=catalogContext.hash;$('batchId').textContent=catalogContext.batch;
+ $('intakeStatus').innerHTML='<span class="ok">AUTO_PASS｜受信検証情報</span>';$('yearResult').innerHTML='<span class="ok">2026</span>';$('profileResult').innerHTML='<span class="ok">Silk 2026</span>';$('candidateResult').innerHTML='<span class="ok">82/82頭</span>';$('missingResult').innerHTML='<span class="ok">0</span>';$('pageMapResult').innerHTML='<span class="ok">82/82</span>';
+ $('measureFileName').textContent=measurementContext.filename;$('measurePageCount').textContent=measurementContext.pages;$('measureSha').textContent=measurementContext.hash;$('measureStatus').innerHTML='<span class="ok">AUTO_PASS｜受信検証情報</span>';$('measureCoverage').textContent=measurementContext.coverage+'/82頭';
+ $('nextState').innerHTML='<span class="ok">採点ソース設定完了 → No.1〜10を手動開始</span>';$('pdfResult').classList.remove('hidden');
+ refreshScoreReady();window.scrollTo({top:$('ownerWorkspace').offsetTop,behavior:'smooth'});
+}
 async function loadOwnerSubmissions(){
  const box=$('ownerSubmissions');box.textContent='読み込み中…';
  const snap=await getDocs(collection(db,'builderSubmissions'));
- if(snap.empty){box.innerHTML='<span class="muted">提出済みPDFはありません。</span>';return}
+ if(snap.empty){box.innerHTML='<span class="muted">採点依頼はありません。</span>';return}
  const rows=snap.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>String(b.submitted_at||'').localeCompare(String(a.submitted_at||'')));
  box.replaceChildren();
  for(const r of rows){
   const card=document.createElement('div');card.className='step';
   const who=document.createElement('strong');who.textContent=r.contributor_ref||r.rar_user_id||'Contributor';
   const when=document.createElement('div');when.className='muted small';when.textContent=r.submitted_at||'';
-  const links=document.createElement('div');links.className='small';
-  const addLink=(label,asset)=>{
-   if(!asset?.download_url)return;
-   const a=document.createElement('a');a.href=asset.download_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label+'｜'+(asset.original_name||'PDF');
-   links.append(a,document.createElement('br'));
-  };
-  addLink('カタログPDF',r.catalog);addLink('測尺PDF',r.measurements);
+  const catalog=document.createElement('div');catalog.className='small';catalog.textContent='カタログ｜'+(r.catalog?.original_name||'—')+'｜'+(r.catalog?.page_count||'—')+'p｜SHA '+String(r.catalog?.sha256||'—').slice(0,16)+'…';
+  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜PDF本体 未保存';
   const actions=document.createElement('div');actions.className='submission-actions';
+  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='採点にセット';use.onclick=()=>{try{useSubmissionForScoring(r)}catch(e){fail(e)}};
   const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='消去';del.onclick=()=>requestDeleteSubmission(r);
-  actions.append(del);card.append(who,when,links,actions);box.append(card);
+  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
  }
 }
 async function submitPdfsToOwner(){
  const user=auth.currentUser;if(!user)throw new Error('ログインが必要です');
  if(!validPdfFile(submitCatalogFile)||!validPdfFile(submitMeasureFile))throw new Error('カタログPDFと測尺PDFを両方選択してください');
- $('submitOwnerBtn').disabled=true;$('submitOwnerStatus').className='review';$('submitOwnerStatus').textContent='Ownerへ送信中…';
- const submissionId='sub-'+Date.now()+'-'+crypto.randomUUID().slice(0,8),base='builderSubmissions/'+user.uid+'/'+submissionId;
+ $('submitOwnerBtn').disabled=true;$('submitOwnerStatus').className='review';$('submitOwnerStatus').textContent='PDFを端末内で照合中…';
+ const submissionId='sub-'+Date.now()+'-'+crypto.randomUUID().slice(0,8);
+ const catalogName=submitCatalogFile.name,measureName=submitMeasureFile.name,catalogSize=submitCatalogFile.size,measureSize=submitMeasureFile.size;
  const [catalogBuffer,measureBuffer]=await Promise.all([submitCatalogFile.arrayBuffer(),submitMeasureFile.arrayBuffer()]);
  const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
- const catalogPath=base+'/catalog.pdf',measurePath=base+'/measurements.pdf';
- const catRef=storageRef(storage,catalogPath),meaRef=storageRef(storage,measurePath);
- await uploadBytes(catRef,submitCatalogFile,{contentType:'application/pdf',customMetadata:{originalName:submitCatalogFile.name,sha256:catalogSha,submissionId}});
- await uploadBytes(meaRef,submitMeasureFile,{contentType:'application/pdf',customMetadata:{originalName:submitMeasureFile.name,sha256:measureSha,submissionId}});
- const [catalogUrl,measureUrl]=await Promise.all([getDownloadURL(catRef),getDownloadURL(meaRef)]);
+ const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise,catalogPages=catalogPdf.numPages;
+ if(catalogSha!==KNOWN_SHA||catalogPages!==128)throw new Error('現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます');
+ const potential=await loadPotential(catalogSha,catalogPages);if(!potential)throw new Error('Silk 2026採点ソースを照合できません');
+ const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=/測尺/.test(measureExtract.text)&&/体高/.test(measureExtract.text)&&/管囲/.test(measureExtract.text);
+ const coverage=potential.records.filter(r=>flat.includes(norm(r.name))).length,measureOk=headerOk&&coverage>=70;
+ if(!measureOk)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした');
  await setDoc(doc(db,'builderSubmissions',submissionId),{
-   schema_version:'builder-pdf-submission-v1',submission_id:submissionId,rar_user_id:user.uid,
-   contributor_ref:user.displayName||user.email||user.uid,status:'SUBMITTED',submitted_at:now(),
-   catalog:{original_name:submitCatalogFile.name,sha256:catalogSha,size_bytes:submitCatalogFile.size,storage_path:catalogPath,download_url:catalogUrl},
-   measurements:{original_name:submitMeasureFile.name,sha256:measureSha,size_bytes:submitMeasureFile.size,storage_path:measurePath,download_url:measureUrl}
+   schema_version:'builder-intake-manifest-v2',submission_id:submissionId,rar_user_id:user.uid,
+   contributor_ref:user.displayName||user.email||user.uid,status:'SUBMITTED',submitted_at:now(),storage_policy:'NO_PDF_PERSISTENCE',
+   catalog:{original_name:catalogName,sha256:catalogSha,size_bytes:catalogSize,page_count:catalogPages,profile:'Silk 2026',verified:true},
+   measurements:{original_name:measureName,sha256:measureSha,size_bytes:measureSize,page_count:measureExtract.pages,header_ok:headerOk,name_coverage:coverage,verified:true}
  });
- $('submitOwnerStatus').className='ok';$('submitOwnerStatus').textContent='Ownerへ送信しました';
+ $('submitOwnerStatus').className='ok';$('submitOwnerStatus').textContent='Ownerへ送信しました｜PDF本体は保存していません';
  submitCatalogFile=null;submitMeasureFile=null;$('submitCatalogInput').value='';$('submitMeasureInput').value='';$('submitCatalogName').textContent='未選択';$('submitMeasureName').textContent='未選択';
 }
 function unpack(m){const f=m.fields;return m.records.map(a=>{const o={};f.forEach((k,i)=>o[k]=a[i]);o.status='AUTO_PASS';o.missing=[];return o})}

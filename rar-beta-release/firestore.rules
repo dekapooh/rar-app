@@ -60,8 +60,8 @@ service cloud.firestore {
       allow write: if isManager();
     }
 
-    // Contributor PDF submissions are write-once from the submitting user.
-    // Owner/Manager can read and manage the queue.
+    // Contributor intake manifests are write-once from the submitting user.
+    // PDF bytes are never persisted; Owner/Manager reads compact validation metadata only.
     match /builderSubmissions/{submissionId} {
       allow create: if signedIn()
         && request.resource.data.rar_user_id == request.auth.uid
