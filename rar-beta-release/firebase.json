@@ -1,0 +1,12 @@
+{
+  "hosting": {
+    "public": "rar-beta-release",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+  },
+  "firestore": {
+    "rules": "rar-beta-release/firestore.rules"
+  },
+  "storage": {
+    "rules": "rar-beta-release/storage.rules"
+  }
+}
