@@ -1,0 +1,39 @@
+{
+  "contract_id": "RAR_BUILDER_TO_APP_TRANSFER_20260914",
+  "status": "PROVISIONAL_70_IV_HOLD",
+  "source_repo": "dekapooh/RAR",
+  "source_branch": "career-sim-v22-latest-spec",
+  "target_repo": "dekapooh/rar-app",
+  "target_branch": "integration/rar-v2-score-contract-20260914",
+  "target_path": "rar-v2-summaries.json",
+  "catalog_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec",
+  "row_count": 82,
+  "inputs": {
+    "potential": "builder_app/web/silk_2026_potential_beta49_recovered_v1.json",
+    "pedigree": "builder_app/web/silk_2026_pedigree_v1.json",
+    "facts": "builder_app/web/silk_2026_facts_v1.json",
+    "dream_baseline": "specs/frozen/RAR_HISTORICAL_CAREER_BASELINE_FROZEN_20260914.json"
+  },
+  "scoring": {
+    "architecture": "Potential /30 + Pedigree /20 + Dream /20 + Investment Value /30",
+    "dream": "RAR_DREAM_FROZEN_FINAL_20260914",
+    "iv": "RAR_INVESTMENT_VALUE_FROZEN_20260914 revision 2",
+    "roi_config": "RAR_ROI_PRIZE_GENERATOR_CONFIG_20260914",
+    "roi_config_status": "HOLD"
+  },
+  "bootstrap_pedigree_provenance": {
+    "source_repo": "dekapooh/rar-app",
+    "source_branch": "integration/rar-v2-score-contract-20260914",
+    "source_path": "silk_2026_pedigree_v1.json",
+    "source_git_blob_sha": "ba6161ac1466ee7bb6071df2c8aa8b10295f7b7a",
+    "note": "Byte-identical migration copy. Historical source_binding path declared by the JSON is absent from the current Builder branch; do not describe this as independently regenerated from that missing CSV."
+  },
+  "audit": {
+    "unique_recruitment_numbers": 82,
+    "pedigree_pass": 82,
+    "pedigree_arithmetic_mismatch": 0,
+    "catalog_hash_match": true,
+    "dream_recompute_match_to_current_rar": 82,
+    "official_rar_100_available": false
+  }
+}
