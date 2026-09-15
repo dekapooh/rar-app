@@ -1,0 +1,2763 @@
+{
+  "schema_version": "1.1",
+  "audit_id": "RAR_BUILDER_ROI_ROUTE_STATUS_V2_20260914",
+  "generated_from_branch": "career-sim-v22-latest-spec",
+  "engine_base_commit": "e92ebd6b74c11c383128ba235a555a491179caf2",
+  "decimal_dream_rule": "performance_position=max(1,1+target_anchor-dream_level); official payout ratios are linearly interpolated between adjacent integer positions",
+  "summary": {
+    "horse_count": 82,
+    "middle_resolved": 82,
+    "middle_unresolved": 0,
+    "high_resolved": 70,
+    "high_unresolved": 12,
+    "high_unresolved_nos": [
+      14,
+      17,
+      18,
+      22,
+      28,
+      34,
+      38,
+      57,
+      58,
+      60,
+      78,
+      81
+    ]
+  },
+  "records": [
+    {
+      "no": 1,
+      "name": "アーモンドアイの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 16.4,
+          "high_performance_position": 3,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 15.4,
+          "high_performance_position": 2,
+          "surface": "turf"
+        },
+        {
+          "race_name": "天皇賞（秋）",
+          "anchor": 18,
+          "middle_performance_position": 15.4,
+          "high_performance_position": 2,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ジャパンC",
+          "anchor": 19,
+          "middle_performance_position": 16.4,
+          "high_performance_position": 3,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 2,
+      "name": "ソーディヴァインの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.9,
+      "dream_official": 9.649999999999999,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "晩成寄り",
+      "named_targets": [
+        {
+          "race_name": "クイーンC",
+          "anchor": 15,
+          "middle_performance_position": 13.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "阪神牝馬S",
+          "anchor": 16,
+          "middle_performance_position": 14.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 3,
+      "name": "ディアンドルの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.1,
+      "dream_official": 10.65,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長余地あり",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 14.8,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 15.8,
+          "high_performance_position": 2.9,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 4,
+      "name": "クリーンスイープの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め安定",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 13.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 5,
+      "name": "シャトーブランシュの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 6,
+      "name": "ロッテンマイヤーの25",
+      "dream_middle": 5.7,
+      "dream_high_career": 17.8,
+      "dream_official": 11.75,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 13.3,
+          "high_performance_position": 1.2,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 14.3,
+          "high_performance_position": 2.2,
+          "surface": "turf"
+        },
+        {
+          "race_name": "天皇賞（秋）",
+          "anchor": 18,
+          "middle_performance_position": 13.3,
+          "high_performance_position": 1.2,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 7,
+      "name": "ギルデッドミラーの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "武蔵野S",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "フェブラリーS",
+          "anchor": 18,
+          "middle_performance_position": 15.1,
+          "high_performance_position": 1.9,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 8,
+      "name": "マハゴニーの25",
+      "dream_middle": 5.4,
+      "dream_high_career": 17.5,
+      "dream_official": 11.45,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 11.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ローズS",
+          "anchor": 16,
+          "middle_performance_position": 11.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 9,
+      "name": "ワディハッタの25",
+      "dream_middle": 4.5,
+      "dream_high_career": 17.4,
+      "dream_official": 10.95,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め安定",
+      "named_targets": [
+        {
+          "race_name": "共同通信杯",
+          "anchor": 15,
+          "middle_performance_position": 11.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 14.5,
+          "high_performance_position": 1.6,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 10,
+      "name": "アルビアーノの25",
+      "dream_middle": 3.3,
+      "dream_high_career": 17,
+      "dream_official": 10.15,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "晩成寄り",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 14.7,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 14.7,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 14.7,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 11,
+      "name": "ラヴユーライヴの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 15.4,
+          "high_performance_position": 2,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 16.4,
+          "high_performance_position": 3,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 15.4,
+          "high_performance_position": 2,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 12,
+      "name": "リンフォルツァンドの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.2,
+      "dream_official": 10.7,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "晩成",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 12.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "中距離条件戦"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 13,
+      "name": "モーベットの25",
+      "dream_middle": 1.8,
+      "dream_high_career": 16.7,
+      "dream_official": 9.25,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 16.2,
+          "high_performance_position": 1.3,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬マイル条件"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 14,
+      "name": "ベルゼールの25",
+      "dream_middle": 3.3,
+      "dream_high_career": 17,
+      "dream_official": 10.15,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "成長待ち",
+      "named_targets": [],
+      "generic_target_labels": [
+        "ダート条件戦",
+        "L/OP"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 15,
+      "name": "ビオグラフィーの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早熟～持続",
+      "named_targets": [
+        {
+          "race_name": "ユニコーンS",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "武蔵野S",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "根岸S",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 16,
+      "name": "ルーツドールの25",
+      "dream_middle": 4.8,
+      "dream_high_career": 17.4,
+      "dream_official": 11.1,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "ユニコーンS",
+          "anchor": 15,
+          "middle_performance_position": 11.2,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "武蔵野S",
+          "anchor": 15,
+          "middle_performance_position": 11.2,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "フェブラリーS",
+          "anchor": 18,
+          "middle_performance_position": 14.2,
+          "high_performance_position": 1.6,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 17,
+      "name": "インヘリットデールの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早め安定",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬ダート条件",
+        "OP/L"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 18,
+      "name": "レディホークフィールドの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長余地あり",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬マイル条件",
+        "OP/L"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 19,
+      "name": "スイープセレリタスの25",
+      "dream_middle": 5.1,
+      "dream_high_career": 17.5,
+      "dream_official": 11.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "毎日杯",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エプソムC",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "関屋記念",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 20,
+      "name": "ソニックベガの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "晩成",
+      "named_targets": [
+        {
+          "race_name": "ラジオNIKKEI賞",
+          "anchor": 15,
+          "middle_performance_position": 12.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エプソムC",
+          "anchor": 15,
+          "middle_performance_position": 12.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 21,
+      "name": "アイアゲートの25",
+      "dream_middle": 5.4,
+      "dream_high_career": 17.6,
+      "dream_official": 11.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 11.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ローズS",
+          "anchor": 16,
+          "middle_performance_position": 11.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 22,
+      "name": "カラパタールの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬マイル条件",
+        "OP/L"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 23,
+      "name": "ドナウデルタの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "共同通信杯",
+          "anchor": 15,
+          "middle_performance_position": 12.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 15.4,
+          "high_performance_position": 2,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 24,
+      "name": "シーヴの25",
+      "dream_middle": 3.3,
+      "dream_high_career": 17,
+      "dream_official": 10.15,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め安定",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 14.7,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ローズS",
+          "anchor": 16,
+          "middle_performance_position": 13.7,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 25,
+      "name": "サンテローズの25",
+      "dream_middle": 4.5,
+      "dream_high_career": 17.4,
+      "dream_official": 10.95,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 14.5,
+          "high_performance_position": 1.6,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 15.5,
+          "high_performance_position": 2.6,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 26,
+      "name": "トーセンソレイユの25",
+      "dream_middle": 4.8,
+      "dream_high_career": 17.4,
+      "dream_official": 11.1,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 12.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ローズS",
+          "anchor": 16,
+          "middle_performance_position": 12.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 27,
+      "name": "ラストプリマドンナの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.1,
+      "dream_official": 10.65,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "毎日杯",
+          "anchor": 15,
+          "middle_performance_position": 11.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "青葉賞",
+          "anchor": 16,
+          "middle_performance_position": 12.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 15.8,
+          "high_performance_position": 2.9,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 28,
+      "name": "クードラパンの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬マイル条件",
+        "OP挑戦"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 29,
+      "name": "グランデストラーダの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "成長余地あり",
+      "named_targets": [
+        {
+          "race_name": "関東オークス",
+          "anchor": 16,
+          "middle_performance_position": 13.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬ダート条件"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 30,
+      "name": "エレクトラムの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.2,
+      "dream_official": 10.7,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 12.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 31,
+      "name": "クリッパークラスの25",
+      "dream_middle": 1.8,
+      "dream_high_career": 16.7,
+      "dream_official": 9.25,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [
+        {
+          "race_name": "ファルコンS",
+          "anchor": 15,
+          "middle_performance_position": 14.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "短距離条件"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 32,
+      "name": "レオパルディナの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "朝日杯FS",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 33,
+      "name": "サラーブの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "毎日杯",
+          "anchor": 15,
+          "middle_performance_position": 12.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ラジオNIKKEI賞",
+          "anchor": 15,
+          "middle_performance_position": 12.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "中距離OP"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 34,
+      "name": "クインアマランサスの25",
+      "dream_middle": 3.3,
+      "dream_high_career": 17,
+      "dream_official": 10.15,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早め安定",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬ダート条件",
+        "OP/L"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 35,
+      "name": "スイの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "関東オークス",
+          "anchor": 16,
+          "middle_performance_position": 13.4,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬ダート条件",
+        "Jpn重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 36,
+      "name": "テキサスルビーの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [
+        {
+          "race_name": "毎日杯",
+          "anchor": 15,
+          "middle_performance_position": 13,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ラジオNIKKEI賞",
+          "anchor": 15,
+          "middle_performance_position": 13,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "中距離OP"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 37,
+      "name": "メリーウィドウの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "成長余地あり",
+      "named_targets": [
+        {
+          "race_name": "ユニコーンS",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "武蔵野S",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "ダート重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 38,
+      "name": "ジュディッタの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.9,
+      "dream_official": 9.649999999999999,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早め安定",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬ダート条件",
+        "OP/L"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 39,
+      "name": "ルコントブルーの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "成長余地あり",
+      "named_targets": [
+        {
+          "race_name": "関東オークス",
+          "anchor": 16,
+          "middle_performance_position": 13.4,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "レディスプレリュード",
+          "anchor": 16,
+          "middle_performance_position": 13.4,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬交流重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 40,
+      "name": "キラープレゼンスの25",
+      "dream_middle": 5.4,
+      "dream_high_career": 17.7,
+      "dream_official": 11.55,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "青葉賞",
+          "anchor": 16,
+          "middle_performance_position": 11.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 14.6,
+          "high_performance_position": 2.3,
+          "surface": "turf"
+        },
+        {
+          "race_name": "菊花賞",
+          "anchor": 18,
+          "middle_performance_position": 13.6,
+          "high_performance_position": 1.3,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ジャパンC",
+          "anchor": 19,
+          "middle_performance_position": 14.6,
+          "high_performance_position": 2.3,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 41,
+      "name": "アグレアーブルの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 42,
+      "name": "クイーンブロッサムの25",
+      "dream_middle": 5.1,
+      "dream_high_career": 17.5,
+      "dream_official": 11.3,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "ユニコーンS",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "武蔵野S",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "根岸S",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "フェブラリーS",
+          "anchor": 18,
+          "middle_performance_position": 13.9,
+          "high_performance_position": 1.5,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 43,
+      "name": "ホットンヘクティックの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "dirt",
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "ヴィクトリアマイル",
+          "anchor": 17,
+          "middle_performance_position": 14.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 44,
+      "name": "サロミナの25",
+      "dream_middle": 6.9,
+      "dream_high_career": 18.1,
+      "dream_official": 12.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早期完成＋持続",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 13.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "天皇賞",
+          "anchor": 18,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "JC",
+          "anchor": 19,
+          "middle_performance_position": 13.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "秋"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 45,
+      "name": "ドリームアンドドゥの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.1,
+      "dream_official": 10.65,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "桜花賞～オークス",
+        "古馬牝馬中距離GⅠ"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 46,
+      "name": "ロザリンドの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 47,
+      "name": "エクセレンスⅡの25",
+      "dream_middle": 4.8,
+      "dream_high_career": 17.4,
+      "dream_official": 11.1,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 14.2,
+          "high_performance_position": 1.6,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 15.2,
+          "high_performance_position": 2.6,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 48,
+      "name": "ピュアブレンドの25",
+      "dream_middle": 4.5,
+      "dream_high_career": 17.3,
+      "dream_official": 10.9,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 13.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 13.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 49,
+      "name": "バラーディストの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 50,
+      "name": "ピクシーホロウの25",
+      "dream_middle": 5.4,
+      "dream_high_career": 17.6,
+      "dream_official": 11.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 13.6,
+          "high_performance_position": 1.4,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 13.6,
+          "high_performance_position": 1.4,
+          "surface": "turf"
+        },
+        {
+          "race_name": "天皇賞",
+          "anchor": 18,
+          "middle_performance_position": 13.6,
+          "high_performance_position": 1.4,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "秋"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 51,
+      "name": "マイアミバウンドの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.9,
+      "dream_official": 9.649999999999999,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 14.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 52,
+      "name": "アルルの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "共同通信杯",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 15.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 16.1,
+          "high_performance_position": 2.9,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 53,
+      "name": "イーヴンソーの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.9,
+      "dream_official": 9.649999999999999,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 54,
+      "name": "ジャポニカーラの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 15.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 16.1,
+          "high_performance_position": 2.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 15.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "天皇賞（秋）",
+          "anchor": 18,
+          "middle_performance_position": 15.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        },
+        {
+          "race_name": "JC",
+          "anchor": 19,
+          "middle_performance_position": 16.1,
+          "high_performance_position": 2.9,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 55,
+      "name": "ノワールドゥジェの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長余地あり",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 14,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 56,
+      "name": "アルジャンテの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 15,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "京王杯SC",
+          "anchor": 16,
+          "middle_performance_position": 14,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 57,
+      "name": "リズムオブラヴの25",
+      "dream_middle": 2.1,
+      "dream_high_career": 16.7,
+      "dream_official": 9.4,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬条件戦",
+        "牝馬マイル～中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 58,
+      "name": "アーデルワイゼの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.8,
+      "dream_official": 9.6,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "晩成寄り",
+      "named_targets": [],
+      "generic_target_labels": [
+        "中距離条件戦",
+        "OP",
+        "中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 59,
+      "name": "ステップオブダンスの25",
+      "dream_middle": 5.7,
+      "dream_high_career": 17.7,
+      "dream_official": 11.7,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "羽田盃",
+          "anchor": 17,
+          "middle_performance_position": 12.3,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "東京ダービー",
+          "anchor": 17,
+          "middle_performance_position": 12.3,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "JDC",
+          "anchor": 17,
+          "middle_performance_position": 12.3,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "チャンピオンズC",
+          "anchor": 18,
+          "middle_performance_position": 13.3,
+          "high_performance_position": 1.3,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "フェブラリーS",
+          "anchor": 18,
+          "middle_performance_position": 13.3,
+          "high_performance_position": 1.3,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 60,
+      "name": "スカイグルーヴの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "dirt",
+        "turf"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "晩成寄り",
+      "named_targets": [],
+      "generic_target_labels": [
+        "3歳中距離路線",
+        "OP",
+        "L",
+        "芝またはダート中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET",
+      "route_resolution_note": "FROZEN mixed-surface ROI simulation tie-break: dirt preferred; source suitability remains unchanged."
+    },
+    {
+      "no": 61,
+      "name": "メジロマリアンの25",
+      "dream_middle": 4.8,
+      "dream_high_career": 17.4,
+      "dream_official": 11.1,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "関東オークス",
+          "anchor": 16,
+          "middle_performance_position": 12.2,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "JBCレディスクラシック",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬交流重賞",
+        "中央ダートGⅠ"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 62,
+      "name": "ウィクトーリアの25",
+      "dream_middle": 4.8,
+      "dream_high_career": 17.4,
+      "dream_official": 11.1,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "富士S",
+          "anchor": 16,
+          "middle_performance_position": 12.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "マイルCS",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "1800m重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 63,
+      "name": "パーシステントリーの25",
+      "dream_middle": 4.8,
+      "dream_high_career": 17.4,
+      "dream_official": 11.1,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "阪神牝馬S",
+          "anchor": 16,
+          "middle_performance_position": 12.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 13.2,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 64,
+      "name": "ローズウィスパーの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "共同通信杯",
+          "anchor": 15,
+          "middle_performance_position": 12.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 15.1,
+          "high_performance_position": 1.9,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "中距離OP",
+        "中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 65,
+      "name": "プリモシーンの25",
+      "dream_middle": 5.1,
+      "dream_high_career": 17.5,
+      "dream_official": 11.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "阪神JF",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 66,
+      "name": "イスパニダの25",
+      "dream_middle": 5.1,
+      "dream_high_career": 17.5,
+      "dream_official": 11.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "共同通信杯",
+          "anchor": 15,
+          "middle_performance_position": 10.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "日本ダービー",
+          "anchor": 19,
+          "middle_performance_position": 14.9,
+          "high_performance_position": 2.5,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 13.9,
+          "high_performance_position": 1.5,
+          "surface": "turf"
+        },
+        {
+          "race_name": "天皇賞（秋）",
+          "anchor": 18,
+          "middle_performance_position": 13.9,
+          "high_performance_position": 1.5,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 67,
+      "name": "ドリームローパーの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.1,
+      "dream_official": 10.65,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 68,
+      "name": "パタゴニアの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "早め持続",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "短距離重賞",
+        "マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 69,
+      "name": "チャーチクワイアの25",
+      "dream_middle": 4.5,
+      "dream_high_career": 17.4,
+      "dream_official": 10.95,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 13.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "マイルCS",
+          "anchor": 17,
+          "middle_performance_position": 13.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 70,
+      "name": "セリユーズの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長余地大",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 14.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "マイルCS",
+          "anchor": 17,
+          "middle_performance_position": 14.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 71,
+      "name": "サラキアの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 14.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 14.4,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬マイル～中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 72,
+      "name": "グラヴィタスの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.8,
+      "dream_official": 9.6,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "関東オークス",
+          "anchor": 16,
+          "middle_performance_position": 14.6,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "JBCレディスクラシック",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.2,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬交流重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 73,
+      "name": "ステファニーズキトゥンの25",
+      "dream_middle": 3.9,
+      "dream_high_career": 17.1,
+      "dream_official": 10.5,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長待ち",
+      "named_targets": [
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "エリザベス女王杯",
+          "anchor": 17,
+          "middle_performance_position": 14.1,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 74,
+      "name": "ワイルドラズベリーの25",
+      "dream_middle": 4.2,
+      "dream_high_career": 17.2,
+      "dream_official": 10.7,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "成長余地大",
+      "named_targets": [
+        {
+          "race_name": "NHKマイルC",
+          "anchor": 17,
+          "middle_performance_position": 13.8,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "芝マイル重賞",
+        "短距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 75,
+      "name": "バラダガールの25",
+      "dream_middle": 5.1,
+      "dream_high_career": 17.5,
+      "dream_official": 11.3,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 12.9,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 76,
+      "name": "ピュアブラックの25",
+      "dream_middle": 3,
+      "dream_high_career": 17,
+      "dream_official": 10,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "スプリングS",
+          "anchor": 16,
+          "middle_performance_position": 14,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "皐月賞",
+          "anchor": 18,
+          "middle_performance_position": 16,
+          "high_performance_position": 2,
+          "surface": "turf"
+        },
+        {
+          "race_name": "大阪杯",
+          "anchor": 18,
+          "middle_performance_position": 16,
+          "high_performance_position": 2,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 77,
+      "name": "アンティフォナの25",
+      "dream_middle": 2.4,
+      "dream_high_career": 16.9,
+      "dream_official": 9.649999999999999,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "桜花賞",
+          "anchor": 17,
+          "middle_performance_position": 15.6,
+          "high_performance_position": 1.1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬マイル重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 78,
+      "name": "グラマラスライフの25",
+      "dream_middle": 3.3,
+      "dream_high_career": 17,
+      "dream_official": 10.15,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [],
+      "generic_target_labels": [
+        "牝馬ダート重賞",
+        "交流重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 79,
+      "name": "グリモリオの25",
+      "dream_middle": 5.4,
+      "dream_high_career": 17.7,
+      "dream_official": 11.55,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "早期～持続成長",
+      "named_targets": [
+        {
+          "race_name": "ユニコーンS",
+          "anchor": 15,
+          "middle_performance_position": 10.6,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        },
+        {
+          "race_name": "東京ダービー",
+          "anchor": 17,
+          "middle_performance_position": 12.6,
+          "high_performance_position": 1,
+          "surface": "dirt"
+        }
+      ],
+      "generic_target_labels": [
+        "JpnⅠ",
+        "古馬ダート重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 80,
+      "name": "キープシークレットの25",
+      "dream_middle": 5.4,
+      "dream_high_career": 17.5,
+      "dream_official": 11.45,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "持続成長",
+      "named_targets": [
+        {
+          "race_name": "フローラS",
+          "anchor": 16,
+          "middle_performance_position": 11.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "オークス",
+          "anchor": 17,
+          "middle_performance_position": 12.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "秋華賞",
+          "anchor": 17,
+          "middle_performance_position": 12.6,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "古馬牝馬中距離GⅠ"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    },
+    {
+      "no": 81,
+      "name": "アルコレーヌの25",
+      "dream_middle": 3.6,
+      "dream_high_career": 17,
+      "dream_official": 10.3,
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "resolved_route_surface": "dirt",
+      "growth_type": "持続成長",
+      "named_targets": [],
+      "generic_target_labels": [
+        "中央ダートOP",
+        "牝馬交流重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "UNRESOLVED_TARGET"
+    },
+    {
+      "no": 82,
+      "name": "外セサの25",
+      "dream_middle": 4.5,
+      "dream_high_career": 17.3,
+      "dream_official": 10.9,
+      "preferred_surfaces": [
+        "turf"
+      ],
+      "resolved_route_surface": "turf",
+      "growth_type": "晩成寄り",
+      "named_targets": [
+        {
+          "race_name": "チューリップ賞",
+          "anchor": 16,
+          "middle_performance_position": 12.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ローズS",
+          "anchor": 16,
+          "middle_performance_position": 12.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        },
+        {
+          "race_name": "ヴィクトリアM",
+          "anchor": 17,
+          "middle_performance_position": 13.5,
+          "high_performance_position": 1,
+          "surface": "turf"
+        }
+      ],
+      "generic_target_labels": [
+        "牝馬中距離重賞"
+      ],
+      "middle_status": "RESOLVED",
+      "high_status": "RESOLVED"
+    }
+  ],
+  "source_pdf_sha256": "25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec",
+  "cohort": "Silk Horse Club 2026 No.1-82",
+  "final_roi_iv_spec_id": "RAR_ROI_IV_82_FROZEN_20260914",
+  "final_roi_iv_status": "FROZEN_FINAL"
+}
