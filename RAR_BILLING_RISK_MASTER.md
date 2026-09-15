@@ -34,7 +34,7 @@ RARで「無料枠はあるが、超過時に課金される」「支払い方�
 - 方針: Standardのみ使用し、PDFは全頭採点完了後すぐ削除。無料枠内で運用する。
 - 自動削除ルール:
   - 82頭採点完了・結果送信確認後、その提出に紐づくPDFを即削除する。
-  - 未処理・放置状態のPDFは提出から30日で自動削除する。
+  - 未処理・放置状態のPDFは提出から20日で自動削除する。
 - 利用量監視:
   - R2の保存量・Class A / Class B使用量を監視する。
   - 無料枠へ近づいた場合にOwnerへ警告できる設計とする。
@@ -61,5 +61,5 @@ RARで「無料枠はあるが、超過時に課金される」「支払い方�
 - 用途候補: R2オブジェクト変更時の自動イベント処理
 - 状態: R2設定画面上で Workers Paid plan が必要と表示される機能
 - 方針: RARでは現時点で使用しない。
-- 理由: 30日自動削除はR2 Object Lifecycle Rulesで実現でき、Event Notificationsは不要。
+- 理由: 20日自動削除はR2 Object Lifecycle Rulesで実現でき、Event Notificationsは不要。
 - 課金回避: Event Notifications / Workers Paid plan は有効化しない。
