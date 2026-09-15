@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Privileged owner/admin marker must be provisioned through a trusted path.
+    function isManager() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid));
+    }
+
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isManager();
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly([
+          'displayName', 'email', 'photoUrl', 'createdAt', 'updatedAt'
+        ]);
+      allow update: if isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'displayName', 'email', 'photoUrl', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    // A signed-in RAR user can create only their own PENDING Builder application.
+    // Approval/rejection remains Manager-only.
+    match /builderApplications/{uid} {
+      allow read: if isSelf(uid) || isManager();
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly([
+          'rar_user_id', 'status', 'display_ref', 'requested_at', 'updated_at'
+        ])
+        && request.resource.data.rar_user_id == uid
+        && request.resource.data.status == 'PENDING';
+      allow update: if isSelf(uid)
+        && resource.data.status == 'PENDING'
+        && request.resource.data.status == 'PENDING'
+        && request.resource.data.rar_user_id == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'display_ref', 'updated_at'
+        ]);
+      allow delete: if false;
+      allow write: if isManager();
+    }
+
+    match /builderAuthorizations/{uid} {
+      allow read: if isSelf(uid) || isManager();
+      allow write: if isManager();
+    }
+
+    match /benefitEntitlements/{uid}/items/{entitlementId} {
+      allow read: if isSelf(uid) || isManager();
+      allow write: if isManager();
+    }
+
+    // Contributor PDF submissions are write-once from the submitting user.
+    // Owner/Manager can read and manage the queue.
+    match /builderSubmissions/{submissionId} {
+      allow create: if signedIn()
+        && request.resource.data.rar_user_id == request.auth.uid
+        && request.resource.data.submission_id == submissionId
+        && request.resource.data.status == 'SUBMITTED';
+      allow read: if signedIn()
+        && (resource.data.rar_user_id == request.auth.uid || isManager());
+      allow update, delete: if isManager();
+    }
+
+    match /adminUsers/{uid} {
+      // Each signed-in user may read only their own marker so the client can
+      // determine whether Manager access is active. Manager authority itself
+      // is still granted only by trusted creation of this document.
+      allow read: if isSelf(uid);
+      allow write: if false;
+    }
+
+    // Account backend does not expose RAR horse collection data by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
