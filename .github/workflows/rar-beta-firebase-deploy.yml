@@ -1,0 +1,83 @@
+name: RAR Beta Firebase Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rar-beta-release/**"
+      - ".github/workflows/rar-beta-firebase-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Audit RAR beta release
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
+          required=[
+            "<title>RARβ</title>",
+            'id="submitCatalogInput"',
+            'id="submitMeasureInput"',
+            'id="submitOwnerBtn"',
+            "Ownerに送信",
+            "消去しますがよろしいですか？",
+            "start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total)",
+          ]
+          missing=[x for x in required if x not in html]
+          if missing:
+            raise SystemExit("Missing release contract: "+repr(missing))
+          print("RAR beta release contract PASS")
+          PY
+      - name: JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
+          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+            raise SystemExit("module script missing")
+          js="\n".join(line for line in m.group(1).splitlines() if not line.strip().startswith("import"))
+          Path("/tmp/rar-beta.js").write_text(js,encoding="utf-8")
+          PY
+          node --check /tmp/rar-beta.js
+
+  deploy:
+    needs: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify Firebase credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "::error::FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E is not configured in this repository."
+            exit 2
+          fi
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy RAR beta to Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+        run: |
+          firebase deploy \
+            --only hosting,firestore:rules,storage \
+            --project rar-project-5a27e \
+            --config rar-beta-release/firebase.json
