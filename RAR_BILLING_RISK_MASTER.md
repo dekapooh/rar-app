@@ -55,3 +55,11 @@ RARで「無料枠はあるが、超過時に課金される」「支払い方�
 4. 無料枠超過時に自動課金されるか
 5. 上限・アラート・自動削除で課金リスクを抑えられるか
 6. RAR規模で実質無料運用が現実的か
+
+
+### 3. Cloudflare Workers / R2 Event Notifications
+- 用途候補: R2オブジェクト変更時の自動イベント処理
+- 状態: R2設定画面上で Workers Paid plan が必要と表示される機能
+- 方針: RARでは現時点で使用しない。
+- 理由: 30日自動削除はR2 Object Lifecycle Rulesで実現でき、Event Notificationsは不要。
+- 課金回避: Event Notifications / Workers Paid plan は有効化しない。
