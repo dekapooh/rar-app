@@ -2551,8 +2551,8 @@ document.getElementById("favoritesOnly").addEventListener("change",()=>{
  renderRanking();
 });
 document.getElementById("resetRankFilters").addEventListener("click",()=>{
- state.rankBase={potential:true,pedigree:true,dream:true,roi:true};
- state.filterBase={favoritesOnly:false,excludeFull:false};
+ // Ranking reset returns to the user's My Page standard settings.
+ // Never overwrite rankBase/filterBase/rankBaseScenario here.
  state.priceRange={min:"",max:""};
  saveState();
  applyRankBase();
