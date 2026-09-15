@@ -1,0 +1,226 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>RARβ</title><style>
+:root{font-family:system-ui,-apple-system,sans-serif;color-scheme:dark;background:#101214;color:#f5f5f5}body{margin:0;padding:24px}.wrap{max-width:760px;margin:auto}.card{background:#1b1e21;border:1px solid #333;border-radius:16px;padding:18px;margin:14px 0}.hidden{display:none}.muted{color:#aaa}.ok{color:#7ee787}.review{color:#f2cc60}.grid{display:grid;grid-template-columns:auto 1fr;gap:8px 12px}.small{font-size:14px}.mono{font-family:ui-monospace,monospace;word-break:break-all;font-size:13px}.hold{color:#ff7b72}.route-pill{display:inline-block;padding:2px 7px;border-radius:999px;border:1px solid #3b434a;margin:1px 3px 1px 0;font-size:12px}.route-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.route-kpi{background:#15181a;border:1px solid #2b2f32;border-radius:10px;padding:10px}.route-kpi strong{display:block;font-size:18px}.nowrap{white-space:nowrap}button,.filebtn{font:inherit;border:0;border-radius:12px;padding:12px 16px}.primary,.filebtn{background:#ff8a00;color:#111;font-weight:700;display:inline-block}.fact-table{width:100%;border-collapse:collapse;font-size:13px}.fact-table th,.fact-table td{border-bottom:1px solid #333;padding:7px 5px;text-align:left;vertical-align:top}.fact-scroll{max-height:420px;overflow:auto}.step{background:#15181a;border:1px solid #2b2f32;border-radius:12px;padding:14px;margin:8px 0}.source-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.source-box{background:#15181a;border:1px solid #2b2f32;border-radius:12px;padding:14px}.source-box h3{margin:0 0 8px}.score-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.score-progress{height:10px;background:#292d31;border-radius:999px;overflow:hidden;margin-top:10px}.score-progress>span{display:block;height:100%;width:0;background:#7ee787;transition:width .2s}.score-result-table{min-width:980px}.score-result-table th{white-space:nowrap}.score-result-table td{white-space:nowrap}.ready{color:#7ee787;font-weight:700}.disabled-note{color:#aaa;font-size:13px}.danger{background:#7a2020;color:#fff;font-weight:700}.submission-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.delete-dialog{border:1px solid #555;border-radius:16px;background:#1b1e21;color:#f5f5f5;padding:22px;max-width:360px;width:calc(100% - 48px)}.delete-dialog::backdrop{background:rgba(0,0,0,.7)}.delete-dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}@media(max-width:640px){.source-grid{grid-template-columns:1fr}}
+</style></head><body><main class="wrap"><h1>RARβ</h1><p class="muted">RAR採点・データ収集 Webアプリ</p>
+<section id="signin" class="card"><h2>RARアカウント</h2><p>Builderは蓄積RARデータやランキングを表示しません。</p><button id="login" class="primary">Googleでログイン</button></section>
+<section id="pending" class="card hidden"><h2>協力者承認待ち</h2><p>申請は自動送信済みです。RAR Managerで承認されると利用できます。</p><p>UID: <code id="pendingUid"></code></p><button id="logout1">ログアウト</button></section>
+<section id="denied" class="card hidden"><h2>RARβ利用権限なし</h2><button id="logout2">ログアウト</button></section>
+<section id="builder" class="hidden"><div class="card"><strong id="who"></strong><p class="muted">RARβ 認証済み</p><button id="logout3">ログアウト</button></div>
+<div id="contributorWorkspace" class="hidden">
+<div class="card"><h2>OwnerへPDF提出</h2><p>公式募集カタログPDFと公式測尺PDFの2ファイルを添付してOwnerへ提出します。採点はOwner側で行います。</p>
+<div class="source-grid">
+  <div class="source-box"><h3>募集カタログ</h3><label class="filebtn" for="submitCatalogInput">カタログPDFを選ぶ</label><input id="submitCatalogInput" type="file" accept="application/pdf,.pdf" class="hidden"><p id="submitCatalogName" class="small muted">未選択</p></div>
+  <div class="source-box"><h3>測尺</h3><label class="filebtn" for="submitMeasureInput">測尺PDFを選ぶ</label><input id="submitMeasureInput" type="file" accept="application/pdf,.pdf" class="hidden"><p id="submitMeasureName" class="small muted">未選択</p></div>
+</div>
+<div class="score-actions"><button id="submitOwnerBtn" class="primary" disabled>Ownerに送信</button><span id="submitOwnerStatus" class="disabled-note">PDFを2種類選択してください</span></div>
+</div>
+</div>
+<div id="ownerWorkspace" class="hidden">
+<div class="card"><h2>協力者からの提出PDF</h2><p class="muted">協力者が「Ownerに送信」で提出したカタログPDFと測尺PDFです。</p><div class="score-actions"><button id="reloadOwnerSubmissions" type="button">再読み込み</button></div><div id="ownerSubmissions" class="small" style="margin-top:12px">読み込み中…</div></div>
+<div class="card"><h2>1. 採点ソースPDF</h2><p>公式募集カタログPDFと公式測尺PDFの2ファイルを選択してください。両方の照合が完了すると採点できます。</p>
+<div class="source-grid">
+  <div class="source-box"><h3>募集カタログ</h3><label class="filebtn" for="pdfInput">カタログPDFを選ぶ</label><input id="pdfInput" type="file" accept="application/pdf,.pdf" class="hidden"><div class="grid small" style="margin-top:12px"><strong>状態</strong><span id="intakeStatus">未選択</span><strong>ファイル</strong><span id="fileName">—</span><strong>ページ数</strong><span id="pageCount">—</span><strong>SHA-256</strong><span id="sha" class="mono">—</span><strong>年度</strong><span id="yearResult">—</span><strong>Profile</strong><span id="profileResult">—</span></div></div>
+  <div class="source-box"><h3>測尺</h3><label class="filebtn" for="measureInput">測尺PDFを選ぶ</label><input id="measureInput" type="file" accept="application/pdf,.pdf" class="hidden"><div class="grid small" style="margin-top:12px"><strong>状態</strong><span id="measureStatus">未選択</span><strong>ファイル</strong><span id="measureFileName">—</span><strong>ページ数</strong><span id="measurePageCount">—</span><strong>SHA-256</strong><span id="measureSha" class="mono">—</span><strong>照合</strong><span id="measureCoverage">—</span></div></div>
+</div>
+<p id="busy" class="muted hidden">PDFを確認中…</p>
+<div id="pdfResult" class="hidden"><div class="grid small"><strong>Batch ID</strong><span id="batchId" class="mono"></span><strong>募集馬検出</strong><span id="candidateResult"></span><strong>欠番</strong><span id="missingResult"></span><strong>ページ照合</strong><span id="pageMapResult"></span><strong>次工程</strong><span id="nextState"></span></div></div>
+<div class="score-actions"><button id="scoreBtn" class="primary" disabled>採点開始</button><button id="scoreResetBtn" type="button">結果をクリア</button><span id="scoreReady" class="disabled-note">カタログPDFと測尺PDFを選択してください</span></div>
+<div class="score-progress"><span id="scoreProgressBar"></span></div><div id="scoreBatchStatus" class="muted small" style="margin-top:7px">0 / 82</div>
+</div>
+<div id="scoreCard" class="card hidden"><h2>2. RAR /100 採点結果</h2><div class="grid small"><strong>状態</strong><span id="scoreStatus"></span><strong>処理</strong><span id="scoreCount"></span><strong>フォーマット</strong><span>Potential /30 + Pedigree /20 + 夢 /20 + Investment Value /30</span></div><div class="fact-scroll" style="margin-top:14px"><table class="fact-table score-result-table"><thead><tr><th>No</th><th>募集馬</th><th>Potential</th><th>Pedigree</th><th>夢 Middle</th><th>夢 High</th><th>夢 Official</th><th>IV Middle</th><th>IV High</th><th>Investment Value</th><th>RAR /100</th></tr></thead><tbody id="scoreRows"></tbody></table></div></div>
+<div id="factCard" class="card hidden"><h2>3. FACT抽出</h2><div class="grid small"><strong>状態</strong><span id="factStatus"></span><strong>抽出</strong><span id="factCount"></span><strong>AUTO_PASS</strong><span id="factPass"></span><strong>REVIEW</strong><span id="factReview"></span></div><div id="factSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のFACT一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>父</th><th>性</th><th>生年月日</th><th>厩舎</th><th>一口</th><th>判定</th></tr></thead><tbody id="factRows"></tbody></table></div></details><p class="muted small">既知の公式PDFは、事前検証済みの固定FACT ManifestをSHA-256で結び付けます。別版へ流用しません。</p></div>
+<div id="potentialCard" class="card hidden"><h2>4. Potential｜Beta4.9</h2><div class="grid small"><strong>状態</strong><span id="potentialStatus"></span><strong>対象</strong><span id="potentialCount"></span><strong>Q1〜Q7</strong><span id="potentialQ17"></span><strong>Q8</strong><span id="potentialQ8"></span><strong>Canonical再現</strong><span id="potentialCanonical"></span><strong>Engine</strong><span>Potential Ver.4.4 Beta / CLPP Beta4.9</span></div><div id="potentialSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のPotential一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Scale/Frame</th><th>Rear</th><th>Trunk</th><th>Front</th><th>Potential</th><th>Route</th></tr></thead><tbody id="potentialRows"></tbody></table></div></details><p class="muted small">Recovery Package SHA-256と公式PDF SHA-256を固定照合。保存済みBeta4.9監査結果をそのまま表示し、新しい採点値は生成しません。</p></div>
+<div id="dreamRoiCard" class="card hidden"><h2>5-7. 夢 / ROI / Investment Value</h2><div class="grid small"><strong>夢</strong><span id="dreamRouteStatus"></span><strong>Middle Route</strong><span id="middleRouteStatus"></span><strong>High</strong><span id="highRouteStatus"></span><strong>夢 小数値</strong><span id="decimalRouteStatus"></span><strong>ROI / IV</strong><span id="roiIvStatus"></span><strong>RAR /100</strong><span id="rar100Status"></span><strong>Engine</strong><span id="routeEngine"></span></div><div class="route-grid"><div class="route-kpi"><span class="muted small">Middle解決</span><strong id="middleResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High解決</span><strong id="highResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High HOLD</span><strong id="highHoldKpi">—</strong></div></div><div id="routeSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭の夢 / Route一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Middle</th><th>High</th><th>Official</th><th>High</th><th>Target</th><th>Middle ROI</th><th>High ROI</th><th>Official ROI</th><th>IV /30</th><th>RAR /100</th></tr></thead><tbody id="routeRows"></tbody></table></div></details><p class="muted small">夢の小数は整数Anchorへ丸めず、実名ターゲットの性能着順へ連続反映します。ROI / IVはFROZEN_FINALの82頭出力のみ表示します。Route推測値や途中仕様は表示しません。</p></div>
+<div class="card"><h2>収集パイプライン</h2><div class="step">1. 公式募集カタログPDF＋公式測尺PDF</div><div class="step">2. FACT確認｜AUTO_PASS / REVIEW / MISSING</div><div class="step">3. Potential｜画像・QA・CLPP・FROZEN</div><div class="step">4. 血統</div><div class="step">5. 夢 /20｜Middle / High / Official</div><div class="step">6. ROI｜Middle / High競走生活・賞金積上げ</div><div class="step">7. Investment Value /30｜Middle / High / Official</div><div class="step">8. QA｜出典・Version・未確定項目</div><div class="step">9. 収集データを送信</div></div></div></section>
+<dialog id="deleteSubmissionDialog" class="delete-dialog"><strong>消去しますがよろしいですか？</strong><p id="deleteSubmissionLabel" class="muted small"></p><div class="row"><button id="deleteSubmissionNo" type="button">No</button><button id="deleteSubmissionYes" type="button" class="danger">Yes</button></div></dialog>
+<section id="err" class="card hidden"><h2>エラー</h2><pre id="errmsg"></pre></section></main>
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
+import{getAuth,GoogleAuthProvider,onAuthStateChanged,signInWithPopup,signOut}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
+import{collection,deleteDoc,doc,getDoc,getDocs,getFirestore,setDoc}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import{deleteObject,getDownloadURL,getStorage,ref as storageRef,uploadBytes}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-storage.js';
+import*as pdfjsLib from'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+const cfg={apiKey:'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',authDomain:'rar-project-5a27e.firebaseapp.com',projectId:'rar-project-5a27e',storageBucket:'rar-project-5a27e.firebasestorage.app',messagingSenderId:'574526681741',appId:'1:574526681741:web:a5da958e5babc1c16c68c4'};
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10;
+let catalogContext=null,measurementContext=null,scoringSources=null,scoredRows=[],nextScoreStart=1,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null;
+const IV_ANCHORS=[[0,0],[10,1],[20,2],[30,3],[40,4],[50,5],[60,6],[70,7],[80,8],[90,9],[100,10],[120,11],[140,12],[160,13],[180,14],[200,15],[250,16],[300,17],[350,18],[400,19],[450,20],[500,21],[600,22],[700,23],[800,24],[900,25],[1000,26],[1500,27],[2000,28],[2500,29],[3000,30]];
+function show(id){for(const x of['signin','pending','denied','builder'])$(x).classList.add('hidden');$(id).classList.remove('hidden');$('err').classList.add('hidden')}
+function fail(e){$('errmsg').textContent=e?.message||String(e);$('err').classList.remove('hidden')}
+const now=()=>new Date().toISOString();
+async function ensureProfile(u){const r=doc(db,'users',u.uid),s=await getDoc(r),t=now(),d={displayName:u.displayName||null,email:u.email||null,photoUrl:u.photoURL||null,updatedAt:t};if(!s.exists())d.createdAt=t;await setDoc(r,d,{merge:true})}
+async function access(u){await ensureProfile(u);try{const a=await getDoc(doc(db,'adminUsers',u.uid));if(a.exists()&&a.data()?.status==='ACTIVE')return{state:'APPROVED',role:'OWNER'}}catch{}const z=await getDoc(doc(db,'builderAuthorizations',u.uid));if(z.exists()){const s=String(z.data()?.status||'');if(s==='APPROVED'||s==='ACTIVE')return{state:'APPROVED',role:String(z.data()?.role||'CONTRIBUTOR')};if(s==='REVOKED'||s==='SUSPENDED')return{state:'DENIED'}}const ar=doc(db,'builderApplications',u.uid),as=await getDoc(ar);if(as.exists()){const s=String(as.data()?.status||'');if(s==='APPROVED')return{state:'APPROVED',role:'CONTRIBUTOR'};if(s==='REJECTED'||s==='WITHDRAWN')return{state:'DENIED'}}else{const t=now();await setDoc(ar,{rar_user_id:u.uid,status:'PENDING',display_ref:u.displayName||u.email||u.uid,requested_at:t,updated_at:t})}return{state:'PENDING'}}
+async function sha256(buffer){const h=await crypto.subtle.digest('SHA-256',buffer);return[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+function validPdfFile(file){return !!file&&file.size>0&&file.size<=30*1024*1024&&(file.type==='application/pdf'||/\.pdf$/i.test(file.name))}
+function refreshOwnerSubmit(){const ready=validPdfFile(submitCatalogFile)&&validPdfFile(submitMeasureFile);$('submitOwnerBtn').disabled=!ready;$('submitOwnerStatus').className=ready?'ready':'disabled-note';$('submitOwnerStatus').textContent=ready?'提出準備完了':'PDFを2種類選択してください'}
+async function deleteStorageIfPresent(path){
+ if(!path)return;
+ try{await deleteObject(storageRef(storage,path))}
+ catch(e){if(e?.code!=='storage/object-not-found')throw e}
+}
+function requestDeleteSubmission(record){
+ pendingDeleteSubmission=record;
+ $('deleteSubmissionLabel').textContent=(record.contributor_ref||record.rar_user_id||'Contributor')+'｜'+(record.submitted_at||'');
+ $('deleteSubmissionDialog').showModal();
+}
+async function confirmDeleteSubmission(){
+ const record=pendingDeleteSubmission;if(!record)return;
+ $('deleteSubmissionYes').disabled=true;$('deleteSubmissionNo').disabled=true;
+ try{
+  await Promise.all([
+   deleteStorageIfPresent(record.catalog?.storage_path),
+   deleteStorageIfPresent(record.measurements?.storage_path)
+  ]);
+  await deleteDoc(doc(db,'builderSubmissions',record.id));
+  pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
+  await loadOwnerSubmissions();
+ }catch(e){fail(e)}
+ finally{$('deleteSubmissionYes').disabled=false;$('deleteSubmissionNo').disabled=false}
+}
+async function loadOwnerSubmissions(){
+ const box=$('ownerSubmissions');box.textContent='読み込み中…';
+ const snap=await getDocs(collection(db,'builderSubmissions'));
+ if(snap.empty){box.innerHTML='<span class="muted">提出済みPDFはありません。</span>';return}
+ const rows=snap.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>String(b.submitted_at||'').localeCompare(String(a.submitted_at||'')));
+ box.replaceChildren();
+ for(const r of rows){
+  const card=document.createElement('div');card.className='step';
+  const who=document.createElement('strong');who.textContent=r.contributor_ref||r.rar_user_id||'Contributor';
+  const when=document.createElement('div');when.className='muted small';when.textContent=r.submitted_at||'';
+  const links=document.createElement('div');links.className='small';
+  const addLink=(label,asset)=>{
+   if(!asset?.download_url)return;
+   const a=document.createElement('a');a.href=asset.download_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label+'｜'+(asset.original_name||'PDF');
+   links.append(a,document.createElement('br'));
+  };
+  addLink('カタログPDF',r.catalog);addLink('測尺PDF',r.measurements);
+  const actions=document.createElement('div');actions.className='submission-actions';
+  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='消去';del.onclick=()=>requestDeleteSubmission(r);
+  actions.append(del);card.append(who,when,links,actions);box.append(card);
+ }
+}
+async function submitPdfsToOwner(){
+ const user=auth.currentUser;if(!user)throw new Error('ログインが必要です');
+ if(!validPdfFile(submitCatalogFile)||!validPdfFile(submitMeasureFile))throw new Error('カタログPDFと測尺PDFを両方選択してください');
+ $('submitOwnerBtn').disabled=true;$('submitOwnerStatus').className='review';$('submitOwnerStatus').textContent='Ownerへ送信中…';
+ const submissionId='sub-'+Date.now()+'-'+crypto.randomUUID().slice(0,8),base='builderSubmissions/'+user.uid+'/'+submissionId;
+ const [catalogBuffer,measureBuffer]=await Promise.all([submitCatalogFile.arrayBuffer(),submitMeasureFile.arrayBuffer()]);
+ const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
+ const catalogPath=base+'/catalog.pdf',measurePath=base+'/measurements.pdf';
+ const catRef=storageRef(storage,catalogPath),meaRef=storageRef(storage,measurePath);
+ await uploadBytes(catRef,submitCatalogFile,{contentType:'application/pdf',customMetadata:{originalName:submitCatalogFile.name,sha256:catalogSha,submissionId}});
+ await uploadBytes(meaRef,submitMeasureFile,{contentType:'application/pdf',customMetadata:{originalName:submitMeasureFile.name,sha256:measureSha,submissionId}});
+ const [catalogUrl,measureUrl]=await Promise.all([getDownloadURL(catRef),getDownloadURL(meaRef)]);
+ await setDoc(doc(db,'builderSubmissions',submissionId),{
+   schema_version:'builder-pdf-submission-v1',submission_id:submissionId,rar_user_id:user.uid,
+   contributor_ref:user.displayName||user.email||user.uid,status:'SUBMITTED',submitted_at:now(),
+   catalog:{original_name:submitCatalogFile.name,sha256:catalogSha,size_bytes:submitCatalogFile.size,storage_path:catalogPath,download_url:catalogUrl},
+   measurements:{original_name:submitMeasureFile.name,sha256:measureSha,size_bytes:submitMeasureFile.size,storage_path:measurePath,download_url:measureUrl}
+ });
+ $('submitOwnerStatus').className='ok';$('submitOwnerStatus').textContent='Ownerへ送信しました';
+ submitCatalogFile=null;submitMeasureFile=null;$('submitCatalogInput').value='';$('submitMeasureInput').value='';$('submitCatalogName').textContent='未選択';$('submitMeasureName').textContent='未選択';
+}
+function unpack(m){const f=m.fields;return m.records.map(a=>{const o={};f.forEach((k,i)=>o[k]=a[i]);o.status='AUTO_PASS';o.missing=[];return o})}
+async function loadFacts(hash,pages){if(hash!==KNOWN_SHA||pages!==128)return null;const r=await fetch('./silk_2026_facts_v1.json?v=1',{cache:'no-store'});if(!r.ok)throw new Error('FACT Manifestを取得できません');const m=await r.json();if(m.source_sha256!==hash||m.page_count!==pages||m.records?.length!==82)throw new Error('FACT Manifest検証失敗');return unpack(m)}
+async function loadPotential(hash,pages){if(hash!==KNOWN_SHA||pages!==128)return null;const r=await fetch('./silk_2026_potential_beta49_recovered_v1.json?v=1',{cache:'no-store'});if(!r.ok)throw new Error('Potential Manifestを取得できません');const m=await r.json();if(m.source_pdf_sha256!==hash||m.recovery_package_sha256!==RECOVERY_SHA||m.records?.length!==82)throw new Error('Potential Manifest検証失敗');return{meta:m,records:unpack(m)}}
+async function loadPedigree(hash,pages){if(hash!==KNOWN_SHA||pages!==128)return null;const r=await fetch('./silk_2026_pedigree_v1.json?v=1',{cache:'no-store'});if(!r.ok)throw new Error('Pedigree Manifestを取得できません');const m=await r.json();if(m.source_catalog_sha256!==hash||m.records?.length!==82)throw new Error('Pedigree Manifest検証失敗');return{meta:m,records:unpack(m)}}
+async function loadSuitability(){const r=await fetch('./silk_2026_suitability_v1.json?v=1',{cache:'no-store'});if(!r.ok)throw new Error('Suitability Manifestを取得できません');const m=await r.json();if(m.records?.length!==82)throw new Error('Suitability Manifest検証失敗');return m.records}
+async function loadDreamRoi(hash,pages){if(hash!==KNOWN_SHA||pages!==128)return null;const [r,s]=await Promise.all([fetch('./rar-roi-route-status-v1.json?v=2',{cache:'no-store'}),fetch('./rar-v2-summaries.json?v=2',{cache:'no-store'})]);if(!r.ok)throw new Error('夢/ROI Route Manifestを取得できません');if(!s.ok)throw new Error('ROI/IV FROZEN Summaryを取得できません');const m=await r.json(),scores=await s.json();if(m.source_pdf_sha256!==hash||m.records?.length!==82||m.summary?.horse_count!==82)throw new Error('夢/ROI Route Manifest検証失敗');if(scores?.length!==82||scores.some(x=>x.roi_iv_status!=='FROZEN_FINAL'||x.rar_total_status!=='FROZEN_FINAL'))throw new Error('ROI/IV FROZEN Summary検証失敗');m.score_records=scores;return m}
+function esc(v){return String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function sample(r){return `<div class="step"><strong>No.${r.recruitment_number} ${esc(r.display_name)}</strong><br>父 ${esc(r.sire)}｜${esc(r.sex)} ${esc(r.color)}｜${esc(r.birth_date)}<br>${esc(r.trainer)}厩舎｜一口 ${Number(r.share_price_yen).toLocaleString()}円 <span class="ok">AUTO_PASS</span>${r.disclosed_notice?`<br>公表事項：${esc(r.disclosed_notice)}`:''}</div>`}
+function renderFacts(records){$('factCard').classList.remove('hidden');$('factStatus').innerHTML='<span class="ok">AUTO_PASS</span>';$('factCount').textContent='82/82頭';$('factPass').innerHTML='<span class="ok">82</span>';$('factReview').innerHTML='<span class="ok">0</span>';const picks=[records[0],records[39],records[81]];$('factSamples').innerHTML=picks.map(sample).join('');$('factRows').innerHTML=records.map(r=>`<tr><td>${r.recruitment_number}</td><td>${esc(r.display_name)}</td><td>${esc(r.sire)}</td><td>${esc(r.sex)}</td><td>${esc(r.birth_date)}</td><td>${esc(r.trainer)}</td><td>${Number(r.share_price_yen).toLocaleString()}円</td><td class="ok">AUTO_PASS</td></tr>`).join('')}
+function pSample(r){return `<div class="step"><strong>No.${r.horse_no} ${esc(r.name)}</strong><br>Scale & Frame ${r.ScaleFrame_6}/6｜Rear ${r.Rear_10}/10｜Trunk ${r.Trunk_8}/8｜Front ${r.Front_6}/6<br><strong>Potential ${r.Potential_30_Beta48}/30</strong> <span class="ok">${esc(r.Beta49_route_candidate)}</span></div>`}
+function renderPotential(p){const m=p.meta,records=p.records;$('potentialCard').classList.remove('hidden');$('potentialStatus').innerHTML='<span class="ok">BETA4.9 QA PASS</span>';$('potentialCount').textContent='82/82頭';$('potentialQ17').innerHTML=`<span class="ok">${m.qa.q1_q7_pass}/82 PASS</span>`;$('potentialQ8').innerHTML=`<span class="ok">${m.qa.q8_pass}/82 PASS</span>`;$('potentialCanonical').innerHTML=`<span class="ok">${m.qa.canonical_repeatability_match}/82一致</span>`;$('potentialSamples').innerHTML=[records[0],records[39],records[81]].map(pSample).join('');$('potentialRows').innerHTML=records.map(r=>`<tr><td>${r.horse_no}</td><td>${esc(r.name)}</td><td>${r.ScaleFrame_6}/6</td><td>${r.Rear_10}/10</td><td>${r.Trunk_8}/8</td><td>${r.Front_6}/6</td><td><strong>${r.Potential_30_Beta48}/30</strong></td><td class="ok">${esc(r.Beta49_route_candidate)}</td></tr>`).join('')}
+function targetText(r){if(!r.named_targets?.length)return '<span class="muted">実名Targetなし</span>';return r.named_targets.map(t=>`<span class="route-pill">${esc(t.race_name)}｜H ${Number(t.high_performance_position).toFixed(1)}着相当</span>`).join('')}
+function routeSample(r){const status=r.high_status==='RESOLVED'?'<span class="ok">RESOLVED</span>':'<span class="hold">HOLD</span>';return `<div class="step"><strong>No.${r.no} ${esc(r.name)}</strong><br>夢 M ${r.dream_middle.toFixed(1)}｜H ${r.dream_high_career.toFixed(1)}｜Official ${r.dream_official.toFixed(1)}｜High ${status}<br>${targetText(r)}${r.generic_target_labels?.length?`<br><span class="muted">Generic: ${esc(r.generic_target_labels.join(' / '))}</span>`:''}</div>`}
+function renderDreamRoi(m){const s=m.summary,records=m.records,scores=new Map((m.score_records||[]).map(x=>[x.no,x]));$('dreamRoiCard').classList.remove('hidden');$('dreamRouteStatus').innerHTML='<span class="ok">FROZEN 夢値読込済み</span>';$('middleRouteStatus').innerHTML=`<span class="ok">${s.middle_resolved}/82 RESOLVED</span>`;$('highRouteStatus').innerHTML=s.high_unresolved===0?`<span class="ok">${s.high_resolved}/82 RESOLVED</span>`:`<span class="ok">${s.high_resolved}/82 RESOLVED</span> / <span class="hold">${s.high_unresolved} HOLD</span>`;$('decimalRouteStatus').innerHTML='<span class="ok">NO ROUNDING｜連続着順補間</span>';$('roiIvStatus').innerHTML='<span class="ok">82/82 FROZEN_FINAL</span>';$('rar100Status').innerHTML='<span class="ok">Potential /30 + Pedigree /20 + 夢 /20 + Investment Value /30</span>';$('routeEngine').textContent=m.engine_base_commit.slice(0,8);$('middleResolvedKpi').textContent=`${s.middle_resolved}/82`;$('highResolvedKpi').textContent=`${s.high_resolved}/82`;$('highHoldKpi').innerHTML=s.high_unresolved? `<span class="hold">${s.high_unresolved}</span>`:'0';const picks=[records.find(r=>r.no===59),records.find(r=>r.no===40),records.find(r=>r.no===60)].filter(Boolean);$('routeSamples').innerHTML=picks.map(r=>{const q=scores.get(r.no);return routeSample(r)+(q?`<div class="small muted">Prize M ¥${Math.round(q.roi_middle_prize_yen).toLocaleString()}｜H ¥${Math.round(q.roi_high_career_prize_yen).toLocaleString()}｜ROI ${q.roi_official.toFixed(1)}%｜IV ${q.investment_value_official.toFixed(1)}/30｜RAR ${q.rar_total_official.toFixed(1)}/100</div>`:'')}).join('');$('routeRows').innerHTML=records.map(r=>{const q=scores.get(r.no);return `<tr><td>${r.no}</td><td>${esc(r.name)}</td><td>${r.dream_middle.toFixed(1)}</td><td>${r.dream_high_career.toFixed(1)}</td><td>${r.dream_official.toFixed(1)}</td><td class="${r.high_status==='RESOLVED'?'ok':'hold'}">${esc(r.high_status)}</td><td>${targetText(r)}</td><td>${q?q.roi_middle.toFixed(1)+'%':'—'}</td><td>${q?q.roi_high_career.toFixed(1)+'%':'—'}</td><td>${q?q.roi_official.toFixed(1)+'%':'—'}</td><td>${q?q.investment_value_official.toFixed(2):'—'}</td><td>${q?q.rar_total_official.toFixed(2):'—'}</td></tr>`}).join('')}
+
+const sleep0=()=>new Promise(resolve=>setTimeout(resolve,0));
+const norm=v=>String(v??'').replace(/[\s　・･]/g,'').replace(/の25$/,'の25');
+const close=(a,b,t=1e-6)=>Math.abs(Number(a)-Number(b))<=t;
+function ivScore(roi){const r=Math.max(0,Number(roi)||0);if(r>=3000)return 30;for(let i=0;i<IV_ANCHORS.length-1;i++){const [r0,s0]=IV_ANCHORS[i],[r1,s1]=IV_ANCHORS[i+1];if(r<=r1)return s0+(r-r0)/(r1-r0)*(s1-s0)}return 30}
+async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise;let text='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),tc=await page.getTextContent();text+='\n'+tc.items.map(x=>x.str).join(' ')}return{pages:pdf.numPages,text}}
+async function ensureSources(){
+ if(!catalogContext?.known)return null;
+ if(scoringSources)return scoringSources;
+ const [facts,potential,pedigree,suitability,dreamRoi]=await Promise.all([loadFacts(catalogContext.hash,catalogContext.pages),loadPotential(catalogContext.hash,catalogContext.pages),loadPedigree(catalogContext.hash,catalogContext.pages),loadSuitability(),loadDreamRoi(catalogContext.hash,catalogContext.pages)]);
+ if(!facts||!potential||!pedigree||!dreamRoi)throw new Error('採点ソースを構成できません');
+ scoringSources={facts,potential,pedigree,suitability,dreamRoi};
+ return scoringSources;
+}
+async function validateMeasurement(buffer){
+ const src=await ensureSources();if(!src)return{ok:false,pages:0,coverage:0};
+ const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=/測尺/.test(ext.text)&&/体高/.test(ext.text)&&/管囲/.test(ext.text);
+ const hits=src.potential.records.filter(r=>flat.includes(norm(r.name))).length;
+ return{ok:headerOk&&hits>=70,pages:ext.pages,coverage:hits,headerOk};
+}
+function refreshScoreReady(){
+ const sourcesReady=!!catalogContext?.known&&!!measurementContext?.ok;
+ const complete=scoredRows.length>=82;
+ const ready=sourcesReady&&!complete;
+ $('scoreBtn').disabled=!ready;
+ $('scoreReady').className=sourcesReady?'ready':'disabled-note';
+ if(!sourcesReady){
+   $('scoreReady').textContent='カタログPDFと測尺PDFの照合完了後に採点できます';
+   $('scoreBtn').textContent='採点開始';
+ }else if(complete){
+   $('scoreReady').textContent='82頭の採点が完了しました';
+   $('scoreBtn').textContent='採点完了';
+ }else{
+   const end=Math.min(nextScoreStart+LOT_SIZE-1,82);
+   $('scoreReady').textContent=`次は No.${nextScoreStart}〜${end} を手動スタート`;
+   $('scoreBtn').textContent=`No.${nextScoreStart}〜${end}を採点`;
+ }
+}
+function clearScoreResult(){
+ scoredRows=[];nextScoreStart=1;$('scoreRows').innerHTML='';$('scoreCard').classList.add('hidden');$('factCard').classList.add('hidden');$('potentialCard').classList.add('hidden');$('dreamRoiCard').classList.add('hidden');$('scoreProgressBar').style.width='0%';$('scoreBatchStatus').textContent='0 / 82｜次回 No.1〜10';$('scoreStatus').textContent='';$('scoreCount').textContent='';
+}
+function validatedScore(no,src){
+ const p=src.potential.records.find(x=>Number(x.horse_no)===no),g=src.pedigree.records.find(x=>Number(x.recruitment_no)===no),r=src.dreamRoi.records.find(x=>Number(x.no)===no),q=src.dreamRoi.score_records.find(x=>Number(x.no)===no),fact=src.facts.find(x=>Number(x.recruitment_number)===no),suit=src.suitability.find(x=>Number(x.no)===no);
+ if(!p||!g||!r||!q||!fact||!suit)throw new Error('No.'+no+' の採点入力が不足しています');
+ if(q.roi_iv_status!=='FROZEN_FINAL'||q.rar_total_status!=='FROZEN_FINAL')throw new Error('No.'+no+' のROI/IVがFROZEN_FINALではありません');
+ if(!close(q.potential_official,p.Potential_30_Beta48)||!close(q.pedigree_official,g.pedigree_20))throw new Error('No.'+no+' Potential/Pedigree整合性エラー');
+ if(!close(q.dream_middle,r.dream_middle)||!close(q.dream_high_career,r.dream_high_career)||!close(q.dream_official,(Number(r.dream_middle)+Number(r.dream_high_career))/2))throw new Error('No.'+no+' 夢整合性エラー');
+ const ivM=ivScore(q.roi_middle),ivH=ivScore(q.roi_high_career),ivOfficial=ivScore(q.roi_official),total=Number(q.potential_official)+Number(q.pedigree_official)+Number(q.dream_official)+ivOfficial;
+ if(!close(ivOfficial,q.investment_value_official)||!close(total,q.rar_total_official))throw new Error('No.'+no+' Investment Value/RAR100整合性エラー');
+ return{no,name:q.display_name,potential:Number(q.potential_official),pedigree:Number(q.pedigree_official),dreamMiddle:Number(q.dream_middle),dreamHigh:Number(q.dream_high_career),dreamOfficial:Number(q.dream_official),roiMiddle:Number(q.roi_middle),roiHigh:Number(q.roi_high_career),roiOfficial:Number(q.roi_official),ivMiddle:ivM,ivHigh:ivH,ivOfficial:Number(q.investment_value_official),rar100:Number(q.rar_total_official),middlePrize:Number(q.roi_middle_prize_yen),highPrize:Number(q.roi_high_career_prize_yen),surface:r.resolved_route_surface,growth:r.growth_type};
+}
+function appendScoreRows(rows){$('scoreRows').insertAdjacentHTML('beforeend',rows.map(x=>`<tr><td>${x.no}</td><td>${esc(x.name)}</td><td>${x.potential.toFixed(1)}</td><td>${x.pedigree.toFixed(1)}</td><td>${x.dreamMiddle.toFixed(1)}</td><td>${x.dreamHigh.toFixed(1)}</td><td><strong>${x.dreamOfficial.toFixed(1)}</strong></td><td>${x.ivMiddle.toFixed(1)}</td><td>${x.ivHigh.toFixed(1)}</td><td><strong>${x.ivOfficial.toFixed(1)}</strong></td><td><strong>${x.rar100.toFixed(1)}</strong></td></tr>`).join(''))}
+async function runScoring(){
+ if($('scoreBtn').disabled)return;
+ $('scoreBtn').disabled=true;
+ if(nextScoreStart===1){clearScoreResult();$('scoreCard').classList.remove('hidden')}
+ $('scoreStatus').innerHTML='<span class="review">この10頭を採点中</span>';
+ try{
+  const src=await ensureSources(),total=src.facts.length,start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total),lot=[];
+  for(let no=start;no<=end;no++)lot.push(validatedScore(no,src));
+  scoredRows.push(...lot);appendScoreRows(lot);nextScoreStart=end+1;
+  $('scoreCount').textContent=`${scoredRows.length}/${total}頭`;
+  $('scoreProgressBar').style.width=`${scoredRows.length/total*100}%`;
+  if(nextScoreStart<=total){
+    const nextEnd=Math.min(nextScoreStart+LOT_SIZE-1,total);
+    $('scoreStatus').innerHTML=`<span class="ok">No.${start}〜${end} 完了</span>｜次のロットは手動開始`;
+    $('scoreBatchStatus').textContent=`${scoredRows.length} / ${total}｜次回 No.${nextScoreStart}〜${nextEnd}`;
+    $('nextState').innerHTML=`<span class="ok">No.${start}〜${end}完了。次の採点ボタン待ち</span>`;
+  }else{
+    $('scoreStatus').innerHTML='<span class="ok">82頭採点完了｜FROZEN_FINAL</span>';
+    $('scoreBatchStatus').textContent=`${scoredRows.length} / ${total}｜完了`;
+    $('nextState').innerHTML='<span class="ok">82頭採点完了 → QA / 送信準備</span>';
+    renderFacts(src.facts);renderPotential(src.potential);renderDreamRoi(src.dreamRoi);
+  }
+  localStorage.setItem('rar_builder_last_batch',JSON.stringify({batch_id:catalogContext.batch,catalog_filename:catalogContext.filename,catalog_sha256:catalogContext.hash,catalog_page_count:catalogContext.pages,measurement_filename:measurementContext.filename,measurement_sha256:measurementContext.hash,measurement_page_count:measurementContext.pages,measurement_name_coverage:measurementContext.coverage,lot_size:LOT_SIZE,manual_lot_start:true,next_score_start:nextScoreStart<=total?nextScoreStart:null,horse_count:scoredRows.length,score_schema:'RAR_100_FROZEN_20260914',score_architecture:{potential:30,pedigree:20,dream:20,investment_value:30},status:scoredRows.length===total?'AUTO_SCORED':'PARTIAL_MANUAL_LOT',created_at:now()}));
+ }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';fail(err)}finally{refreshScoreReady()}
+}
+$('pdfInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;$('busy').classList.remove('hidden');clearScoreResult();scoringSources=null;try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer),pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise,pages=pdf.numPages,batch='batch-'+hash.slice(0,16),known=hash===KNOWN_SHA&&pages===128;catalogContext={filename:f.name,hash,pages,batch,known};$('fileName').textContent=f.name;$('pageCount').textContent=pages;$('sha').textContent=hash;$('batchId').textContent=batch;$('intakeStatus').innerHTML=known?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('yearResult').innerHTML=known?'<span class="ok">2026</span>':'<span class="review">未確定</span>';$('profileResult').innerHTML=known?'<span class="ok">Silk 2026</span>':'<span class="review">UNKNOWN</span>';$('candidateResult').innerHTML=known?'<span class="ok">82/82頭</span>':'<span class="review">未確定</span>';$('missingResult').innerHTML=known?'<span class="ok">0</span>':'—';$('pageMapResult').innerHTML=known?'<span class="ok">82/82</span>':'—';$('nextState').innerHTML=known?'<span class="ok">測尺PDFを照合してください</span>':'<span class="review">Profile確認へ</span>';$('pdfResult').classList.remove('hidden');if(measurementContext?.buffer){const v=await validateMeasurement(measurementContext.buffer);measurementContext={...measurementContext,...v};$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`}}catch(err){catalogContext=null;fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
+$('measureInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;$('busy').classList.remove('hidden');clearScoreResult();try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer);$('measureFileName').textContent=f.name;$('measureSha').textContent=hash;measurementContext={filename:f.name,hash,buffer,ok:false,pages:0,coverage:0};if(!catalogContext?.known){$('measureStatus').innerHTML='<span class="review">カタログ待ち</span>';$('measureCoverage').textContent='—'}else{const v=await validateMeasurement(buffer);measurementContext={...measurementContext,...v};$('measurePageCount').textContent=v.pages;$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`;if(!v.ok)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした')}}catch(err){fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
+$('scoreBtn').onclick=runScoring;
+$('scoreResetBtn').onclick=()=>{clearScoreResult();refreshScoreReady()};
+$('deleteSubmissionNo').onclick=()=>{pendingDeleteSubmission=null;$('deleteSubmissionDialog').close()};
+$('deleteSubmissionYes').onclick=()=>confirmDeleteSubmission();
+$('deleteSubmissionDialog').addEventListener('cancel',e=>{e.preventDefault();pendingDeleteSubmission=null;$('deleteSubmissionDialog').close()});
+$('submitCatalogInput').onchange=e=>{const f=e.target.files?.[0]||null;if(f&&!validPdfFile(f)){fail(new Error('カタログは30MB以下のPDFを選択してください'));e.target.value='';submitCatalogFile=null}else submitCatalogFile=f;$('submitCatalogName').textContent=f?f.name:'未選択';refreshOwnerSubmit()};
+$('submitMeasureInput').onchange=e=>{const f=e.target.files?.[0]||null;if(f&&!validPdfFile(f)){fail(new Error('測尺は30MB以下のPDFを選択してください'));e.target.value='';submitMeasureFile=null}else submitMeasureFile=f;$('submitMeasureName').textContent=f?f.name:'未選択';refreshOwnerSubmit()};
+$('submitOwnerBtn').onclick=()=>submitPdfsToOwner().catch(e=>{fail(e);refreshOwnerSubmit()});
+$('reloadOwnerSubmissions').onclick=()=>loadOwnerSubmissions().catch(fail);
+$('login').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(fail);for(const id of['logout1','logout2','logout3'])$(id).onclick=()=>signOut(auth).catch(fail);
+onAuthStateChanged(auth,async u=>{try{if(!u){currentRole=null;return show('signin')}const r=await access(u);if(r.state==='APPROVED'){currentRole=r.role;$('who').textContent=`${u.displayName||'RAR User'}｜${r.role}`;if(r.role==='OWNER'){$('ownerWorkspace').classList.remove('hidden');$('contributorWorkspace').classList.add('hidden');show('builder');await loadOwnerSubmissions();return}else{$('ownerWorkspace').classList.add('hidden');$('contributorWorkspace').classList.remove('hidden');refreshOwnerSubmit();return show('builder')}}if(r.state==='DENIED')return show('denied');$('pendingUid').textContent=u.uid;show('pending')}catch(e){fail(e)}});
+</script></body></html>
