@@ -1,0 +1,30 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isManager() {
+      return signedIn()
+        && firestore.get(/databases/(default)/documents/adminUsers/$(request.auth.uid)).data.status == 'ACTIVE';
+    }
+
+    match /builderSubmissions/{uid}/{submissionId}/{fileName} {
+      // Contributor can upload only their own two PDF assets.
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && (fileName == 'catalog.pdf' || fileName == 'measurements.pdf')
+        && request.resource.size <= 30 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+
+      // Contributor can verify their own upload; Owner can inspect submitted files.
+      allow get: if signedIn() && (request.auth.uid == uid || isManager());
+
+      // Only Owner/Manager can remove submitted source PDFs.
+      allow delete: if isManager();
+
+      allow update, list: if false;
+    }
+  }
+}
