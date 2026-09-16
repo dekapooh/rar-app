@@ -96,6 +96,15 @@ jobs:
             exit 2
           fi
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Show deploy service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          python - <<'PY'
+          import json, os
+          d=json.loads(os.environ["FIREBASE_SERVICE_ACCOUNT"])
+          print("DEPLOY_SERVICE_ACCOUNT="+str(d.get("client_email","UNKNOWN")))
+          PY
       - name: Install Firebase CLI
         run: npm install --global firebase-tools
       - name: Deploy RAR beta to Firebase
