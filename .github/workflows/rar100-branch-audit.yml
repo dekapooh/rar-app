@@ -63,6 +63,9 @@ jobs:
               "__RAR_CONSUMER_ADOPTION__",
               "古い採点結果は表示していません",
               "async function startRarApp()",
+              'id="rarLastUpdated"',
+              "function formatRarLastUpdated",
+              "renderRarLastUpdated(adoption.transferredAt)",
           ]
           missing_consumer=[x for x in required_consumer if x not in index_s]
           assert not missing_consumer, missing_consumer
