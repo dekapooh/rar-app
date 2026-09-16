@@ -82,7 +82,20 @@ RARβ Owner
 - ブラウザにR2 Secretを配布せずに済む。
 - PUT/GETのPDF bytesはPresigned URLでR2とブラウザが直接通信でき、Cloud RunへPDF本体を常時中継する必要がない。
 
-※ Cloud Runの具体的サービス・既存backend実体はrepo内からは確認できていないため、実装前に実在構成を特定する。
+既存Cloud Runは以下を確認済み:
+- GCP project: `rar-project-5a27e`
+- Service: `rar-builder-runtime`
+- Region: `asia-northeast1`
+- URL: `https://rar-builder-runtime-574526681741.asia-northeast1.run.app`
+- Service Account: `rar-builder-runtime@rar-project-5a27e.iam.gserviceaccount.com`
+- CPU: 1
+- Memory: 512Mi
+- maxScale: 1
+- Firebase auth mode
+- `/healthz` とruntime API routesあり
+- `RAR_PRODUCTION_TRANSITION=HOLD`
+
+GitHub `dekapooh/rar-app` の現行45ファイルを再帰監査したところ、Dockerfile / package.json / requirements.txt / pyproject.toml / backend / server / Cloud Run deploy sourceに相当するファイルは見つからなかった。したがって、既存Cloud Runの実行コード正本はこのrepo外にある可能性が高い。R2実装時は、既存サービスを更新する前に現在のデプロイ元を特定する。
 
 ## CORS提案
 
