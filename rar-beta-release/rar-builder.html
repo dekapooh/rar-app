@@ -247,6 +247,16 @@ function buildFrozenTransferPayload(){
   }))
  };
 }
+async function verifyRarConsumerAdoption(commit){
+ const current=await api('/v1/consumer-data/current');
+ if(current?.schema_version!=='rar-app-data-v3')throw new Error('RAR本体のOfficialデータ形式が一致しません');
+ if(Number(current?.record_count)!==82||!Array.isArray(current?.records)||current.records.length!==82)throw new Error('RAR本体で82頭の採用を確認できません');
+ if(String(current?.version_id||'')!==String(commit.version_id||''))throw new Error('RAR本体のversion_idが送信結果と一致しません');
+ if(String(current?.payload_sha256||'')!==String(commit.payload_sha256||''))throw new Error('RAR本体のpayload_sha256が送信結果と一致しません');
+ if(String(current?.consumer_records_sha256||'')!==String(commit.consumer_records_sha256||''))throw new Error('RAR本体のconsumer_records_sha256が送信結果と一致しません');
+ if(String(current?.source_submission_id||'')!==String(activeSubmissionId||''))throw new Error('RAR本体の提出IDが今回のR2提出と一致しません');
+ return current;
+}
 async function transferToRar(){
  const btn=$('transferBtn');btn.disabled=true;$('transferStatus').className='review';$('transferStatus').textContent='転送前Dry-run検証中…';
  try{
@@ -256,13 +266,15 @@ async function transferToRar(){
   $('transferStatus').textContent='RAR本体へ82頭を転送中…';
   const commit=await api('/v1/consumer-transfer/frozen-v2/commit',{method:'POST',body:{payload,dry_run:dry}});
   if(commit.status!=='PASS_TRANSFER'||!commit.version_id)throw new Error('RAR本体への転送確認に失敗しました');
-  $('transferStatus').textContent='RAR転送確認済み｜R2 PDFを削除中…';
+  $('transferStatus').textContent='RAR本体が採用するOfficialデータを照合中…';
+  await verifyRarConsumerAdoption(commit);
+  $('transferStatus').textContent='RAR本体採用確認済み｜R2 PDFを削除中…';
   const done=await api('/v1/submissions/'+encodeURIComponent(activeSubmissionId)+'/complete-transfer',{method:'POST',body:{
    version_id:commit.version_id,payload_sha256:commit.payload_sha256,consumer_records_sha256:commit.consumer_records_sha256
   }});
   if(done.status!=='RAR_TRANSFERRED'||done.pdf_deleted!==true)throw new Error('RAR転送後のR2 PDF削除確認に失敗しました');
-  $('transferStatus').className='ok';$('transferStatus').textContent='RAR送信完了｜R2 PDF 2枚の即時削除確認済み';
-  $('nextState').innerHTML='<span class="ok">RAR本体送信完了｜R2 PDF削除済み</span>';
+  $('transferStatus').className='ok';$('transferStatus').textContent='RAR本体採用確認済み｜R2 PDF 2枚の即時削除確認済み';
+  $('nextState').innerHTML='<span class="ok">RAR本体採用確認済み｜R2 PDF削除済み</span>';
  }catch(e){$('transferStatus').className='hold';$('transferStatus').textContent='送信停止｜'+(e?.message||e);btn.disabled=false;throw e}
 }
 async function runScoring(){
