@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - rar100-integration-20260915
+      - r2-temp-pdf-prodflow
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -55,7 +56,18 @@ jobs:
           assert 'const fmt1=v=>Number(v).toFixed(1);' in s
           assert 'currentHorse.dream+"/25"' not in s
           assert 'currentHorse.roi+"/25"' not in s
-          print(f"RAR100 preview audit PASS: {target} 82/82")
+          index_s=pathlib.Path("index.html").read_text(encoding="utf-8")
+          required_consumer=[
+              "https://rar-project-5a27e.web.app/v1/consumer-data/current",
+              "validateConsumerDataset",
+              "__RAR_CONSUMER_ADOPTION__",
+              "古い採点結果は表示していません",
+              "async function startRarApp()",
+          ]
+          missing_consumer=[x for x in required_consumer if x not in index_s]
+          assert not missing_consumer, missing_consumer
+          assert "Officialデータは82頭必要です" in index_s
+          print(f"RAR100 preview audit PASS: {target} 82/82｜CONSUMER_SYNC_REQUIRED")
           PY
       - name: JavaScript syntax audit
         run: |
