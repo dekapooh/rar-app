@@ -2,7 +2,7 @@ name: RAR Beta Firebase Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, r2-temp-pdf-prodflow]
     paths:
       - "rar-beta-release/**"
       - ".github/workflows/rar-beta-firebase-deploy.yml"
