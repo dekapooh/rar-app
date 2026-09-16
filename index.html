@@ -1491,7 +1491,7 @@ main{padding-top:84px}
 </style></head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC64</div><div id="rarLastUpdated" class="rar-last-updated">最終更新 --</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC64</div><div id="rarLastUpdated" class="rar-last-updated">最終更新日時 --</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
@@ -3520,8 +3520,8 @@ const RAR_CONSUMER_ENDPOINT="https://rar-project-5a27e.web.app/v1/consumer-data/
 let rarConsumerSyncState={status:"PENDING",versionId:"",consumerRecordsSha256:"",sourceSubmissionId:"",error:""};
 function formatRarLastUpdated(value){
  const d=new Date(value||"");
- if(Number.isNaN(d.getTime()))return "最終更新 --";
- return "最終更新 "+new Intl.DateTimeFormat("ja-JP",{
+ if(Number.isNaN(d.getTime()))return "最終更新日時 --";
+ return "最終更新日時 "+new Intl.DateTimeFormat("ja-JP",{
    timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",
    hour:"2-digit",minute:"2-digit",hour12:false
  }).format(d);
