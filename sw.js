@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v13-rar100-lastupdated";
+const CACHE_NAME="rar-rc66-public-beta-v14-fresh-builder-final";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
 ];
