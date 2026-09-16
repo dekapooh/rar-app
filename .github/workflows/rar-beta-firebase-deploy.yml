@@ -41,12 +41,17 @@ jobs:
             "RAR本体採用確認済み",
             "/complete-transfer",
             "R2 PDF 2枚の即時削除確認済み",
-            "start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total)",
+            "/v1/potential/batch/start",
+            "/v1/potential/batch/crosscheck-v2/",
+            "/v1/final-score/build",
+            "progress-by-catalog",
+            "FRESH_SUBMISSION_SCOPED",
+            "return latestFinalPayload",
           ]
           missing=[x for x in required if x not in html]
           if missing:
             raise SystemExit("Missing release contract: "+repr(missing))
-          forbidden=["firebase-storage.js","uploadBytes(","getStorage(","storageRef(","NO_PDF_PERSISTENCE","PDF本体は保存しません"]
+          forbidden=["firebase-storage.js","uploadBytes(","getStorage(","storageRef(","NO_PDF_PERSISTENCE","PDF本体は保存しません","validatedScore(no,src)","const [facts,potential,pedigree,suitability,dreamRoi]=await Promise.all"]
           leaked=[x for x in forbidden if x in html]
           if leaked:
             raise SystemExit("Storage dependency remains: "+repr(leaked))
