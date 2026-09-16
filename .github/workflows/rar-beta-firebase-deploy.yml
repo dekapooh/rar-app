@@ -31,19 +31,26 @@ jobs:
             'id="submitMeasureInput"',
             'id="submitOwnerBtn"',
             "Ownerに送信",
-            "NO_PDF_PERSISTENCE",
-            "PDF本体は保存しません",
-            "消去しますがよろしいですか？",
+            "R2_TEMPORARY",
+            "/v1/submissions/init",
+            "/v1/submissions/owner-queue",
+            "/v1/consumer-transfer/frozen-v2/validate",
+            "/v1/consumer-transfer/frozen-v2/commit",
+            "/complete-transfer",
+            "R2 PDF 2枚の即時削除確認済み",
             "start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total)",
           ]
           missing=[x for x in required if x not in html]
           if missing:
             raise SystemExit("Missing release contract: "+repr(missing))
-          forbidden=["firebase-storage.js","uploadBytes(","getStorage(","storageRef("]
+          forbidden=["firebase-storage.js","uploadBytes(","getStorage(","storageRef(","NO_PDF_PERSISTENCE","PDF本体は保存しません"]
           leaked=[x for x in forbidden if x in html]
           if leaked:
             raise SystemExit("Storage dependency remains: "+repr(leaked))
-          print("RAR beta release contract PASS｜NO_PDF_PERSISTENCE")
+          cfg=Path("rar-beta-release/firebase.json").read_text(encoding="utf-8")
+          if '"source": "/v1/**"' not in cfg or '"serviceId": "rar-builder-runtime"' not in cfg:
+            raise SystemExit("Cloud Run /v1 rewrite missing")
+          print("RAR beta release contract PASS｜R2_TEMPORARY")
           PY
       - name: JavaScript syntax check
         run: |
