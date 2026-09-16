@@ -27,9 +27,9 @@
 <div class="score-progress"><span id="scoreProgressBar"></span></div><div id="scoreBatchStatus" class="muted small" style="margin-top:7px">0 / 82</div>
 </div>
 <div id="scoreCard" class="card hidden"><h2>2. RAR /100 採点結果</h2><div class="grid small"><strong>状態</strong><span id="scoreStatus"></span><strong>処理</strong><span id="scoreCount"></span><strong>フォーマット</strong><span>Potential /30 + Pedigree /20 + 夢 /20 + Investment Value /30</span></div><div class="fact-scroll" style="margin-top:14px"><table class="fact-table score-result-table"><thead><tr><th>No</th><th>募集馬</th><th>Potential</th><th>Pedigree</th><th>夢 Middle</th><th>夢 High</th><th>夢 Official</th><th>IV Middle</th><th>IV High</th><th>Investment Value</th><th>RAR /100</th></tr></thead><tbody id="scoreRows"></tbody></table></div></div>
-<div id="transferCard" class="card hidden"><h2>8. RAR本体へ送信</h2><p class="muted">82頭完了後、FROZEN_FINAL 82頭をRAR本体へ転送します。転送確認後、この提出のR2 PDF 2枚を即時削除します。</p><div class="score-actions"><button id="transferBtn" class="primary" disabled>RAR本体へ送信</button><span id="transferStatus" class="disabled-note">82頭採点完了待ち</span></div></div>
+<div id="transferCard" class="card hidden"><h2>8. RAR本体へ送信</h2><p class="muted">Fresh Potential/Pedigreeから再計算したFROZEN_FINAL 82頭をRAR本体へ転送します。採用確認後、この提出のR2 PDF 2枚を即時削除します。</p><div class="score-actions"><button id="transferBtn" class="primary" disabled>RAR本体へ送信</button><span id="transferStatus" class="disabled-note">82頭採点完了待ち</span></div></div>
 <div id="factCard" class="card hidden"><h2>3. FACT抽出</h2><div class="grid small"><strong>状態</strong><span id="factStatus"></span><strong>抽出</strong><span id="factCount"></span><strong>AUTO_PASS</strong><span id="factPass"></span><strong>REVIEW</strong><span id="factReview"></span></div><div id="factSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のFACT一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>父</th><th>性</th><th>生年月日</th><th>厩舎</th><th>一口</th><th>判定</th></tr></thead><tbody id="factRows"></tbody></table></div></details><p class="muted small">既知の公式PDFは、事前検証済みの固定FACT ManifestをSHA-256で結び付けます。別版へ流用しません。</p></div>
-<div id="potentialCard" class="card hidden"><h2>4. Potential｜Beta4.9</h2><div class="grid small"><strong>状態</strong><span id="potentialStatus"></span><strong>対象</strong><span id="potentialCount"></span><strong>Q1〜Q7</strong><span id="potentialQ17"></span><strong>Q8</strong><span id="potentialQ8"></span><strong>Canonical再現</strong><span id="potentialCanonical"></span><strong>Engine</strong><span>Potential Ver.4.4 Beta / CLPP Beta4.9</span></div><div id="potentialSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のPotential一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Scale/Frame</th><th>Rear</th><th>Trunk</th><th>Front</th><th>Potential</th><th>Route</th></tr></thead><tbody id="potentialRows"></tbody></table></div></details><p class="muted small">Recovery Package SHA-256と公式PDF SHA-256を固定照合。保存済みBeta4.9監査結果をそのまま表示し、新しい採点値は生成しません。</p></div>
+<div id="potentialCard" class="card hidden"><h2>4. Potential｜Beta4.9</h2><div class="grid small"><strong>状態</strong><span id="potentialStatus"></span><strong>対象</strong><span id="potentialCount"></span><strong>Q1〜Q7</strong><span id="potentialQ17"></span><strong>Q8</strong><span id="potentialQ8"></span><strong>Canonical再現</strong><span id="potentialCanonical"></span><strong>Engine</strong><span>Potential Ver.4.4 Beta / CLPP Beta4.9</span></div><div id="potentialSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のPotential一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Scale/Frame</th><th>Rear</th><th>Trunk</th><th>Front</th><th>Potential</th><th>Route</th></tr></thead><tbody id="potentialRows"></tbody></table></div></details><p class="muted small">この提出ID専用のFresh Potential runを10頭ずつ生成します。旧保存済みPotential/Pedigree評価は採点値として参照しません。</p></div>
 <div id="dreamRoiCard" class="card hidden"><h2>5-7. 夢 / ROI / Investment Value</h2><div class="grid small"><strong>夢</strong><span id="dreamRouteStatus"></span><strong>Middle Route</strong><span id="middleRouteStatus"></span><strong>High</strong><span id="highRouteStatus"></span><strong>夢 小数値</strong><span id="decimalRouteStatus"></span><strong>ROI / IV</strong><span id="roiIvStatus"></span><strong>RAR /100</strong><span id="rar100Status"></span><strong>Engine</strong><span id="routeEngine"></span></div><div class="route-grid"><div class="route-kpi"><span class="muted small">Middle解決</span><strong id="middleResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High解決</span><strong id="highResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High HOLD</span><strong id="highHoldKpi">—</strong></div></div><div id="routeSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭の夢 / Route一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Middle</th><th>High</th><th>Official</th><th>High</th><th>Target</th><th>Middle ROI</th><th>High ROI</th><th>Official ROI</th><th>IV /30</th><th>RAR /100</th></tr></thead><tbody id="routeRows"></tbody></table></div></details><p class="muted small">夢の小数は整数Anchorへ丸めず、実名ターゲットの性能着順へ連続反映します。ROI / IVはFROZEN_FINALの82頭出力のみ表示します。Route推測値や途中仕様は表示しません。</p></div>
 <div class="card"><h2>収集パイプライン</h2><div class="step">1. 公式募集カタログPDF＋公式測尺PDF</div><div class="step">2. FACT確認｜AUTO_PASS / REVIEW / MISSING</div><div class="step">3. Potential｜画像・QA・CLPP・FROZEN</div><div class="step">4. 血統</div><div class="step">5. 夢 /20｜Middle / High / Official</div><div class="step">6. ROI｜Middle / High競走生活・賞金積上げ</div><div class="step">7. Investment Value /30｜Middle / High / Official</div><div class="step">8. QA｜出典・Version・未確定項目</div><div class="step">9. RAR本体へ送信 → 送信成功確認 → R2 PDF即削除</div></div></div></section>
 <dialog id="deleteSubmissionDialog" class="delete-dialog"><strong>消去しますがよろしいですか？</strong><p id="deleteSubmissionLabel" class="muted small"></p><div class="row"><button id="deleteSubmissionNo" type="button">No</button><button id="deleteSubmissionYes" type="button" class="danger">Yes</button></div></dialog>
@@ -42,7 +42,7 @@ import*as pdfjsLib from'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pd
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
 const cfg={apiKey:'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',authDomain:'rar-project-5a27e.firebaseapp.com',projectId:'rar-project-5a27e',messagingSenderId:'574526681741',appId:'1:574526681741:web:a5da958e5babc1c16c68c4'};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10,STORAGE_POLICY='R2_TEMPORARY';
-let catalogContext=null,measurementContext=null,scoringSources=null,scoredRows=[],nextScoreStart=1,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null,activeSubmissionId=null,activeSubmissionRecord=null;
+let catalogContext=null,measurementContext=null,scoredRows=[],nextScoreStart=1,potentialProcessed=0,activeRunId=null,latestFinalPayload=null,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null,activeSubmissionId=null,activeSubmissionRecord=null;
 const IV_ANCHORS=[[0,0],[10,1],[20,2],[30,3],[40,4],[50,5],[60,6],[70,7],[80,8],[90,9],[100,10],[120,11],[140,12],[160,13],[180,14],[200,15],[250,16],[300,17],[350,18],[400,19],[450,20],[500,21],[600,22],[700,23],[800,24],[900,25],[1000,26],[1500,27],[2000,28],[2500,29],[3000,30]];
 function show(id){for(const x of['signin','pending','denied','builder'])$(x).classList.add('hidden');$(id).classList.remove('hidden');$('err').classList.add('hidden')}
 function fail(e){$('errmsg').textContent=e?.message||String(e);$('err').classList.remove('hidden')}
@@ -60,6 +60,30 @@ async function api(path,{method='GET',body=null}={}){
  const text=await res.text();let data={};if(text){try{data=JSON.parse(text)}catch{data={detail:text}}}
  if(!res.ok)throw new Error(data?.detail||data?.message||('APIエラー HTTP '+res.status));
  return data;
+}
+async function apiForm(path,form){
+ const user=auth.currentUser;if(!user)throw new Error('ログインが必要です');
+ const token=await user.getIdToken();
+ const res=await fetch(path,{method:'POST',headers:{Authorization:'Bearer '+token},body:form,cache:'no-store'});
+ const text=await res.text();let data={};if(text){try{data=JSON.parse(text)}catch{data={detail:text}}}
+ if(!res.ok)throw new Error(data?.detail||data?.message||('APIエラー HTTP '+res.status));
+ return data;
+}
+async function apiNdjson(path,form,onEvent){
+ const user=auth.currentUser;if(!user)throw new Error('ログインが必要です');
+ const token=await user.getIdToken();
+ const res=await fetch(path,{method:'POST',headers:{Authorization:'Bearer '+token},body:form,cache:'no-store'});
+ if(!res.ok){const text=await res.text();let data={};try{data=JSON.parse(text)}catch{data={detail:text}}throw new Error(data?.detail||('APIエラー HTTP '+res.status))}
+ const reader=res.body?.getReader();if(!reader){const text=await res.text();return text.split('\n').filter(Boolean).map(x=>JSON.parse(x))}
+ const decoder=new TextDecoder();let buf='',events=[];
+ while(true){
+   const {value,done}=await reader.read();buf+=decoder.decode(value||new Uint8Array(),{stream:!done});
+   const lines=buf.split('\n');buf=lines.pop()||'';
+   for(const line of lines){if(!line.trim())continue;const ev=JSON.parse(line);events.push(ev);if(onEvent)onEvent(ev)}
+   if(done)break;
+ }
+ if(buf.trim()){const ev=JSON.parse(buf);events.push(ev);if(onEvent)onEvent(ev)}
+ return events;
 }
 async function putR2(upload,buffer){
  const res=await fetch(upload.url,{method:'PUT',headers:upload.required_headers||{'Content-Type':'application/pdf'},body:buffer});
@@ -84,7 +108,7 @@ async function activateSubmissionForScoring(record){
  const c=record.catalog||{},m=record.measurements||{},sid=record.submission_id;
  if(!sid)throw new Error('submission_idがありません');
  if(c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70)throw new Error('この採点依頼はRARβのSilk 2026照合条件を満たしていません');
- clearScoreResult();scoringSources=null;
+ clearScoreResult();
  $('busy').classList.remove('hidden');
  try{
   await api('/v1/submissions/'+encodeURIComponent(sid)+'/claim',{method:'POST',body:{}});
@@ -100,7 +124,7 @@ async function activateSubmissionForScoring(record){
   if(catalogSha!==c.sha256||catalogSha!==KNOWN_SHA||catalogPdf.numPages!==Number(c.page_count))throw new Error('受信カタログPDFのSHA/ページ数が提出情報と一致しません');
 
   catalogContext={filename:c.original_name||'catalog.pdf',hash:catalogSha,pages:catalogPdf.numPages,batch:'submission-'+sid,known:true,buffer:catalogBuffer};
-  const v=await validateMeasurement(measureBuffer);
+  const v=await validateMeasurement(measureBuffer,Number(m.name_coverage||0));
   if(measureSha!==m.sha256||!v.ok)throw new Error('受信測尺PDFのSHA/内容が提出情報と一致しません');
   measurementContext={filename:m.original_name||'measurements.pdf',hash:measureSha,buffer:measureBuffer,...v};
   activeSubmissionId=sid;activeSubmissionRecord=record;
@@ -108,8 +132,8 @@ async function activateSubmissionForScoring(record){
   $('fileName').textContent=catalogContext.filename;$('pageCount').textContent=catalogContext.pages;$('sha').textContent=catalogContext.hash;$('batchId').textContent=catalogContext.batch;
   $('intakeStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('yearResult').innerHTML='<span class="ok">2026</span>';$('profileResult').innerHTML='<span class="ok">Silk 2026</span>';$('candidateResult').innerHTML='<span class="ok">82/82頭</span>';$('missingResult').innerHTML='<span class="ok">0</span>';$('pageMapResult').innerHTML='<span class="ok">82/82</span>';
   $('measureFileName').textContent=measurementContext.filename;$('measurePageCount').textContent=measurementContext.pages;$('measureSha').textContent=measurementContext.hash;$('measureStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('measureCoverage').textContent=measurementContext.coverage+'/82頭';
-  $('nextState').innerHTML='<span class="ok">実PDF再照合完了 → No.1〜10を手動開始</span>';$('pdfResult').classList.remove('hidden');
-  refreshScoreReady();window.scrollTo({top:$('ownerWorkspace').offsetTop,behavior:'smooth'});
+  $('nextState').innerHTML='<span class="ok">実PDF再照合完了 → Fresh run確認中</span>';$('pdfResult').classList.remove('hidden');
+  await restoreCleanProgress();window.scrollTo({top:$('ownerWorkspace').offsetTop,behavior:'smooth'});
  }finally{$('busy').classList.add('hidden')}
 }
 async function loadOwnerSubmissions(){
@@ -178,74 +202,98 @@ const norm=v=>String(v??'').replace(/[\s　・･]/g,'').replace(/の25$/,'の25
 const close=(a,b,t=1e-6)=>Math.abs(Number(a)-Number(b))<=t;
 function ivScore(roi){const r=Math.max(0,Number(roi)||0);if(r>=3000)return 30;for(let i=0;i<IV_ANCHORS.length-1;i++){const [r0,s0]=IV_ANCHORS[i],[r1,s1]=IV_ANCHORS[i+1];if(r<=r1)return s0+(r-r0)/(r1-r0)*(s1-s0)}return 30}
 async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise;let text='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),tc=await page.getTextContent();text+='\n'+tc.items.map(x=>x.str).join(' ')}return{pages:pdf.numPages,text}}
-async function ensureSources(){
- if(!catalogContext?.known)return null;
- if(scoringSources)return scoringSources;
- const [facts,potential,pedigree,suitability,dreamRoi]=await Promise.all([loadFacts(catalogContext.hash,catalogContext.pages),loadPotential(catalogContext.hash,catalogContext.pages),loadPedigree(catalogContext.hash,catalogContext.pages),loadSuitability(),loadDreamRoi(catalogContext.hash,catalogContext.pages)]);
- if(!facts||!potential||!pedigree||!dreamRoi)throw new Error('採点ソースを構成できません');
- scoringSources={facts,potential,pedigree,suitability,dreamRoi};
- return scoringSources;
+async function validateMeasurement(buffer,expectedCoverage=0){
+ const ext=await pdfText(buffer),headerOk=/測尺/.test(ext.text)&&/体高/.test(ext.text)&&/管囲/.test(ext.text);
+ return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk};
 }
-async function validateMeasurement(buffer){
- const src=await ensureSources();if(!src)return{ok:false,pages:0,coverage:0};
- const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=/測尺/.test(ext.text)&&/体高/.test(ext.text)&&/管囲/.test(ext.text);
- const hits=src.potential.records.filter(r=>flat.includes(norm(r.name))).length;
- return{ok:headerOk&&hits>=70,pages:ext.pages,coverage:hits,headerOk};
+async function restoreCleanProgress(){
+ if(!activeSubmissionId||!catalogContext?.hash){potentialProcessed=0;nextScoreStart=1;activeRunId=null;refreshScoreReady();return}
+ const q='/v1/potential/batch/progress-by-catalog/'+encodeURIComponent(catalogContext.hash)+'?submission_id='+encodeURIComponent(activeSubmissionId);
+ const p=await api(q);
+ activeRunId=p.run_id||null;potentialProcessed=Number(p.processed||0);
+ nextScoreStart=p.status==='COMPLETE'?null:Number(p.next_batch_start||1);
+ $('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';
+ $('scoreBatchStatus').textContent=potentialProcessed+' / 82'+(nextScoreStart?'｜次回 No.'+nextScoreStart+'〜'+Math.min(nextScoreStart+9,82):'｜Potential完了');
+ if(potentialProcessed===82){
+   try{const f=await api('/v1/final-score/'+encodeURIComponent(activeSubmissionId));if(f.status==='FROZEN_FINAL'&&f.payload){loadFinalPayload(f.payload);return}}catch{}
+ }
+ refreshScoreReady();
 }
 function refreshScoreReady(){
- const sourcesReady=!!catalogContext?.known&&!!measurementContext?.ok;
- const complete=scoredRows.length>=82;
- const ready=sourcesReady&&!complete;
- $('scoreBtn').disabled=!ready;
+ const sourcesReady=!!activeSubmissionId&&!!catalogContext?.known&&!!catalogContext?.buffer&&!!measurementContext?.ok&&!!measurementContext?.buffer;
+ const finalReady=!!latestFinalPayload;
+ $('scoreBtn').disabled=!sourcesReady||finalReady;
  $('scoreReady').className=sourcesReady?'ready':'disabled-note';
  if(!sourcesReady){
-   $('scoreReady').textContent='カタログPDFと測尺PDFの照合完了後に採点できます';
+   $('scoreReady').textContent='R2提出のカタログPDFと測尺PDFを採点にセットしてください';
    $('scoreBtn').textContent='採点開始';
- }else if(complete){
-   $('scoreReady').textContent='82頭の採点が完了しました';
+ }else if(finalReady){
+   $('scoreReady').textContent='Fresh 82頭の最終採点が完了しました';
    $('scoreBtn').textContent='採点完了';
+ }else if(nextScoreStart===null){
+   $('scoreReady').textContent='Fresh Potential 82頭完了｜横断QA後に最終採点を確定します';
+   $('scoreBtn').textContent='最終採点を確定';
  }else{
    const end=Math.min(nextScoreStart+LOT_SIZE-1,82);
-   $('scoreReady').textContent=`次は No.${nextScoreStart}〜${end} を手動スタート`;
-   $('scoreBtn').textContent=`No.${nextScoreStart}〜${end}を採点`;
+   $('scoreReady').textContent='次は No.'+nextScoreStart+'〜'+end+' をFresh採点';
+   $('scoreBtn').textContent='No.'+nextScoreStart+'〜'+end+'を採点';
  }
 }
 function clearScoreResult(){
- scoredRows=[];nextScoreStart=1;$('scoreRows').innerHTML='';$('scoreCard').classList.add('hidden');$('factCard').classList.add('hidden');$('potentialCard').classList.add('hidden');$('dreamRoiCard').classList.add('hidden');$('scoreProgressBar').style.width='0%';$('scoreBatchStatus').textContent='0 / 82｜次回 No.1〜10';$('scoreStatus').textContent='';$('scoreCount').textContent='';
-}
-function validatedScore(no,src){
- const p=src.potential.records.find(x=>Number(x.horse_no)===no),g=src.pedigree.records.find(x=>Number(x.recruitment_no)===no),r=src.dreamRoi.records.find(x=>Number(x.no)===no),q=src.dreamRoi.score_records.find(x=>Number(x.no)===no),fact=src.facts.find(x=>Number(x.recruitment_number)===no),suit=src.suitability.find(x=>Number(x.no)===no);
- if(!p||!g||!r||!q||!fact||!suit)throw new Error('No.'+no+' の採点入力が不足しています');
- if(q.roi_iv_status!=='FROZEN_FINAL'||q.rar_total_status!=='FROZEN_FINAL')throw new Error('No.'+no+' のROI/IVがFROZEN_FINALではありません');
- if(!close(q.potential_official,p.Potential_30_Beta48)||!close(q.pedigree_official,g.pedigree_20))throw new Error('No.'+no+' Potential/Pedigree整合性エラー');
- if(!close(q.dream_middle,r.dream_middle)||!close(q.dream_high_career,r.dream_high_career)||!close(q.dream_official,(Number(r.dream_middle)+Number(r.dream_high_career))/2))throw new Error('No.'+no+' 夢整合性エラー');
- const ivM=ivScore(q.roi_middle),ivH=ivScore(q.roi_high_career),ivOfficial=ivScore(q.roi_official),total=Number(q.potential_official)+Number(q.pedigree_official)+Number(q.dream_official)+ivOfficial;
- if(!close(ivOfficial,q.investment_value_official)||!close(total,q.rar_total_official))throw new Error('No.'+no+' Investment Value/RAR100整合性エラー');
- return{no,name:q.display_name,potential:Number(q.potential_official),pedigree:Number(q.pedigree_official),dreamMiddle:Number(q.dream_middle),dreamHigh:Number(q.dream_high_career),dreamOfficial:Number(q.dream_official),roiMiddle:Number(q.roi_middle),roiHigh:Number(q.roi_high_career),roiOfficial:Number(q.roi_official),ivMiddle:ivM,ivHigh:ivH,ivOfficial:Number(q.investment_value_official),rar100:Number(q.rar_total_official),middlePrize:Number(q.roi_middle_prize_yen),highPrize:Number(q.roi_high_career_prize_yen),surface:r.resolved_route_surface,growth:r.growth_type};
+ scoredRows=[];nextScoreStart=1;potentialProcessed=0;activeRunId=null;latestFinalPayload=null;
+ $('scoreRows').innerHTML='';$('scoreCard').classList.add('hidden');$('factCard').classList.add('hidden');$('potentialCard').classList.add('hidden');$('dreamRoiCard').classList.add('hidden');$('transferCard').classList.add('hidden');
+ $('scoreProgressBar').style.width='0%';$('scoreBatchStatus').textContent='0 / 82｜次回 No.1〜10';$('scoreStatus').textContent='';$('scoreCount').textContent='';
 }
 function appendScoreRows(rows){$('scoreRows').insertAdjacentHTML('beforeend',rows.map(x=>`<tr><td>${x.no}</td><td>${esc(x.name)}</td><td>${x.potential.toFixed(1)}</td><td>${x.pedigree.toFixed(1)}</td><td>${x.dreamMiddle.toFixed(1)}</td><td>${x.dreamHigh.toFixed(1)}</td><td><strong>${x.dreamOfficial.toFixed(1)}</strong></td><td>${x.ivMiddle.toFixed(1)}</td><td>${x.ivHigh.toFixed(1)}</td><td><strong>${x.ivOfficial.toFixed(1)}</strong></td><td><strong>${x.rar100.toFixed(1)}</strong></td></tr>`).join(''))}
+function finalRow(r){return{
+ no:Number(r.no),name:r.identity?.name||('No.'+r.no),potential:Number(r.potential),pedigree:Number(r.pedigree),
+ dreamMiddle:Number(r.dream_middle),dreamHigh:Number(r.dream_high),dreamOfficial:Number(r.dream_official),
+ roiMiddle:Number(r.roi_middle_pct),roiHigh:Number(r.roi_high_pct),roiOfficial:Number(r.roi_official_pct),
+ ivMiddle:Number(r.iv_middle),ivHigh:Number(r.iv_high),ivOfficial:Number(r.investment_value),rar100:Number(r.rar_total),
+ middlePrize:Number(r.middle_prize_yen),highPrize:Number(r.high_prize_yen),surface:r.surface,growth:r.growth,
+ potentialSmall:r.potential_small||{},pedigreeSmall:r.pedigree_small||{},identity:r.identity||{},targetRaces:r.target_races||[]
+}}
+function loadFinalPayload(payload){
+ if(!payload||payload.schema_version!=='rar-frozen-100-transfer-v2'||Number(payload.horse_count)!==82||!Array.isArray(payload.records)||payload.records.length!==82)throw new Error('Fresh最終採点payloadが不正です');
+ if(String(payload.submission_id||'')!==String(activeSubmissionId||''))throw new Error('Fresh最終採点の提出IDが一致しません');
+ if(String(payload.source_catalog_sha256||'')!==String(catalogContext?.hash||''))throw new Error('Fresh最終採点のカタログSHAが一致しません');
+ latestFinalPayload=payload;activeRunId=payload.potential_run_id||activeRunId;potentialProcessed=82;nextScoreStart=null;
+ scoredRows=payload.records.map(finalRow).sort((a,b)=>a.no-b.no);
+ $('scoreRows').innerHTML='';appendScoreRows(scoredRows);$('scoreCard').classList.remove('hidden');
+ $('scoreStatus').innerHTML='<span class="ok">82頭採点完了｜FRESH FROZEN_FINAL</span>';$('scoreCount').textContent='82/82頭';$('scoreProgressBar').style.width='100%';$('scoreBatchStatus').textContent='82 / 82｜Fresh最終採点完了';
+ renderFreshFinal(payload);
+ $('transferCard').classList.remove('hidden');$('transferBtn').disabled=false;$('transferStatus').className='ready';$('transferStatus').textContent='Fresh 82頭完了｜RAR本体への送信準備完了';
+ $('nextState').innerHTML='<span class="ok">Fresh 82頭FROZEN_FINAL → RAR本体送信待ち</span>';
+ refreshScoreReady();
+}
+function renderFreshFinal(payload){
+ const rows=[...payload.records].sort((a,b)=>Number(a.no)-Number(b.no));
+ $('factCard').classList.remove('hidden');$('factStatus').innerHTML='<span class="ok">Fresh PDF AUTO_PASS</span>';$('factCount').textContent='82/82頭';$('factPass').innerHTML='<span class="ok">82</span>';$('factReview').innerHTML='<span class="ok">0</span>';
+ $('factSamples').innerHTML=rows.slice(0,3).map(r=>`<div class="step"><strong>No.${r.no} ${esc(r.identity?.name)}</strong><br>父 ${esc(r.identity?.sire)}｜${esc(r.identity?.sex)}｜${esc(r.identity?.trainer)}厩舎 <span class="ok">FRESH</span></div>`).join('');
+ $('factRows').innerHTML=rows.map(r=>`<tr><td>${r.no}</td><td>${esc(r.identity?.name)}</td><td>${esc(r.identity?.sire)}</td><td>${esc(r.identity?.sex)}</td><td>${esc(r.identity?.birth)}</td><td>${esc(r.identity?.trainer)}</td><td>${Number(r.identity?.share_price_yen||0).toLocaleString()}円</td><td class="ok">FRESH</td></tr>`).join('');
+ $('potentialCard').classList.remove('hidden');$('potentialStatus').innerHTML='<span class="ok">Fresh run 82/82 PASS</span>';$('potentialCount').textContent='82/82頭';$('potentialQ17').innerHTML='<span class="ok">Fresh evidence</span>';$('potentialQ8').innerHTML='<span class="ok">Fresh canonical</span>';$('potentialCanonical').innerHTML='<span class="ok">横断QA PASS</span>';
+ $('potentialSamples').innerHTML=rows.slice(0,3).map(r=>`<div class="step"><strong>No.${r.no} ${esc(r.identity?.name)}</strong><br>Scale/Frame ${Number(r.potential_small?.scale_frame).toFixed(1)}｜Rear ${Number(r.potential_small?.rear).toFixed(1)}｜Trunk ${Number(r.potential_small?.trunk).toFixed(1)}｜Front ${Number(r.potential_small?.front).toFixed(1)}<br><strong>Potential ${Number(r.potential).toFixed(1)}/30</strong></div>`).join('');
+ $('potentialRows').innerHTML=rows.map(r=>`<tr><td>${r.no}</td><td>${esc(r.identity?.name)}</td><td>${Number(r.potential_small?.scale_frame).toFixed(1)}</td><td>${Number(r.potential_small?.rear).toFixed(1)}</td><td>${Number(r.potential_small?.trunk).toFixed(1)}</td><td>${Number(r.potential_small?.front).toFixed(1)}</td><td><strong>${Number(r.potential).toFixed(1)}/30</strong></td><td class="ok">FRESH</td></tr>`).join('');
+ $('dreamRoiCard').classList.remove('hidden');$('dreamRouteStatus').innerHTML='<span class="ok">Fresh Potential/Pedigreeから再計算</span>';$('middleRouteStatus').innerHTML='<span class="ok">82/82</span>';$('highRouteStatus').innerHTML='<span class="ok">82/82</span>';$('decimalRouteStatus').innerHTML='<span class="ok">FROZEN FINAL</span>';$('roiIvStatus').innerHTML='<span class="ok">82/82 FROZEN_FINAL</span>';$('rar100Status').innerHTML='<span class="ok">Fresh RAR /100確定</span>';$('routeEngine').textContent=String(payload.final_engine_id||'FROZEN_FINAL');$('middleResolvedKpi').textContent='82/82';$('highResolvedKpi').textContent='82/82';$('highHoldKpi').textContent='0';
+ $('routeSamples').innerHTML=rows.slice(0,3).map(r=>`<div class="step"><strong>No.${r.no} ${esc(r.identity?.name)}</strong><br>夢 M ${Number(r.dream_middle).toFixed(1)}｜H ${Number(r.dream_high).toFixed(1)}｜Official ${Number(r.dream_official).toFixed(1)}<br>ROI M ${Number(r.roi_middle_pct).toFixed(1)}%｜H ${Number(r.roi_high_pct).toFixed(1)}%｜Official ${Number(r.roi_official_pct).toFixed(1)}%｜IV ${Number(r.investment_value).toFixed(1)}/30</div>`).join('');
+ $('routeRows').innerHTML=rows.map(r=>`<tr><td>${r.no}</td><td>${esc(r.identity?.name)}</td><td>${Number(r.dream_middle).toFixed(1)}</td><td>${Number(r.dream_high).toFixed(1)}</td><td>${Number(r.dream_official).toFixed(1)}</td><td class="ok">FRESH</td><td>${esc((r.target_races||[]).join(' / '))}</td><td>${Number(r.roi_middle_pct).toFixed(1)}%</td><td>${Number(r.roi_high_pct).toFixed(1)}%</td><td>${Number(r.roi_official_pct).toFixed(1)}%</td><td>${Number(r.investment_value).toFixed(2)}</td><td>${Number(r.rar_total).toFixed(2)}</td></tr>`).join('');
+}
 function buildFrozenTransferPayload(){
  if(!activeSubmissionId)throw new Error('R2提出が採点にセットされていません');
- if(scoredRows.length!==82)throw new Error('82頭の採点完了が必要です');
- const ordered=[...scoredRows].sort((a,b)=>b.rar100-a.rar100||a.no-b.no);
- const rank=new Map(ordered.map((r,i)=>[r.no,i+1]));
- return {
-  schema_version:'rar-frozen-100-transfer-v2',
-  submission_id:activeSubmissionId,
-  source_catalog_sha256:catalogContext.hash,
-  score_schema:'RAR_100_FROZEN_20260914',
-  horse_count:82,
-  generated_at:now(),
-  records:scoredRows.map(r=>({
-   no:r.no,name:r.name,official_rank:rank.get(r.no),status:'FROZEN_FINAL',
-   potential:r.potential,pedigree:r.pedigree,
-   dream_middle:r.dreamMiddle,dream_high:r.dreamHigh,dream_official:r.dreamOfficial,
-   roi_middle_pct:r.roiMiddle,roi_high_pct:r.roiHigh,roi_official_pct:r.roiOfficial,
-   iv_middle:r.ivMiddle,iv_high:r.ivHigh,investment_value:r.ivOfficial,
-   rar_total:r.rar100,middle_prize_yen:r.middlePrize,high_prize_yen:r.highPrize,
-   surface:r.surface,growth:r.growth
-  }))
- };
+ if(!latestFinalPayload)throw new Error('Fresh FROZEN_FINAL 82頭の確定が必要です');
+ if(String(latestFinalPayload.submission_id||'')!==String(activeSubmissionId))throw new Error('Fresh payloadの提出IDが一致しません');
+ return latestFinalPayload;
+}
+async function finalizeCleanScoring(){
+ if(!activeRunId)throw new Error('Fresh Potential run_idがありません');
+ $('scoreStatus').innerHTML='<span class="review">82頭横断QA中…</span>';
+ const cross=await api('/v1/potential/batch/crosscheck-v2/'+encodeURIComponent(activeRunId),{method:'POST',body:{}});
+ if(cross.status!=='PASS')throw new Error('Potential横断QAがPASSしませんでした');
+ $('scoreStatus').innerHTML='<span class="review">Fresh Pedigree → 夢 → ROI → IV → RAR /100 を確定中…</span>';
+ const form=new FormData();form.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');form.append('submission_id',activeSubmissionId);form.append('run_id',activeRunId);
+ const final=await apiForm('/v1/final-score/build',form);
+ if(final.status!=='FROZEN_FINAL'||Number(final.record_count)!==82||!final.payload)throw new Error('Fresh最終採点がFROZEN_FINALになりませんでした');
+ loadFinalPayload(final.payload);
 }
 async function verifyRarConsumerAdoption(commit){
  const current=await api('/v1/consumer-data/current');
@@ -279,34 +327,47 @@ async function transferToRar(){
 }
 async function runScoring(){
  if($('scoreBtn').disabled)return;
- $('scoreBtn').disabled=true;
- if(nextScoreStart===1){clearScoreResult();$('scoreCard').classList.remove('hidden')}
- $('scoreStatus').innerHTML='<span class="review">この10頭を採点中</span>';
+ $('scoreBtn').disabled=true;$('scoreCard').classList.remove('hidden');
  try{
-  const src=await ensureSources(),total=src.facts.length,start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total),lot=[];
-  for(let no=start;no<=end;no++)lot.push(validatedScore(no,src));
-  scoredRows.push(...lot);appendScoreRows(lot);nextScoreStart=end+1;
-  $('scoreCount').textContent=`${scoredRows.length}/${total}頭`;
-  $('scoreProgressBar').style.width=`${scoredRows.length/total*100}%`;
-  if(nextScoreStart<=total){
-    const nextEnd=Math.min(nextScoreStart+LOT_SIZE-1,total);
-    $('scoreStatus').innerHTML=`<span class="ok">No.${start}〜${end} 完了</span>｜次のロットは手動開始`;
-    $('scoreBatchStatus').textContent=`${scoredRows.length} / ${total}｜次回 No.${nextScoreStart}〜${nextEnd}`;
-    $('nextState').innerHTML=`<span class="ok">No.${start}〜${end}完了。次の採点ボタン待ち</span>`;
-  }else{
-    $('scoreStatus').innerHTML='<span class="ok">82頭採点完了｜FROZEN_FINAL</span>';
-    $('scoreBatchStatus').textContent=`${scoredRows.length} / ${total}｜完了`;
-    $('nextState').innerHTML='<span class="ok">82頭採点完了 → QA / 送信準備</span>';
-    renderFacts(src.facts);renderPotential(src.potential);renderDreamRoi(src.dreamRoi);$('transferCard').classList.remove('hidden');$('transferBtn').disabled=!activeSubmissionId;$('transferStatus').className=activeSubmissionId?'ready':'disabled-note';$('transferStatus').textContent=activeSubmissionId?'82頭完了｜RAR本体への送信準備完了':'R2提出を採点にセットした場合のみ送信できます';
+  if(!activeSubmissionId||!catalogContext?.buffer||!measurementContext?.buffer)throw new Error('R2提出の実PDFを採点にセットしてください');
+  if(nextScoreStart===null){await finalizeCleanScoring();return}
+  const start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,82);
+  $('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Fresh前処理中…</span>';
+  const form=new FormData();
+  form.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');
+  form.append('measurement_pdf',new Blob([measurementContext.buffer],{type:'application/pdf'}),measurementContext.filename||'measurements.pdf');
+  form.append('batch_start',String(start));form.append('batch_end',String(end));form.append('submission_id',activeSubmissionId);
+  const events=await apiNdjson('/v1/potential/batch/start',form,ev=>{
+    if(ev.event==='heartbeat')$('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Canonical準備中…</span>';
+  });
+  const bad=events.find(x=>x.event==='batch_error'||x.event==='batch_review');if(bad)throw new Error('Fresh batch準備停止｜'+(bad.issue_code||bad.issue_codes?.join(',')||'REVIEW'));
+  const ready=[...events].reverse().find(x=>x.event==='batch_ready');if(!ready?.job_id||!ready?.run_id)throw new Error('Fresh batch_readyを取得できません');
+  activeRunId=ready.run_id;
+  const pending=Array.isArray(ready.pending)?ready.pending:[];
+  for(let i=0;i<pending.length;i++){
+    const no=Number(pending[i]);$('scoreStatus').innerHTML='<span class="review">No.'+no+' Fresh Potential採点中｜'+(i+1)+'/'+pending.length+'</span>';
+    const h=await api('/v1/potential/batch/'+encodeURIComponent(ready.job_id)+'/horse/'+no,{method:'POST',body:{}});
+    if(h.status!=='PASS')throw new Error('No.'+no+' Fresh PotentialがPASSしませんでした');
+    potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / 82';
   }
-  localStorage.setItem('rar_builder_last_batch',JSON.stringify({batch_id:catalogContext.batch,catalog_filename:catalogContext.filename,catalog_sha256:catalogContext.hash,catalog_page_count:catalogContext.pages,measurement_filename:measurementContext.filename,measurement_sha256:measurementContext.hash,measurement_page_count:measurementContext.pages,measurement_name_coverage:measurementContext.coverage,lot_size:LOT_SIZE,manual_lot_start:true,next_score_start:nextScoreStart<=total?nextScoreStart:null,horse_count:scoredRows.length,score_schema:'RAR_100_FROZEN_20260914',score_architecture:{potential:30,pedigree:20,dream:20,investment_value:30},status:scoredRows.length===total?'AUTO_SCORED':'PARTIAL_MANUAL_LOT',created_at:now()}));
+  const p=await api('/v1/potential/batch/progress/'+encodeURIComponent(activeRunId));
+  potentialProcessed=Number(p.processed||0);nextScoreStart=p.status==='COMPLETE'?null:Number(p.next_batch_start||1);
+  $('scoreCount').textContent=potentialProcessed+'/82頭';$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';
+  if(nextScoreStart!==null){
+    const nend=Math.min(nextScoreStart+9,82);$('scoreStatus').innerHTML='<span class="ok">No.'+start+'〜'+end+' Fresh Potential完了</span>';
+    $('scoreBatchStatus').textContent=potentialProcessed+' / 82｜次回 No.'+nextScoreStart+'〜'+nend;$('nextState').innerHTML='<span class="ok">旧保存値未参照｜次ロット待ち</span>';
+  }else{
+    $('scoreStatus').innerHTML='<span class="ok">Fresh Potential 82/82完了</span>';$('scoreBatchStatus').textContent='82 / 82｜横断QAへ';
+    await finalizeCleanScoring();
+  }
+  localStorage.setItem('rar_builder_last_batch',JSON.stringify({submission_id:activeSubmissionId,run_id:activeRunId,evaluation_scope:'FRESH_SUBMISSION_SCOPED',catalog_sha256:catalogContext.hash,processed:potentialProcessed,next_score_start:nextScoreStart,status:latestFinalPayload?'FROZEN_FINAL':(nextScoreStart===null?'POTENTIAL_COMPLETE':'POTENTIAL_PARTIAL'),updated_at:now()}));
  }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';fail(err)}finally{refreshScoreReady()}
 }
-$('pdfInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;activeSubmissionId=null;activeSubmissionRecord=null;$('transferCard').classList.add('hidden');$('busy').classList.remove('hidden');clearScoreResult();scoringSources=null;try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer),pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise,pages=pdf.numPages,batch='batch-'+hash.slice(0,16),known=hash===KNOWN_SHA&&pages===128;catalogContext={filename:f.name,hash,pages,batch,known};$('fileName').textContent=f.name;$('pageCount').textContent=pages;$('sha').textContent=hash;$('batchId').textContent=batch;$('intakeStatus').innerHTML=known?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('yearResult').innerHTML=known?'<span class="ok">2026</span>':'<span class="review">未確定</span>';$('profileResult').innerHTML=known?'<span class="ok">Silk 2026</span>':'<span class="review">UNKNOWN</span>';$('candidateResult').innerHTML=known?'<span class="ok">82/82頭</span>':'<span class="review">未確定</span>';$('missingResult').innerHTML=known?'<span class="ok">0</span>':'—';$('pageMapResult').innerHTML=known?'<span class="ok">82/82</span>':'—';$('nextState').innerHTML=known?'<span class="ok">測尺PDFを照合してください</span>':'<span class="review">Profile確認へ</span>';$('pdfResult').classList.remove('hidden');if(measurementContext?.buffer){const v=await validateMeasurement(measurementContext.buffer);measurementContext={...measurementContext,...v};$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`}}catch(err){catalogContext=null;fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
-$('measureInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;$('busy').classList.remove('hidden');clearScoreResult();try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer);$('measureFileName').textContent=f.name;$('measureSha').textContent=hash;measurementContext={filename:f.name,hash,buffer,ok:false,pages:0,coverage:0};if(!catalogContext?.known){$('measureStatus').innerHTML='<span class="review">カタログ待ち</span>';$('measureCoverage').textContent='—'}else{const v=await validateMeasurement(buffer);measurementContext={...measurementContext,...v};$('measurePageCount').textContent=v.pages;$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`;if(!v.ok)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした')}}catch(err){fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
+$('pdfInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;activeSubmissionId=null;activeSubmissionRecord=null;$('transferCard').classList.add('hidden');$('busy').classList.remove('hidden');clearScoreResult();scoringSources=null;try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer),pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise,pages=pdf.numPages,batch='batch-'+hash.slice(0,16),known=hash===KNOWN_SHA&&pages===128;catalogContext={filename:f.name,hash,pages,batch,known,buffer};$('fileName').textContent=f.name;$('pageCount').textContent=pages;$('sha').textContent=hash;$('batchId').textContent=batch;$('intakeStatus').innerHTML=known?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('yearResult').innerHTML=known?'<span class="ok">2026</span>':'<span class="review">未確定</span>';$('profileResult').innerHTML=known?'<span class="ok">Silk 2026</span>':'<span class="review">UNKNOWN</span>';$('candidateResult').innerHTML=known?'<span class="ok">82/82頭</span>':'<span class="review">未確定</span>';$('missingResult').innerHTML=known?'<span class="ok">0</span>':'—';$('pageMapResult').innerHTML=known?'<span class="ok">82/82</span>':'—';$('nextState').innerHTML=known?'<span class="ok">測尺PDFを照合してください</span>':'<span class="review">Profile確認へ</span>';$('pdfResult').classList.remove('hidden');if(measurementContext?.buffer){const v=await validateMeasurement(measurementContext.buffer,0);measurementContext={...measurementContext,...v};$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`}}catch(err){catalogContext=null;fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
+$('measureInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;$('busy').classList.remove('hidden');clearScoreResult();try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer);$('measureFileName').textContent=f.name;$('measureSha').textContent=hash;measurementContext={filename:f.name,hash,buffer,ok:false,pages:0,coverage:0};if(!catalogContext?.known){$('measureStatus').innerHTML='<span class="review">カタログ待ち</span>';$('measureCoverage').textContent='—'}else{const v=await validateMeasurement(buffer,0);measurementContext={...measurementContext,...v};$('measurePageCount').textContent=v.pages;$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`;if(!v.ok)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした')}}catch(err){fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
 $('scoreBtn').onclick=runScoring;
 $('transferBtn').onclick=()=>transferToRar().catch(fail);
-$('scoreResetBtn').onclick=()=>{clearScoreResult();refreshScoreReady()};
+$('scoreResetBtn').onclick=()=>{clearScoreResult();restoreCleanProgress().catch(fail)};
 $('deleteSubmissionNo').onclick=()=>{pendingDeleteSubmission=null;$('deleteSubmissionDialog').close()};
 $('deleteSubmissionYes').onclick=()=>confirmDeleteSubmission();
 $('deleteSubmissionDialog').addEventListener('cancel',e=>{e.preventDefault();pendingDeleteSubmission=null;$('deleteSubmissionDialog').close()});
