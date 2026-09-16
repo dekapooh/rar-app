@@ -36,6 +36,9 @@ jobs:
             "/v1/submissions/owner-queue",
             "/v1/consumer-transfer/frozen-v2/validate",
             "/v1/consumer-transfer/frozen-v2/commit",
+            "/v1/consumer-data/current",
+            "verifyRarConsumerAdoption",
+            "RAR本体採用確認済み",
             "/complete-transfer",
             "R2 PDF 2枚の即時削除確認済み",
             "start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total)",
@@ -50,7 +53,11 @@ jobs:
           cfg=Path("rar-beta-release/firebase.json").read_text(encoding="utf-8")
           if '"source": "/v1/**"' not in cfg or '"serviceId": "rar-builder-runtime"' not in cfg:
             raise SystemExit("Cloud Run /v1 rewrite missing")
-          print("RAR beta release contract PASS｜R2_TEMPORARY")
+          verify_pos=html.index("await verifyRarConsumerAdoption(commit);")
+          delete_pos=html.index("/complete-transfer")
+          if verify_pos < 0 or delete_pos < 0 or verify_pos > delete_pos:
+            raise SystemExit("RAR adoption verification must happen before complete-transfer")
+          print("RAR beta release contract PASS｜R2_TEMPORARY｜ADOPTION_GATED_DELETE")
           PY
       - name: JavaScript syntax check
         run: |
