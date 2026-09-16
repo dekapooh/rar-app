@@ -6,7 +6,7 @@
 <section id="denied" class="card hidden"><h2>RARβ利用権限なし</h2><button id="logout2">ログアウト</button></section>
 <section id="builder" class="hidden"><div class="card"><strong id="who"></strong><p class="muted">RARβ 認証済み</p><button id="logout3">ログアウト</button></div>
 <div id="contributorWorkspace" class="hidden">
-<div class="card"><h2>Ownerへ採点依頼</h2><p>公式募集カタログPDFと公式測尺PDFを照合後、Cloudflare R2へ一時保存してOwnerへ送信します。PDFは採点完了・RAR送信成功後に即時削除し、放置時も20日で自動削除します。</p>
+<div class="card"><h2>新規採点依頼</h2><p>公式募集カタログPDFと公式測尺PDFを照合後、Cloudflare R2へ一時保存してOwnerへ送信します。OWNER本人の最終テスト提出にも使用できます。PDFは採点完了・RAR送信成功後に即時削除し、放置時も20日で自動削除します。</p>
 <div class="source-grid">
   <div class="source-box"><h3>募集カタログ</h3><label class="filebtn" for="submitCatalogInput">カタログPDFを選ぶ</label><input id="submitCatalogInput" type="file" accept="application/pdf,.pdf" class="hidden"><p id="submitCatalogName" class="small muted">未選択</p></div>
   <div class="source-box"><h3>測尺</h3><label class="filebtn" for="submitMeasureInput">測尺PDFを選ぶ</label><input id="submitMeasureInput" type="file" accept="application/pdf,.pdf" class="hidden"><p id="submitMeasureName" class="small muted">未選択</p></div>
@@ -162,9 +162,9 @@ async function submitPdfsToOwner(){
  const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
  const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise,catalogPages=catalogPdf.numPages;
  if(catalogSha!==KNOWN_SHA||catalogPages!==128)throw new Error('現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます');
- const potential=await loadPotential(catalogSha,catalogPages);if(!potential)throw new Error('Silk 2026採点ソースを照合できません');
+ const facts=await loadFacts(catalogSha,catalogPages);if(!facts)throw new Error('Silk 2026公式FACT名簿を照合できません');
  const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=/測尺/.test(measureExtract.text)&&/体高/.test(measureExtract.text)&&/管囲/.test(measureExtract.text);
- const coverage=potential.records.filter(r=>flat.includes(norm(r.name))).length,measureOk=headerOk&&coverage>=70;
+ const coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length,measureOk=headerOk&&coverage>=70;
  if(!measureOk)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした');
 
  $('submitOwnerStatus').textContent='R2アップロードURLを準備中…';
@@ -376,5 +376,5 @@ $('submitMeasureInput').onchange=e=>{const f=e.target.files?.[0]||null;if(f&&!va
 $('submitOwnerBtn').onclick=()=>submitPdfsToOwner().catch(e=>{fail(e);refreshOwnerSubmit()});
 $('reloadOwnerSubmissions').onclick=()=>loadOwnerSubmissions().catch(fail);
 $('login').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(fail);for(const id of['logout1','logout2','logout3'])$(id).onclick=()=>signOut(auth).catch(fail);
-onAuthStateChanged(auth,async u=>{try{if(!u){currentRole=null;return show('signin')}const r=await access(u);if(r.state==='APPROVED'){currentRole=r.role;$('who').textContent=`${u.displayName||'RAR User'}｜${r.role}`;if(r.role==='OWNER'){$('ownerWorkspace').classList.remove('hidden');$('contributorWorkspace').classList.add('hidden');show('builder');await loadOwnerSubmissions();return}else{$('ownerWorkspace').classList.add('hidden');$('contributorWorkspace').classList.remove('hidden');refreshOwnerSubmit();return show('builder')}}if(r.state==='DENIED')return show('denied');$('pendingUid').textContent=u.uid;show('pending')}catch(e){fail(e)}});
+onAuthStateChanged(auth,async u=>{try{if(!u){currentRole=null;return show('signin')}const r=await access(u);if(r.state==='APPROVED'){currentRole=r.role;$('who').textContent=`${u.displayName||'RAR User'}｜${r.role}`;if(r.role==='OWNER'){$('ownerWorkspace').classList.remove('hidden');$('contributorWorkspace').classList.remove('hidden');refreshOwnerSubmit();show('builder');await loadOwnerSubmissions();return}else{$('ownerWorkspace').classList.add('hidden');$('contributorWorkspace').classList.remove('hidden');refreshOwnerSubmit();return show('builder')}}if(r.state==='DENIED')return show('denied');$('pendingUid').textContent=u.uid;show('pending')}catch(e){fail(e)}});
 </script></body></html>
