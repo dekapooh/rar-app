@@ -60,16 +60,13 @@ service cloud.firestore {
       allow write: if isManager();
     }
 
-    // Contributor intake manifests are write-once from the submitting user.
-    // PDF bytes are never persisted; Owner/Manager reads compact validation metadata only.
+    // R2 temporary PDF submissions are created and mutated only by the
+    // authenticated Cloud Run backend (Admin SDK bypasses client rules).
+    // Browser clients must use /v1/submissions/* so object keys/status cannot
+    // be forged directly in Firestore.
     match /builderSubmissions/{submissionId} {
-      allow create: if signedIn()
-        && request.resource.data.rar_user_id == request.auth.uid
-        && request.resource.data.submission_id == submissionId
-        && request.resource.data.status == 'SUBMITTED';
-      allow read: if signedIn()
-        && (resource.data.rar_user_id == request.auth.uid || isManager());
-      allow update, delete: if isManager();
+      allow read: if isManager();
+      allow create, update, delete: if false;
     }
 
     match /adminUsers/{uid} {
