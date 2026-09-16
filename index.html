@@ -16,6 +16,8 @@
 #app{max-width:520px;margin:auto;min-height:100vh;background:#fff;padding-bottom:78px;box-shadow:0 0 30px #ccd5df}
 header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(520px,100%);z-index:40;background:var(--navy);color:#fff;padding:14px 16px}
 .brand{font-weight:800;letter-spacing:.4px;font-size:18px} .sub{font-size:11px;opacity:.8}
+.rar-last-updated{position:absolute;right:14px;top:12px;font-size:9px;font-weight:800;line-height:1.25;text-align:right;color:#52685e;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:390px){.rar-last-updated{right:10px;top:11px;font-size:8px}}
 main{padding:70px 14px 14px} .screen{display:none} .screen.active{display:block}
 .hero{background:linear-gradient(135deg,#0f2f57,#2a6db0);color:#fff;border-radius:20px;padding:18px;margin-bottom:14px;min-height:145px;position:relative;overflow:hidden}
 .hero:after{content:"🐴";position:absolute;right:15px;bottom:-8px;font-size:74px;opacity:.23}
@@ -1489,7 +1491,7 @@ main{padding-top:84px}
 </style></head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
-<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC64</div></header>
+<header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC64</div><div id="rarLastUpdated" class="rar-last-updated">最終更新 --</div></header>
 <main>
 <section id="home" class="screen active">
 <div class="hero home-hero-natural">
@@ -3516,6 +3518,19 @@ function checkPersonalDataHealth(){
 
 const RAR_CONSUMER_ENDPOINT="https://rar-project-5a27e.web.app/v1/consumer-data/current";
 let rarConsumerSyncState={status:"PENDING",versionId:"",consumerRecordsSha256:"",sourceSubmissionId:"",error:""};
+function formatRarLastUpdated(value){
+ const d=new Date(value||"");
+ if(Number.isNaN(d.getTime()))return "最終更新 --";
+ return "最終更新 "+new Intl.DateTimeFormat("ja-JP",{
+   timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",
+   hour:"2-digit",minute:"2-digit",hour12:false
+ }).format(d);
+}
+function renderRarLastUpdated(value){
+ const el=document.getElementById("rarLastUpdated");
+ if(el)el.textContent=formatRarLastUpdated(value);
+}
+
 
 function closeEnough(a,b,tol=1e-7){
  return Number.isFinite(Number(a)) && Number.isFinite(Number(b)) && Math.abs(Number(a)-Number(b))<=tol;
@@ -3597,6 +3612,7 @@ function applyConsumerDataset(data){
  };
  window.__RAR_CONSUMER_ADOPTION__=adoption;
  rarConsumerSyncState={status:"ADOPTED",versionId:adoption.versionId,consumerRecordsSha256:adoption.consumerRecordsSha256,sourceSubmissionId:adoption.sourceSubmissionId,error:""};
+ renderRarLastUpdated(adoption.transferredAt);
  try{localStorage.setItem("rarConsumerAdoption",JSON.stringify(adoption));}catch(e){console.warn("Official adoption marker storage failed",e);}
 }
 function ensureConsumerGate(){
