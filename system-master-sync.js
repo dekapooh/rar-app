@@ -2,9 +2,9 @@
   'use strict';
 
   const API_URL = 'https://rar-project-5a27e.web.app/v1/consumer-data/current';
+  const DATASET_API_BASE = 'https://rar-project-5a27e.web.app/v1/consumer-data/dataset/';
   const EXPECTED_SCHEMA = 'rar-app-data-v3';
   const EXPECTED_RELEASE = 'FROZEN_100_20260914';
-  const EXPECTED_COUNT = 82;
   const LEGACY_DATASET = Object.freeze({
     season_year: 2026,
     club_id: 'silk',
@@ -14,6 +14,7 @@
 
   let availableDatasets = [LEGACY_DATASET];
   let activeDatasetKey = LEGACY_DATASET.dataset_key;
+  let staticHorseSnapshot = null;
 
   function ensureStatusEl() {
     let el = document.getElementById('rarSystemMasterUpdatedAt');
@@ -157,12 +158,12 @@
     const clubSelect = root.querySelector('#rarClubSelect');
     seasonSelect.addEventListener('change', () => {
       renderDatasetSelectorOptions(Number(seasonSelect.value), null);
+      const requestedKey = clubSelect.value;
+      if (requestedKey && requestedKey !== activeDatasetKey) void selectDataset(requestedKey);
     });
     clubSelect.addEventListener('change', () => {
-      const selected = availableDatasets.find(d => d.dataset_key === clubSelect.value);
-      if (!selected) return;
-      const detail = { ...selected, active_dataset_key: activeDatasetKey };
-      window.dispatchEvent(new CustomEvent('rar:dataset-selection-requested', { detail }));
+      const requestedKey = clubSelect.value;
+      if (requestedKey && requestedKey !== activeDatasetKey) void selectDataset(requestedKey);
     });
     return root;
   }
@@ -212,16 +213,17 @@
     const data = normalizeDatasetIdentity(rawData);
     if (data.schema_version !== EXPECTED_SCHEMA) throw new Error(`schema mismatch: ${data.schema_version}`);
     if (data.release_class !== EXPECTED_RELEASE) throw new Error(`release mismatch: ${data.release_class}`);
-    if (Number(data.record_count) !== EXPECTED_COUNT) throw new Error('record_count must be 82');
-    if (!Array.isArray(data.records) || data.records.length !== EXPECTED_COUNT) throw new Error('records must be 82');
+    const count = Number(data.record_count);
+    if (!Number.isInteger(count) || count <= 0 || count > 500) throw new Error(`invalid record_count: ${data.record_count}`);
+    if (!Array.isArray(data.records) || data.records.length !== count) throw new Error('records length must equal record_count');
 
     const nos = new Set();
     const ranks = new Set();
     for (const r of data.records) {
       const no = n(r.no, 'no');
       const rank = n(r.officialRank, `No.${no}.officialRank`);
-      if (!Number.isInteger(no) || no < 1 || no > 82 || nos.has(no)) throw new Error(`invalid/duplicate no: ${no}`);
-      if (!Number.isInteger(rank) || rank < 1 || rank > 82 || ranks.has(rank)) throw new Error(`invalid/duplicate rank: ${rank}`);
+      if (!Number.isInteger(no) || no < 1 || nos.has(no)) throw new Error(`invalid/duplicate no: ${no}`);
+      if (!Number.isInteger(rank) || rank < 1 || rank > count || ranks.has(rank)) throw new Error(`invalid/duplicate rank: ${rank}`);
       nos.add(no); ranks.add(rank);
       const potential = n(r.potential, `No.${no}.potential`);
       const pedigree = n(r.pedigree, `No.${no}.pedigree`);
@@ -233,8 +235,8 @@
       }
       if (r.manager_status !== 'FROZEN_FINAL') throw new Error(`No.${no} is not FROZEN_FINAL`);
     }
-    for (let i = 1; i <= 82; i++) {
-      if (!nos.has(i) || !ranks.has(i)) throw new Error('No/rank set must be 1..82');
+    for (let i = 1; i <= count; i++) {
+      if (!ranks.has(i)) throw new Error(`rank set must be 1..${count}`);
     }
     if (!data.transferred_at) throw new Error('transferred_at missing');
     return data;
@@ -292,20 +294,51 @@
     if (Number.isFinite(Number(invSc.official))) h.ivOfficial = Number(invSc.official);
   }
 
+  function cloneHorse(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function blankHorse(no) {
+    return {
+      no, name: '', sex: '', sire: '', dam: '', birth: '', trainer: '', breeder: '',
+      sharePrice: 0, price: 0, height: 0, chest: 0, cannon: 0, weight: 0,
+      potential: 0, pedigree: 0, dream: 0, roi: 0, ivOfficial: 0, total: 0,
+      officialRank: no, dreamMiddle: 0, dreamHigh: 0, dreamLower: 0, dreamUpper: 0,
+      roiMiddlePct: 0, roiHighPct: 0, roiOfficialPct: 0,
+      prizeMiddleYen: 0, prizeHighYen: 0, prizeOfficialYen: 0,
+      expectedPrize: 0, returnRate: 0, full: false,
+      turf: '', dirt: '', distance: '', category: '', growth: '', targets: '', comment: '',
+      small: {}
+    };
+  }
+
   function applyDataset(data) {
-    if (typeof HORSES === 'undefined' || !Array.isArray(HORSES) || HORSES.length !== 82) {
+    if (typeof HORSES === 'undefined' || !Array.isArray(HORSES)) {
       throw new Error('RAR HORSES base is unavailable');
     }
-    const byNo = new Map(data.records.map(r => [Number(r.no), r]));
-    for (const h of HORSES) {
-      const r = byNo.get(Number(h.no));
-      if (!r) throw new Error(`SYSTEM MASTER missing No.${h.no}`);
-      patchHorse(h, r);
-      if (typeof CAREER_META !== 'undefined' && CAREER_META && r.career) {
-        CAREER_META[String(h.no)] = {
-          middleStarts: Number(r.career.middle_starts || 0),
-          highStarts: Number(r.career.high_starts || 0),
-          surface: r.career.surface || CAREER_META[String(h.no)]?.surface || 'turf'
+    if (!staticHorseSnapshot) staticHorseSnapshot = HORSES.map(cloneHorse);
+    const legacyByNo = new Map(staticHorseSnapshot.map(h => [Number(h.no), h]));
+    const nextHorses = data.records.map(r => {
+      const no = Number(r.no);
+      const base = data.dataset_key === LEGACY_DATASET.dataset_key && legacyByNo.has(no)
+        ? cloneHorse(legacyByNo.get(no))
+        : blankHorse(no);
+      patchHorse(base, r);
+      if (!base.turf && r.career?.surface === 'turf') base.turf = '◎';
+      if (!base.dirt && r.career?.surface === 'dirt') base.dirt = '◎';
+      return base;
+    });
+    HORSES.splice(0, HORSES.length, ...nextHorses);
+
+    if (typeof CAREER_META !== 'undefined' && CAREER_META) {
+      for (const key of Object.keys(CAREER_META)) delete CAREER_META[key];
+      for (const r of data.records) {
+        const no = Number(r.no);
+        const career = r.career || {};
+        CAREER_META[String(no)] = {
+          middleStarts: Number(career.middle_starts || 0),
+          highStarts: Number(career.high_starts || 0),
+          surface: career.surface || 'turf'
         };
       }
     }
@@ -341,6 +374,33 @@
     }).format(d).replaceAll('/', '/');
   }
 
+  async function selectDataset(datasetKey) {
+    const requested = String(datasetKey || '').trim();
+    const selected = availableDatasets.find(d => d.dataset_key === requested);
+    if (!selected) throw new Error(`unknown dataset: ${requested}`);
+    const detail = { ...selected, active_dataset_key: activeDatasetKey };
+    window.dispatchEvent(new CustomEvent('rar:dataset-selection-requested', { detail }));
+    setStatus(`切替中 ${selected.season_year} ${selected.club_name}…`);
+    try {
+      const res = await fetch(`${DATASET_API_BASE}${encodeURIComponent(requested)}`, { cache: 'no-store', mode: 'cors' });
+      if (!res.ok) throw new Error(`consumer dataset API HTTP ${res.status}`);
+      const data = validateDataset(await res.json());
+      if (data.dataset_key !== requested) throw new Error(`dataset response mismatch: ${data.dataset_key}`);
+      updateDatasetCatalog(data);
+      applyDataset(data);
+      activeDatasetKey = data.dataset_key;
+      renderDatasetSelectorOptions(data.season_year, data.dataset_key);
+      setStatus(`最終更新 ${formatTokyo(data.transferred_at)}`);
+      window.dispatchEvent(new CustomEvent('rar:dataset-changed', { detail: { ...window.__RAR_SYSTEM_MASTER__ } }));
+      return window.__RAR_SYSTEM_MASTER__;
+    } catch (e) {
+      console.error('[RAR SYSTEM MASTER] dataset switch failed; active dataset kept', e);
+      renderDatasetSelectorOptions(null, activeDatasetKey);
+      setStatus('切替失敗｜現在データを継続', 'error');
+      return null;
+    }
+  }
+
   async function sync() {
     ensureStatusEl();
     renderDatasetSelectorOptions(LEGACY_DATASET.season_year, LEGACY_DATASET.dataset_key);
@@ -365,7 +425,8 @@
     get activeDatasetKey() { return activeDatasetKey; },
     get availableDatasets() { return availableDatasets.map(d => ({ ...d })); },
     normalizeDatasetIdentity,
-    render: renderDatasetSelectorOptions
+    render: renderDatasetSelectorOptions,
+    select: selectDataset
   };
   window.RARSystemMasterSync = { sync, validateDataset };
   if (document.readyState === 'loading') {
