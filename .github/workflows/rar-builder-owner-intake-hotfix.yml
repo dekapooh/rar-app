@@ -29,33 +29,36 @@ jobs:
           s=p.read_text(encoding='utf-8')
 
           old_gate=" if(c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70)throw new Error('この採点依頼はRARβのSilk 2026照合条件を満たしていません');\n"
-          new_gate=""" const catalogMetaOk=c.sha256===KNOWN_SHA&&Number(c.page_count)===128;
- const officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA;
- const fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70;
- if(!catalogMetaOk||(!officialMeasureMeta&&!fallbackMeasureMeta))throw new Error('Silk 2026事前照合NG｜catalog '+(catalogMetaOk?'OK':'NG')+'｜measurement '+(officialMeasureMeta?'公式SHA':('verified='+String(m.verified)+' coverage='+(m.name_coverage??'—')+'/82')));
-"""
+          new_gate="\n".join([
+              " const catalogMetaOk=c.sha256===KNOWN_SHA&&Number(c.page_count)===128;",
+              " const officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA;",
+              " const fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70;",
+              " if(!catalogMetaOk||(!officialMeasureMeta&&!fallbackMeasureMeta))throw new Error('Silk 2026事前照合NG｜catalog '+(catalogMetaOk?'OK':'NG')+'｜measurement '+(officialMeasureMeta?'公式SHA':('verified='+String(m.verified)+' coverage='+(m.name_coverage??'—')+'/82')));",
+          ])+"\n"
           if old_gate in s:
               s=s.replace(old_gate,new_gate,1)
           elif 'officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA' not in s:
               raise SystemExit('Owner intake gate anchor missing')
 
-          old_list="""  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';
-  const actions=document.createElement('div');actions.className='submission-actions';
-  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
-  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
-  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
-"""
-          new_list="""  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';
-  const catalogOk=r.catalog?.sha256===KNOWN_SHA&&Number(r.catalog?.page_count)===128;
-  const officialMeasure=r.measurements?.sha256===KNOWN_MEASURE_SHA;
-  const fallbackMeasure=r.measurements?.verified===true&&Number(r.measurements?.name_coverage)>=70;
-  const preOk=catalogOk&&(officialMeasure||fallbackMeasure);
-  const pre=document.createElement('div');pre.className=(preOk?'ok':'review')+' small';pre.textContent='事前照合｜'+(preOk?'PASS':'REVIEW')+'｜'+(officialMeasure?'公式測尺SHA 82/82':('verified='+String(r.measurements?.verified)+'｜'+(r.measurements?.name_coverage??'—')+'/82'));
-  const actions=document.createElement('div');actions.className='submission-actions';
-  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
-  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
-  actions.append(use,del);card.append(who,when,catalog,measure,pre,actions);box.append(card);
-"""
+          old_list="\n".join([
+              "  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';",
+              "  const actions=document.createElement('div');actions.className='submission-actions';",
+              "  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};",
+              "  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);",
+              "  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);",
+          ])+"\n"
+          new_list="\n".join([
+              "  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';",
+              "  const catalogOk=r.catalog?.sha256===KNOWN_SHA&&Number(r.catalog?.page_count)===128;",
+              "  const officialMeasure=r.measurements?.sha256===KNOWN_MEASURE_SHA;",
+              "  const fallbackMeasure=r.measurements?.verified===true&&Number(r.measurements?.name_coverage)>=70;",
+              "  const preOk=catalogOk&&(officialMeasure||fallbackMeasure);",
+              "  const pre=document.createElement('div');pre.className=(preOk?'ok':'review')+' small';pre.textContent='事前照合｜'+(preOk?'PASS':'REVIEW')+'｜'+(officialMeasure?'公式測尺SHA 82/82':('verified='+String(r.measurements?.verified)+'｜'+(r.measurements?.name_coverage??'—')+'/82'));",
+              "  const actions=document.createElement('div');actions.className='submission-actions';",
+              "  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};",
+              "  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);",
+              "  actions.append(use,del);card.append(who,when,catalog,measure,pre,actions);box.append(card);",
+          ])+"\n"
           if old_list in s:
               s=s.replace(old_list,new_list,1)
           elif "pre.textContent='事前照合｜'" not in s:
@@ -70,23 +73,23 @@ jobs:
           import re
           html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
           required=[
-            'officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA',
-            'fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70',
-            'Silk 2026事前照合NG',
-            "pre.textContent='事前照合｜'",
-            "officialMeasure?'公式測尺SHA 82/82'",
-            'measureSha!==m.sha256||!v.ok',
-            "verifiedBy:'SHA256'",
+              'officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA',
+              'fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70',
+              'Silk 2026事前照合NG',
+              "pre.textContent='事前照合｜'",
+              "officialMeasure?'公式測尺SHA 82/82'",
+              'measureSha!==m.sha256||!v.ok',
+              "verifiedBy:'SHA256'",
           ]
           missing=[x for x in required if x not in html]
           if missing:
-            raise SystemExit('missing '+repr(missing))
+              raise SystemExit('missing '+repr(missing))
           stale="c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70"
           if stale in html:
-            raise SystemExit('stale Owner intake gate remains')
+              raise SystemExit('stale Owner intake gate remains')
           m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
           if not m:
-            raise SystemExit('module script missing')
+              raise SystemExit('module script missing')
           js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
           Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
           print('Owner intake measurement SHA gate audit PASS')
