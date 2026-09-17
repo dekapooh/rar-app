@@ -9,6 +9,9 @@ on:
       - "system-master-sync.js"
       - ".github/workflows/system-master-sync-audit.yml"
 
+permissions:
+  contents: read
+
 jobs:
   audit:
     runs-on: ubuntu-latest
