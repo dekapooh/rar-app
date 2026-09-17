@@ -38,6 +38,10 @@ jobs:
             "DATASET_REVIEW",
             "R2_TEMPORARY",
             "Cloudflare R2",
+            "activeHorseCount",
+            "readiness.horse_count",
+            "readiness.catalog_sha256",
+            "/v1/consumer-data/dataset/",
           ]
           missing=[x for x in required if x not in html]
           if missing:
@@ -45,6 +49,9 @@ jobs:
           forbidden=[
             "現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます",
             "club:'SILK',season:'2026'",
+            "record.dataset_key!=='2026:silk'",
+            "Number(payload.horse_count)!==82",
+            "dry.record_count!==82",
           ]
           leaked=[x for x in forbidden if x in html]
           if leaked:
