@@ -32,7 +32,7 @@
 <div id="potentialCard" class="card hidden"><h2>4. Potential｜Beta4.9</h2><div class="grid small"><strong>状態</strong><span id="potentialStatus"></span><strong>対象</strong><span id="potentialCount"></span><strong>Q1〜Q7</strong><span id="potentialQ17"></span><strong>Q8</strong><span id="potentialQ8"></span><strong>Canonical再現</strong><span id="potentialCanonical"></span><strong>Engine</strong><span>Potential Ver.4.4 Beta / CLPP Beta4.9</span></div><div id="potentialSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のPotential一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Scale/Frame</th><th>Rear</th><th>Trunk</th><th>Front</th><th>Potential</th><th>Route</th></tr></thead><tbody id="potentialRows"></tbody></table></div></details><p class="muted small">この提出ID専用のFresh Potential runを10頭ずつ生成します。旧保存済みPotential/Pedigree評価は採点値として参照しません。</p></div>
 <div id="dreamRoiCard" class="card hidden"><h2>5-7. 夢 / ROI / Investment Value</h2><div class="grid small"><strong>夢</strong><span id="dreamRouteStatus"></span><strong>Middle Route</strong><span id="middleRouteStatus"></span><strong>High</strong><span id="highRouteStatus"></span><strong>夢 小数値</strong><span id="decimalRouteStatus"></span><strong>ROI / IV</strong><span id="roiIvStatus"></span><strong>RAR /100</strong><span id="rar100Status"></span><strong>Engine</strong><span id="routeEngine"></span></div><div class="route-grid"><div class="route-kpi"><span class="muted small">Middle解決</span><strong id="middleResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High解決</span><strong id="highResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High HOLD</span><strong id="highHoldKpi">—</strong></div></div><div id="routeSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭の夢 / Route一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Middle</th><th>High</th><th>Official</th><th>High</th><th>Target</th><th>Middle ROI</th><th>High ROI</th><th>Official ROI</th><th>IV /30</th><th>RAR /100</th></tr></thead><tbody id="routeRows"></tbody></table></div></details><p class="muted small">夢の小数は整数Anchorへ丸めず、実名ターゲットの性能着順へ連続反映します。ROI / IVはFROZEN_FINALの82頭出力のみ表示します。Route推測値や途中仕様は表示しません。</p></div>
 <div class="card"><h2>収集パイプライン</h2><div class="step">1. 公式募集カタログPDF＋公式測尺PDF</div><div class="step">2. FACT確認｜AUTO_PASS / REVIEW / MISSING</div><div class="step">3. Potential｜画像・QA・CLPP・FROZEN</div><div class="step">4. 血統</div><div class="step">5. 夢 /20｜Middle / High / Official</div><div class="step">6. ROI｜Middle / High競走生活・賞金積上げ</div><div class="step">7. Investment Value /30｜Middle / High / Official</div><div class="step">8. QA｜出典・Version・未確定項目</div><div class="step">9. RAR本体へ送信 → 送信成功確認 → R2 PDF即削除</div></div></div></section>
-<dialog id="deleteSubmissionDialog" class="delete-dialog"><strong>消去しますがよろしいですか？</strong><p id="deleteSubmissionLabel" class="muted small"></p><div class="row"><button id="deleteSubmissionNo" type="button">No</button><button id="deleteSubmissionYes" type="button" class="danger">Yes</button></div></dialog>
+<dialog id="deleteSubmissionDialog" class="delete-dialog"><strong>この受信データを削除しますか？</strong><p id="deleteSubmissionLabel" class="muted small"></p><div class="row"><button id="deleteSubmissionNo" type="button">No</button><button id="deleteSubmissionYes" type="button" class="danger">Yes</button></div></dialog>
 <section id="err" class="card hidden"><h2>エラー</h2><pre id="errmsg"></pre></section></main>
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
@@ -109,8 +109,16 @@ function requestDeleteSubmission(record){
  $('deleteSubmissionDialog').showModal();
 }
 async function confirmDeleteSubmission(){
+ const record=pendingDeleteSubmission;
  pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
- throw new Error('正式フローでは提出の手動削除は行いません。RAR送信成功後の即時削除、または20日Lifecycle削除を使用します');
+ if(!record?.submission_id)throw new Error('削除対象のsubmission_idがありません');
+ const result=await api('/v1/submissions/'+encodeURIComponent(record.submission_id)+'/owner-delete',{method:'POST',body:{}});
+ if(result.status!=='OWNER_DELETED')throw new Error('受信データの削除確認に失敗しました');
+ if(activeSubmissionId===record.submission_id){
+   activeSubmissionId=null;activeSubmissionRecord=null;catalogContext=null;measurementContext=null;
+   clearScoreResult();refreshScoreReady();
+ }
+ await loadOwnerSubmissions();
 }
 async function activateSubmissionForScoring(record){
  const c=record.catalog||{},m=record.measurements||{},sid=record.submission_id;
@@ -158,7 +166,8 @@ async function loadOwnerSubmissions(){
   const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';
   const actions=document.createElement('div');actions.className='submission-actions';
   const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
-  actions.append(use);card.append(who,when,catalog,measure,actions);box.append(card);
+  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
+  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
  }
 }
 async function submitPdfsToOwner(){
