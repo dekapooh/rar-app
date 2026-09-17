@@ -1,0 +1,118 @@
+name: RAR Builder Owner Intake Hotfix
+
+on:
+  push:
+    branches: [r2-temp-pdf-prodflow]
+    paths:
+      - ".github/workflows/rar-builder-owner-intake-hotfix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-audit-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r2-temp-pdf-prodflow
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Patch Owner intake verification
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('rar-beta-release/rar-builder.html')
+          s=p.read_text(encoding='utf-8')
+
+          old_gate=" if(c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70)throw new Error('この採点依頼はRARβのSilk 2026照合条件を満たしていません');\n"
+          new_gate=""" const catalogMetaOk=c.sha256===KNOWN_SHA&&Number(c.page_count)===128;
+ const officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA;
+ const fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70;
+ if(!catalogMetaOk||(!officialMeasureMeta&&!fallbackMeasureMeta))throw new Error('Silk 2026事前照合NG｜catalog '+(catalogMetaOk?'OK':'NG')+'｜measurement '+(officialMeasureMeta?'公式SHA':('verified='+String(m.verified)+' coverage='+(m.name_coverage??'—')+'/82')));
+"""
+          if old_gate in s:
+              s=s.replace(old_gate,new_gate,1)
+          elif 'officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA' not in s:
+              raise SystemExit('Owner intake gate anchor missing')
+
+          old_list="""  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';
+  const actions=document.createElement('div');actions.className='submission-actions';
+  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
+  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
+  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
+"""
+          new_list="""  const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';
+  const catalogOk=r.catalog?.sha256===KNOWN_SHA&&Number(r.catalog?.page_count)===128;
+  const officialMeasure=r.measurements?.sha256===KNOWN_MEASURE_SHA;
+  const fallbackMeasure=r.measurements?.verified===true&&Number(r.measurements?.name_coverage)>=70;
+  const preOk=catalogOk&&(officialMeasure||fallbackMeasure);
+  const pre=document.createElement('div');pre.className=(preOk?'ok':'review')+' small';pre.textContent='事前照合｜'+(preOk?'PASS':'REVIEW')+'｜'+(officialMeasure?'公式測尺SHA 82/82':('verified='+String(r.measurements?.verified)+'｜'+(r.measurements?.name_coverage??'—')+'/82'));
+  const actions=document.createElement('div');actions.className='submission-actions';
+  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
+  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
+  actions.append(use,del);card.append(who,when,catalog,measure,pre,actions);box.append(card);
+"""
+          if old_list in s:
+              s=s.replace(old_list,new_list,1)
+          elif "pre.textContent='事前照合｜'" not in s:
+              raise SystemExit('Owner queue display anchor missing')
+
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Audit and JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
+          required=[
+            'officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA',
+            'fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70',
+            'Silk 2026事前照合NG',
+            "pre.textContent='事前照合｜'",
+            "officialMeasure?'公式測尺SHA 82/82'",
+            'measureSha!==m.sha256||!v.ok',
+            "verifiedBy:'SHA256'",
+          ]
+          missing=[x for x in required if x not in html]
+          if missing:
+            raise SystemExit('missing '+repr(missing))
+          stale="c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70"
+          if stale in html:
+            raise SystemExit('stale Owner intake gate remains')
+          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+            raise SystemExit('module script missing')
+          js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
+          Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
+          print('Owner intake measurement SHA gate audit PASS')
+          PY
+          node --check /tmp/rar-beta.js
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rar-beta-release/rar-builder.html
+          if git diff --cached --quiet; then
+            echo "No patch changes"
+          else
+            git commit -m "fix: validate Owner intake with official measurement SHA"
+            git push origin HEAD:r2-temp-pdf-prodflow
+          fi
+      - name: Verify Firebase credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+        run: |
+          firebase deploy --only hosting,firestore:rules --project rar-project-5a27e --config rar-beta-release/firebase.json
