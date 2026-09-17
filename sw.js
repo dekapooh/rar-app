@@ -1,7 +1,12 @@
-const CACHE_NAME="rar-rc66-public-beta-v11-rar100";
+const CACHE_NAME="rar-rc66-public-beta-v12-system-master";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js"
 ];
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=20260917"><\/script>';
+function injectSystemMasterSync(html){
+  if(html.includes('system-master-sync.js')) return html;
+  return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;
+}
 const RC66_BRAND_CSS=`
 /* RAR RC66 PUBLIC BETA FINAL */
 .brand{gap:6px!important;}
@@ -73,7 +78,7 @@ function makeRC66(html){
 `;
   if(out.includes("</style>")) out=out.replace("</style>",RC66_BRAND_CSS+cleanup+"\n</style>");
   else if(out.includes("</head>")) out=out.replace("</head>","<style>"+RC66_BRAND_CSS+cleanup+"</style></head>");
-  return out;
+  return injectSystemMasterSync(out);
 }
 
 function makeAdminRC66(html){
@@ -126,7 +131,7 @@ window.addEventListener("DOMContentLoaded",()=>{
 });
 <\/script>`;
   out=out.replace("</body>",adminSync+"</body>");
-  return out;
+  return injectSystemMasterSync(out);
 }
 
 self.addEventListener("install",event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE_NAME);await Promise.allSettled(APP_SHELL.map(url=>cache.add(url)));})());self.skipWaiting();});
