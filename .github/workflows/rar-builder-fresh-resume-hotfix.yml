@@ -1,0 +1,96 @@
+name: RAR Builder Fresh Resume Hotfix
+
+on:
+  push:
+    branches: [r2-temp-pdf-prodflow]
+    paths:
+      - ".github/workflows/rar-builder-fresh-resume-hotfix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-audit-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r2-temp-pdf-prodflow
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Patch Fresh batch resume handling
+        env:
+          OLD_MAIN: "ICBjb25zdCBmb3JtPW5ldyBGb3JtRGF0YSgpOwogIGZvcm0uYXBwZW5kKCdjYXRhbG9nX3BkZicsbmV3IEJsb2IoW2NhdGFsb2dDb250ZXh0LmJ1ZmZlcl0se3R5cGU6J2FwcGxpY2F0aW9uL3BkZid9KSxjYXRhbG9nQ29udGV4dC5maWxlbmFtZXx8J2NhdGFsb2cucGRmJyk7CiAgZm9ybS5hcHBlbmQoJ21lYXN1cmVtZW50X3BkZicsbmV3IEJsb2IoW21lYXN1cmVtZW50Q29udGV4dC5idWZmZXJdLHt0eXBlOidhcHBsaWNhdGlvbi9wZGYnfSksbWVhc3VyZW1lbnRDb250ZXh0LmZpbGVuYW1lfHwnbWVhc3VyZW1lbnRzLnBkZicpOwogIGZvcm0uYXBwZW5kKCdiYXRjaF9zdGFydCcsU3RyaW5nKHN0YXJ0KSk7Zm9ybS5hcHBlbmQoJ2JhdGNoX2VuZCcsU3RyaW5nKGVuZCkpO2Zvcm0uYXBwZW5kKCdzdWJtaXNzaW9uX2lkJyxhY3RpdmVTdWJtaXNzaW9uSWQpOwogIGNvbnN0IGV2ZW50cz1hd2FpdCBhcGlOZGpzb24oJy92MS9wb3RlbnRpYWwvYmF0Y2gvc3RhcnQnLGZvcm0sZXY9PnsKICAgIGlmKGV2LmV2ZW50PT09J2hlYXJ0YmVhdCcpJCgnc2NvcmVTdGF0dXMnKS5pbm5lckhUTUw9JzxzcGFuIGNsYXNzPSJyZXZpZXciPk5vLicrc3RhcnQrJ+OAnCcrZW5kKycgQ2Fub25pY2Fs5rqW5YKZ5Lit4oCmPC9zcGFuPic7CiAgfSk7CiAgY29uc3QgYmFkPWV2ZW50cy5maW5kKHg9PnguZXZlbnQ9PT0nYmF0Y2hfZXJyb3InfHx4LmV2ZW50PT09J2JhdGNoX3JldmlldycpO2lmKGJhZCl0aHJvdyBuZXcgRXJyb3IoJ0ZyZXNoIGJhdGNo5rqW5YKZ5YGc5q2i772cJysoYmFkLmlzc3VlX2NvZGV8fGJhZC5pc3N1ZV9jb2Rlcz8uam9pbignLCcpfHwnUkVWSUVXJykpOwogIGNvbnN0IHJlYWR5PVsuLi5ldmVudHNdLnJldmVyc2UoKS5maW5kKHg9PnguZXZlbnQ9PT0nYmF0Y2hfcmVhZHknKTtpZighcmVhZHk/LmpvYl9pZHx8IXJlYWR5Py5ydW5faWQpdGhyb3cgbmV3IEVycm9yKCdGcmVzaCBiYXRjaF9yZWFkeeOCkuWPluW+l+OBp+OBjeOBvuOBm+OCkycpOwogIGFjdGl2ZVJ1bklkPXJlYWR5LnJ1bl9pZDsKICBjb25zdCBwZW5kaW5nPUFycmF5LmlzQXJyYXkocmVhZHkucGVuZGluZyk/cmVhZHkucGVuZGluZzpbXTsKICBmb3IobGV0IGk9MDtpPHBlbmRpbmcubGVuZ3RoO2krKyl7CiAgICBjb25zdCBubz1OdW1iZXIocGVuZGluZ1tpXSk7JCgnc2NvcmVTdGF0dXMnKS5pbm5lckhUTUw9JzxzcGFuIGNsYXNzPSJyZXZpZXciPk5vLicrbm8rJyBGcmVzaCBQb3RlbnRpYWzmjqHngrnkuK3vvZwnKyhpKzEpKycvJytwZW5kaW5nLmxlbmd0aCsnPC9zcGFuPic7CiAgICBjb25zdCBoPWF3YWl0IGFwaSgnL3YxL3BvdGVudGlhbC9iYXRjaC8nK2VuY29kZVVSSUNvbXBvbmVudChyZWFkeS5qb2JfaWQpKycvaG9yc2UvJytubyx7bWV0aG9kOidQT1NUJyxib2R5Ont9fSk7CiAgICBpZihoLnN0YXR1cyE9PSdQQVNTJyl0aHJvdyBuZXcgRXJyb3IoJ05vLicrbm8rJyBGcmVzaCBQb3RlbnRpYWzjgYxQQVNT44GX44G+44Gb44KT44Gn44GX44GfJyk7CiAgICBwb3RlbnRpYWxQcm9jZXNzZWQ9TnVtYmVyKGgub3ZlcmFsbF9wcm9jZXNzZWR8fHBvdGVudGlhbFByb2Nlc3NlZCsxKTskKCdzY29yZVByb2dyZXNzQmFyJykuc3R5bGUud2lkdGg9KHBvdGVudGlhbFByb2Nlc3NlZC84MioxMDApKyclJzskKCdzY29yZUJhdGNoU3RhdHVzJykudGV4dENvbnRlbnQ9cG90ZW50aWFsUHJvY2Vzc2VkKycgLyA4Mic7CiAgfQo="
+          NEW_MAIN: "ICBjb25zdCBtYWtlQmF0Y2hGb3JtPSgpPT57Y29uc3QgZj1uZXcgRm9ybURhdGEoKTtmLmFwcGVuZCgnY2F0YWxvZ19wZGYnLG5ldyBCbG9iKFtjYXRhbG9nQ29udGV4dC5idWZmZXJdLHt0eXBlOidhcHBsaWNhdGlvbi9wZGYnfSksY2F0YWxvZ0NvbnRleHQuZmlsZW5hbWV8fCdjYXRhbG9nLnBkZicpO2YuYXBwZW5kKCdtZWFzdXJlbWVudF9wZGYnLG5ldyBCbG9iKFttZWFzdXJlbWVudENvbnRleHQuYnVmZmVyXSx7dHlwZTonYXBwbGljYXRpb24vcGRmJ30pLG1lYXN1cmVtZW50Q29udGV4dC5maWxlbmFtZXx8J21lYXN1cmVtZW50cy5wZGYnKTtmLmFwcGVuZCgnYmF0Y2hfc3RhcnQnLFN0cmluZyhzdGFydCkpO2YuYXBwZW5kKCdiYXRjaF9lbmQnLFN0cmluZyhlbmQpKTtmLmFwcGVuZCgnc3VibWlzc2lvbl9pZCcsYWN0aXZlU3VibWlzc2lvbklkKTtyZXR1cm4gZn07CiAgbGV0IHJlYWR5PW51bGwsZXZlbnRzPVtdOwogIGZvcihsZXQgYXR0ZW1wdD0xO2F0dGVtcHQ8PTImJiFyZWFkeTthdHRlbXB0KyspewogICAgaWYoYXR0ZW1wdD4xKSQoJ3Njb3JlU3RhdHVzJykuaW5uZXJIVE1MPSc8c3BhbiBjbGFzcz0icmV2aWV3Ij5Oby4nK3N0YXJ0KyfjgJwnK2VuZCsnIGJhdGNoX3JlYWR55YaN5o6l57aa5Lit4oCmPC9zcGFuPic7CiAgICBldmVudHM9YXdhaXQgYXBpTmRqc29uKCcvdjEvcG90ZW50aWFsL2JhdGNoL3N0YXJ0JyxtYWtlQmF0Y2hGb3JtKCksZXY9PnsKICAgICAgaWYoZXYuZXZlbnQ9PT0naGVhcnRiZWF0JykkKCdzY29yZVN0YXR1cycpLmlubmVySFRNTD0nPHNwYW4gY2xhc3M9InJldmlldyI+Tm8uJytzdGFydCsn44CcJytlbmQrJyBDYW5vbmljYWzmupblgpnkuK3igKY8L3NwYW4+JzsKICAgIH0pOwogICAgY29uc3QgYmFkPWV2ZW50cy5maW5kKHg9PnguZXZlbnQ9PT0nYmF0Y2hfZXJyb3InfHx4LmV2ZW50PT09J2JhdGNoX3JldmlldycpOwogICAgaWYoYmFkKXRocm93IG5ldyBFcnJvcignRnJlc2ggYmF0Y2jmupblgpnlgZzmraLvvZwnKyhiYWQuaXNzdWVfY29kZXx8YmFkLmlzc3VlX2NvZGVzPy5qb2luKCcsJyl8fCdSRVZJRVcnKSk7CiAgICByZWFkeT1bLi4uZXZlbnRzXS5yZXZlcnNlKCkuZmluZCh4PT54LmV2ZW50PT09J2JhdGNoX3JlYWR5Jyl8fG51bGw7CiAgfQogIGlmKCFyZWFkeT8uam9iX2lkfHwhcmVhZHk/LnJ1bl9pZCl0aHJvdyBuZXcgRXJyb3IoJ0ZyZXNoIGJhdGNoX3JlYWR544KS5Y+W5b6X44Gn44GN44G+44Gb44KT772c5YaN5o6l57aaMuWbnuOBp+OCguacquWPluW+lycpOwogIGFjdGl2ZVJ1bklkPXJlYWR5LnJ1bl9pZDsKICBjb25zdCBwZW5kaW5nPUFycmF5LmlzQXJyYXkocmVhZHkucGVuZGluZyk/cmVhZHkucGVuZGluZzpbXTsKICBmb3IobGV0IGk9MDtpPHBlbmRpbmcubGVuZ3RoO2krKyl7CiAgICBjb25zdCBubz1OdW1iZXIocGVuZGluZ1tpXSk7JCgnc2NvcmVTdGF0dXMnKS5pbm5lckhUTUw9JzxzcGFuIGNsYXNzPSJyZXZpZXciPk5vLicrbm8rJyBGcmVzaCBQb3RlbnRpYWzmjqHngrnkuK3vvZwnKyhpKzEpKycvJytwZW5kaW5nLmxlbmd0aCsnPC9zcGFuPic7CiAgICBsZXQgaD1udWxsOwogICAgZm9yKGxldCBhdHRlbXB0PTE7YXR0ZW1wdDw9MzthdHRlbXB0KyspewogICAgICBoPWF3YWl0IGFwaSgnL3YxL3BvdGVudGlhbC9iYXRjaC8nK2VuY29kZVVSSUNvbXBvbmVudChyZWFkeS5qb2JfaWQpKycvaG9yc2UvJytubyx7bWV0aG9kOidQT1NUJyxib2R5Ont9fSk7CiAgICAgIGlmKGguc3RhdHVzPT09J1BBU1MnKWJyZWFrOwogICAgICBpZihoLmlzc3VlX2NvZGUhPT0nSEVBVllfRVhFQ1VUSU9OX0ZBSUxFRCcpYnJlYWs7CiAgICAgICQoJ3Njb3JlU3RhdHVzJykuaW5uZXJIVE1MPSc8c3BhbiBjbGFzcz0icmV2aWV3Ij5Oby4nK25vKycg5LiA5pmC5aSx5pWX772c5YaN6Kmm6KGMICcrYXR0ZW1wdCsnLzM8L3NwYW4+JzsKICAgIH0KICAgIGlmKGg/LnN0YXR1cyE9PSdQQVNTJyl0aHJvdyBuZXcgRXJyb3IoJ05vLicrbm8rJyBGcmVzaCBQb3RlbnRpYWzlgZzmraLvvZwnKyhoPy5pc3N1ZV9jb2RlfHxoPy5zdGF0dXN8fCdVTktOT1dOJykpOwogICAgcG90ZW50aWFsUHJvY2Vzc2VkPU51bWJlcihoLm92ZXJhbGxfcHJvY2Vzc2VkfHxwb3RlbnRpYWxQcm9jZXNzZWQrMSk7JCgnc2NvcmVQcm9ncmVzc0JhcicpLnN0eWxlLndpZHRoPShwb3RlbnRpYWxQcm9jZXNzZWQvODIqMTAwKSsnJSc7JCgnc2NvcmVCYXRjaFN0YXR1cycpLnRleHRDb250ZW50PXBvdGVudGlhbFByb2Nlc3NlZCsnIC8gODInOwogIH0K"
+          OLD_CATCH: "IH1jYXRjaChlcnIpeyQoJ3Njb3JlU3RhdHVzJykuaW5uZXJIVE1MPSc8c3BhbiBjbGFzcz0iaG9sZCI+RVJST1I8L3NwYW4+JztmYWlsKGVycil9ZmluYWxseXtyZWZyZXNoU2NvcmVSZWFkeSgpfQo="
+          NEW_CATCH: "IH1jYXRjaChlcnIpeyQoJ3Njb3JlU3RhdHVzJykuaW5uZXJIVE1MPSc8c3BhbiBjbGFzcz0iaG9sZCI+RVJST1I8L3NwYW4+Jzt0cnl7YXdhaXQgcmVzdG9yZUNsZWFuUHJvZ3Jlc3MoKTskKCdzY29yZUNvdW50JykudGV4dENvbnRlbnQ9cG90ZW50aWFsUHJvY2Vzc2VkKycvODLpoK0nfWNhdGNoe31mYWlsKGVycil9ZmluYWxseXtyZWZyZXNoU2NvcmVSZWFkeSgpfQo="
+        run: |
+          python - <<'PY'
+          import base64, os
+          from pathlib import Path
+          p=Path('rar-beta-release/rar-builder.html')
+          s=p.read_text(encoding='utf-8')
+          for a,b,label in [
+              (os.environ['OLD_MAIN'],os.environ['NEW_MAIN'],'main'),
+              (os.environ['OLD_CATCH'],os.environ['NEW_CATCH'],'catch'),
+          ]:
+              old=base64.b64decode(a).decode('utf-8')
+              new=base64.b64decode(b).decode('utf-8')
+              if old not in s:
+                  if new in s:
+                      continue
+                  raise SystemExit(label+' anchor missing')
+              s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Audit and JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
+          required=[
+            'batch_ready再接続中',
+            '再接続2回でも未取得',
+            "h.issue_code!=='HEAVY_EXECUTION_FAILED'",
+            'Fresh Potential停止｜',
+            'await restoreCleanProgress()',
+          ]
+          missing=[x for x in required if x not in html]
+          if missing:
+              raise SystemExit('missing '+repr(missing))
+          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+              raise SystemExit('module script missing')
+          js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
+          Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
+          print('Fresh resume/retry audit PASS')
+          PY
+          node --check /tmp/rar-beta.js
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rar-beta-release/rar-builder.html
+          if git diff --cached --quiet; then
+            echo "No patch changes"
+          else
+            git commit -m "fix: resume Fresh batches after transient stream failures"
+            git push origin HEAD:r2-temp-pdf-prodflow
+          fi
+      - name: Verify Firebase credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+        run: |
+          firebase deploy --only hosting,firestore:rules --project rar-project-5a27e --config rar-beta-release/firebase.json
