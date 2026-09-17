@@ -299,11 +299,13 @@ async function restoreCleanProgress(){
  if(!activeSubmissionId||!catalogContext?.hash){potentialProcessed=0;nextScoreStart=1;activeRunId=null;refreshScoreReady();return}
  const q='/v1/potential/batch/progress-by-catalog/'+encodeURIComponent(catalogContext.hash)+'?submission_id='+encodeURIComponent(activeSubmissionId);
  const p=await api(q);
+ if(String(p.dataset_key||activeDatasetKey)!==activeDatasetKey)throw new Error('Potential進捗のdataset_keyが一致しません');
+ if(Number(p.total||activeHorseCount)!==activeHorseCount)throw new Error('Potential進捗の募集頭数が一致しません');
  activeRunId=p.run_id||null;potentialProcessed=Number(p.processed||0);
  const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);
- $('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';
- $('scoreBatchStatus').textContent=potentialProcessed+' / 82'+(nextScoreStart?'｜次回 No.'+nextScoreStart+'〜'+Math.min(nextScoreStart+9,82):'｜Potential完了');
- if(potentialProcessed===82){
+ $('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';
+ $('scoreBatchStatus').textContent=potentialProcessed+' / 82'+(nextScoreStart?'｜次回 No.'+nextScoreStart+'〜'+Math.min(nextScoreStart+9,activeHorseCount):'｜Potential完了');
+ if(potentialProcessed===activeHorseCount){
    try{const f=await api('/v1/final-score/'+encodeURIComponent(activeSubmissionId));if(f.status==='FROZEN_FINAL'&&f.payload){loadFinalPayload(f.payload);return}}catch{}
  }
  refreshScoreReady();
@@ -323,7 +325,7 @@ function refreshScoreReady(){
    $('scoreReady').textContent='Fresh Potential 82頭完了｜横断QA後に最終採点を確定します';
    $('scoreBtn').textContent='最終採点を確定';
  }else{
-   const end=Math.min(nextScoreStart+LOT_SIZE-1,82);
+   const end=Math.min(nextScoreStart+LOT_SIZE-1,activeHorseCount);
    $('scoreReady').textContent='次は No.'+nextScoreStart+'〜'+end+' をFresh採点';
    $('scoreBtn').textContent='No.'+nextScoreStart+'〜'+end+'を採点';
  }
@@ -343,10 +345,11 @@ function finalRow(r){return{
  potentialSmall:r.potential_small||{},pedigreeSmall:r.pedigree_small||{},identity:r.identity||{},targetRaces:r.target_races||[]
 }}
 function loadFinalPayload(payload){
- if(!payload||payload.schema_version!=='rar-frozen-100-transfer-v2'||Number(payload.horse_count)!==82||!Array.isArray(payload.records)||payload.records.length!==82)throw new Error('Fresh最終採点payloadが不正です');
+ if(!payload||payload.schema_version!=='rar-frozen-100-transfer-v2'||Number(payload.horse_count)!==activeHorseCount||!Array.isArray(payload.records)||payload.records.length!==activeHorseCount)throw new Error('Fresh最終採点payloadが不正です');
+ if(String(payload.dataset_key||'')!==activeDatasetKey)throw new Error('Fresh最終採点のdataset_keyが一致しません');
  if(String(payload.submission_id||'')!==String(activeSubmissionId||''))throw new Error('Fresh最終採点の提出IDが一致しません');
  if(String(payload.source_catalog_sha256||'')!==String(catalogContext?.hash||''))throw new Error('Fresh最終採点のカタログSHAが一致しません');
- latestFinalPayload=payload;activeRunId=payload.potential_run_id||activeRunId;potentialProcessed=82;nextScoreStart=null;
+ latestFinalPayload=payload;activeRunId=payload.potential_run_id||activeRunId;potentialProcessed=activeHorseCount;nextScoreStart=null;
  scoredRows=payload.records.map(finalRow).sort((a,b)=>a.no-b.no);
  $('scoreRows').innerHTML='';appendScoreRows(scoredRows);$('scoreCard').classList.remove('hidden');
  $('scoreStatus').innerHTML='<span class="ok">82頭採点完了｜FRESH FROZEN_FINAL</span>';$('scoreCount').textContent='82/82頭';$('scoreProgressBar').style.width='100%';$('scoreBatchStatus').textContent='82 / 82｜Fresh最終採点完了';
@@ -377,17 +380,19 @@ async function finalizeCleanScoring(){
  if(!activeRunId)throw new Error('Fresh Potential run_idがありません');
  $('scoreStatus').innerHTML='<span class="review">82頭横断QA中…</span>';
  const cross=await api('/v1/potential/batch/crosscheck-v2/'+encodeURIComponent(activeRunId),{method:'POST',body:{}});
- if(cross.status!=='PASS')throw new Error('Potential横断QAがPASSしませんでした');
+ if(cross.status!=='PASS'||String(cross.dataset_key||activeDatasetKey)!==activeDatasetKey||Number(cross.total||0)!==activeHorseCount)throw new Error('Potential横断QAがdataset単位でPASSしませんでした');
  $('scoreStatus').innerHTML='<span class="review">Fresh Pedigree → 夢 → ROI → IV → RAR /100 を確定中…</span>';
  const form=new FormData();form.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');form.append('submission_id',activeSubmissionId);form.append('run_id',activeRunId);
  const final=await apiForm('/v1/final-score/build',form);
- if(final.status!=='FROZEN_FINAL'||Number(final.record_count)!==82||!final.payload)throw new Error('Fresh最終採点がFROZEN_FINALになりませんでした');
+ if(final.status!=='FROZEN_FINAL'||Number(final.record_count)!==activeHorseCount||!final.payload)throw new Error('Fresh最終採点がFROZEN_FINALになりませんでした');
  loadFinalPayload(final.payload);
 }
 async function verifyRarConsumerAdoption(commit){
- const current=await api('/v1/consumer-data/current');
+ const endpoint=activeDatasetKey==='2026:silk'?'/v1/consumer-data/current':'/v1/consumer-data/dataset/'+encodeURIComponent(activeDatasetKey);
+ const current=await api(endpoint);
  if(current?.schema_version!=='rar-app-data-v3')throw new Error('RAR本体のOfficialデータ形式が一致しません');
- if(Number(current?.record_count)!==82||!Array.isArray(current?.records)||current.records.length!==82)throw new Error('RAR本体で82頭の採用を確認できません');
+ if(String(current?.dataset_key||'')!==activeDatasetKey)throw new Error('RAR本体のdataset_keyが送信結果と一致しません');
+ if(Number(current?.record_count)!==activeHorseCount||!Array.isArray(current?.records)||current.records.length!==activeHorseCount)throw new Error('RAR本体で'+activeHorseCount+'頭の採用を確認できません');
  if(String(current?.version_id||'')!==String(commit.version_id||''))throw new Error('RAR本体のversion_idが送信結果と一致しません');
  if(String(current?.payload_sha256||'')!==String(commit.payload_sha256||''))throw new Error('RAR本体のpayload_sha256が送信結果と一致しません');
  if(String(current?.consumer_records_sha256||'')!==String(commit.consumer_records_sha256||''))throw new Error('RAR本体のconsumer_records_sha256が送信結果と一致しません');
@@ -399,7 +404,7 @@ async function transferToRar(){
  try{
   const payload=buildFrozenTransferPayload();
   const dry=await api('/v1/consumer-transfer/frozen-v2/validate',{method:'POST',body:payload});
-  if(dry.status!=='PASS_DRY_RUN'||dry.record_count!==82)throw new Error('RAR転送Dry-runがPASSしませんでした');
+  if(dry.status!=='PASS_DRY_RUN'||Number(dry.record_count)!==activeHorseCount)throw new Error('RAR転送Dry-runがPASSしませんでした');
   $('transferStatus').textContent='RAR本体へ82頭を転送中…';
   const commit=await api('/v1/consumer-transfer/frozen-v2/commit',{method:'POST',body:{payload,dry_run:dry}});
   if(commit.status!=='PASS_TRANSFER'||!commit.version_id)throw new Error('RAR本体への転送確認に失敗しました');
@@ -420,7 +425,7 @@ async function runScoring(){
  try{
   if(!activeSubmissionId||!catalogContext?.buffer||!measurementContext?.buffer)throw new Error('R2提出の実PDFを採点にセットしてください');
   if(nextScoreStart===null){await finalizeCleanScoring();return}
-  const start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,82);
+  const start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,activeHorseCount);
   $('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Fresh前処理中…</span>';
   const makeBatchForm=()=>{const f=new FormData();f.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');f.append('measurement_pdf',new Blob([measurementContext.buffer],{type:'application/pdf'}),measurementContext.filename||'measurements.pdf');f.append('batch_start',String(start));f.append('batch_end',String(end));f.append('submission_id',activeSubmissionId);return f};
   let ready=null,events=[];
@@ -446,13 +451,13 @@ async function runScoring(){
       $('scoreStatus').innerHTML='<span class="review">No.'+no+' 一時失敗｜再試行 '+attempt+'/3</span>';
     }
     if(h?.status!=='PASS')throw new Error('No.'+no+' Fresh Potential停止｜'+(h?.issue_code||h?.status||'UNKNOWN'));
-    potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / 82';
+    potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / 82';
   }
   const p=await api('/v1/potential/batch/progress/'+encodeURIComponent(activeRunId));
   potentialProcessed=Number(p.processed||0);const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);
-  $('scoreCount').textContent=potentialProcessed+'/82頭';$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';
+  $('scoreCount').textContent=potentialProcessed+'/82頭';$('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';
   if(nextScoreStart!==null){
-    const nend=Math.min(nextScoreStart+9,82);$('scoreStatus').innerHTML='<span class="ok">No.'+start+'〜'+end+' Fresh Potential完了</span>';
+    const nend=Math.min(nextScoreStart+9,activeHorseCount);$('scoreStatus').innerHTML='<span class="ok">No.'+start+'〜'+end+' Fresh Potential完了</span>';
     $('scoreBatchStatus').textContent=potentialProcessed+' / 82｜次回 No.'+nextScoreStart+'〜'+nend;$('nextState').innerHTML='<span class="ok">旧保存値未参照｜次ロット待ち</span>';
   }else{
     $('scoreStatus').innerHTML='<span class="ok">Fresh Potential 82/82完了</span>';$('scoreBatchStatus').textContent='82 / 82｜横断QAへ';
