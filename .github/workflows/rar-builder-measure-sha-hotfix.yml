@@ -57,6 +57,20 @@ jobs:
           elif 'catalogBuffer.byteLength' not in s:
               raise SystemExit('R2 size source anchor missing')
 
+          old_pdftext="async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise;"
+          new_pdftext="async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer.slice(0))}).promise;"
+          if old_pdftext in s:
+              s=s.replace(old_pdftext,new_pdftext,1)
+          elif 'new Uint8Array(buffer.slice(0))' not in s:
+              raise SystemExit('pdfText clone anchor missing')
+
+          old_catalog="const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise"
+          new_catalog="const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise"
+          if old_catalog in s:
+              s=s.replace(old_catalog,new_catalog,1)
+          elif 'new Uint8Array(catalogBuffer.slice(0))' not in s:
+              raise SystemExit('catalog clone anchor missing')
+
           p.write_text(s,encoding='utf-8')
           PY
       - name: Audit and JavaScript syntax check
@@ -65,20 +79,20 @@ jobs:
           from pathlib import Path
           import re
           html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
-          required=['KNOWN_MEASURE_SHA','measureSha===KNOWN_MEASURE_SHA',"verifiedBy:'SHA256'",'#err pre{white-space:pre-wrap','catalogBuffer.byteLength','measureBuffer.byteLength']
+          required=['KNOWN_MEASURE_SHA','measureSha===KNOWN_MEASURE_SHA',"verifiedBy:'SHA256'",'#err pre{white-space:pre-wrap','catalogBuffer.byteLength','measureBuffer.byteLength','new Uint8Array(buffer.slice(0))','new Uint8Array(catalogBuffer.slice(0))']
           missing=[x for x in required if x not in html]
           if missing:
               raise SystemExit('missing '+repr(missing))
-          forbidden=['catalogSize=submitCatalogFile.size','measureSize=submitMeasureFile.size']
+          forbidden=['catalogSize=submitCatalogFile.size','measureSize=submitMeasureFile.size','getDocument({data:new Uint8Array(catalogBuffer)}).promise']
           present=[x for x in forbidden if x in html]
           if present:
-              raise SystemExit('stale size source '+repr(present))
+              raise SystemExit('stale upload/parser source '+repr(present))
           m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
           if not m:
               raise SystemExit('module script missing')
           js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
           Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
-          print('R2 byteLength + measurement SHA audit PASS')
+          print('R2 immutable-buffer + byteLength + measurement SHA audit PASS')
           PY
           node --check /tmp/rar-beta.js
       - name: Commit patch
@@ -89,7 +103,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No patch changes"
           else
-            git commit -m "fix: use uploaded ArrayBuffer byteLength for R2 metadata"
+            git commit -m "fix: preserve R2 upload buffers across PDF.js parsing"
             git push origin HEAD:r2-temp-pdf-prodflow
           fi
       - name: Verify Firebase credential
