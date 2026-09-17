@@ -33,10 +33,10 @@
 <p id="busy" class="muted hidden">PDFを確認中…</p>
 <div id="pdfResult" class="hidden"><div class="grid small"><strong>Batch ID</strong><span id="batchId" class="mono"></span><strong>募集馬検出</strong><span id="candidateResult"></span><strong>欠番</strong><span id="missingResult"></span><strong>ページ照合</strong><span id="pageMapResult"></span><strong>次工程</strong><span id="nextState"></span></div></div>
 <div class="score-actions"><button id="scoreBtn" class="primary" disabled>採点開始</button><button id="scoreResetBtn" type="button">結果をクリア</button><span id="scoreReady" class="disabled-note">カタログPDFと測尺PDFを選択してください</span></div>
-<div class="score-progress"><span id="scoreProgressBar"></span></div><div id="scoreBatchStatus" class="muted small" style="margin-top:7px">0 / 82</div>
+<div class="score-progress"><span id="scoreProgressBar"></span></div><div id="scoreBatchStatus" class="muted small" style="margin-top:7px">0 / —</div>
 </div>
 <div id="scoreCard" class="card hidden"><h2>2. RAR /100 採点結果</h2><div class="grid small"><strong>状態</strong><span id="scoreStatus"></span><strong>処理</strong><span id="scoreCount"></span><strong>フォーマット</strong><span>Potential /30 + Pedigree /20 + 夢 /20 + Investment Value /30</span></div><div class="fact-scroll" style="margin-top:14px"><table class="fact-table score-result-table"><thead><tr><th>No</th><th>募集馬</th><th>Potential</th><th>Pedigree</th><th>夢 Middle</th><th>夢 High</th><th>夢 Official</th><th>IV Middle</th><th>IV High</th><th>Investment Value</th><th>RAR /100</th></tr></thead><tbody id="scoreRows"></tbody></table></div></div>
-<div id="transferCard" class="card hidden"><h2>8. RAR本体へ送信</h2><p class="muted">Fresh Potential/Pedigreeから再計算したFROZEN_FINAL 82頭をRAR本体へ転送します。採用確認後、この提出のR2 PDF 2枚を即時削除します。</p><div class="score-actions"><button id="transferBtn" class="primary" disabled>RAR本体へ送信</button><span id="transferStatus" class="disabled-note">82頭採点完了待ち</span></div></div>
+<div id="transferCard" class="card hidden"><h2>8. RAR本体へ送信</h2><p class="muted">Fresh Potential/Pedigreeから再計算した対象datasetのFROZEN_FINALをRAR本体へ転送します。採用確認後、この提出のR2 PDF 2枚を即時削除します。</p><div class="score-actions"><button id="transferBtn" class="primary" disabled>RAR本体へ送信</button><span id="transferStatus" class="disabled-note">82頭採点完了待ち</span></div></div>
 <div id="factCard" class="card hidden"><h2>3. FACT抽出</h2><div class="grid small"><strong>状態</strong><span id="factStatus"></span><strong>抽出</strong><span id="factCount"></span><strong>AUTO_PASS</strong><span id="factPass"></span><strong>REVIEW</strong><span id="factReview"></span></div><div id="factSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のFACT一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>父</th><th>性</th><th>生年月日</th><th>厩舎</th><th>一口</th><th>判定</th></tr></thead><tbody id="factRows"></tbody></table></div></details><p class="muted small">既知の公式PDFは、事前検証済みの固定FACT ManifestをSHA-256で結び付けます。別版へ流用しません。</p></div>
 <div id="potentialCard" class="card hidden"><h2>4. Potential｜Beta4.9</h2><div class="grid small"><strong>状態</strong><span id="potentialStatus"></span><strong>対象</strong><span id="potentialCount"></span><strong>Q1〜Q7</strong><span id="potentialQ17"></span><strong>Q8</strong><span id="potentialQ8"></span><strong>Canonical再現</strong><span id="potentialCanonical"></span><strong>Engine</strong><span>Potential Ver.4.4 Beta / CLPP Beta4.9</span></div><div id="potentialSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭のPotential一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Scale/Frame</th><th>Rear</th><th>Trunk</th><th>Front</th><th>Potential</th><th>Route</th></tr></thead><tbody id="potentialRows"></tbody></table></div></details><p class="muted small">この提出ID専用のFresh Potential runを10頭ずつ生成します。旧保存済みPotential/Pedigree評価は採点値として参照しません。</p></div>
 <div id="dreamRoiCard" class="card hidden"><h2>5-7. 夢 / ROI / Investment Value</h2><div class="grid small"><strong>夢</strong><span id="dreamRouteStatus"></span><strong>Middle Route</strong><span id="middleRouteStatus"></span><strong>High</strong><span id="highRouteStatus"></span><strong>夢 小数値</strong><span id="decimalRouteStatus"></span><strong>ROI / IV</strong><span id="roiIvStatus"></span><strong>RAR /100</strong><span id="rar100Status"></span><strong>Engine</strong><span id="routeEngine"></span></div><div class="route-grid"><div class="route-kpi"><span class="muted small">Middle解決</span><strong id="middleResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High解決</span><strong id="highResolvedKpi">—</strong></div><div class="route-kpi"><span class="muted small">High HOLD</span><strong id="highHoldKpi">—</strong></div></div><div id="routeSamples" class="small" style="margin-top:14px"></div><details style="margin-top:14px"><summary>82頭の夢 / Route一覧</summary><div class="fact-scroll"><table class="fact-table"><thead><tr><th>No</th><th>募集馬</th><th>Middle</th><th>High</th><th>Official</th><th>High</th><th>Target</th><th>Middle ROI</th><th>High ROI</th><th>Official ROI</th><th>IV /30</th><th>RAR /100</th></tr></thead><tbody id="routeRows"></tbody></table></div></details><p class="muted small">夢の小数は整数Anchorへ丸めず、実名ターゲットの性能着順へ連続反映します。ROI / IVはFROZEN_FINALの82頭出力のみ表示します。Route推測値や途中仕様は表示しません。</p></div>
@@ -51,7 +51,7 @@ import*as pdfjsLib from'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pd
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
 const cfg={apiKey:'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',authDomain:'rar-project-5a27e.firebaseapp.com',projectId:'rar-project-5a27e',messagingSenderId:'574526681741',appId:'1:574526681741:web:a5da958e5babc1c16c68c4'};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',KNOWN_MEASURE_SHA='f6c84434d90b5a41697dcfd330435495fb0eeefa3ec068eb024a0498dd21df56',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10,STORAGE_POLICY='R2_TEMPORARY';
-let catalogContext=null,measurementContext=null,scoredRows=[],nextScoreStart=1,potentialProcessed=0,activeRunId=null,latestFinalPayload=null,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null,activeSubmissionId=null,activeSubmissionRecord=null;
+let catalogContext=null,measurementContext=null,scoredRows=[],nextScoreStart=1,potentialProcessed=0,activeRunId=null,latestFinalPayload=null,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null,activeSubmissionId=null,activeSubmissionRecord=null,activeHorseCount=82,activeDatasetKey='2026:silk',activeDatasetReadiness=null;
 const IV_ANCHORS=[[0,0],[10,1],[20,2],[30,3],[40,4],[50,5],[60,6],[70,7],[80,8],[90,9],[100,10],[120,11],[140,12],[160,13],[180,14],[200,15],[250,16],[300,17],[350,18],[400,19],[450,20],[500,21],[600,22],[700,23],[800,24],[900,25],[1000,26],[1500,27],[2000,28],[2500,29],[3000,30]];
 function show(id){for(const x of['signin','pending','denied','builder'])$(x).classList.add('hidden');$(id).classList.remove('hidden');$('err').classList.add('hidden')}
 function fail(e){$('errmsg').textContent=e?.message||String(e);$('err').classList.remove('hidden')}
@@ -147,14 +147,18 @@ async function confirmDeleteSubmission(){
 async function activateSubmissionForScoring(record){
  const c=record.catalog||{},m=record.measurements||{},sid=record.submission_id;
  if(!sid)throw new Error('submission_idがありません');
- if(record.dataset_key!=='2026:silk'||record.dataset_readiness?.official_scoring_ready!==true){
-   const missing=record.dataset_readiness?.missing_components||[];
-   throw new Error('このdatasetはまだ採点未対応です｜'+(record.dataset_key||'未確定')+(missing.length?'｜不足 '+missing.join(', '):''));
+ const readiness=record.dataset_readiness||{},datasetKey=String(record.dataset_key||'').trim().toLowerCase();
+ if(!datasetKey||readiness.official_scoring_ready!==true){
+   const missing=readiness.missing_components||[];
+   throw new Error('このdatasetはまだ採点未対応です｜'+(datasetKey||'未確定')+(missing.length?'｜不足 '+missing.join(', '):''));
  }
- const catalogMetaOk=c.sha256===KNOWN_SHA&&Number(c.page_count)===128;
- const officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA;
- const fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70;
- if(!catalogMetaOk||(!officialMeasureMeta&&!fallbackMeasureMeta))throw new Error('Silk 2026事前照合NG｜catalog '+(catalogMetaOk?'OK':'NG')+'｜measurement '+(officialMeasureMeta?'公式SHA':('verified='+String(m.verified)+' coverage='+(m.name_coverage??'—')+'/82')));
+ const expectedHorseCount=Number(readiness.horse_count||(datasetKey==='2026:silk'?82:0));
+ const expectedCatalogSha=String(readiness.catalog_sha256||(datasetKey==='2026:silk'?KNOWN_SHA:'')).toLowerCase();
+ if(!Number.isInteger(expectedHorseCount)||expectedHorseCount<=0||expectedHorseCount>500||!/^[a-f0-9]{64}$/.test(expectedCatalogSha)){
+   throw new Error('dataset readinessの募集頭数/SHAが未確定です｜'+datasetKey);
+ }
+ if(String(c.sha256||'').toLowerCase()!==expectedCatalogSha||Number(c.page_count)<=0)throw new Error('dataset事前照合NG｜'+datasetKey+'｜catalog SHA/profile不一致');
+ activeHorseCount=expectedHorseCount;activeDatasetKey=datasetKey;activeDatasetReadiness=readiness;
  clearScoreResult();
  $('busy').classList.remove('hidden');
  try{
@@ -167,18 +171,25 @@ async function activateSubmissionForScoring(record){
   if(!cr.ok||!mr.ok)throw new Error('R2の実PDFを受信できませんでした');
   const [catalogBuffer,measureBuffer]=await Promise.all([cr.arrayBuffer(),mr.arrayBuffer()]);
   const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
-  const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise;
-  if(catalogSha!==c.sha256||catalogSha!==KNOWN_SHA||catalogPdf.numPages!==Number(c.page_count))throw new Error('受信カタログPDFのSHA/ページ数が提出情報と一致しません');
-
-  catalogContext={filename:c.original_name||'catalog.pdf',hash:catalogSha,pages:catalogPdf.numPages,batch:'submission-'+sid,known:true,buffer:catalogBuffer};
-  const v=await validateMeasurement(measureBuffer,Number(m.name_coverage||0));
-  if(measureSha!==m.sha256||!v.ok)throw new Error('受信測尺PDFのSHA/内容が提出情報と一致しません');
+  const [catalogPdf,measurePdf]=await Promise.all([
+    pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise,
+    pdfjsLib.getDocument({data:new Uint8Array(measureBuffer.slice(0))}).promise
+  ]);
+  if(catalogSha!==String(c.sha256||'').toLowerCase()||catalogSha!==expectedCatalogSha||catalogPdf.numPages!==Number(c.page_count))throw new Error('受信カタログPDFのSHA/ページ数が提出情報と一致しません');
+  if(measureSha!==String(m.sha256||'').toLowerCase()||measurePdf.numPages!==Number(m.page_count))throw new Error('受信測尺PDFのSHA/ページ数が提出情報と一致しません');
+  catalogContext={filename:c.original_name||'catalog.pdf',hash:catalogSha,pages:catalogPdf.numPages,batch:'submission-'+sid,known:true,buffer:catalogBuffer,datasetKey};
+  let v;
+  if(datasetKey==='2026:silk'){
+    v=await validateMeasurement(measureBuffer,Number(m.name_coverage||0));
+    if(!v.ok)throw new Error('受信測尺PDFを2026:silk公式測尺表として照合できません');
+  }else{
+    v={ok:true,pages:measurePdf.numPages,coverage:expectedHorseCount,headerOk:null,verifiedBy:'SERVER_DATASET_PARSER_GATE'};
+  }
   measurementContext={filename:m.original_name||'measurements.pdf',hash:measureSha,buffer:measureBuffer,...v};
   activeSubmissionId=sid;activeSubmissionRecord=record;
-
   $('fileName').textContent=catalogContext.filename;$('pageCount').textContent=catalogContext.pages;$('sha').textContent=catalogContext.hash;$('batchId').textContent=catalogContext.batch;
-  $('intakeStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('yearResult').innerHTML='<span class="ok">2026</span>';$('profileResult').innerHTML='<span class="ok">Silk 2026</span>';$('candidateResult').innerHTML='<span class="ok">82/82頭</span>';$('missingResult').innerHTML='<span class="ok">0</span>';$('pageMapResult').innerHTML='<span class="ok">82/82</span>';
-  $('measureFileName').textContent=measurementContext.filename;$('measurePageCount').textContent=measurementContext.pages;$('measureSha').textContent=measurementContext.hash;$('measureStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('measureCoverage').textContent=measurementContext.coverage+'/82頭';
+  $('intakeStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('yearResult').innerHTML='<span class="ok">'+esc(record.season_year??'—')+'</span>';$('profileResult').innerHTML='<span class="ok">'+esc(record.club_name||datasetKey)+'</span>';$('candidateResult').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'頭</span>';$('missingResult').innerHTML='<span class="ok">0</span>';$('pageMapResult').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'</span>';
+  $('measureFileName').textContent=measurementContext.filename;$('measurePageCount').textContent=measurementContext.pages;$('measureSha').textContent=measurementContext.hash;$('measureStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('measureCoverage').textContent=measurementContext.coverage+'/'+activeHorseCount+'頭';
   $('nextState').innerHTML='<span class="ok">実PDF再照合完了 → Fresh run確認中</span>';$('pdfResult').classList.remove('hidden');
   await restoreCleanProgress();window.scrollTo({top:$('ownerWorkspace').offsetTop,behavior:'smooth'});
  }finally{$('busy').classList.add('hidden')}
