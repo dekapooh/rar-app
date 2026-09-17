@@ -205,8 +205,6 @@
 
   function updateDatasetCatalog(data) {
     availableDatasets = catalogFromDataset(data);
-    activeDatasetKey = data.dataset_key;
-    renderDatasetSelectorOptions(data.season_year, data.dataset_key);
   }
 
   function validateDataset(rawData) {
@@ -411,6 +409,8 @@
       const data = validateDataset(await res.json());
       updateDatasetCatalog(data);
       applyDataset(data);
+      activeDatasetKey = data.dataset_key;
+      renderDatasetSelectorOptions(data.season_year, data.dataset_key);
       setStatus(`最終更新 ${formatTokyo(data.transferred_at)}`);
       console.info('[RAR SYSTEM MASTER] synced', window.__RAR_SYSTEM_MASTER__);
       return window.__RAR_SYSTEM_MASTER__;
