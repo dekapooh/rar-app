@@ -367,21 +367,30 @@ async function runScoring(){
   if(nextScoreStart===null){await finalizeCleanScoring();return}
   const start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,82);
   $('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Fresh前処理中…</span>';
-  const form=new FormData();
-  form.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');
-  form.append('measurement_pdf',new Blob([measurementContext.buffer],{type:'application/pdf'}),measurementContext.filename||'measurements.pdf');
-  form.append('batch_start',String(start));form.append('batch_end',String(end));form.append('submission_id',activeSubmissionId);
-  const events=await apiNdjson('/v1/potential/batch/start',form,ev=>{
-    if(ev.event==='heartbeat')$('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Canonical準備中…</span>';
-  });
-  const bad=events.find(x=>x.event==='batch_error'||x.event==='batch_review');if(bad)throw new Error('Fresh batch準備停止｜'+(bad.issue_code||bad.issue_codes?.join(',')||'REVIEW'));
-  const ready=[...events].reverse().find(x=>x.event==='batch_ready');if(!ready?.job_id||!ready?.run_id)throw new Error('Fresh batch_readyを取得できません');
+  const makeBatchForm=()=>{const f=new FormData();f.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');f.append('measurement_pdf',new Blob([measurementContext.buffer],{type:'application/pdf'}),measurementContext.filename||'measurements.pdf');f.append('batch_start',String(start));f.append('batch_end',String(end));f.append('submission_id',activeSubmissionId);return f};
+  let ready=null,events=[];
+  for(let attempt=1;attempt<=2&&!ready;attempt++){
+    if(attempt>1)$('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' batch_ready再接続中…</span>';
+    events=await apiNdjson('/v1/potential/batch/start',makeBatchForm(),ev=>{
+      if(ev.event==='heartbeat')$('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Canonical準備中…</span>';
+    });
+    const bad=events.find(x=>x.event==='batch_error'||x.event==='batch_review');
+    if(bad)throw new Error('Fresh batch準備停止｜'+(bad.issue_code||bad.issue_codes?.join(',')||'REVIEW'));
+    ready=[...events].reverse().find(x=>x.event==='batch_ready')||null;
+  }
+  if(!ready?.job_id||!ready?.run_id)throw new Error('Fresh batch_readyを取得できません｜再接続2回でも未取得');
   activeRunId=ready.run_id;
   const pending=Array.isArray(ready.pending)?ready.pending:[];
   for(let i=0;i<pending.length;i++){
     const no=Number(pending[i]);$('scoreStatus').innerHTML='<span class="review">No.'+no+' Fresh Potential採点中｜'+(i+1)+'/'+pending.length+'</span>';
-    const h=await api('/v1/potential/batch/'+encodeURIComponent(ready.job_id)+'/horse/'+no,{method:'POST',body:{}});
-    if(h.status!=='PASS')throw new Error('No.'+no+' Fresh PotentialがPASSしませんでした');
+    let h=null;
+    for(let attempt=1;attempt<=3;attempt++){
+      h=await api('/v1/potential/batch/'+encodeURIComponent(ready.job_id)+'/horse/'+no,{method:'POST',body:{}});
+      if(h.status==='PASS')break;
+      if(h.issue_code!=='HEAVY_EXECUTION_FAILED')break;
+      $('scoreStatus').innerHTML='<span class="review">No.'+no+' 一時失敗｜再試行 '+attempt+'/3</span>';
+    }
+    if(h?.status!=='PASS')throw new Error('No.'+no+' Fresh Potential停止｜'+(h?.issue_code||h?.status||'UNKNOWN'));
     potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / 82';
   }
   const p=await api('/v1/potential/batch/progress/'+encodeURIComponent(activeRunId));
@@ -395,7 +404,7 @@ async function runScoring(){
     await finalizeCleanScoring();
   }
   localStorage.setItem('rar_builder_last_batch',JSON.stringify({submission_id:activeSubmissionId,run_id:activeRunId,evaluation_scope:'FRESH_SUBMISSION_SCOPED',catalog_sha256:catalogContext.hash,processed:potentialProcessed,next_score_start:nextScoreStart,status:latestFinalPayload?'FROZEN_FINAL':(nextScoreStart===null?'POTENTIAL_COMPLETE':'POTENTIAL_PARTIAL'),updated_at:now()}));
- }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';fail(err)}finally{refreshScoreReady()}
+ }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';try{await restoreCleanProgress();$('scoreCount').textContent=potentialProcessed+'/82頭'}catch{}fail(err)}finally{refreshScoreReady()}
 }
 $('pdfInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;activeSubmissionId=null;activeSubmissionRecord=null;$('transferCard').classList.add('hidden');$('busy').classList.remove('hidden');clearScoreResult();scoringSources=null;try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer),pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise,pages=pdf.numPages,batch='batch-'+hash.slice(0,16),known=hash===KNOWN_SHA&&pages===128;catalogContext={filename:f.name,hash,pages,batch,known,buffer};$('fileName').textContent=f.name;$('pageCount').textContent=pages;$('sha').textContent=hash;$('batchId').textContent=batch;$('intakeStatus').innerHTML=known?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('yearResult').innerHTML=known?'<span class="ok">2026</span>':'<span class="review">未確定</span>';$('profileResult').innerHTML=known?'<span class="ok">Silk 2026</span>':'<span class="review">UNKNOWN</span>';$('candidateResult').innerHTML=known?'<span class="ok">82/82頭</span>':'<span class="review">未確定</span>';$('missingResult').innerHTML=known?'<span class="ok">0</span>':'—';$('pageMapResult').innerHTML=known?'<span class="ok">82/82</span>':'—';$('nextState').innerHTML=known?'<span class="ok">測尺PDFを照合してください</span>':'<span class="review">Profile確認へ</span>';$('pdfResult').classList.remove('hidden');if(measurementContext?.buffer){const v=await validateMeasurement(measurementContext.buffer,0);measurementContext={...measurementContext,...v};$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`}}catch(err){catalogContext=null;fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
 $('measureInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;$('busy').classList.remove('hidden');clearScoreResult();try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer);$('measureFileName').textContent=f.name;$('measureSha').textContent=hash;measurementContext={filename:f.name,hash,buffer,ok:false,pages:0,coverage:0};if(!catalogContext?.known){$('measureStatus').innerHTML='<span class="review">カタログ待ち</span>';$('measureCoverage').textContent='—'}else{const v=await validateMeasurement(buffer,0);measurementContext={...measurementContext,...v};$('measurePageCount').textContent=v.pages;$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`;if(!v.ok)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした')}}catch(err){fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
