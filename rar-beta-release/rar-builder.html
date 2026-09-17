@@ -123,7 +123,10 @@ async function confirmDeleteSubmission(){
 async function activateSubmissionForScoring(record){
  const c=record.catalog||{},m=record.measurements||{},sid=record.submission_id;
  if(!sid)throw new Error('submission_idがありません');
- if(c.sha256!==KNOWN_SHA||Number(c.page_count)!==128||m.verified!==true||Number(m.name_coverage)<70)throw new Error('この採点依頼はRARβのSilk 2026照合条件を満たしていません');
+ const catalogMetaOk=c.sha256===KNOWN_SHA&&Number(c.page_count)===128;
+ const officialMeasureMeta=m.sha256===KNOWN_MEASURE_SHA;
+ const fallbackMeasureMeta=m.verified===true&&Number(m.name_coverage)>=70;
+ if(!catalogMetaOk||(!officialMeasureMeta&&!fallbackMeasureMeta))throw new Error('Silk 2026事前照合NG｜catalog '+(catalogMetaOk?'OK':'NG')+'｜measurement '+(officialMeasureMeta?'公式SHA':('verified='+String(m.verified)+' coverage='+(m.name_coverage??'—')+'/82')));
  clearScoreResult();
  $('busy').classList.remove('hidden');
  try{
@@ -164,10 +167,15 @@ async function loadOwnerSubmissions(){
   const when=document.createElement('div');when.className='muted small';when.textContent=(r.submitted_at||'')+'｜'+(r.status||'');
   const catalog=document.createElement('div');catalog.className='small';catalog.textContent='カタログ｜'+(r.catalog?.original_name||'—')+'｜'+(r.catalog?.page_count||'—')+'p｜SHA '+String(r.catalog?.sha256||'—').slice(0,16)+'…';
   const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜照合 '+(r.measurements?.name_coverage??'—')+'/82｜R2一時保管';
+  const catalogOk=r.catalog?.sha256===KNOWN_SHA&&Number(r.catalog?.page_count)===128;
+  const officialMeasure=r.measurements?.sha256===KNOWN_MEASURE_SHA;
+  const fallbackMeasure=r.measurements?.verified===true&&Number(r.measurements?.name_coverage)>=70;
+  const preOk=catalogOk&&(officialMeasure||fallbackMeasure);
+  const pre=document.createElement('div');pre.className=(preOk?'ok':'review')+' small';pre.textContent='事前照合｜'+(preOk?'PASS':'REVIEW')+'｜'+(officialMeasure?'公式測尺SHA 82/82':('verified='+String(r.measurements?.verified)+'｜'+(r.measurements?.name_coverage??'—')+'/82'));
   const actions=document.createElement('div');actions.className='submission-actions';
   const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
   const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
-  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
+  actions.append(use,del);card.append(who,when,catalog,measure,pre,actions);box.append(card);
  }
 }
 async function submitPdfsToOwner(){
