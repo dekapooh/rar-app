@@ -165,8 +165,9 @@ async function submitPdfsToOwner(){
  const user=auth.currentUser;if(!user)throw new Error('ログインが必要です');
  if(!validPdfFile(submitCatalogFile)||!validPdfFile(submitMeasureFile))throw new Error('カタログPDFと測尺PDFを両方選択してください');
  $('submitOwnerBtn').disabled=true;$('submitOwnerStatus').className='review';$('submitOwnerStatus').textContent='PDFを端末内で照合中…';
- const catalogName=submitCatalogFile.name,measureName=submitMeasureFile.name,catalogSize=submitCatalogFile.size,measureSize=submitMeasureFile.size;
+ const catalogName=submitCatalogFile.name,measureName=submitMeasureFile.name;
  const [catalogBuffer,measureBuffer]=await Promise.all([submitCatalogFile.arrayBuffer(),submitMeasureFile.arrayBuffer()]);
+ const catalogSize=catalogBuffer.byteLength,measureSize=measureBuffer.byteLength;
  const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
  const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise,catalogPages=catalogPdf.numPages;
  if(catalogSha!==KNOWN_SHA||catalogPages!==128)throw new Error('現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます');
