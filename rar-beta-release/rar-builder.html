@@ -41,7 +41,7 @@ import{collection,deleteDoc,doc,getDoc,getDocs,getFirestore,setDoc}from'https://
 import*as pdfjsLib from'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
 const cfg={apiKey:'AIzaSyDrhbYjwxvTCN-I-Kos-SpSLJS9En3btDE',authDomain:'rar-project-5a27e.firebaseapp.com',projectId:'rar-project-5a27e',messagingSenderId:'574526681741',appId:'1:574526681741:web:a5da958e5babc1c16c68c4'};
-const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10,STORAGE_POLICY='R2_TEMPORARY';
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id),KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',KNOWN_MEASURE_SHA='f6c84434d90b5a41697dcfd330435495fb0eeefa3ec068eb024a0498dd21df56',RECOVERY_SHA='c013b48beb1ca1f9993365c4c4de6dc1071b75fed8845ca73f436214cad8eb33',LOT_SIZE=10,STORAGE_POLICY='R2_TEMPORARY';
 let catalogContext=null,measurementContext=null,scoredRows=[],nextScoreStart=1,potentialProcessed=0,activeRunId=null,latestFinalPayload=null,submitCatalogFile=null,submitMeasureFile=null,currentRole=null,pendingDeleteSubmission=null,activeSubmissionId=null,activeSubmissionRecord=null;
 const IV_ANCHORS=[[0,0],[10,1],[20,2],[30,3],[40,4],[50,5],[60,6],[70,7],[80,8],[90,9],[100,10],[120,11],[140,12],[160,13],[180,14],[200,15],[250,16],[300,17],[350,18],[400,19],[450,20],[500,21],[600,22],[700,23],[800,24],[900,25],[1000,26],[1500,27],[2000,28],[2500,29],[3000,30]];
 function show(id){for(const x of['signin','pending','denied','builder'])$(x).classList.add('hidden');$(id).classList.remove('hidden');$('err').classList.add('hidden')}
@@ -171,9 +171,15 @@ async function submitPdfsToOwner(){
  const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise,catalogPages=catalogPdf.numPages;
  if(catalogSha!==KNOWN_SHA||catalogPages!==128)throw new Error('現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます');
  const facts=await loadFacts(catalogSha,catalogPages);if(!facts)throw new Error('Silk 2026公式FACT名簿を照合できません');
- const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
- const coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length,measureOk=headerOk&&coverage>=70;
- if(!measureOk)throw new Error('測尺PDF照合失敗｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');
+ let measureExtract,headerOk,coverage,measureOk;
+ if(measureSha===KNOWN_MEASURE_SHA){
+   measureExtract={pages:2,text:''};headerOk=true;coverage=82;measureOk=true;
+ }else{
+   measureExtract=await pdfText(measureBuffer);const flat=norm(measureExtract.text);
+   headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
+   coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length;measureOk=headerOk&&coverage>=70;
+ }
+ if(!measureOk)throw new Error('測尺PDF照合失敗｜公式SHA不一致｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');
 
  $('submitOwnerStatus').textContent='R2アップロードURLを準備中…';
  const init=await api('/v1/submissions/init',{method:'POST',body:{
@@ -211,8 +217,10 @@ const close=(a,b,t=1e-6)=>Math.abs(Number(a)-Number(b))<=t;
 function ivScore(roi){const r=Math.max(0,Number(roi)||0);if(r>=3000)return 30;for(let i=0;i<IV_ANCHORS.length-1;i++){const [r0,s0]=IV_ANCHORS[i],[r1,s1]=IV_ANCHORS[i+1];if(r<=r1)return s0+(r-r0)/(r1-r0)*(s1-s0)}return 30}
 async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise;let text='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),tc=await page.getTextContent();text+='\n'+tc.items.map(x=>x.str).join(' ')}return{pages:pdf.numPages,text}}
 async function validateMeasurement(buffer,expectedCoverage=0){
+ const hash=await sha256(buffer);
+ if(hash===KNOWN_MEASURE_SHA)return{ok:true,pages:2,coverage:82,headerOk:true,verifiedBy:'SHA256'};
  const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
- return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk};
+ return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk,verifiedBy:'TEXT_FALLBACK'};
 }
 async function restoreCleanProgress(){
  if(!activeSubmissionId||!catalogContext?.hash){potentialProcessed=0;nextScoreStart=1;activeRunId=null;refreshScoreReady();return}
