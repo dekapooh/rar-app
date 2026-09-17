@@ -128,7 +128,7 @@ async function activateSubmissionForScoring(record){
   if(!cr.ok||!mr.ok)throw new Error('R2の実PDFを受信できませんでした');
   const [catalogBuffer,measureBuffer]=await Promise.all([cr.arrayBuffer(),mr.arrayBuffer()]);
   const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
-  const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise;
+  const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise;
   if(catalogSha!==c.sha256||catalogSha!==KNOWN_SHA||catalogPdf.numPages!==Number(c.page_count))throw new Error('受信カタログPDFのSHA/ページ数が提出情報と一致しません');
 
   catalogContext={filename:c.original_name||'catalog.pdf',hash:catalogSha,pages:catalogPdf.numPages,batch:'submission-'+sid,known:true,buffer:catalogBuffer};
@@ -169,7 +169,7 @@ async function submitPdfsToOwner(){
  const [catalogBuffer,measureBuffer]=await Promise.all([submitCatalogFile.arrayBuffer(),submitMeasureFile.arrayBuffer()]);
  const catalogSize=catalogBuffer.byteLength,measureSize=measureBuffer.byteLength;
  const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
- const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer)}).promise,catalogPages=catalogPdf.numPages;
+ const catalogPdf=await pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise,catalogPages=catalogPdf.numPages;
  if(catalogSha!==KNOWN_SHA||catalogPages!==128)throw new Error('現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます');
  const facts=await loadFacts(catalogSha,catalogPages);if(!facts)throw new Error('Silk 2026公式FACT名簿を照合できません');
  let measureExtract,headerOk,coverage,measureOk;
@@ -216,7 +216,7 @@ const sleep0=()=>new Promise(resolve=>setTimeout(resolve,0));
 const norm=v=>String(v??'').replace(/[\s　・･]/g,'').replace(/の25$/,'の25');
 const close=(a,b,t=1e-6)=>Math.abs(Number(a)-Number(b))<=t;
 function ivScore(roi){const r=Math.max(0,Number(roi)||0);if(r>=3000)return 30;for(let i=0;i<IV_ANCHORS.length-1;i++){const [r0,s0]=IV_ANCHORS[i],[r1,s1]=IV_ANCHORS[i+1];if(r<=r1)return s0+(r-r0)/(r1-r0)*(s1-s0)}return 30}
-async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise;let text='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),tc=await page.getTextContent();text+='\n'+tc.items.map(x=>x.str).join(' ')}return{pages:pdf.numPages,text}}
+async function pdfText(buffer){const pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer.slice(0))}).promise;let text='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),tc=await page.getTextContent();text+='\n'+tc.items.map(x=>x.str).join(' ')}return{pages:pdf.numPages,text}}
 async function validateMeasurement(buffer,expectedCoverage=0){
  const hash=await sha256(buffer);
  if(hash===KNOWN_MEASURE_SHA)return{ok:true,pages:2,coverage:82,headerOk:true,verifiedBy:'SHA256'};
