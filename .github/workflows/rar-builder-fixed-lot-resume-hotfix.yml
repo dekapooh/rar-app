@@ -1,0 +1,81 @@
+name: RAR Builder Fixed Lot Resume Hotfix
+
+on:
+  push:
+    branches: [r2-temp-pdf-prodflow]
+    paths:
+      - ".github/workflows/rar-builder-fixed-lot-resume-hotfix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-audit-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r2-temp-pdf-prodflow
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Patch fixed 10-horse lot resume
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('rar-beta-release/rar-builder.html')
+          s=p.read_text(encoding='utf-8')
+          old="nextScoreStart=p.status==='COMPLETE'?null:Number(p.next_batch_start||1);"
+          new="const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);"
+          count=s.count(old)
+          if count not in (0,2):
+              raise SystemExit('unexpected resume anchor count '+str(count))
+          if count==2:
+              s=s.replace(old,new)
+          elif s.count(new)!=2:
+              raise SystemExit('fixed-lot resume patch missing')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Audit and JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
+          needle="Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1"
+          if html.count(needle)!=2:
+              raise SystemExit('fixed-lot resume audit failed')
+          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+              raise SystemExit('module script missing')
+          js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
+          Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
+          print('Fixed lot resume audit PASS')
+          PY
+          node --check /tmp/rar-beta.js
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rar-beta-release/rar-builder.html
+          if git diff --cached --quiet; then
+            echo "No patch changes"
+          else
+            git commit -m "fix: keep Fresh resume aligned to 10-horse lots"
+            git push origin HEAD:r2-temp-pdf-prodflow
+          fi
+      - name: Verify Firebase credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+        run: |
+          firebase deploy --only hosting,firestore:rules --project rar-project-5a27e --config rar-beta-release/firebase.json
