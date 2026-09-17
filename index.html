@@ -2548,7 +2548,10 @@ function renderRanking(){
  const officialRankMap=new Map(official.map(x=>[x.no,x.rank]));
  const visibleRanked=ranked;
  list.innerHTML=visibleRanked.map((h,i)=>{
- const baseName=String(h.name||"").replace(/の25$/,"");
+ const displayName=String(h.name||"");
+ const suffixMatch=displayName.match(/(の\d{2})$/);
+ const nameSuffix=suffixMatch?suffixMatch[1]:"";
+ const baseName=nameSuffix?displayName.slice(0,-nameSuffix.length):displayName;
  const longClass=baseName.length>=12?" long":"";
  return `<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
  ${rankEmblemHTML(h.rank,"personal")}
@@ -2560,7 +2563,7 @@ function renderRanking(){
    </div>
    <div class="rank-horse-name${longClass}">${baseName}</div>
    <div class="rank-info-bottom">
-     <span class="rank-info-suffix">の25</span>
+     <span class="rank-info-suffix">${nameSuffix}</span>
      <span class="rank-info-price">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</span>
    </div>
    <div class="rank-info-scenarios">
