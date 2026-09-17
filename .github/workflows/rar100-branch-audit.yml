@@ -5,9 +5,11 @@ on:
     branches:
       - main
       - rar100-integration-20260915
+      - feature/dataset-selectors-20260918
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
+      - "system-master-sync.js"
       - "rar100-preview.html"
       - "sw.js"
       - "rar-v2-summaries.json"
@@ -74,5 +76,7 @@ jobs:
           print(f"extracted {count} script blocks")
           PY
           for f in /tmp/rar-script-*.js; do node --check "$f"; done
+      - name: SYSTEM MASTER sync syntax audit
+        run: node --check system-master-sync.js
       - name: Service worker syntax audit
         run: node --check sw.js
