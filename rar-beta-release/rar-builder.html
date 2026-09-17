@@ -245,7 +245,7 @@ async function restoreCleanProgress(){
  const q='/v1/potential/batch/progress-by-catalog/'+encodeURIComponent(catalogContext.hash)+'?submission_id='+encodeURIComponent(activeSubmissionId);
  const p=await api(q);
  activeRunId=p.run_id||null;potentialProcessed=Number(p.processed||0);
- nextScoreStart=p.status==='COMPLETE'?null:Number(p.next_batch_start||1);
+ const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);
  $('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';
  $('scoreBatchStatus').textContent=potentialProcessed+' / 82'+(nextScoreStart?'｜次回 No.'+nextScoreStart+'〜'+Math.min(nextScoreStart+9,82):'｜Potential完了');
  if(potentialProcessed===82){
@@ -394,7 +394,7 @@ async function runScoring(){
     potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / 82';
   }
   const p=await api('/v1/potential/batch/progress/'+encodeURIComponent(activeRunId));
-  potentialProcessed=Number(p.processed||0);nextScoreStart=p.status==='COMPLETE'?null:Number(p.next_batch_start||1);
+  potentialProcessed=Number(p.processed||0);const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);
   $('scoreCount').textContent=potentialProcessed+'/82頭';$('scoreProgressBar').style.width=(potentialProcessed/82*100)+'%';
   if(nextScoreStart!==null){
     const nend=Math.min(nextScoreStart+9,82);$('scoreStatus').innerHTML='<span class="ok">No.'+start+'〜'+end+' Fresh Potential完了</span>';
