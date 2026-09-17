@@ -1,0 +1,112 @@
+name: RAR Builder Owner Delete UI
+
+on:
+  push:
+    branches: [r2-temp-pdf-prodflow]
+    paths:
+      - ".github/workflows/rar-builder-owner-delete-ui.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-audit-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r2-temp-pdf-prodflow
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Restore Owner manual delete UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('rar-beta-release/rar-builder.html')
+          s=p.read_text(encoding='utf-8')
+
+          old="""async function confirmDeleteSubmission(){
+ pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
+ throw new Error('正式フローでは提出の手動削除は行いません。RAR送信成功後の即時削除、または20日Lifecycle削除を使用します');
+}
+"""
+          new="""async function confirmDeleteSubmission(){
+ const record=pendingDeleteSubmission;
+ pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
+ if(!record?.submission_id)throw new Error('削除対象のsubmission_idがありません');
+ const result=await api('/v1/submissions/'+encodeURIComponent(record.submission_id)+'/owner-delete',{method:'POST',body:{}});
+ if(result.status!=='OWNER_DELETED')throw new Error('受信データの削除確認に失敗しました');
+ if(activeSubmissionId===record.submission_id){
+   activeSubmissionId=null;activeSubmissionRecord=null;catalogContext=null;measurementContext=null;
+   clearScoreResult();refreshScoreReady();
+ }
+ await loadOwnerSubmissions();
+}
+"""
+          if old in s:
+              s=s.replace(old,new,1)
+          elif "'/owner-delete'" not in s and "+'/owner-delete'" not in s:
+              raise SystemExit('confirmDeleteSubmission anchor missing')
+
+          old2="""  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
+  actions.append(use);card.append(who,when,catalog,measure,actions);box.append(card);
+"""
+          new2="""  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
+  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
+  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
+"""
+          if old2 in s:
+              s=s.replace(old2,new2,1)
+          elif "del.onclick=()=>requestDeleteSubmission(r)" not in s:
+              raise SystemExit('owner queue action anchor missing')
+
+          s=s.replace('<strong>消去しますがよろしいですか？</strong>','<strong>この受信データを削除しますか？</strong>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Audit and JavaScript syntax check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
+          required=["+'/owner-delete'","result.status!=='OWNER_DELETED'","del.onclick=()=>requestDeleteSubmission(r)","actions.append(use,del)",'この受信データを削除しますか？']
+          missing=[x for x in required if x not in html]
+          if missing:
+              raise SystemExit('missing '+repr(missing))
+          if '正式フローでは提出の手動削除は行いません' in html:
+              raise SystemExit('stale manual-delete block remains')
+          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+              raise SystemExit('module script missing')
+          js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
+          Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
+          print('Owner manual-delete UI audit PASS')
+          PY
+          node --check /tmp/rar-beta.js
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rar-beta-release/rar-builder.html
+          if git diff --cached --quiet; then
+            echo "No patch changes"
+          else
+            git commit -m "feat: restore Owner manual submission deletion"
+            git push origin HEAD:r2-temp-pdf-prodflow
+          fi
+      - name: Verify Firebase credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+        run: |
+          firebase deploy --only hosting,firestore:rules --project rar-project-5a27e --config rar-beta-release/firebase.json
