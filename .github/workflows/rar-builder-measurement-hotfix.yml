@@ -1,0 +1,55 @@
+name: RAR Builder Measurement Hotfix
+
+on:
+  push:
+    branches: [r2-temp-pdf-prodflow]
+    paths:
+      - .github/workflows/rar-builder-measurement-hotfix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r2-temp-pdf-prodflow
+      - name: Patch Builder measurement validation and mobile error wrapping
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('rar-beta-release/rar-builder.html')
+          s=p.read_text(encoding='utf-8')
+
+          old="const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=/測尺/.test(measureExtract.text)&&/体高/.test(measureExtract.text)&&/管囲/.test(measureExtract.text);"
+          new="const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');"
+          assert old in s, 'submit measurement header anchor missing'
+          s=s.replace(old,new,1)
+
+          old="if(!measureOk)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした');"
+          new="if(!measureOk)throw new Error('測尺PDF照合失敗｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');"
+          assert old in s, 'measurement error anchor missing'
+          s=s.replace(old,new,1)
+
+          old="async function validateMeasurement(buffer,expectedCoverage=0){\n const ext=await pdfText(buffer),headerOk=/測尺/.test(ext.text)&&/体高/.test(ext.text)&&/管囲/.test(ext.text);"
+          new="async function validateMeasurement(buffer,expectedCoverage=0){\n const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');"
+          assert old in s, 'owner measurement header anchor missing'
+          s=s.replace(old,new,1)
+
+          old="@media(max-width:640px){.source-grid{grid-template-columns:1fr}}"
+          new="#err pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:0} @media(max-width:640px){.source-grid{grid-template-columns:1fr}}"
+          assert old in s, 'mobile css anchor missing'
+          s=s.replace(old,new,1)
+
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rar-beta-release/rar-builder.html
+          git diff --cached --check
+          git commit -m "fix: normalize measurement PDF text and wrap errors"
+          git push origin HEAD:r2-temp-pdf-prodflow
