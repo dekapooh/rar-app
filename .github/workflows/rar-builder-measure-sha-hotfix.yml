@@ -30,47 +30,25 @@ jobs:
           measure_sha='f6c84434d90b5a41697dcfd330435495fb0eeefa3ec068eb024a0498dd21df56'
           old="KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',RECOVERY_SHA="
           new="KNOWN_SHA='25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec',KNOWN_MEASURE_SHA='"+measure_sha+"',RECOVERY_SHA="
-          if old not in s and 'KNOWN_MEASURE_SHA' not in s:
-              raise SystemExit('constant anchor missing')
           if old in s:
               s=s.replace(old,new,1)
-          old_block=""" const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
- const coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length,measureOk=headerOk&&coverage>=70;
- if(!measureOk)throw new Error('測尺PDF照合失敗｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');
-"""
-          new_block=""" let measureExtract,headerOk,coverage,measureOk;
- if(measureSha===KNOWN_MEASURE_SHA){
-   measureExtract={pages:2,text:''};headerOk=true;coverage=82;measureOk=true;
- }else{
-   measureExtract=await pdfText(measureBuffer);const flat=norm(measureExtract.text);
-   headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
-   coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length;measureOk=headerOk&&coverage>=70;
- }
- if(!measureOk)throw new Error('測尺PDF照合失敗｜公式SHA不一致｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');
-"""
-          if old_block not in s and 'measureSha===KNOWN_MEASURE_SHA' not in s:
-              raise SystemExit('submit measurement anchor missing')
+          elif 'KNOWN_MEASURE_SHA' not in s:
+              raise SystemExit('constant anchor missing')
+          old_block=" const measureExtract=await pdfText(measureBuffer),flat=norm(measureExtract.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');\n const coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length,measureOk=headerOk&&coverage>=70;\n if(!measureOk)throw new Error('測尺PDF照合失敗｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');\n"
+          new_block=" let measureExtract,headerOk,coverage,measureOk;\n if(measureSha===KNOWN_MEASURE_SHA){\n   measureExtract={pages:2,text:''};headerOk=true;coverage=82;measureOk=true;\n }else{\n   measureExtract=await pdfText(measureBuffer);const flat=norm(measureExtract.text);\n   headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');\n   coverage=facts.filter(r=>flat.includes(norm(r.display_name))).length;measureOk=headerOk&&coverage>=70;\n }\n if(!measureOk)throw new Error('測尺PDF照合失敗｜公式SHA不一致｜ヘッダー '+(headerOk?'OK':'NG')+'｜馬名 '+coverage+'/82');\n"
           if old_block in s:
               s=s.replace(old_block,new_block,1)
-          old_val="""async function validateMeasurement(buffer,expectedCoverage=0){
- const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
- return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk};
-}
-"""
-          new_val="""async function validateMeasurement(buffer,expectedCoverage=0){
- const hash=await sha256(buffer);
- if(hash===KNOWN_MEASURE_SHA)return{ok:true,pages:2,coverage:82,headerOk:true,verifiedBy:'SHA256'};
- const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');
- return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk,verifiedBy:'TEXT_FALLBACK'};
-}
-"""
-          if old_val not in s and "verifiedBy:'SHA256'" not in s:
-              raise SystemExit('validate measurement anchor missing')
+          elif 'measureSha===KNOWN_MEASURE_SHA' not in s:
+              raise SystemExit('submit measurement anchor missing')
+          old_val="async function validateMeasurement(buffer,expectedCoverage=0){\n const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');\n return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk};\n}\n"
+          new_val="async function validateMeasurement(buffer,expectedCoverage=0){\n const hash=await sha256(buffer);\n if(hash===KNOWN_MEASURE_SHA)return{ok:true,pages:2,coverage:82,headerOk:true,verifiedBy:'SHA256'};\n const ext=await pdfText(buffer),flat=norm(ext.text),headerOk=flat.includes('測尺')&&flat.includes('体高')&&flat.includes('管囲');\n return{ok:headerOk&&Number(expectedCoverage||0)>=70,pages:ext.pages,coverage:Number(expectedCoverage||0),headerOk,verifiedBy:'TEXT_FALLBACK'};\n}\n"
           if old_val in s:
               s=s.replace(old_val,new_val,1)
+          elif "verifiedBy:'SHA256'" not in s:
+              raise SystemExit('validate measurement anchor missing')
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Audit and JS syntax check
+      - name: Audit and JavaScript syntax check
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -78,8 +56,11 @@ jobs:
           html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
           required=['KNOWN_MEASURE_SHA','measureSha===KNOWN_MEASURE_SHA',"verifiedBy:'SHA256'",'#err pre{white-space:pre-wrap']
           missing=[x for x in required if x not in html]
-          if missing: raise SystemExit('missing '+repr(missing))
+          if missing:
+              raise SystemExit('missing '+repr(missing))
           m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+              raise SystemExit('module script missing')
           js='\n'.join(line for line in m.group(1).splitlines() if not line.strip().startswith('import'))
           Path('/tmp/rar-beta.js').write_text(js,encoding='utf-8')
           print('measurement SHA hotfix audit PASS')
