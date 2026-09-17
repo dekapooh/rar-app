@@ -1,0 +1,66 @@
+name: RAR Builder Dataset UI Audit
+
+on:
+  push:
+    branches:
+      - feature/builder-dataset-identity-ui-20260918
+    paths:
+      - "rar-beta-release/rar-builder.html"
+      - ".github/workflows/rar-builder-dataset-ui-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Dataset identity UI contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
+          required=[
+            'id="submitDatasetResult"',
+            'id="submitDatasetYear"',
+            'id="submitDatasetClub"',
+            'id="submitDatasetKey"',
+            'id="submitDatasetReadiness"',
+            'function renderSubmittedDataset(fin)',
+            "dataset_readiness",
+            "official_scoring_ready",
+            "DATASET_REVIEW",
+            "R2_TEMPORARY",
+            "Cloudflare R2",
+          ]
+          missing=[x for x in required if x not in html]
+          if missing:
+            raise SystemExit("Missing dataset UI contract: "+repr(missing))
+          forbidden=[
+            "現在のRARβテストはSilk 2026公式カタログPDFのみ受け付けます",
+            "club:'SILK',season:'2026'",
+          ]
+          leaked=[x for x in forbidden if x in html]
+          if leaked:
+            raise SystemExit("Legacy upload gate remains: "+repr(leaked))
+          print("Dataset identity UI contract PASS")
+          PY
+      - name: JavaScript syntax audit
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
+          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
+          if not m:
+            raise SystemExit("module script missing")
+          js="\n".join(line for line in m.group(1).splitlines() if not line.strip().startswith("import"))
+          Path("/tmp/rar-builder-dataset.js").write_text(js,encoding="utf-8")
+          PY
+          node --check /tmp/rar-builder-dataset.js
