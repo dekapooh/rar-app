@@ -95,6 +95,14 @@ function refreshOwnerSubmit(){
  $('submitOwnerStatus').className=ready?'ready':'disabled-note';
  $('submitOwnerStatus').textContent=ready?'提出準備完了｜R2へ一時保存してOwnerへ送信':'PDFを2種類選択してください';
 }
+function resetNewSubmissionDraft(){
+ submitCatalogFile=null;submitMeasureFile=null;
+ if($('submitCatalogInput'))$('submitCatalogInput').value='';
+ if($('submitMeasureInput'))$('submitMeasureInput').value='';
+ if($('submitCatalogName'))$('submitCatalogName').textContent='未選択';
+ if($('submitMeasureName'))$('submitMeasureName').textContent='未選択';
+ refreshOwnerSubmit();
+}
 function requestDeleteSubmission(record){
  pendingDeleteSubmission=record;
  $('deleteSubmissionLabel').textContent=(record.submitted_by||record.rar_user_id||'Contributor')+'｜'+(record.submitted_at||'');
@@ -376,5 +384,6 @@ $('submitMeasureInput').onchange=e=>{const f=e.target.files?.[0]||null;if(f&&!va
 $('submitOwnerBtn').onclick=()=>submitPdfsToOwner().catch(e=>{fail(e);refreshOwnerSubmit()});
 $('reloadOwnerSubmissions').onclick=()=>loadOwnerSubmissions().catch(fail);
 $('login').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(fail);for(const id of['logout1','logout2','logout3'])$(id).onclick=()=>signOut(auth).catch(fail);
-onAuthStateChanged(auth,async u=>{try{if(!u){currentRole=null;return show('signin')}const r=await access(u);if(r.state==='APPROVED'){currentRole=r.role;$('who').textContent=`${u.displayName||'RAR User'}｜${r.role}`;if(r.role==='OWNER'){$('ownerWorkspace').classList.remove('hidden');$('contributorWorkspace').classList.remove('hidden');refreshOwnerSubmit();show('builder');await loadOwnerSubmissions();return}else{$('ownerWorkspace').classList.add('hidden');$('contributorWorkspace').classList.remove('hidden');refreshOwnerSubmit();return show('builder')}}if(r.state==='DENIED')return show('denied');$('pendingUid').textContent=u.uid;show('pending')}catch(e){fail(e)}});
+window.addEventListener('pageshow',()=>resetNewSubmissionDraft());
+onAuthStateChanged(auth,async u=>{try{if(!u){currentRole=null;resetNewSubmissionDraft();return show('signin')}const r=await access(u);if(r.state==='APPROVED'){currentRole=r.role;resetNewSubmissionDraft();$('who').textContent=`${u.displayName||'RAR User'}｜${r.role}`;if(r.role==='OWNER'){$('ownerWorkspace').classList.remove('hidden');$('contributorWorkspace').classList.remove('hidden');show('builder');await loadOwnerSubmissions();return}else{$('ownerWorkspace').classList.add('hidden');$('contributorWorkspace').classList.remove('hidden');return show('builder')}}if(r.state==='DENIED')return show('denied');$('pendingUid').textContent=u.uid;show('pending')}catch(e){fail(e)}});
 </script></body></html>
