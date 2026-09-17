@@ -27,42 +27,18 @@ jobs:
           from pathlib import Path
           p=Path('rar-beta-release/rar-builder.html')
           s=p.read_text(encoding='utf-8')
-
-          old="""async function confirmDeleteSubmission(){
- pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
- throw new Error('正式フローでは提出の手動削除は行いません。RAR送信成功後の即時削除、または20日Lifecycle削除を使用します');
-}
-"""
-          new="""async function confirmDeleteSubmission(){
- const record=pendingDeleteSubmission;
- pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();
- if(!record?.submission_id)throw new Error('削除対象のsubmission_idがありません');
- const result=await api('/v1/submissions/'+encodeURIComponent(record.submission_id)+'/owner-delete',{method:'POST',body:{}});
- if(result.status!=='OWNER_DELETED')throw new Error('受信データの削除確認に失敗しました');
- if(activeSubmissionId===record.submission_id){
-   activeSubmissionId=null;activeSubmissionRecord=null;catalogContext=null;measurementContext=null;
-   clearScoreResult();refreshScoreReady();
- }
- await loadOwnerSubmissions();
-}
-"""
+          old="async function confirmDeleteSubmission(){\n pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();\n throw new Error('正式フローでは提出の手動削除は行いません。RAR送信成功後の即時削除、または20日Lifecycle削除を使用します');\n}\n"
+          new="async function confirmDeleteSubmission(){\n const record=pendingDeleteSubmission;\n pendingDeleteSubmission=null;$('deleteSubmissionDialog').close();\n if(!record?.submission_id)throw new Error('削除対象のsubmission_idがありません');\n const result=await api('/v1/submissions/'+encodeURIComponent(record.submission_id)+'/owner-delete',{method:'POST',body:{}});\n if(result.status!=='OWNER_DELETED')throw new Error('受信データの削除確認に失敗しました');\n if(activeSubmissionId===record.submission_id){\n   activeSubmissionId=null;activeSubmissionRecord=null;catalogContext=null;measurementContext=null;\n   clearScoreResult();refreshScoreReady();\n }\n await loadOwnerSubmissions();\n}\n"
           if old in s:
               s=s.replace(old,new,1)
-          elif "'/owner-delete'" not in s and "+'/owner-delete'" not in s:
+          elif "/owner-delete" not in s:
               raise SystemExit('confirmDeleteSubmission anchor missing')
-
-          old2="""  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
-  actions.append(use);card.append(who,when,catalog,measure,actions);box.append(card);
-"""
-          new2="""  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};
-  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
-  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);
-"""
+          old2="  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};\n  actions.append(use);card.append(who,when,catalog,measure,actions);box.append(card);\n"
+          new2="  const use=document.createElement('button');use.type='button';use.className='primary';use.textContent='実PDFを受信して採点にセット';use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=false}};\n  const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);\n  actions.append(use,del);card.append(who,when,catalog,measure,actions);box.append(card);\n"
           if old2 in s:
               s=s.replace(old2,new2,1)
           elif "del.onclick=()=>requestDeleteSubmission(r)" not in s:
               raise SystemExit('owner queue action anchor missing')
-
           s=s.replace('<strong>消去しますがよろしいですか？</strong>','<strong>この受信データを削除しますか？</strong>',1)
           p.write_text(s,encoding='utf-8')
           PY
@@ -72,7 +48,7 @@ jobs:
           from pathlib import Path
           import re
           html=Path('rar-beta-release/rar-builder.html').read_text(encoding='utf-8')
-          required=["+'/owner-delete'","result.status!=='OWNER_DELETED'","del.onclick=()=>requestDeleteSubmission(r)","actions.append(use,del)",'この受信データを削除しますか？']
+          required=['/owner-delete',"result.status!=='OWNER_DELETED'","del.onclick=()=>requestDeleteSubmission(r)","actions.append(use,del)",'この受信データを削除しますか？']
           missing=[x for x in required if x not in html]
           if missing:
               raise SystemExit('missing '+repr(missing))
