@@ -304,7 +304,7 @@ async function restoreCleanProgress(){
  activeRunId=p.run_id||null;potentialProcessed=Number(p.processed||0);
  const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);
  $('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';
- $('scoreBatchStatus').textContent=potentialProcessed+' / 82'+(nextScoreStart?'｜次回 No.'+nextScoreStart+'〜'+Math.min(nextScoreStart+9,activeHorseCount):'｜Potential完了');
+ $('scoreBatchStatus').textContent=potentialProcessed+' / '+activeHorseCount+(nextScoreStart?'｜次回 No.'+nextScoreStart+'〜'+Math.min(nextScoreStart+9,activeHorseCount):'｜Potential完了');
  if(potentialProcessed===activeHorseCount){
    try{const f=await api('/v1/final-score/'+encodeURIComponent(activeSubmissionId));if(f.status==='FROZEN_FINAL'&&f.payload){loadFinalPayload(f.payload);return}}catch{}
  }
@@ -319,10 +319,10 @@ function refreshScoreReady(){
    $('scoreReady').textContent='R2提出のカタログPDFと測尺PDFを採点にセットしてください';
    $('scoreBtn').textContent='採点開始';
  }else if(finalReady){
-   $('scoreReady').textContent='Fresh 82頭の最終採点が完了しました';
+   $('scoreReady').textContent='Fresh '+activeHorseCount+'頭の最終採点が完了しました';
    $('scoreBtn').textContent='採点完了';
  }else if(nextScoreStart===null){
-   $('scoreReady').textContent='Fresh Potential 82頭完了｜横断QA後に最終採点を確定します';
+   $('scoreReady').textContent='Fresh Potential '+activeHorseCount+'頭完了｜横断QA後に最終採点を確定します';
    $('scoreBtn').textContent='最終採点を確定';
  }else{
    const end=Math.min(nextScoreStart+LOT_SIZE-1,activeHorseCount);
@@ -333,7 +333,7 @@ function refreshScoreReady(){
 function clearScoreResult(){
  scoredRows=[];nextScoreStart=1;potentialProcessed=0;activeRunId=null;latestFinalPayload=null;
  $('scoreRows').innerHTML='';$('scoreCard').classList.add('hidden');$('factCard').classList.add('hidden');$('potentialCard').classList.add('hidden');$('dreamRoiCard').classList.add('hidden');$('transferCard').classList.add('hidden');
- $('scoreProgressBar').style.width='0%';$('scoreBatchStatus').textContent='0 / 82｜次回 No.1〜10';$('scoreStatus').textContent='';$('scoreCount').textContent='';
+ $('scoreProgressBar').style.width='0%';$('scoreBatchStatus').textContent='0 / '+activeHorseCount+'｜次回 No.1〜'+Math.min(LOT_SIZE,activeHorseCount);$('scoreStatus').textContent='';$('scoreCount').textContent='';
 }
 function appendScoreRows(rows){$('scoreRows').insertAdjacentHTML('beforeend',rows.map(x=>`<tr><td>${x.no}</td><td>${esc(x.name)}</td><td>${x.potential.toFixed(1)}</td><td>${x.pedigree.toFixed(1)}</td><td>${x.dreamMiddle.toFixed(1)}</td><td>${x.dreamHigh.toFixed(1)}</td><td><strong>${x.dreamOfficial.toFixed(1)}</strong></td><td>${x.ivMiddle.toFixed(1)}</td><td>${x.ivHigh.toFixed(1)}</td><td><strong>${x.ivOfficial.toFixed(1)}</strong></td><td><strong>${x.rar100.toFixed(1)}</strong></td></tr>`).join(''))}
 function finalRow(r){return{
@@ -352,33 +352,34 @@ function loadFinalPayload(payload){
  latestFinalPayload=payload;activeRunId=payload.potential_run_id||activeRunId;potentialProcessed=activeHorseCount;nextScoreStart=null;
  scoredRows=payload.records.map(finalRow).sort((a,b)=>a.no-b.no);
  $('scoreRows').innerHTML='';appendScoreRows(scoredRows);$('scoreCard').classList.remove('hidden');
- $('scoreStatus').innerHTML='<span class="ok">82頭採点完了｜FRESH FROZEN_FINAL</span>';$('scoreCount').textContent='82/82頭';$('scoreProgressBar').style.width='100%';$('scoreBatchStatus').textContent='82 / 82｜Fresh最終採点完了';
+ $('scoreStatus').innerHTML='<span class="ok">'+activeHorseCount+'頭採点完了｜FRESH FROZEN_FINAL</span>';$('scoreCount').textContent=activeHorseCount+'/'+activeHorseCount+'頭';$('scoreProgressBar').style.width='100%';$('scoreBatchStatus').textContent=activeHorseCount+' / '+activeHorseCount+'｜Fresh最終採点完了';
  renderFreshFinal(payload);
- $('transferCard').classList.remove('hidden');$('transferBtn').disabled=false;$('transferStatus').className='ready';$('transferStatus').textContent='Fresh 82頭完了｜RAR本体への送信準備完了';
- $('nextState').innerHTML='<span class="ok">Fresh 82頭FROZEN_FINAL → RAR本体送信待ち</span>';
+ $('transferCard').classList.remove('hidden');$('transferBtn').disabled=false;$('transferStatus').className='ready';$('transferStatus').textContent='Fresh '+activeHorseCount+'頭完了｜RAR本体への送信準備完了';
+ $('nextState').innerHTML='<span class="ok">Fresh '+activeHorseCount+'頭FROZEN_FINAL → RAR本体送信待ち</span>';
  refreshScoreReady();
 }
 function renderFreshFinal(payload){
  const rows=[...payload.records].sort((a,b)=>Number(a.no)-Number(b.no));
- $('factCard').classList.remove('hidden');$('factStatus').innerHTML='<span class="ok">Fresh PDF AUTO_PASS</span>';$('factCount').textContent='82/82頭';$('factPass').innerHTML='<span class="ok">82</span>';$('factReview').innerHTML='<span class="ok">0</span>';
+ $('factCard').classList.remove('hidden');$('factStatus').innerHTML='<span class="ok">Fresh PDF AUTO_PASS</span>';$('factCount').textContent=activeHorseCount+'/'+activeHorseCount+'頭';$('factPass').innerHTML='<span class="ok">'+activeHorseCount+'</span>';$('factReview').innerHTML='<span class="ok">0</span>';
  $('factSamples').innerHTML=rows.slice(0,3).map(r=>`<div class="step"><strong>No.${r.no} ${esc(r.identity?.name)}</strong><br>父 ${esc(r.identity?.sire)}｜${esc(r.identity?.sex)}｜${esc(r.identity?.trainer)}厩舎 <span class="ok">FRESH</span></div>`).join('');
  $('factRows').innerHTML=rows.map(r=>`<tr><td>${r.no}</td><td>${esc(r.identity?.name)}</td><td>${esc(r.identity?.sire)}</td><td>${esc(r.identity?.sex)}</td><td>${esc(r.identity?.birth)}</td><td>${esc(r.identity?.trainer)}</td><td>${Number(r.identity?.share_price_yen||0).toLocaleString()}円</td><td class="ok">FRESH</td></tr>`).join('');
- $('potentialCard').classList.remove('hidden');$('potentialStatus').innerHTML='<span class="ok">Fresh run 82/82 PASS</span>';$('potentialCount').textContent='82/82頭';$('potentialQ17').innerHTML='<span class="ok">Fresh evidence</span>';$('potentialQ8').innerHTML='<span class="ok">Fresh canonical</span>';$('potentialCanonical').innerHTML='<span class="ok">横断QA PASS</span>';
+ $('potentialCard').classList.remove('hidden');$('potentialStatus').innerHTML='<span class="ok">Fresh run '+activeHorseCount+'/'+activeHorseCount+' PASS</span>';$('potentialCount').textContent=activeHorseCount+'/'+activeHorseCount+'頭';$('potentialQ17').innerHTML='<span class="ok">Fresh evidence</span>';$('potentialQ8').innerHTML='<span class="ok">Fresh canonical</span>';$('potentialCanonical').innerHTML='<span class="ok">横断QA PASS</span>';
  $('potentialSamples').innerHTML=rows.slice(0,3).map(r=>`<div class="step"><strong>No.${r.no} ${esc(r.identity?.name)}</strong><br>Scale/Frame ${Number(r.potential_small?.scale_frame).toFixed(1)}｜Rear ${Number(r.potential_small?.rear).toFixed(1)}｜Trunk ${Number(r.potential_small?.trunk).toFixed(1)}｜Front ${Number(r.potential_small?.front).toFixed(1)}<br><strong>Potential ${Number(r.potential).toFixed(1)}/30</strong></div>`).join('');
  $('potentialRows').innerHTML=rows.map(r=>`<tr><td>${r.no}</td><td>${esc(r.identity?.name)}</td><td>${Number(r.potential_small?.scale_frame).toFixed(1)}</td><td>${Number(r.potential_small?.rear).toFixed(1)}</td><td>${Number(r.potential_small?.trunk).toFixed(1)}</td><td>${Number(r.potential_small?.front).toFixed(1)}</td><td><strong>${Number(r.potential).toFixed(1)}/30</strong></td><td class="ok">FRESH</td></tr>`).join('');
- $('dreamRoiCard').classList.remove('hidden');$('dreamRouteStatus').innerHTML='<span class="ok">Fresh Potential/Pedigreeから再計算</span>';$('middleRouteStatus').innerHTML='<span class="ok">82/82</span>';$('highRouteStatus').innerHTML='<span class="ok">82/82</span>';$('decimalRouteStatus').innerHTML='<span class="ok">FROZEN FINAL</span>';$('roiIvStatus').innerHTML='<span class="ok">82/82 FROZEN_FINAL</span>';$('rar100Status').innerHTML='<span class="ok">Fresh RAR /100確定</span>';$('routeEngine').textContent=String(payload.final_engine_id||'FROZEN_FINAL');$('middleResolvedKpi').textContent='82/82';$('highResolvedKpi').textContent='82/82';$('highHoldKpi').textContent='0';
+ $('dreamRoiCard').classList.remove('hidden');$('dreamRouteStatus').innerHTML='<span class="ok">Fresh Potential/Pedigreeから再計算</span>';$('middleRouteStatus').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'</span>';$('highRouteStatus').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'</span>';$('decimalRouteStatus').innerHTML='<span class="ok">FROZEN FINAL</span>';$('roiIvStatus').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+' FROZEN_FINAL</span>';$('rar100Status').innerHTML='<span class="ok">Fresh RAR /100確定</span>';$('routeEngine').textContent=String(payload.final_engine_id||'FROZEN_FINAL');$('middleResolvedKpi').textContent=activeHorseCount+'/'+activeHorseCount;$('highResolvedKpi').textContent=activeHorseCount+'/'+activeHorseCount;$('highHoldKpi').textContent='0';
  $('routeSamples').innerHTML=rows.slice(0,3).map(r=>`<div class="step"><strong>No.${r.no} ${esc(r.identity?.name)}</strong><br>夢 M ${Number(r.dream_middle).toFixed(1)}｜H ${Number(r.dream_high).toFixed(1)}｜Official ${Number(r.dream_official).toFixed(1)}<br>ROI M ${Number(r.roi_middle_pct).toFixed(1)}%｜H ${Number(r.roi_high_pct).toFixed(1)}%｜Official ${Number(r.roi_official_pct).toFixed(1)}%｜IV ${Number(r.investment_value).toFixed(1)}/30</div>`).join('');
  $('routeRows').innerHTML=rows.map(r=>`<tr><td>${r.no}</td><td>${esc(r.identity?.name)}</td><td>${Number(r.dream_middle).toFixed(1)}</td><td>${Number(r.dream_high).toFixed(1)}</td><td>${Number(r.dream_official).toFixed(1)}</td><td class="ok">FRESH</td><td>${esc((r.target_races||[]).join(' / '))}</td><td>${Number(r.roi_middle_pct).toFixed(1)}%</td><td>${Number(r.roi_high_pct).toFixed(1)}%</td><td>${Number(r.roi_official_pct).toFixed(1)}%</td><td>${Number(r.investment_value).toFixed(2)}</td><td>${Number(r.rar_total).toFixed(2)}</td></tr>`).join('');
 }
 function buildFrozenTransferPayload(){
  if(!activeSubmissionId)throw new Error('R2提出が採点にセットされていません');
- if(!latestFinalPayload)throw new Error('Fresh FROZEN_FINAL 82頭の確定が必要です');
+ if(!latestFinalPayload)throw new Error('Fresh FROZEN_FINAL '+activeHorseCount+'頭の確定が必要です');
+ if(String(latestFinalPayload.dataset_key||'')!==activeDatasetKey)throw new Error('Fresh payloadのdataset_keyが一致しません');
  if(String(latestFinalPayload.submission_id||'')!==String(activeSubmissionId))throw new Error('Fresh payloadの提出IDが一致しません');
  return latestFinalPayload;
 }
 async function finalizeCleanScoring(){
  if(!activeRunId)throw new Error('Fresh Potential run_idがありません');
- $('scoreStatus').innerHTML='<span class="review">82頭横断QA中…</span>';
+ $('scoreStatus').innerHTML='<span class="review">'+activeHorseCount+'頭横断QA中…</span>';
  const cross=await api('/v1/potential/batch/crosscheck-v2/'+encodeURIComponent(activeRunId),{method:'POST',body:{}});
  if(cross.status!=='PASS'||String(cross.dataset_key||activeDatasetKey)!==activeDatasetKey||Number(cross.total||0)!==activeHorseCount)throw new Error('Potential横断QAがdataset単位でPASSしませんでした');
  $('scoreStatus').innerHTML='<span class="review">Fresh Pedigree → 夢 → ROI → IV → RAR /100 を確定中…</span>';
@@ -405,7 +406,7 @@ async function transferToRar(){
   const payload=buildFrozenTransferPayload();
   const dry=await api('/v1/consumer-transfer/frozen-v2/validate',{method:'POST',body:payload});
   if(dry.status!=='PASS_DRY_RUN'||Number(dry.record_count)!==activeHorseCount)throw new Error('RAR転送Dry-runがPASSしませんでした');
-  $('transferStatus').textContent='RAR本体へ82頭を転送中…';
+  $('transferStatus').textContent='RAR本体へ'+activeHorseCount+'頭を転送中…';
   const commit=await api('/v1/consumer-transfer/frozen-v2/commit',{method:'POST',body:{payload,dry_run:dry}});
   if(commit.status!=='PASS_TRANSFER'||!commit.version_id)throw new Error('RAR本体への転送確認に失敗しました');
   $('transferStatus').textContent='RAR本体が採用するOfficialデータを照合中…';
@@ -451,20 +452,21 @@ async function runScoring(){
       $('scoreStatus').innerHTML='<span class="review">No.'+no+' 一時失敗｜再試行 '+attempt+'/3</span>';
     }
     if(h?.status!=='PASS')throw new Error('No.'+no+' Fresh Potential停止｜'+(h?.issue_code||h?.status||'UNKNOWN'));
-    potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / 82';
+    potentialProcessed=Number(h.overall_processed||potentialProcessed+1);$('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';$('scoreBatchStatus').textContent=potentialProcessed+' / '+activeHorseCount;
   }
   const p=await api('/v1/potential/batch/progress/'+encodeURIComponent(activeRunId));
+  if(String(p.dataset_key||activeDatasetKey)!==activeDatasetKey||Number(p.total||activeHorseCount)!==activeHorseCount)throw new Error('Potential進捗のdataset/募集頭数が一致しません');
   potentialProcessed=Number(p.processed||0);const resumedStart=Number(p.next_batch_start||1);nextScoreStart=p.status==='COMPLETE'?null:(Math.floor((resumedStart-1)/LOT_SIZE)*LOT_SIZE+1);
-  $('scoreCount').textContent=potentialProcessed+'/82頭';$('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';
+  $('scoreCount').textContent=potentialProcessed+'/'+activeHorseCount+'頭';$('scoreProgressBar').style.width=(potentialProcessed/activeHorseCount*100)+'%';
   if(nextScoreStart!==null){
     const nend=Math.min(nextScoreStart+9,activeHorseCount);$('scoreStatus').innerHTML='<span class="ok">No.'+start+'〜'+end+' Fresh Potential完了</span>';
-    $('scoreBatchStatus').textContent=potentialProcessed+' / 82｜次回 No.'+nextScoreStart+'〜'+nend;$('nextState').innerHTML='<span class="ok">旧保存値未参照｜次ロット待ち</span>';
+    $('scoreBatchStatus').textContent=potentialProcessed+' / '+activeHorseCount+'｜次回 No.'+nextScoreStart+'〜'+nend;$('nextState').innerHTML='<span class="ok">旧保存値未参照｜次ロット待ち</span>';
   }else{
-    $('scoreStatus').innerHTML='<span class="ok">Fresh Potential 82/82完了</span>';$('scoreBatchStatus').textContent='82 / 82｜横断QAへ';
+    $('scoreStatus').innerHTML='<span class="ok">Fresh Potential '+activeHorseCount+'/'+activeHorseCount+'完了</span>';$('scoreBatchStatus').textContent=activeHorseCount+' / '+activeHorseCount+'｜横断QAへ';
     await finalizeCleanScoring();
   }
   localStorage.setItem('rar_builder_last_batch',JSON.stringify({submission_id:activeSubmissionId,run_id:activeRunId,evaluation_scope:'FRESH_SUBMISSION_SCOPED',catalog_sha256:catalogContext.hash,processed:potentialProcessed,next_score_start:nextScoreStart,status:latestFinalPayload?'FROZEN_FINAL':(nextScoreStart===null?'POTENTIAL_COMPLETE':'POTENTIAL_PARTIAL'),updated_at:now()}));
- }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';try{await restoreCleanProgress();$('scoreCount').textContent=potentialProcessed+'/82頭'}catch{}fail(err)}finally{refreshScoreReady()}
+ }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';try{await restoreCleanProgress();$('scoreCount').textContent=potentialProcessed+'/'+activeHorseCount+'頭'}catch{}fail(err)}finally{refreshScoreReady()}
 }
 $('pdfInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;activeSubmissionId=null;activeSubmissionRecord=null;$('transferCard').classList.add('hidden');$('busy').classList.remove('hidden');clearScoreResult();scoringSources=null;try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer),pdf=await pdfjsLib.getDocument({data:new Uint8Array(buffer)}).promise,pages=pdf.numPages,batch='batch-'+hash.slice(0,16),known=hash===KNOWN_SHA&&pages===128;catalogContext={filename:f.name,hash,pages,batch,known,buffer};$('fileName').textContent=f.name;$('pageCount').textContent=pages;$('sha').textContent=hash;$('batchId').textContent=batch;$('intakeStatus').innerHTML=known?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('yearResult').innerHTML=known?'<span class="ok">2026</span>':'<span class="review">未確定</span>';$('profileResult').innerHTML=known?'<span class="ok">Silk 2026</span>':'<span class="review">UNKNOWN</span>';$('candidateResult').innerHTML=known?'<span class="ok">82/82頭</span>':'<span class="review">未確定</span>';$('missingResult').innerHTML=known?'<span class="ok">0</span>':'—';$('pageMapResult').innerHTML=known?'<span class="ok">82/82</span>':'—';$('nextState').innerHTML=known?'<span class="ok">測尺PDFを照合してください</span>':'<span class="review">Profile確認へ</span>';$('pdfResult').classList.remove('hidden');if(measurementContext?.buffer){const v=await validateMeasurement(measurementContext.buffer,0);measurementContext={...measurementContext,...v};$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`}}catch(err){catalogContext=null;fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
 $('measureInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;$('busy').classList.remove('hidden');clearScoreResult();try{const buffer=await f.arrayBuffer(),hash=await sha256(buffer);$('measureFileName').textContent=f.name;$('measureSha').textContent=hash;measurementContext={filename:f.name,hash,buffer,ok:false,pages:0,coverage:0};if(!catalogContext?.known){$('measureStatus').innerHTML='<span class="review">カタログ待ち</span>';$('measureCoverage').textContent='—'}else{const v=await validateMeasurement(buffer,0);measurementContext={...measurementContext,...v};$('measurePageCount').textContent=v.pages;$('measureStatus').innerHTML=v.ok?'<span class="ok">AUTO_PASS</span>':'<span class="review">REVIEW</span>';$('measureCoverage').textContent=`${v.coverage}/82頭`;if(!v.ok)throw new Error('測尺PDFをSilk 2026公式測尺表として照合できませんでした')}}catch(err){fail(err)}finally{$('busy').classList.add('hidden');refreshScoreReady()}};
