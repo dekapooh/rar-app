@@ -24,6 +24,7 @@
 </div>
 </div>
 <div id="ownerWorkspace" class="hidden">
+<div class="card"><h2>公式データ取得</h2><p class="muted">端末へPDFを保存せず、RAR Backendが登録済みの公式ソースから直接取得してR2へ一時保存します。</p><div class="score-actions"><button id="importOfficialSilk2025" class="primary" type="button">2025 シルク公式データを取得</button><span id="officialImportStatus" class="disabled-note">未取得</span></div></div>
 <div class="card"><h2>協力者からの採点依頼</h2><p class="muted">Cloudflare R2に一時保存された実PDFをOwnerが受信・再照合し、No.1〜10から10頭ずつ手動採点します。</p><div class="score-actions"><button id="reloadOwnerSubmissions" type="button">再読み込み</button></div><div id="ownerSubmissions" class="small" style="margin-top:12px">読み込み中…</div></div>
 <div class="card"><h2>1. 採点ソースPDF</h2><p>公式募集カタログPDFと公式測尺PDFの2ファイルを選択してください。両方の照合が完了すると採点できます。</p>
 <div class="source-grid">
@@ -196,6 +197,24 @@ async function activateSubmissionForScoring(record){
   $('nextState').innerHTML='<span class="ok">実PDF再照合完了 → Fresh run確認中</span>';$('pdfResult').classList.remove('hidden');
   await restoreCleanProgress();window.scrollTo({top:$('ownerWorkspace').offsetTop,behavior:'smooth'});
  }finally{$('busy').classList.add('hidden')}
+}
+async function importOfficialDataset(datasetKey){
+ const btn=$('importOfficialSilk2025'),status=$('officialImportStatus');
+ if(btn)btn.disabled=true;
+ if(status){status.className='review';status.textContent='公式PDF取得・照合中…'}
+ try{
+  const result=await api('/v1/submissions/import-official/'+encodeURIComponent(datasetKey),{method:'POST',body:{}});
+  if(result.status!=='READY_FOR_OWNER')throw new Error('公式データ取得の完了状態を確認できません');
+  if(status){
+   const r=result.dataset_readiness||{};
+   status.className=r.official_scoring_ready===true?'ok':'review';
+   status.textContent='取得完了｜'+datasetKey+'｜'+(r.official_scoring_ready===true?'READY':'VALIDATION_REQUIRED');
+  }
+  await loadOwnerSubmissions();
+  return result;
+ }finally{
+  if(btn)btn.disabled=false;
+ }
 }
 async function loadOwnerSubmissions(){
  const box=$('ownerSubmissions');box.textContent='読み込み中…';
@@ -493,6 +512,7 @@ $('submitCatalogInput').onchange=e=>{const f=e.target.files?.[0]||null;if(f&&!va
 $('submitMeasureInput').onchange=e=>{const f=e.target.files?.[0]||null;if(f&&!validPdfFile(f)){fail(new Error('測尺は30MB以下のPDFを選択してください'));e.target.value='';submitMeasureFile=null}else submitMeasureFile=f;$('submitMeasureName').textContent=f?f.name:'未選択';refreshOwnerSubmit()};
 $('submitOwnerBtn').onclick=()=>submitPdfsToOwner().catch(e=>{fail(e);refreshOwnerSubmit()});
 $('reloadOwnerSubmissions').onclick=()=>loadOwnerSubmissions().catch(fail);
+$('importOfficialSilk2025').onclick=()=>importOfficialDataset('2025:silk').catch(fail);
 $('login').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(fail);for(const id of['logout1','logout2','logout3'])$(id).onclick=()=>signOut(auth).catch(fail);
 window.addEventListener('pageshow',()=>resetNewSubmissionDraft());
 onAuthStateChanged(auth,async u=>{try{if(!u){currentRole=null;resetNewSubmissionDraft();return show('signin')}const r=await access(u);if(r.state==='APPROVED'){currentRole=r.role;resetNewSubmissionDraft();$('who').textContent=`${u.displayName||'RAR User'}｜${r.role}`;if(r.role==='OWNER'){$('ownerWorkspace').classList.remove('hidden');$('contributorWorkspace').classList.remove('hidden');show('builder');await loadOwnerSubmissions();return}else{$('ownerWorkspace').classList.add('hidden');$('contributorWorkspace').classList.remove('hidden');return show('builder')}}if(r.state==='DENIED')return show('denied');$('pendingUid').textContent=u.uid;show('pending')}catch(e){fail(e)}});
