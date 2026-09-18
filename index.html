@@ -2236,7 +2236,7 @@ function bindPersonalDataset(datasetKey,{seedCurrent=false}={}){
 }
 function persistState(){
  syncActivePersonalBucket();
- persistState();
+ localStorage.setItem("rarBetaState",JSON.stringify(state));
 }
 // Existing flat Personal data belongs to the completed legacy dataset.
 // This migrates it once without losing the user's current 2026 settings.
