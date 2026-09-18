@@ -61,6 +61,8 @@ jobs:
           assert '<script src="./system-master-sync.js' in index_s, "SYSTEM MASTER sync is not loaded by index.html"
           assert 'standard:{rankLimit:Infinity' in index_s and 'premium:{rankLimit:Infinity' in index_s
           assert 'const DATASET_PERSONAL_KEYS=[' in index_s
+          assert 'window.addEventListener("rar:dataset-before-apply"' in index_s
+          assert 'window.addEventListener("rar:dataset-apply-failed"' in index_s
           assert 'window.addEventListener("rar:dataset-changed"' in index_s
           assert 'backupSchema:2' in index_s and 'datasetPersonal:' in index_s
           assert 'rankLimit:82' not in index_s
@@ -95,6 +97,8 @@ jobs:
           required=[
             "DATASET_API_BASE",
             "rar:dataset-selection-requested",
+            "rar:dataset-before-apply",
+            "rar:dataset-apply-failed",
             "rar:dataset-changed",
             "window.__RAR_SYSTEM_MASTER__",
             "record_count: data.record_count",
@@ -107,5 +111,14 @@ jobs:
           PY
       - name: SYSTEM MASTER sync syntax audit
         run: node --check system-master-sync.js
+      - name: Service worker dataset cache contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("sw.js").read_text(encoding="utf-8")
+          assert 'rar-rc66-public-beta-v13-dataset-multikey' in s
+          assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
+          print("Service worker dataset cache contract PASS")
+          PY
       - name: Service worker syntax audit
         run: node --check sw.js
