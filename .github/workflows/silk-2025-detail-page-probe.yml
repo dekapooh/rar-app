@@ -1,0 +1,74 @@
+name: Silk 2025 Detail Page Probe
+
+on:
+  push:
+    branches:
+      - r2-temp-pdf-prodflow
+    paths:
+      - '.github/workflows/silk-2025-detail-page-probe.yml'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PDF runtime
+        run: python -m pip install --quiet 'PyMuPDF==1.26.7'
+      - name: Fetch official Silk 2025 catalog
+        run: |
+          curl --fail --location --retry 3 --retry-delay 2 \
+            --user-agent 'RAR-Builder/1.0 (+official-source-validation)' \
+            'https://www.silkhorseclub.jp/assets_static/pdf/silkhorseclub_2025_yearlings.pdf' \
+            -o /tmp/silk2025.pdf
+          sha256sum /tmp/silk2025.pdf
+          wc -c /tmp/silk2025.pdf
+      - name: Detect individual horse detail pages
+        run: |
+          python - <<'PY'
+          import re, fitz
+          path='/tmp/silk2025.pdf'
+          doc=fitz.open(path)
+          pages=[]
+          text_only=[]
+          def lines(text):
+              return [x.strip() for x in str(text or '').splitlines() if x.strip()]
+          def detail_text(text):
+              ls=lines(text); joined='\n'.join(ls)
+              names=[x for x in ls if re.search(r'の24$',x)]
+              centers=[x for x in ls if x in ('美浦入厩','栗東入厩')]
+              trainers=[x for x in ls if x.endswith('厩舎予定')]
+              births=[x for x in ls if re.fullmatch(r'24\.\d{1,2}\.\d{1,2}生',x)]
+              return len(names)==1 and len(centers)==1 and len(trainers)==1 and len(births)==1 and '総口数' in joined and '一口価格' in joined
+          def raster(index):
+              page=doc.load_page(index); seen=set()
+              for image in page.get_images(full=True):
+                  xref=int(image[0])
+                  if xref in seen: continue
+                  seen.add(xref)
+                  try: meta=doc.extract_image(xref)
+                  except Exception: continue
+                  w=int(meta.get('width') or 0); h=int(meta.get('height') or 0)
+                  if w>h and w>=1000 and h>=700: return True
+              return False
+          near=[]
+          for i in range(doc.page_count):
+              text=doc.load_page(i).get_text('text') or ''
+              if detail_text(text):
+                  text_only.append(i+1)
+                  if raster(i):
+                      pages.append(i+1)
+                  else:
+                      near.append(i+1)
+          print('PAGE_COUNT=',doc.page_count)
+          print('TEXT_ONLY_COUNT=',len(text_only))
+          print('TEXT_ONLY_PAGES=',text_only)
+          print('TEXT_MATCH_WITHOUT_LARGE_RASTER=',near)
+          print('FINAL_DETAIL_COUNT=',len(pages))
+          print('FINAL_DETAIL_PAGES=',pages)
+          assert len(pages)==82, f'expected 82 detail pages, got {len(pages)}'
+          print('SILK_2025_DETAIL_PAGE_DETECTION=PASS')
+          PY
