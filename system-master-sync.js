@@ -386,6 +386,13 @@
       if (!res.ok) throw new Error(`consumer dataset API HTTP ${res.status}`);
       const data = validateDataset(await res.json());
       if (data.dataset_key !== requested) throw new Error(`dataset response mismatch: ${data.dataset_key}`);
+      window.dispatchEvent(new CustomEvent('rar:dataset-before-apply', { detail: {
+        season_year: data.season_year,
+        club_id: data.club_id,
+        club_name: data.club_name,
+        dataset_key: data.dataset_key,
+        record_count: data.record_count
+      } }));
       updateDatasetCatalog(data);
       applyDataset(data);
       activeDatasetKey = data.dataset_key;
@@ -409,6 +416,13 @@
       const res = await fetch(API_URL, { cache: 'no-store', mode: 'cors' });
       if (!res.ok) throw new Error(`consumer API HTTP ${res.status}`);
       const data = validateDataset(await res.json());
+      window.dispatchEvent(new CustomEvent('rar:dataset-before-apply', { detail: {
+        season_year: data.season_year,
+        club_id: data.club_id,
+        club_name: data.club_name,
+        dataset_key: data.dataset_key,
+        record_count: data.record_count
+      } }));
       updateDatasetCatalog(data);
       applyDataset(data);
       activeDatasetKey = data.dataset_key;
