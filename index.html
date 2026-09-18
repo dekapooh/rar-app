@@ -2320,15 +2320,19 @@ const BACKUP_KEYS=[
  "rankBase","filterBase","priceRange"
 ];
 function buildBackupPayload(){
+ syncActivePersonalBucket();
  const data={};
- BACKUP_KEYS.forEach(k=>{data[k]=structuredClone(state[k]??{});});
+ BACKUP_KEYS.forEach(k=>{data[k]=clonePersonalValue(state[k]??{});});
  return {
    app:"RAR",
    format:"rar-personal-backup",
-   version:1,    backupSchema:1,
+   version:2,
+   backupSchema:2,
    build:"β Ver.1.0 RC64",
    localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
+   activeDatasetKey:activePersonalDatasetKey,
+   datasetPersonal:clonePersonalValue(state.datasetPersonal||{}),
    data
  };
 }
@@ -2368,12 +2372,32 @@ function validateBackupPayload(payload){
  if(payload.format!=="rar-personal-backup")return false;
  const schema=Number(payload.backupSchema||payload.version||1);
  if(!Number.isFinite(schema)||schema<1)return false;
- if(schema>1){alert("このバックアップは新しいRARで作成されています。アプリを更新してください");return false;}
+ if(schema>2){alert("このバックアップは新しいRARで作成されています。アプリを更新してください");return false;}
  if(!payload.data || typeof payload.data!=="object")return false;
  return true;
 }
 function normalizeBackupObject(v){
  return v && typeof v==="object" && !Array.isArray(v) ? v : {};
+}
+function applyBackupPayloadToState(payload){
+ const keepPlan=state.plan;
+ const currentKey=activePersonalDatasetKey;
+ const schema=Number(payload.backupSchema||payload.version||1);
+ BACKUP_KEYS.forEach(k=>{state[k]=normalizeBackupObject(payload.data?.[k]);});
+ if(schema>=2){
+   state.datasetPersonal=clonePersonalValue(normalizeBackupObject(payload.datasetPersonal));
+   const backupKey=String(payload.activeDatasetKey||currentKey).trim().toLowerCase();
+   if(/^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(backupKey) && !state.datasetPersonal[backupKey]){
+     const bucket={};
+     for(const name of DATASET_PERSONAL_KEYS)bucket[name]=clonePersonalValue(normalizeBackupObject(payload.data?.[name]));
+     state.datasetPersonal[backupKey]=bucket;
+   }
+   bindPersonalDataset(currentKey);
+ }else{
+   syncActivePersonalBucket();
+ }
+ state.plan=keepPlan;
+ persistState();
 }
 function countObjectTruthy(obj){return Object.values(obj||{}).filter(Boolean).length}
 function countPointHorses(data){const set=new Set();for(const k of Object.keys(data.points||{}))if(Number(data.points[k]||0)!==0)set.add(k);for(const [k,obj] of Object.entries(data.categoryPoints||{}))if(Object.values(obj||{}).some(v=>Number(v)!==0))set.add(k);for(const [k,obj] of Object.entries(data.smallPoints||{}))if(Object.values(obj||{}).some(v=>Number(v)!==0))set.add(k);return set.size;}
@@ -2413,12 +2437,7 @@ async function restoreBackupFile(file){
      return;
    }
 
-   const keepPlan=state.plan;
-   BACKUP_KEYS.forEach(k=>{
-     state[k]=normalizeBackupObject(payload.data[k]);
-   });
-   state.plan=keepPlan; // 契約プランはバックアップ対象外
-   persistState();
+   applyBackupPayloadToState(payload); // 契約プランはバックアップ対象外
 
    applyRankBase();
    syncBaseControls();
@@ -3649,10 +3668,7 @@ function undoLastRestore(){
  try{payload=JSON.parse(raw);}catch(e){alert("退避データを読み込めません");return;}
  if(!validateBackupPayload(payload)){alert("退避データの形式を確認できません");return;}
  if(!confirm("直前の復元前のPersonalデータへ戻します。よろしいですか？"))return;
- const keepPlan=state.plan;
- BACKUP_KEYS.forEach(k=>{state[k]=normalizeBackupObject(payload.data[k]);});
- state.plan=keepPlan;
- persistState();
+ applyBackupPayloadToState(payload);
  localStorage.removeItem("rarPreRestoreSnapshot");
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();renderRanking();renderSearch();updateMyPage();
  if(currentHorse)openHorse(currentHorse.no,previousScreen||"mypage");
