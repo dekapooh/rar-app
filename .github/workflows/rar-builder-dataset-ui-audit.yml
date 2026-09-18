@@ -42,6 +42,8 @@ jobs:
             "readiness.horse_count",
             "readiness.catalog_sha256",
             "/v1/consumer-data/dataset/",
+            "/v1/datasets/readiness/",
+            "採点準備を再確認",
           ]
           missing=[x for x in required if x not in html]
           if missing:
@@ -52,6 +54,7 @@ jobs:
             "record.dataset_key!=='2026:silk'",
             "Number(payload.horse_count)!==82",
             "dry.record_count!==82",
+            "use.disabled=!runtimeReady",
           ]
           leaked=[x for x in forbidden if x in html]
           if leaked:
