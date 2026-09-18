@@ -57,17 +57,18 @@ jobs:
           assert 'const fmt1=v=>Number(v).toFixed(1);' in s
           assert 'currentHorse.dream+"/25"' not in s
           assert 'currentHorse.roi+"/25"' not in s
-          assert '<script src="./system-master-sync.js' in s, "SYSTEM MASTER sync is not loaded by index.html"
-          assert 'standard:{rankLimit:Infinity' in s and 'premium:{rankLimit:Infinity' in s
-          assert 'const DATASET_PERSONAL_KEYS=[' in s
-          assert 'window.addEventListener("rar:dataset-changed"' in s
-          assert 'backupSchema:2' in s and 'datasetPersonal:' in s
-          assert 'rankLimit:82' not in s
-          assert 'HORSES.length===82' not in s
-          persist=re.search(r'function persistState\(\)\{(.*?)\n\}',s,re.S)
+          index_s=pathlib.Path("index.html").read_text(encoding="utf-8")
+          assert '<script src="./system-master-sync.js' in index_s, "SYSTEM MASTER sync is not loaded by index.html"
+          assert 'standard:{rankLimit:Infinity' in index_s and 'premium:{rankLimit:Infinity' in index_s
+          assert 'const DATASET_PERSONAL_KEYS=[' in index_s
+          assert 'window.addEventListener("rar:dataset-changed"' in index_s
+          assert 'backupSchema:2' in index_s and 'datasetPersonal:' in index_s
+          assert 'rankLimit:82' not in index_s
+          assert 'HORSES.length===82' not in index_s
+          persist=re.search(r'function persistState\(\)\{(.*?)\n\}',index_s,re.S)
           assert persist and 'localStorage.setItem("rarBetaState",JSON.stringify(state))' in persist.group(1)
           assert 'persistState();\n}' not in persist.group(1), "persistState recursion"
-          print(f"RAR100 preview audit PASS: {target} 82/82 + dataset multikey guards")
+          print(f"RAR100 preview audit PASS: {target} 82/82 + index dataset multikey guards")
           PY
       - name: JavaScript syntax audit
         run: |
