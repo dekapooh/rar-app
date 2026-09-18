@@ -1,0 +1,50 @@
+name: Silk 2025 Measurement Layout Probe
+
+on:
+  push:
+    branches:
+      - r2-temp-pdf-prodflow
+    paths:
+      - '.github/workflows/silk-2025-measurement-probe.yml'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PDF runtime
+        run: python -m pip install --quiet 'PyMuPDF==1.26.7'
+      - name: Fetch official measurement PDF
+        run: |
+          curl --fail --location --retry 3 --retry-delay 2 \
+            --user-agent 'RAR-Builder/1.0 (+official-source-validation)' \
+            'https://www2.silkhorseclub.jp/wp/wp-content/uploads/2025/07/scale_list_2025_boshu.pdf' \
+            -o /tmp/scale2025.pdf
+          sha256sum /tmp/scale2025.pdf
+          wc -c /tmp/scale2025.pdf
+      - name: Inspect text and word geometry
+        run: |
+          python - <<'PY'
+          import fitz, json, re
+          doc=fitz.open('/tmp/scale2025.pdf')
+          print('PAGE_COUNT=',doc.page_count)
+          for i in range(doc.page_count):
+              page=doc.load_page(i)
+              text=page.get_text('text') or ''
+              print('=== PAGE',i+1,'TEXT START ===')
+              for n,line in enumerate(text.splitlines()[:220],1):
+                  print(f'{n:03d}: {line!r}')
+              print('=== PAGE',i+1,'WORDS SAMPLE ===')
+              words=page.get_text('words')
+              # x0,y0,x1,y1,word,block,line,word_no
+              for w in words[:260]:
+                  print(json.dumps({
+                    'x0':round(w[0],1),'y0':round(w[1],1),
+                    'x1':round(w[2],1),'y1':round(w[3],1),
+                    't':w[4],'b':w[5],'l':w[6],'n':w[7]
+                  },ensure_ascii=False))
+          PY
