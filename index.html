@@ -2192,12 +2192,62 @@ dreamScenario=state.rankBaseScenario.dream;
 ivScenario=state.rankBaseScenario.iv;
 delete state.dreamScenario;
 delete state.ivScenario;
+
+const DATASET_PERSONAL_KEYS=[
+ "points","memos","favorites","excluded","finalists",
+ "invested","registeredNames","categoryPoints","smallPoints"
+];
+let activePersonalDatasetKey="2026:silk";
+function clonePersonalValue(v){
+ try{return structuredClone(v)}catch{return JSON.parse(JSON.stringify(v??{}))}
+}
+function normalizePersonalObject(v){return v&&typeof v==="object"&&!Array.isArray(v)?v:{}}
+function ensureDatasetPersonalStore(){
+ if(!state.datasetPersonal||typeof state.datasetPersonal!=="object"||Array.isArray(state.datasetPersonal))state.datasetPersonal={};
+ return state.datasetPersonal;
+}
+function syncActivePersonalBucket(){
+ const store=ensureDatasetPersonalStore();
+ const key=String(activePersonalDatasetKey||"2026:silk").trim().toLowerCase()||"2026:silk";
+ const bucket=normalizePersonalObject(store[key]);
+ for(const name of DATASET_PERSONAL_KEYS)bucket[name]=normalizePersonalObject(state[name]);
+ store[key]=bucket;
+ state.activePersonalDatasetKey=key;
+}
+function bindPersonalDataset(datasetKey,{seedCurrent=false}={}){
+ const key=String(datasetKey||"").trim().toLowerCase();
+ if(!/^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(key))throw new Error("invalid Personal dataset_key");
+ const store=ensureDatasetPersonalStore();
+ let bucket=normalizePersonalObject(store[key]);
+ const hasBucket=Object.keys(bucket).length>0;
+ if(!hasBucket){
+   bucket={};
+   for(const name of DATASET_PERSONAL_KEYS){
+     bucket[name]=seedCurrent?clonePersonalValue(normalizePersonalObject(state[name])):{};
+   }
+   store[key]=bucket;
+ }
+ for(const name of DATASET_PERSONAL_KEYS){
+   bucket[name]=normalizePersonalObject(bucket[name]);
+   state[name]=bucket[name];
+ }
+ activePersonalDatasetKey=key;
+ state.activePersonalDatasetKey=key;
+}
+function persistState(){
+ syncActivePersonalBucket();
+ persistState();
+}
+// Existing flat Personal data belongs to the completed legacy dataset.
+// This migrates it once without losing the user's current 2026 settings.
+bindPersonalDataset("2026:silk",{seedCurrent:true});
+
 const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914_R2";
 if(state.scoreArchitecture!==SCORE_ARCHITECTURE){
   state.categoryPoints={};
   state.smallPoints={};
   state.scoreArchitecture=SCORE_ARCHITECTURE;
-  localStorage.setItem("rarBetaState",JSON.stringify(state));
+  persistState();
 }
 const PLAN_RULES={
  free:{rankLimit:10,canOpenFilter:false,canFavoriteFilter:false,canCategoryToggle:false,canCategoryScores:false,canPriceRange:false,canExcludeHorse:false,pointLimit:10},
@@ -2368,7 +2418,7 @@ async function restoreBackupFile(file){
      state[k]=normalizeBackupObject(payload.data[k]);
    });
    state.plan=keepPlan; // 契約プランはバックアップ対象外
-   localStorage.setItem("rarBetaState",JSON.stringify(state));
+   persistState();
 
    applyRankBase();
    syncBaseControls();
@@ -2398,7 +2448,7 @@ async function restoreBackupFile(file){
 }
 
 function saveState(){
- if(!localStorage.getItem("rarPersistAsked")){localStorage.setItem("rarPersistAsked","1");requestPersistentStorage();}localStorage.setItem("rarBetaState",JSON.stringify(state)); updateMyPage();}
+ if(!localStorage.getItem("rarPersistAsked")){localStorage.setItem("rarPersistAsked","1");requestPersistentStorage();}persistState(); updateMyPage();}
 function selectedCats(){return [...document.querySelectorAll(".cat:checked")].map(x=>x.value)}
 function applyRankBase(){
  const rules=planRules();
@@ -3602,7 +3652,7 @@ function undoLastRestore(){
  const keepPlan=state.plan;
  BACKUP_KEYS.forEach(k=>{state[k]=normalizeBackupObject(payload.data[k]);});
  state.plan=keepPlan;
- localStorage.setItem("rarBetaState",JSON.stringify(state));
+ persistState();
  localStorage.removeItem("rarPreRestoreSnapshot");
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();renderRanking();renderSearch();updateMyPage();
  if(currentHorse)openHorse(currentHorse.no,previousScreen||"mypage");
