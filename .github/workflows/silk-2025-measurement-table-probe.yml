@@ -1,0 +1,56 @@
+name: Silk 2025 Measurement Table Probe
+
+on:
+  push:
+    branches:
+      - r2-temp-pdf-prodflow
+    paths:
+      - '.github/workflows/silk-2025-measurement-table-probe.yml'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet 'PyMuPDF==1.26.7'
+      - run: |
+          curl --fail --location --retry 3 \
+            'https://www2.silkhorseclub.jp/wp/wp-content/uploads/2025/07/scale_list_2025_boshu.pdf' \
+            -o /tmp/scale2025.pdf
+      - name: Probe tables and measurement columns
+        run: |
+          python - <<'PY'
+          import fitz, json, re
+          doc=fitz.open('/tmp/scale2025.pdf')
+          for i in range(doc.page_count):
+              page=doc[i]
+              print('=== PAGE',i+1,'size',page.rect.width,page.rect.height,'===')
+              tabs=page.find_tables()
+              print('TABLE_COUNT',len(tabs.tables))
+              for ti,t in enumerate(tabs.tables):
+                  print('TABLE',ti,'BBOX',t.bbox,'ROWS',t.row_count,'COLS',t.col_count)
+                  data=t.extract()
+                  for ri,row in enumerate(data[:8]):
+                      print('ROW',ri,json.dumps(row,ensure_ascii=False))
+                  print('LAST_ROWS')
+                  for ri,row in enumerate(data[-5:],start=max(0,len(data)-5)):
+                      print('ROW',ri,json.dumps(row,ensure_ascii=False))
+              words=page.get_text('words')
+              headers={}
+              for w in words:
+                  if w[4] in ('No.','募集馬','性別','生月日','体高','胸囲','管囲','体重','一口価格','預託予定廐舎'):
+                      headers.setdefault(w[4],[]).append((round(w[0],1),round(w[1],1),round(w[2],1),round(w[3],1)))
+              print('HEADERS',json.dumps(headers,ensure_ascii=False))
+              # numeric words in right half, useful if table detector fails
+              nums=[]
+              for w in words:
+                  t=w[4]
+                  if w[0]>300 and re.fullmatch(r'\d{2,3}(?:\.\d+)?',t):
+                      nums.append((round(w[0],1),round(w[1],1),t))
+              print('RIGHT_NUMERIC_COUNT',len(nums))
+              print('RIGHT_NUMERIC_HEAD',json.dumps(nums[:30],ensure_ascii=False))
+          PY
