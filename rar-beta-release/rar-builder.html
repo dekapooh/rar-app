@@ -24,7 +24,7 @@
 </div>
 </div>
 <div id="ownerWorkspace" class="hidden">
-<div class="card"><h2>公式データ取得</h2><p class="muted">端末へPDFを保存せず、RAR Backendが登録済みの公式ソースから直接取得してR2へ一時保存します。</p><div class="score-actions"><button id="importOfficialSilk2025" class="primary" type="button">2025 シルク公式データを取得</button><span id="officialImportStatus" class="disabled-note">未取得</span></div></div>
+<div class="card"><h2>公式データ取得</h2><p class="muted">端末へPDFを保存せず、RAR Backendが登録済みの公式ソースから直接取得してR2へ一時保存します。</p><div class="score-actions"><button id="importOfficialSilk2025" class="primary" type="button">2025 シルクを開始（公式データ取得）</button><span id="officialImportStatus" class="disabled-note">未取得</span></div></div>
 <div class="card"><h2>協力者からの採点依頼</h2><p class="muted">Cloudflare R2に一時保存された実PDFをOwnerが受信・再照合し、No.1〜10から10頭ずつ手動採点します。</p><div class="score-actions"><button id="reloadOwnerSubmissions" type="button">再読み込み</button></div><div id="ownerSubmissions" class="small" style="margin-top:12px">読み込み中…</div></div>
 <div class="card"><h2>1. 採点ソースPDF</h2><p>公式募集カタログPDFと公式測尺PDFの2ファイルを選択してください。両方の照合が完了すると採点できます。</p>
 <div class="source-grid">
@@ -152,14 +152,19 @@ async function activateSubmissionForScoring(record){
  if(!datasetKey)throw new Error('dataset_keyが未確定です');
  const readiness=await api('/v1/datasets/readiness/'+encodeURIComponent(datasetKey));
  record.dataset_readiness=readiness;
- if(readiness.official_scoring_ready!==true){
-   const missing=readiness.missing_components||[];
-   throw new Error('このdatasetはまだ採点未対応です｜'+datasetKey+(missing.length?'｜不足 '+missing.join(', '):''));
+ if(readiness.potential_scoring_ready!==true){
+   const missing=readiness.missing_potential_components||[];
+   throw new Error('このdatasetはPotential開始前の検証が未完了です｜'+datasetKey+(missing.length?'｜不足 '+missing.join(', '):''));
  }
  const expectedHorseCount=Number(readiness.horse_count||(datasetKey==='2026:silk'?82:0));
- const expectedCatalogSha=String(readiness.catalog_sha256||(datasetKey==='2026:silk'?KNOWN_SHA:'')).toLowerCase();
+ const sourceLockMode=String(readiness.source_lock_mode||'');
+ const expectedCatalogSha=String(
+   readiness.catalog_sha256 ||
+   (sourceLockMode==='SUBMISSION_BOUND_OFFICIAL_URL'?c.sha256:'') ||
+   (datasetKey==='2026:silk'?KNOWN_SHA:'')
+ ).toLowerCase();
  if(!Number.isInteger(expectedHorseCount)||expectedHorseCount<=0||expectedHorseCount>500||!/^[a-f0-9]{64}$/.test(expectedCatalogSha)){
-   throw new Error('dataset readinessの募集頭数/SHAが未確定です｜'+datasetKey);
+   throw new Error('dataset readinessの募集頭数/ソース固定条件が未確定です｜'+datasetKey);
  }
  if(String(c.sha256||'').toLowerCase()!==expectedCatalogSha||Number(c.page_count)<=0)throw new Error('dataset事前照合NG｜'+datasetKey+'｜catalog SHA/profile不一致');
  activeHorseCount=expectedHorseCount;activeDatasetKey=datasetKey;activeDatasetReadiness=readiness;
@@ -167,32 +172,41 @@ async function activateSubmissionForScoring(record){
  $('busy').classList.remove('hidden');
  try{
   await api('/v1/submissions/'+encodeURIComponent(sid)+'/claim',{method:'POST',body:{}});
-  const [cu,mu]=await Promise.all([
-    api('/v1/submissions/'+encodeURIComponent(sid)+'/download-url/catalog'),
-    api('/v1/submissions/'+encodeURIComponent(sid)+'/download-url/measurement')
-  ]);
-  const [cr,mr]=await Promise.all([fetch(cu.url,{cache:'no-store'}),fetch(mu.url,{cache:'no-store'})]);
-  if(!cr.ok||!mr.ok)throw new Error('R2の実PDFを受信できませんでした');
-  const [catalogBuffer,measureBuffer]=await Promise.all([cr.arrayBuffer(),mr.arrayBuffer()]);
-  const [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
-  const [catalogPdf,measurePdf]=await Promise.all([
-    pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise,
-    pdfjsLib.getDocument({data:new Uint8Array(measureBuffer.slice(0))}).promise
-  ]);
-  if(catalogSha!==String(c.sha256||'').toLowerCase()||catalogSha!==expectedCatalogSha||catalogPdf.numPages!==Number(c.page_count))throw new Error('受信カタログPDFのSHA/ページ数が提出情報と一致しません');
-  if(measureSha!==String(m.sha256||'').toLowerCase()||measurePdf.numPages!==Number(m.page_count))throw new Error('受信測尺PDFのSHA/ページ数が提出情報と一致しません');
-  catalogContext={filename:c.original_name||'catalog.pdf',hash:catalogSha,pages:catalogPdf.numPages,batch:'submission-'+sid,known:true,buffer:catalogBuffer,datasetKey};
-  let v;
-  if(datasetKey==='2026:silk'){
-    v=await validateMeasurement(measureBuffer,Number(m.name_coverage||0));
-    if(!v.ok)throw new Error('受信測尺PDFを2026:silk公式測尺表として照合できません');
+  const serverSideOfficial=record.source_mode==='OFFICIAL_URL_IMPORT';
+  let catalogSha=String(c.sha256||'').toLowerCase(),measureSha=String(m.sha256||'').toLowerCase();
+  let catalogPages=Number(c.page_count||0),measurePages=Number(m.page_count||0);
+  let catalogBuffer=null,measureBuffer=null,v;
+  if(serverSideOfficial){
+    if(catalogSha!==expectedCatalogSha||catalogPages<=0||measurePages<=0)throw new Error('公式R2提出のSHA/ページ情報が不正です');
+    v={ok:true,pages:measurePages,coverage:expectedHorseCount,headerOk:null,verifiedBy:'SERVER_R2_SUBMISSION_SHA'};
   }else{
-    v={ok:true,pages:measurePdf.numPages,coverage:expectedHorseCount,headerOk:null,verifiedBy:'SERVER_DATASET_PARSER_GATE'};
+    const [cu,mu]=await Promise.all([
+      api('/v1/submissions/'+encodeURIComponent(sid)+'/download-url/catalog'),
+      api('/v1/submissions/'+encodeURIComponent(sid)+'/download-url/measurement')
+    ]);
+    const [cr,mr]=await Promise.all([fetch(cu.url,{cache:'no-store'}),fetch(mu.url,{cache:'no-store'})]);
+    if(!cr.ok||!mr.ok)throw new Error('R2の実PDFを受信できませんでした');
+    [catalogBuffer,measureBuffer]=await Promise.all([cr.arrayBuffer(),mr.arrayBuffer()]);
+    [catalogSha,measureSha]=await Promise.all([sha256(catalogBuffer),sha256(measureBuffer)]);
+    const [catalogPdf,measurePdf]=await Promise.all([
+      pdfjsLib.getDocument({data:new Uint8Array(catalogBuffer.slice(0))}).promise,
+      pdfjsLib.getDocument({data:new Uint8Array(measureBuffer.slice(0))}).promise
+    ]);
+    catalogPages=catalogPdf.numPages;measurePages=measurePdf.numPages;
+    if(catalogSha!==String(c.sha256||'').toLowerCase()||catalogSha!==expectedCatalogSha||catalogPages!==Number(c.page_count))throw new Error('受信カタログPDFのSHA/ページ数が提出情報と一致しません');
+    if(measureSha!==String(m.sha256||'').toLowerCase()||measurePages!==Number(m.page_count))throw new Error('受信測尺PDFのSHA/ページ数が提出情報と一致しません');
+    if(datasetKey==='2026:silk'){
+      v=await validateMeasurement(measureBuffer,Number(m.name_coverage||0));
+      if(!v.ok)throw new Error('受信測尺PDFを2026:silk公式測尺表として照合できません');
+    }else{
+      v={ok:true,pages:measurePages,coverage:expectedHorseCount,headerOk:null,verifiedBy:'SERVER_DATASET_PARSER_GATE'};
+    }
   }
-  measurementContext={filename:m.original_name||'measurements.pdf',hash:measureSha,buffer:measureBuffer,...v};
+  catalogContext={filename:c.original_name||'catalog.pdf',hash:catalogSha,pages:catalogPages,batch:'submission-'+sid,known:true,buffer:catalogBuffer,datasetKey,serverSide:serverSideOfficial};
+  measurementContext={filename:m.original_name||'measurements.pdf',hash:measureSha,buffer:measureBuffer,...v,serverSide:serverSideOfficial};
   activeSubmissionId=sid;activeSubmissionRecord=record;
   $('fileName').textContent=catalogContext.filename;$('pageCount').textContent=catalogContext.pages;$('sha').textContent=catalogContext.hash;$('batchId').textContent=catalogContext.batch;
-  $('intakeStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('yearResult').innerHTML='<span class="ok">'+esc(record.season_year??'—')+'</span>';$('profileResult').innerHTML='<span class="ok">'+esc(record.club_name||datasetKey)+'</span>';$('candidateResult').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'頭</span>';$('missingResult').innerHTML='<span class="ok">0</span>';$('pageMapResult').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'</span>';
+  $('intakeStatus').innerHTML='<span class="ok">AUTO_PASS｜R2公式ソース固定済み</span>';$('yearResult').innerHTML='<span class="ok">'+esc(record.season_year??'—')+'</span>';$('profileResult').innerHTML='<span class="ok">'+esc(record.club_name||datasetKey)+'</span>';$('candidateResult').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'頭</span>';$('missingResult').innerHTML='<span class="ok">0</span>';$('pageMapResult').innerHTML='<span class="ok">'+activeHorseCount+'/'+activeHorseCount+'</span>';
   $('measureFileName').textContent=measurementContext.filename;$('measurePageCount').textContent=measurementContext.pages;$('measureSha').textContent=measurementContext.hash;$('measureStatus').innerHTML='<span class="ok">AUTO_PASS｜R2実PDF受信済み</span>';$('measureCoverage').textContent=measurementContext.coverage+'/'+activeHorseCount+'頭';
   $('nextState').innerHTML='<span class="ok">実PDF再照合完了 → Fresh run確認中</span>';$('pdfResult').classList.remove('hidden');
   await restoreCleanProgress();window.scrollTo({top:$('ownerWorkspace').offsetTop,behavior:'smooth'});
@@ -205,10 +219,21 @@ async function importOfficialDataset(datasetKey){
  try{
   const result=await api('/v1/submissions/import-official/'+encodeURIComponent(datasetKey),{method:'POST',body:{}});
   if(result.status!=='READY_FOR_OWNER')throw new Error('公式データ取得の完了状態を確認できません');
+  const rd=result.dataset_readiness||{},identity=result.dataset_identity||{};
   if(status){
-   const r=result.dataset_readiness||{};
-   status.className=r.official_scoring_ready===true?'ok':'review';
-   status.textContent='取得完了｜'+datasetKey+'｜'+(r.official_scoring_ready===true?'READY':'VALIDATION_REQUIRED');
+   status.className=rd.potential_scoring_ready===true?'ok':'review';
+   status.textContent='取得完了｜'+datasetKey+'｜'+(rd.official_scoring_ready===true?'FINAL READY':(rd.potential_scoring_ready===true?'Potential READY':'VALIDATION_REQUIRED'));
+  }
+  if(rd.potential_scoring_ready===true){
+   await activateSubmissionForScoring({
+     ...result,
+     status:'READY_FOR_OWNER',
+     dataset_key:identity.dataset_key||datasetKey,
+     season_year:identity.season_year,
+     club_name:identity.club_name,
+     dataset_identity_status:identity.status,
+   });
+   if(status){status.className='ok';status.textContent='2025シルク採点セット完了｜下の採点ボタンから開始できます'}
   }
   await loadOwnerSubmissions();
   return result;
@@ -229,15 +254,16 @@ async function loadOwnerSubmissions(){
   const catalog=document.createElement('div');catalog.className='small';catalog.textContent='カタログ｜'+(r.catalog?.original_name||'—')+'｜'+(r.catalog?.page_count||'—')+'p｜SHA '+String(r.catalog?.sha256||'—').slice(0,16)+'…';
   const measure=document.createElement('div');measure.className='small';measure.textContent='測尺｜'+(r.measurements?.original_name||'—')+'｜R2一時保管';
   const identityOk=r.dataset_identity_status==='AUTO_PASS'&&!!r.dataset_key;
-  const runtimeReady=r.dataset_readiness?.official_scoring_ready===true;
+  const potentialReady=r.dataset_readiness?.potential_scoring_ready===true;
+  const finalReady=r.dataset_readiness?.official_scoring_ready===true;
   const dataset=document.createElement('div');dataset.className=(identityOk?'ok':'review')+' small';
   dataset.textContent='dataset｜'+(r.season_year??'未確定')+'｜'+(r.club_name||'未確定')+'｜'+(r.dataset_key||'—')+'｜'+(identityOk?'識別PASS':'識別REVIEW');
   const missing=Array.isArray(r.dataset_readiness?.missing_components)?r.dataset_readiness.missing_components:[];
-  const pre=document.createElement('div');pre.className=(runtimeReady?'ok':'review')+' small';
-  pre.textContent='採点準備｜'+(runtimeReady?'READY':'VALIDATION_REQUIRED')+(missing.length?'｜'+missing.join(', '):'');
+  const pre=document.createElement('div');pre.className=(potentialReady?'ok':'review')+' small';
+  pre.textContent='採点準備｜'+(finalReady?'FINAL READY':(potentialReady?'Potential READY｜Final接続中':'VALIDATION_REQUIRED'))+(potentialReady?'':(missing.length?'｜'+missing.join(', '):''));
   const actions=document.createElement('div');actions.className='submission-actions';
   const use=document.createElement('button');use.type='button';use.className='primary';
-  use.textContent=runtimeReady?'実PDFを受信して採点にセット':'採点準備を再確認';
+  use.textContent=potentialReady?'実PDFを受信してPotentialにセット':'採点準備を再確認';
   use.disabled=false;
   use.onclick=async()=>{
    use.disabled=true;
@@ -343,9 +369,12 @@ async function restoreCleanProgress(){
  refreshScoreReady();
 }
 function refreshScoreReady(){
- const sourcesReady=!!activeSubmissionId&&!!catalogContext?.known&&!!catalogContext?.buffer&&!!measurementContext?.ok&&!!measurementContext?.buffer;
+ const serverSide=activeSubmissionRecord?.source_mode==='OFFICIAL_URL_IMPORT';
+ const sourcesReady=!!activeSubmissionId&&!!catalogContext?.known&&!!measurementContext?.ok&&(serverSide||(!!catalogContext?.buffer&&!!measurementContext?.buffer));
  const finalReady=!!latestFinalPayload;
- $('scoreBtn').disabled=!sourcesReady||finalReady;
+ const finalStageReady=activeDatasetReadiness?.official_scoring_ready===true;
+ const potentialComplete=nextScoreStart===null;
+ $('scoreBtn').disabled=!sourcesReady||finalReady||(potentialComplete&&!finalStageReady);
  $('scoreReady').className=sourcesReady?'ready':'disabled-note';
  if(!sourcesReady){
    $('scoreReady').textContent='R2提出のカタログPDFと測尺PDFを採点にセットしてください';
@@ -353,7 +382,10 @@ function refreshScoreReady(){
  }else if(finalReady){
    $('scoreReady').textContent='Fresh '+activeHorseCount+'頭の最終採点が完了しました';
    $('scoreBtn').textContent='採点完了';
- }else if(nextScoreStart===null){
+ }else if(potentialComplete&&!finalStageReady){
+   $('scoreReady').textContent='Fresh Potential '+activeHorseCount+'頭完了｜Pedigree・適性の接続待ち';
+   $('scoreBtn').textContent='Potential完了';
+ }else if(potentialComplete){
    $('scoreReady').textContent='Fresh Potential '+activeHorseCount+'頭完了｜横断QA後に最終採点を確定します';
    $('scoreBtn').textContent='最終採点を確定';
  }else{
@@ -456,11 +488,15 @@ async function runScoring(){
  if($('scoreBtn').disabled)return;
  $('scoreBtn').disabled=true;$('scoreCard').classList.remove('hidden');
  try{
-  if(!activeSubmissionId||!catalogContext?.buffer||!measurementContext?.buffer)throw new Error('R2提出の実PDFを採点にセットしてください');
-  if(nextScoreStart===null){await finalizeCleanScoring();return}
+  const serverSide=activeSubmissionRecord?.source_mode==='OFFICIAL_URL_IMPORT';
+  if(!activeSubmissionId||(!serverSide&&(!catalogContext?.buffer||!measurementContext?.buffer)))throw new Error('R2提出の採点ソースをセットしてください');
+  if(nextScoreStart===null){
+    if(activeDatasetReadiness?.official_scoring_ready===true){await finalizeCleanScoring();return}
+    throw new Error('Potentialは完了済みです。Pedigree・適性の接続完了後に最終採点を確定します');
+  }
   const start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,activeHorseCount);
   $('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' Fresh前処理中…</span>';
-  const makeBatchForm=()=>{const f=new FormData();f.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');f.append('measurement_pdf',new Blob([measurementContext.buffer],{type:'application/pdf'}),measurementContext.filename||'measurements.pdf');f.append('batch_start',String(start));f.append('batch_end',String(end));f.append('submission_id',activeSubmissionId);return f};
+  const makeBatchForm=()=>{const f=new FormData();if(!serverSide){f.append('catalog_pdf',new Blob([catalogContext.buffer],{type:'application/pdf'}),catalogContext.filename||'catalog.pdf');f.append('measurement_pdf',new Blob([measurementContext.buffer],{type:'application/pdf'}),measurementContext.filename||'measurements.pdf')}f.append('batch_start',String(start));f.append('batch_end',String(end));f.append('submission_id',activeSubmissionId);return f};
   let ready=null,events=[];
   for(let attempt=1;attempt<=2&&!ready;attempt++){
     if(attempt>1)$('scoreStatus').innerHTML='<span class="review">No.'+start+'〜'+end+' batch_ready再接続中…</span>';
@@ -494,8 +530,14 @@ async function runScoring(){
     const nend=Math.min(nextScoreStart+9,activeHorseCount);$('scoreStatus').innerHTML='<span class="ok">No.'+start+'〜'+end+' Fresh Potential完了</span>';
     $('scoreBatchStatus').textContent=potentialProcessed+' / '+activeHorseCount+'｜次回 No.'+nextScoreStart+'〜'+nend;$('nextState').innerHTML='<span class="ok">旧保存値未参照｜次ロット待ち</span>';
   }else{
-    $('scoreStatus').innerHTML='<span class="ok">Fresh Potential '+activeHorseCount+'/'+activeHorseCount+'完了</span>';$('scoreBatchStatus').textContent=activeHorseCount+' / '+activeHorseCount+'｜横断QAへ';
-    await finalizeCleanScoring();
+    $('scoreStatus').innerHTML='<span class="ok">Fresh Potential '+activeHorseCount+'/'+activeHorseCount+'完了</span>';
+    if(activeDatasetReadiness?.official_scoring_ready===true){
+      $('scoreBatchStatus').textContent=activeHorseCount+' / '+activeHorseCount+'｜横断QAへ';
+      await finalizeCleanScoring();
+    }else{
+      $('scoreBatchStatus').textContent=activeHorseCount+' / '+activeHorseCount+'｜Potential完了';
+      $('nextState').innerHTML='<span class="ok">2025 Potential完了｜Pedigree・適性接続待ち</span>';
+    }
   }
   localStorage.setItem('rar_builder_last_batch',JSON.stringify({submission_id:activeSubmissionId,run_id:activeRunId,evaluation_scope:'FRESH_SUBMISSION_SCOPED',catalog_sha256:catalogContext.hash,processed:potentialProcessed,next_score_start:nextScoreStart,status:latestFinalPayload?'FROZEN_FINAL':(nextScoreStart===null?'POTENTIAL_COMPLETE':'POTENTIAL_PARTIAL'),updated_at:now()}));
  }catch(err){$('scoreStatus').innerHTML='<span class="hold">ERROR</span>';try{await restoreCleanProgress();$('scoreCount').textContent=potentialProcessed+'/'+activeHorseCount+'頭'}catch{}fail(err)}finally{refreshScoreReady()}
