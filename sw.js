@@ -2,7 +2,7 @@ const CACHE_NAME="rar-rc66-public-beta-v13-dataset-multikey";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=20260917"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=dataset-selectors-20260918"><\/script>';
 function injectSystemMasterSync(html){
   if(html.includes('system-master-sync.js')) return html;
   return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;
