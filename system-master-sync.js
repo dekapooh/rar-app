@@ -341,14 +341,8 @@
       }
     }
 
-    for (const fn of ['syncBaseControls', 'syncScenarioButtons', 'syncBaseScenarioButtons', 'renderRanking', 'renderSearch', 'updateMyPage', 'updateAppDiagnostics']) {
-      try {
-        if (typeof globalThis[fn] === 'function') globalThis[fn]();
-        else if (typeof eval(fn) === 'function') eval(fn)();
-      } catch (e) {
-        console.warn(`[RAR SYSTEM MASTER] ${fn} refresh skipped`, e);
-      }
-    }
+    // Publish dataset metadata before refreshing UI so every renderer sees
+    // the same dataset identity/count as the HORSES array it is rendering.
     window.__RAR_SYSTEM_MASTER__ = {
       version_id: data.version_id,
       payload_sha256: data.payload_sha256,
@@ -361,6 +355,14 @@
       club_name: data.club_name,
       dataset_key: data.dataset_key
     };
+    for (const fn of ['syncBaseControls', 'syncScenarioButtons', 'syncBaseScenarioButtons', 'renderRanking', 'renderSearch', 'updateMyPage', 'updateAppDiagnostics']) {
+      try {
+        if (typeof globalThis[fn] === 'function') globalThis[fn]();
+        else if (typeof eval(fn) === 'function') eval(fn)();
+      } catch (e) {
+        console.warn(`[RAR SYSTEM MASTER] ${fn} refresh skipped`, e);
+      }
+    }
   }
 
   function formatTokyo(iso) {
