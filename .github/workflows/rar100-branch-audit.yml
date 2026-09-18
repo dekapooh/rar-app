@@ -103,6 +103,9 @@ jobs:
             "window.__RAR_SYSTEM_MASTER__",
             "record_count: data.record_count",
             "dataset_key: data.dataset_key",
+            "const API_URL = 'https://rar-project-5a27e.web.app/v1/consumer-data/current'",
+            "dataset_key: '2026:silk'",
+            "sync failed; static fallback kept",
           ]
           missing=[x for x in required if x not in s]
           assert not missing, f"dataset selector runtime missing: {missing}"
