@@ -3712,6 +3712,12 @@ window.addEventListener("rar:dataset-before-apply",e=>{
  persistState();
  currentHorse=null;
 });
+window.addEventListener("rar:dataset-apply-failed",e=>{
+ const rollbackKey=String(e.detail?.dataset_key||"").trim().toLowerCase();
+ if(!rollbackKey || rollbackKey===activePersonalDatasetKey)return;
+ bindPersonalDataset(rollbackKey);
+ persistState();
+});
 window.addEventListener("rar:dataset-changed",()=>{
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();syncScenarioButtons();syncBaseScenarioButtons();
  renderRanking();renderSearch();updateMyPage();updateAppDiagnostics();
