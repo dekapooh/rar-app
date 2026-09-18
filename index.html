@@ -2383,7 +2383,7 @@ function applyBackupPayloadToState(payload){
  const keepPlan=state.plan;
  const currentKey=activePersonalDatasetKey;
  const schema=Number(payload.backupSchema||payload.version||1);
- BACKUP_KEYS.forEach(k=>{state[k]=normalizeBackupObject(payload.data?.[k]);});
+ for(const k of ["rankBase","filterBase","priceRange"])state[k]=normalizeBackupObject(payload.data?.[k]);
  if(schema>=2){
    state.datasetPersonal=clonePersonalValue(normalizeBackupObject(payload.datasetPersonal));
    const backupKey=String(payload.activeDatasetKey||currentKey).trim().toLowerCase();
@@ -2394,7 +2394,13 @@ function applyBackupPayloadToState(payload){
    }
    bindPersonalDataset(currentKey);
  }else{
-   syncActivePersonalBucket();
+   // Schema 1 predates multi-dataset support, so its horse-number keyed
+   // Personal data can only belong to the completed 2026 Silk dataset.
+   const store=ensureDatasetPersonalStore();
+   const legacyBucket={};
+   for(const name of DATASET_PERSONAL_KEYS)legacyBucket[name]=clonePersonalValue(normalizeBackupObject(payload.data?.[name]));
+   store["2026:silk"]=legacyBucket;
+   bindPersonalDataset(currentKey);
  }
  state.plan=keepPlan;
  persistState();
