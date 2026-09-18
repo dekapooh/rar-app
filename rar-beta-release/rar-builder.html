@@ -147,10 +147,13 @@ async function confirmDeleteSubmission(){
 async function activateSubmissionForScoring(record){
  const c=record.catalog||{},m=record.measurements||{},sid=record.submission_id;
  if(!sid)throw new Error('submission_idがありません');
- const readiness=record.dataset_readiness||{},datasetKey=String(record.dataset_key||'').trim().toLowerCase();
- if(!datasetKey||readiness.official_scoring_ready!==true){
+ const datasetKey=String(record.dataset_key||'').trim().toLowerCase();
+ if(!datasetKey)throw new Error('dataset_keyが未確定です');
+ const readiness=await api('/v1/datasets/readiness/'+encodeURIComponent(datasetKey));
+ record.dataset_readiness=readiness;
+ if(readiness.official_scoring_ready!==true){
    const missing=readiness.missing_components||[];
-   throw new Error('このdatasetはまだ採点未対応です｜'+(datasetKey||'未確定')+(missing.length?'｜不足 '+missing.join(', '):''));
+   throw new Error('このdatasetはまだ採点未対応です｜'+datasetKey+(missing.length?'｜不足 '+missing.join(', '):''));
  }
  const expectedHorseCount=Number(readiness.horse_count||(datasetKey==='2026:silk'?82:0));
  const expectedCatalogSha=String(readiness.catalog_sha256||(datasetKey==='2026:silk'?KNOWN_SHA:'')).toLowerCase();
@@ -215,9 +218,19 @@ async function loadOwnerSubmissions(){
   pre.textContent='採点準備｜'+(runtimeReady?'READY':'VALIDATION_REQUIRED')+(missing.length?'｜'+missing.join(', '):'');
   const actions=document.createElement('div');actions.className='submission-actions';
   const use=document.createElement('button');use.type='button';use.className='primary';
-  use.textContent=runtimeReady?'実PDFを受信して採点にセット':'dataset検証待ち';
-  use.disabled=!runtimeReady;
-  use.onclick=async()=>{use.disabled=true;try{await activateSubmissionForScoring(r)}catch(e){fail(e)}finally{use.disabled=!runtimeReady}};
+  use.textContent=runtimeReady?'実PDFを受信して採点にセット':'採点準備を再確認';
+  use.disabled=false;
+  use.onclick=async()=>{
+   use.disabled=true;
+   try{
+    await activateSubmissionForScoring(r);
+   }catch(e){
+    fail(e);
+    await loadOwnerSubmissions().catch(()=>{});
+   }finally{
+    if(document.body.contains(use))use.disabled=false;
+   }
+  };
   const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='削除';del.onclick=()=>requestDeleteSubmission(r);
   actions.append(use,del);card.append(who,when,dataset,catalog,measure,pre,actions);box.append(card);
  }
