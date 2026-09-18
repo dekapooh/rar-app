@@ -3704,19 +3704,17 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
 });
 
 window.addEventListener("rar:dataset-selection-requested",()=>persistState());
-window.addEventListener("rar:dataset-changed",e=>{
+window.addEventListener("rar:dataset-before-apply",e=>{
  const nextKey=String(e.detail?.dataset_key||"").trim().toLowerCase();
- if(!nextKey)return;
- const hadCurrentHorse=!!currentHorse;
- if(nextKey!==activePersonalDatasetKey){
-   persistState();
-   bindPersonalDataset(nextKey);
-   persistState();
-   currentHorse=null;
- }
+ if(!nextKey || nextKey===activePersonalDatasetKey)return;
+ persistState();
+ bindPersonalDataset(nextKey);
+ persistState();
+ currentHorse=null;
+});
+window.addEventListener("rar:dataset-changed",()=>{
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();syncScenarioButtons();syncBaseScenarioButtons();
  renderRanking();renderSearch();updateMyPage();updateAppDiagnostics();
- if(hadCurrentHorse && typeof showScreen==="function")showScreen("ranking");
 });
 
 applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syncBaseScenarioButtons(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
