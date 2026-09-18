@@ -402,6 +402,10 @@
       return window.__RAR_SYSTEM_MASTER__;
     } catch (e) {
       console.error('[RAR SYSTEM MASTER] dataset switch failed; active dataset kept', e);
+      window.dispatchEvent(new CustomEvent('rar:dataset-apply-failed', { detail: {
+        dataset_key: activeDatasetKey,
+        failed_dataset_key: requested
+      } }));
       renderDatasetSelectorOptions(null, activeDatasetKey);
       setStatus('切替失敗｜現在データを継続', 'error');
       return null;
