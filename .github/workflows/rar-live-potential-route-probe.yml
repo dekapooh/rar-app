@@ -1,0 +1,35 @@
+name: RAR Live Potential Route Probe
+
+on:
+  push:
+    branches:
+      - r2-temp-pdf-prodflow
+    paths:
+      - '.github/workflows/rar-live-potential-route-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe Firebase to Cloud Run routes
+        run: |
+          set -eu
+          BASE='https://rar-project-5a27e.web.app'
+          probe_get () {
+            url="$1"
+            code="$(curl -sS -o /tmp/body -w '%{http_code}' "$BASE$url" || true)"
+            echo "GET $url => $code"
+            cat /tmp/body || true
+            echo
+          }
+          probe_post () {
+            url="$1"
+            code="$(curl -sS -o /tmp/body -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{}' "$BASE$url" || true)"
+            echo "POST $url => $code"
+            cat /tmp/body || true
+            echo
+          }
+          probe_get '/v1/potential/batch/progress/test-run-id'
+          probe_get '/v1/potential/batch/progress-by-catalog/testsha?submission_id=test'
+          probe_post '/v1/potential/batch/test-job/horse/1'
+          probe_post '/v1/potential/batch/crosscheck-v2/test-run-id'
