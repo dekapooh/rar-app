@@ -1,0 +1,69 @@
+name: RAR Objective v1 2026 Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-objective-v1-2026-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          set -euo pipefail
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-gcp.json
+          gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
+          gcloud config set project rar-project-5a27e --quiet
+
+      - name: Inspect live Objective v1 source for 2026 reuse
+        run: |
+          set -euo pipefail
+          SERVICE=rar-builder-runtime
+          REGION=asia-northeast1
+          SA="574526681741-compute@developer.gserviceaccount.com"
+          IMAGE="$(gcloud run services describe "$SERVICE" --region="$REGION" --format='value(spec.template.spec.containers[0].image)')"
+          echo "LIVE_IMAGE=$IMAGE"
+          gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
+          docker pull "$IMAGE" >/dev/null
+
+          echo "=== MATCHING FILES ==="
+          docker run --rm --entrypoint sh "$IMAGE" -lc '
+            find /app -type f \( -name "*.py" -o -name "*.json" \) 2>/dev/null |
+              grep -Ei "suit|objective|final|career|dream|roi|dataset|silk_2025|silk_2026" |
+              sort | head -400
+          '
+
+          echo "=== SUITABILITY REFERENCES ==="
+          docker run --rm --entrypoint sh "$IMAGE" -lc '
+            grep -R -n -E "Objective Suitability|objective_suit|suitability|preferred_surfaces|distance_min_m|distance_max_m|growth_type|target_races"               /app/builder_runtime /app/builder_app/python /app/engine /app/rules /app/data 2>/dev/null |
+              head -800 || true
+          '
+
+          echo "=== DATASET ROUTING REFERENCES ==="
+          docker run --rm --entrypoint sh "$IMAGE" -lc '
+            grep -R -n -E "2025:silk|2026:silk|dataset_key|OFFICIAL_URL_IMPORT|final-score|final_score"               /app/builder_runtime /app/builder_app/python 2>/dev/null |
+              head -1000 || true
+          '
+
+          echo "=== CANDIDATE PYTHON SOURCES ==="
+          docker run --rm --entrypoint sh "$IMAGE" -lc '
+            files=$(grep -R -l -E "preferred_surfaces|distance_min_m|objective_suit|suitability" /app/builder_runtime /app/builder_app/python 2>/dev/null | head -20 || true)
+            for f in $files; do
+              echo "----- FILE:$f -----"
+              sed -n "1,420p" "$f"
+            done
+          '
+
+          echo "RESULT=PASS_OBJECTIVE_V1_2026_SOURCE_AUDIT"
