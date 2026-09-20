@@ -16,6 +16,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: google-github-actions/setup-gcloud@v2
+
       - name: Prepare credential
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
@@ -24,36 +25,52 @@ jobs:
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-gcp.json
           gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
           gcloud config set project rar-project-5a27e --quiet
-      - name: Inspect runtime services and recent HTTP activity
+
+      - name: Inspect live Cloud Run limits
         run: |
           set -euo pipefail
-          echo "=== SERVICES ==="
           for svc in rar-builder-runtime rar-potential-runtime; do
-            echo "SERVICE=$svc"
-            gcloud run services describe "$svc" --region=asia-northeast1 --project=rar-project-5a27e \
-              --format='value(status.latestReadyRevisionName,status.conditions[0].status,status.url)' || true
+            echo "=== SERVICE=$svc ==="
+            gcloud run services describe "$svc"               --region=asia-northeast1               --project=rar-project-5a27e               --format='yaml(status.latestReadyRevisionName,status.url,spec.template.spec.timeoutSeconds,spec.template.spec.containerConcurrency,spec.template.spec.containers[0].resources.limits)'
           done
-          echo "=== BUILDER RECENT POTENTIAL HTTP ==="
-          gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="rar-builder-runtime" AND httpRequest.requestUrl:"/v1/potential/"' \
-            --project=rar-project-5a27e --freshness=20m --limit=50 --order=desc \
-            --format='csv[no-heading](timestamp,httpRequest.requestMethod,httpRequest.status,httpRequest.latency,httpRequest.requestUrl)' || true
-          echo "=== HEAVY RECENT HTTP ==="
-          gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="rar-potential-runtime"' \
-            --project=rar-project-5a27e --freshness=20m --limit=50 --order=desc \
-            --format='csv[no-heading](timestamp,httpRequest.requestMethod,httpRequest.status,httpRequest.latency,httpRequest.requestUrl)' || true
-          echo "=== BUILDER ERROR LOGS ==="
-          gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="rar-builder-runtime" AND severity>=ERROR' \
-            --project=rar-project-5a27e --freshness=20m --limit=30 --order=desc \
-            --format='value(timestamp,severity,textPayload)' || true
-          echo "=== HEAVY ERROR LOGS ==="
-          gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="rar-potential-runtime" AND severity>=ERROR' \
-            --project=rar-project-5a27e --freshness=20m --limit=30 --order=desc \
-            --format='value(timestamp,severity,textPayload)' || true
-          echo "=== FIREBASE ADMIN PROJECT ROLES ==="
-          gcloud projects get-iam-policy rar-project-5a27e \
-            --flatten='bindings[].members' \
-            --filter='bindings.members:firebase-adminsdk-fbsvc@rar-project-5a27e.iam.gserviceaccount.com' \
-            --format='value(bindings.role)' || true
-          echo "=== CLOUD BUILD TRIGGERS ==="
-          gcloud builds triggers list --project=rar-project-5a27e \
-            --format='table(id,name,github.owner,github.name,github.push.branch,filename)' || true
+
+      - name: Inspect persisted Silk 2025 final E2E state
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-gcp.json
+        run: |
+          python -m pip install --disable-pip-version-check --quiet firebase-admin google-cloud-firestore
+          python - <<'PY'
+          from firebase_admin import credentials, firestore, initialize_app
+
+          initialize_app(credentials.Certificate("/tmp/rar-gcp.json"), {"projectId":"rar-project-5a27e"})
+          db=firestore.client()
+          rows=[]
+          for s in db.collection("builderSubmissions").where("dataset_key","==","2025:silk").stream():
+              d=s.to_dict() or {}
+              if str(d.get("source_mode") or "")=="OFFICIAL_URL_IMPORT":
+                  rows.append((str(d.get("updated_at") or ""),s.id,d))
+          rows.sort()
+          if not rows:
+              raise SystemExit("NO_2025_SILK_OFFICIAL_SUBMISSION")
+          _,sid,sub=rows[-1]
+          rid=str(sub.get("run_id") or "")
+          print("SUBMISSION_ID="+sid)
+          print("SUBMISSION_STATUS="+str(sub.get("status") or ""))
+          print("SUBMISSION_PROCESSED="+str(sub.get("processed") or ""))
+          print("RUN_ID="+rid)
+          if rid:
+              snap=db.collection("builderPotentialRuns").document(rid).get()
+              print("RUN_EXISTS="+str(snap.exists))
+              if snap.exists:
+                  d=snap.to_dict() or {}
+                  print("RUN_STATUS="+str(d.get("status") or ""))
+                  print("RUN_PROCESSED="+str(d.get("processed") or ""))
+                  print("RUN_PASSED="+str(d.get("passed") or ""))
+                  print("CROSSCHECK_STATUS="+str(d.get("crosscheck_status") or ""))
+          final=db.collection("builderFinalRuns").document(sid).get()
+          print("FINAL_EXISTS="+str(final.exists))
+          if final.exists:
+              d=final.to_dict() or {}
+              print("FINAL_STATUS="+str(d.get("status") or ""))
+              print("FINAL_HORSE_COUNT="+str(d.get("horse_count") or ""))
+          PY
