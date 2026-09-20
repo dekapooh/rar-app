@@ -1,0 +1,87 @@
+name: RAR Runtime API Diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-runtime-api-diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepare Firebase Admin credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check --quiet firebase-admin google-cloud-firestore requests
+      - name: Inspect runtime API surface
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+          GOOGLE_CLOUD_PROJECT: rar-project-5a27e
+        run: |
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          import firebase_admin, requests
+          from firebase_admin import auth, credentials, firestore
+
+          PROJECT="rar-project-5a27e"
+          DIRECT="https://rar-builder-runtime-gddodhkfiq-an.a.run.app"
+          DATASET="2025:silk"
+          cred=credentials.Certificate("/tmp/rar-firebase-service-account.json")
+          firebase_admin.initialize_app(cred, {"projectId":PROJECT})
+          db=firestore.client()
+
+          rows=[]
+          for snap in db.collection("builderSubmissions").where("dataset_key","==",DATASET).stream():
+              d=snap.to_dict() or {}
+              if str(d.get("source_mode") or "")=="OFFICIAL_URL_IMPORT":
+                  rows.append((str(d.get("updated_at") or ""),snap.id,d))
+          rows.sort()
+          _,sid,sub=rows[-1]
+          uid=str(sub.get("claimed_by") or "")
+          driver=Path(".github/workflows/rar-silk2025-server-e2e-driver.yml").read_text()
+          m=re.search(r'API_KEY="([^"]+)"',driver)
+          api_key=m.group(1)
+
+          custom=auth.create_custom_token(uid).decode()
+          ex=requests.post(
+            "https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken",
+            params={"key":api_key},
+            json={"token":custom,"returnSecureToken":True},
+            timeout=30,
+          )
+          ex.raise_for_status()
+          token=ex.json()["idToken"]
+          h={"Authorization":"Bearer "+token}
+
+          for path in ["/v1/runtime/capabilities","/openapi.json"]:
+              r=requests.get(DIRECT+path,headers=h,timeout=60)
+              print("HTTP_"+path.replace("/","_")+"="+str(r.status_code))
+              if not r.ok:
+                  print("BODY_"+path.replace("/","_")+"="+r.text[:1000])
+                  continue
+              data=r.json()
+              if path.endswith("capabilities"):
+                  print("CAPABILITIES="+json.dumps(data,ensure_ascii=False,sort_keys=True,default=str))
+              else:
+                  paths=sorted((data.get("paths") or {}).keys())
+                  print("OPENAPI_PATH_COUNT="+str(len(paths)))
+                  for p in paths:
+                      if any(k in p.lower() for k in ("pedigree","final","catalog","fact","runtime","dataset")):
+                          print("OPENAPI_PATH="+p+"|METHODS="+",".join(sorted((data["paths"][p] or {}).keys())))
+          print("RESULT=PASS_RUNTIME_API_DIAGNOSTIC")
+          PY
