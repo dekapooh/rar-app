@@ -38,19 +38,25 @@ jobs:
           assert int(by_no[59]["officialRank"])==3
           assert abs(float(by_no[59]["total"])-61.047975)<1e-9
           entries=cat.get("datasets") or []
-          hit=[x for x in entries if x.get("dataset_key")=="2026:silk"]
-          assert hit and hit[0].get("version_id")==EXPECTED and int(hit[0].get("record_count") or 0)==82
+          by_key={x.get("dataset_key"):x for x in entries}
+          assert "2025:silk" in by_key and int(by_key["2025:silk"].get("record_count") or 0)==82
+          assert "2026:silk" in by_key
+          assert by_key["2026:silk"].get("version_id")==EXPECTED
+          assert int(by_key["2026:silk"].get("record_count") or 0)==82
           print("LIVE_DATASET_2026_SILK=PASS_82")
           print("LIVE_CURRENT_2026_SILK=PASS_82")
-          print("LIVE_DATASET_CATALOG_2026_SILK=PASS")
+          print("LIVE_DATASET_CATALOG_2025_2026=PASS")
           print("LIVE_VERSION_ID="+EXPECTED)
           print("RESULT=PASS_LIVE_RAR_2026_OBJECTIVE_ADOPTION")
           PY
 
-      - name: Verify public RAR app
+      - name: Verify public RAR app dataset loader
         run: |
           set -euo pipefail
           curl -fsS --retry 5 --retry-delay 2 "https://dekapooh.github.io/rar-app/" -o /tmp/index.html
-          grep -Fq "2026:silk" /tmp/index.html
-          grep -Fq "2025:silk" /tmp/index.html
+          curl -fsS --retry 5 --retry-delay 2 "https://dekapooh.github.io/rar-app/system-master-sync.js?v=dataset-selectors-20260918" -o /tmp/sync.js
+          grep -Fq "system-master-sync.js" /tmp/index.html
+          grep -Fq "2026:silk" /tmp/sync.js
+          grep -Fq "DATASET_API_BASE" /tmp/sync.js
+          grep -Fq "available_datasets" /tmp/sync.js
           echo "LIVE_APP_DATASET_SELECTOR=PASS"
