@@ -68,6 +68,48 @@ jobs:
           else:
               print("LATEST_RUN_ID=NONE")
 
+          print("LATEST_SUBMISSION_UPDATED_AT="+str(sub.get("updated_at") or ""))
+          if run_id:
+              rs=db.collection("builderPotentialRuns").document(run_id).get()
+              if rs.exists:
+                  rd=rs.to_dict() or {}
+                  print("BOUND_RUN_UPDATED_AT="+str(rd.get("updated_at") or ""))
+                  batches=[]
+                  for b in db.collection("builderPotentialRuns").document(run_id).collection("batches").stream():
+                      bd=b.to_dict() or {}
+                      batches.append((int(bd.get("batch_start") or 999),b.id,bd))
+                  batches.sort()
+                  for _,bid,bd in batches:
+                      print("BATCH="+bid+"|STATUS="+str(bd.get("status") or "")+"|COMPLETED="+",".join(map(str,bd.get("completed_numbers") or []))+"|UPDATED="+str(bd.get("updated_at") or ""))
+                  current=[]
+                  for p in db.collection("builderPotentialRuns").document(run_id).collection("potential").stream():
+                      pd=p.to_dict() or {}
+                      current.append((int(pd.get("recruitment_number") or p.id),pd))
+                  current.sort()
+                  for no,pd in current[:15]:
+                      result=pd.get("result") or {}
+                      score=result.get("score") or {}
+                      print("CURRENT_HORSE="+str(no)+"|STATUS="+str(pd.get("status") or "")+"|SCORE_STATUS="+str(score.get("status") or "")+"|UPDATED="+str(pd.get("updated_at") or ""))
+
+          completed_runs=[]
+          for _,rid,run in runs:
+              if rid==run_id:
+                  continue
+              if int(run.get("processed") or 0)==82 and int(run.get("passed") or 0)==82:
+                  completed_runs.append((str(run.get("updated_at") or ""),rid,run))
+          if completed_runs:
+              completed_runs.sort()
+              _,prid,prun=completed_runs[-1]
+              print("PRIOR_COMPLETE_RUN_ID="+prid)
+              print("PRIOR_COMPLETE_UPDATED_AT="+str(prun.get("updated_at") or ""))
+              prior=[]
+              for p in db.collection("builderPotentialRuns").document(prid).collection("potential").stream():
+                  pd=p.to_dict() or {}
+                  prior.append((int(pd.get("recruitment_number") or p.id),pd))
+              prior.sort()
+              for no,pd in prior[:10]:
+                  print("PRIOR_HORSE="+str(no)+"|UPDATED="+str(pd.get("updated_at") or ""))
+
           final=db.collection("builderFinalRuns").document(sid).get()
           print("FINAL_RUN_EXISTS="+str(final.exists))
           if final.exists:
