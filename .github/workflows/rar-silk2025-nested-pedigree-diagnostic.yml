@@ -1,0 +1,76 @@
+name: RAR Silk 2025 Nested Pedigree Diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-silk2025-nested-pedigree-diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepare Firebase Admin credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check --quiet firebase-admin google-cloud-firestore
+      - name: Inspect nested E2E storage
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+          GOOGLE_CLOUD_PROJECT: rar-project-5a27e
+        run: |
+          python - <<'PY'
+          import json
+          from firebase_admin import credentials, firestore, initialize_app
+
+          initialize_app(credentials.Certificate("/tmp/rar-firebase-service-account.json"), {"projectId":"rar-project-5a27e"})
+          db=firestore.client()
+          targets={"Pinatubo","Frankel","Justify","Mehmas","ピナツボ","フランケル","ジャスティファイ","メーマス"}
+          roots=[
+              ("builderSubmissions","ef29943b664547428cd3be4899602a2a"),
+              ("builderPotentialRuns","87254bfc6c25cc27307681ee90c8a5a6"),
+          ]
+
+          def contains(v):
+              if isinstance(v,str): return v in targets
+              if isinstance(v,dict): return any(contains(x) for x in v.values())
+              if isinstance(v,list): return any(contains(x) for x in v)
+              return False
+
+          hit_count=0
+          for cname,docid in roots:
+              ref=db.collection(cname).document(docid)
+              subs=list(ref.collections())
+              print("SUBCOLLECTIONS="+json.dumps({"root":f"{cname}/{docid}","names":[x.id for x in subs]},ensure_ascii=False))
+              for sub in subs:
+                  docs=list(sub.limit(500).stream())
+                  print("SUBCOLLECTION_COUNT="+json.dumps({"path":f"{cname}/{docid}/{sub.id}","count":len(docs)},ensure_ascii=False))
+                  for snap in docs:
+                      data=snap.to_dict() or {}
+                      if contains(data):
+                          hit_count+=1
+                          print("TARGET_HIT="+json.dumps({"path":snap.reference.path,"data":data},ensure_ascii=False,default=str))
+                      # One nested level deeper, if any.
+                      for sub2 in snap.reference.collections():
+                          docs2=list(sub2.limit(500).stream())
+                          print("NESTED_COUNT="+json.dumps({"path":f"{snap.reference.path}/{sub2.id}","count":len(docs2)},ensure_ascii=False))
+                          for snap2 in docs2:
+                              data2=snap2.to_dict() or {}
+                              if contains(data2):
+                                  hit_count+=1
+                                  print("TARGET_HIT="+json.dumps({"path":snap2.reference.path,"data":data2},ensure_ascii=False,default=str))
+          print("TARGET_HIT_COUNT="+str(hit_count))
+          print("RESULT=PASS_NESTED_PEDIGREE_DIAGNOSTIC")
+          PY
