@@ -1,0 +1,51 @@
+name: RAR Deploy Permission Diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-deploy-permission-diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Authenticate base credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-gcp.json
+          gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
+          gcloud config set project rar-project-5a27e --quiet
+
+      - name: Test deploy service-account permissions
+        run: |
+          set -euo pipefail
+          DEPLOY_SA="rar-github-deploy@rar-project-5a27e.iam.gserviceaccount.com"
+          TOKEN="$(gcloud auth print-access-token --impersonate-service-account="$DEPLOY_SA")"
+          echo "=== PROJECT ==="
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://cloudresourcemanager.googleapis.com/v1/projects/rar-project-5a27e:testIamPermissions" \
+            -d '{"permissions":["cloudbuild.builds.create","artifactregistry.repositories.downloadArtifacts","artifactregistry.repositories.uploadArtifacts","iam.serviceAccounts.actAs"]}'
+          echo
+          echo "=== CLOUD RUN ==="
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://run.googleapis.com/v1/projects/rar-project-5a27e/locations/asia-northeast1/services/rar-builder-runtime:testIamPermissions" \
+            -d '{"permissions":["run.services.get","run.services.update"]}'
+          echo
+          echo "=== SERVICE SNAPSHOT ==="
+          gcloud --impersonate-service-account="$DEPLOY_SA" run services describe rar-builder-runtime \
+            --project=rar-project-5a27e --region=asia-northeast1 \
+            --format='yaml(spec.template.spec.serviceAccountName,spec.template.spec.timeoutSeconds,spec.template.spec.containers[0].image,spec.template.spec.containers[0].env,status.latestReadyRevisionName,status.traffic)'
+          echo "RESULT=PASS_DEPLOY_PERMISSION_DIAGNOSTIC"
