@@ -13,12 +13,8 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Authenticate
@@ -31,7 +27,7 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
           gcloud config set project rar-project-5a27e --quiet
 
-      - name: Inspect live 2026 Objective readiness
+      - name: Pull live runtime image
         run: |
           set -euo pipefail
           SERVICE=rar-builder-runtime
@@ -39,159 +35,235 @@ jobs:
           SA="574526681741-compute@developer.gserviceaccount.com"
           IMAGE="$(gcloud run services describe "$SERVICE" --region="$REGION" --format='value(spec.template.spec.containers[0].image)')"
           echo "LIVE_IMAGE=$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
           gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
           docker pull "$IMAGE" >/dev/null
 
-          docker run --rm --entrypoint python "$IMAGE" - <<'PY'
-          import json
-          from builder_runtime.dataset_runtime_registry import dataset_runtime_readiness
-          for key in ("2025:silk","2026:silk"):
-              print("RUNTIME_READINESS="+json.dumps(dataset_runtime_readiness(key),ensure_ascii=False,sort_keys=True))
-          PY
-
-          CID="$(docker create "$IMAGE")"
-          docker cp "$CID":/app/builder_app/web/silk_2026_suitability_objective_v1.json /tmp/objective2026.json
-          docker cp "$CID":/app/builder_app/web/silk_2025_suitability_objective_v1.json /tmp/objective2025.json
-          docker rm "$CID" >/dev/null
-
-          python - <<'PY'
-          import json, hashlib
-          from pathlib import Path
-
-          def load(path):
-              return json.loads(Path(path).read_text(encoding="utf-8"))
-          def records(x):
-              if isinstance(x,list): return x
-              return x.get("records") or x.get("items") or []
-          def by_no(xs):
-              out={}
-              for r in xs:
-                  if isinstance(r,dict):
-                      n=r.get("no",r.get("recruitment_number"))
-                      if n is not None: out[int(n)]=r
-              return out
-
-          obj=load("/tmp/objective2026.json")
-          obj25=load("/tmp/objective2025.json")
-          legacy=load("rar-beta-release/silk_2026_suitability_v1.json")
-          print("OBJECTIVE_2026_META="+json.dumps({k:obj.get(k) for k in obj.keys() if k!="records"},ensure_ascii=False,sort_keys=True))
-          print("OBJECTIVE_2026_COUNT="+str(len(records(obj))))
-          print("OBJECTIVE_2025_COUNT="+str(len(records(obj25))))
-          print("OBJECTIVE_2026_SHA256="+hashlib.sha256(Path("/tmp/objective2026.json").read_bytes()).hexdigest())
-
-          a=by_no(records(legacy)); b=by_no(records(obj))
-          fields=["preferred_surfaces","distance_min_m","distance_max_m","growth_type","target_races"]
-          changed=[]
-          for n in sorted(set(a)|set(b)):
-              old=a.get(n) or {}; new=b.get(n) or {}
-              diffs={f:[old.get(f),new.get(f)] for f in fields if old.get(f)!=new.get(f)}
-              if diffs:
-                  changed.append({"no":n,"name":new.get("name") or old.get("name"),"diffs":diffs})
-          print("LEGACY_OBJECTIVE_CHANGED_COUNT="+str(len(changed)))
-          for row in changed[:25]:
-              print("SUITABILITY_DIFF="+json.dumps(row,ensure_ascii=False,sort_keys=True))
-          PY
-
-      - name: Inspect 2026 stored state
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-gcp.json
-          GOOGLE_CLOUD_PROJECT: rar-project-5a27e
+      - name: Objective v1 Silk 2026 dry-run rebuild
         run: |
-          python -m pip install --disable-pip-version-check --quiet firebase-admin google-cloud-firestore requests
-          python - <<'PY'
-          import json,re
+          set -euo pipefail
+          docker run --rm -i \
+            --entrypoint python \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/rar-gcp.json \
+            -e GOOGLE_CLOUD_PROJECT=rar-project-5a27e \
+            -e PYTHONPATH=/app/builder_app/python:/app \
+            -v /tmp/rar-gcp.json:/tmp/rar-gcp.json:ro \
+            "$IMAGE" - <<'PY'
+          import json
           from pathlib import Path
-          import firebase_admin, requests
-          from firebase_admin import auth, credentials, firestore
 
-          PROJECT="rar-project-5a27e"
+          import firebase_admin
+
+          from auto_score import auto_score_horse
+          from builder_runtime.consumer_persistence import load_dataset
+          from builder_runtime.consumer_transfer_frozen_v2 import build_frozen_v2_dataset, validate_frozen_v2
+          from builder_runtime.final_scoring_gateway import EVALUATION_RUN_NAMESPACE, FINAL_ENGINE_ID, _canonical_digest, _surface_label
+          from builder_runtime.pedigree_registry import build_pedigree_scores_for_dataset
+          from builder_runtime.suitability_registry import load_suitability_for_dataset
+
           DATASET="2026:silk"
-          WEB="https://rar-project-5a27e.web.app"
+          CATALOG_SHA="25d5a726bcc7d8a92e5a8bdf183ea2368ed31b0247341ae748d648038b03d5ec"
+          MEASUREMENT_PDF_SHA="f6c84434d90b5a41697dcfd330435495fb0eeefa3ec068eb024a0498dd21df56"
+          SUBMISSION_ID="silk-2026-objective-v1-migration-20260921"
+          RUN_ID="legacy-frozen-potential-2026-reuse"
+          MEASUREMENTS=[[1,153.0,174.0,20.9],[2,154.0,172.5,19.2],[3,156.0,180.0,21.1],[4,155.5,179.5,20.4],[5,153.0,179.0,19.0],[6,165.0,180.5,21.0],[7,155.0,174.0,20.6],[8,160.0,183.5,21.2],[9,156.0,174.0,20.8],[10,153.5,170.5,19.2],[11,155.0,174.0,20.4],[12,158.5,172.5,19.6],[13,154.0,170.5,19.4],[14,154.0,171.0,19.6],[15,151.5,178.0,20.5],[16,156.0,180.0,20.7],[17,154.0,178.5,19.8],[18,154.5,172.0,19.0],[19,158.0,180.0,20.5],[20,155.0,171.0,19.5],[21,163.5,186.0,20.5],[22,149.5,172.5,19.1],[23,154.0,173.0,20.7],[24,152.5,176.0,19.0],[25,158.5,183.0,21.5],[26,156.0,179.5,21.2],[27,154.0,177.0,20.4],[28,156.0,176.0,18.7],[29,154.0,175.5,19.8],[30,157.5,180.0,20.4],[31,150.5,169.0,18.7],[32,154.5,174.0,20.5],[33,154.5,172.0,20.5],[34,153.0,172.0,20.4],[35,155.0,178.0,20.0],[36,155.5,171.5,20.2],[37,156.0,178.0,19.8],[38,151.5,174.0,19.2],[39,160.5,177.0,19.4],[40,164.0,184.0,21.5],[41,155.5,174.5,19.7],[42,162.5,180.5,20.4],[43,153.5,172.5,19.5],[44,161.0,187.0,21.0],[45,156.0,176.0,20.3],[46,154.5,173.0,19.2],[47,158.0,173.5,21.0],[48,157.0,177.5,20.5],[49,153.0,174.5,19.4],[50,156.0,179.0,21.2],[51,154.0,172.0,18.5],[52,154.0,174.0,20.4],[53,150.5,174.0,19.0],[54,154.0,171.5,20.3],[55,151.0,175.5,19.4],[56,154.5,177.0,20.3],[57,150.0,171.0,19.8],[58,154.5,172.0,19.4],[59,158.0,184.0,21.3],[60,151.5,170.0,20.6],[61,158.5,182.5,20.3],[62,154.0,180.0,21.0],[63,159.0,180.0,19.7],[64,153.5,174.0,21.1],[65,156.0,180.5,20.6],[66,156.0,178.5,21.0],[67,154.0,180.5,20.4],[68,153.0,176.5,21.0],[69,156.0,175.5,19.6],[70,153.0,172.0,20.3],[71,155.0,174.0,18.6],[72,149.0,173.0,19.9],[73,159.0,170.0,19.2],[74,157.0,171.0,20.8],[75,157.0,176.5,21.0],[76,156.0,170.0,20.2],[77,152.0,172.0,18.3],[78,154.5,175.0,19.3],[79,162.0,186.0,22.6],[80,158.0,181.5,21.5],[81,157.0,182.0,20.4],[82,154.0,182.0,20.2]]
 
-          cred=credentials.Certificate("/tmp/rar-gcp.json")
-          firebase_admin.initialize_app(cred, {"projectId":PROJECT})
-          db=firestore.client()
+          def load_table(path):
+              raw=json.loads(Path(path).read_text(encoding="utf-8"))
+              fields=raw["fields"]
+              return raw,[dict(zip(fields,row)) for row in raw["records"]]
 
-          rows=[]
-          for snap in db.collection("builderSubmissions").where("dataset_key","==",DATASET).stream():
-              d=snap.to_dict() or {}
-              rows.append((str(d.get("updated_at") or ""),snap.id,d))
-          rows.sort()
-          print("SUBMISSION_COUNT="+str(len(rows)))
-          for _,sid,d in rows[-8:]:
-              print("SUBMISSION="+json.dumps({
-                  "id":sid,
-                  "status":d.get("status"),
-                  "source_mode":d.get("source_mode"),
-                  "run_id":d.get("run_id"),
-                  "claimed_by":bool(d.get("claimed_by")),
-                  "pdf_deleted":bool(d.get("pdf_deleted_at")),
-                  "updated_at":d.get("updated_at"),
-              },ensure_ascii=False,sort_keys=True,default=str))
+          def norm_name(v):
+              s="".join(str(v or "").split()).replace("○外","外")
+              return s[1:] if s.startswith("外") else s
 
-          candidate_uid=None
-          for _,_,d in reversed(rows):
-              if d.get("claimed_by"):
-                  candidate_uid=str(d.get("claimed_by")); break
-          if not candidate_uid:
-              for snap in db.collection("builderSubmissions").where("dataset_key","==","2025:silk").stream():
-                  d=snap.to_dict() or {}
-                  if d.get("claimed_by"):
-                      candidate_uid=str(d.get("claimed_by")); break
+          facts_raw,fact_records=load_table("/app/builder_app/web/silk_2026_facts_v1.json")
+          potential_raw,potential_records=load_table("/app/builder_app/web/silk_2026_potential_beta49_recovered_v1.json")
+          pedigree_raw,pedigree_records=load_table("/app/builder_app/web/silk_2026_pedigree_v1.json")
 
-          if rows:
-              _,sid,latest=rows[-1]
-              rid=str(latest.get("run_id") or "")
-              if rid:
-                  rs=db.collection("builderPotentialRuns").document(rid).get()
-                  rd=rs.to_dict() or {} if rs.exists else {}
-                  print("LATEST_RUN="+json.dumps({
-                    "run_id":rid,
-                    "exists":rs.exists,
-                    "processed":rd.get("processed"),
-                    "passed":rd.get("passed"),
-                    "crosscheck_status":rd.get("crosscheck_status"),
-                    "status":rd.get("status"),
-                    "dataset_key":rd.get("dataset_key"),
-                  },ensure_ascii=False,sort_keys=True,default=str))
+          assert facts_raw["source_sha256"]==CATALOG_SHA
+          assert potential_raw["source_pdf_sha256"]==CATALOG_SHA
+          assert pedigree_raw["source_catalog_sha256"]==CATALOG_SHA
+          assert len(fact_records)==len(potential_records)==len(pedigree_records)==82
 
-          html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
-          m=re.search(r"apiKey\s*:\s*['\"]([^'\"]+)['\"]",html)
-          if not m:
-              raise SystemExit("Firebase web API key not found")
-          if not candidate_uid:
-              raise SystemExit("No owner UID available for authenticated API audit")
-          custom=auth.create_custom_token(candidate_uid).decode()
-          ex=requests.post(
-              "https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken",
-              params={"key":m.group(1)},
-              json={"token":custom,"returnSecureToken":True},
-              timeout=30,
-          )
-          ex.raise_for_status()
-          token=ex.json()["idToken"]
-          h={"Authorization":"Bearer "+token}
+          facts={int(r["recruitment_number"]):r for r in fact_records}
+          potentials={int(r["horse_no"]):r for r in potential_records}
+          pedigree_static={int(r["recruitment_no"]):r for r in pedigree_records}
+          measurements={int(no):{"height_cm":float(h),"girth_cm":float(g),"cannon_cm":float(c)} for no,h,g,c in MEASUREMENTS}
+          expected=set(range(1,83))
+          assert set(facts)==set(potentials)==set(pedigree_static)==set(measurements)==expected
 
-          for path in ["/v1/runtime/capabilities","/v1/consumer-data/current","/v1/consumer-data/dataset/2026%3Asilk"]:
-              r=requests.get(WEB+path,headers=h,timeout=120)
-              print("API="+path+"|HTTP="+str(r.status_code))
-              if r.ok:
-                  j=r.json()
-                  if "consumer-data" in path:
-                      recs=j.get("records") or []
-                      print("CONSUMER="+json.dumps({
-                        "schema_version":j.get("schema_version"),
-                        "dataset_key":j.get("dataset_key"),
-                        "record_count":j.get("record_count"),
-                        "version_id":j.get("version_id"),
-                        "payload_sha256":j.get("payload_sha256"),
-                        "generated_at":j.get("generated_at"),
-                        "updated_at":j.get("updated_at"),
-                        "first_record_keys":sorted((recs[0] if recs else {}).keys()),
-                      },ensure_ascii=False,sort_keys=True,default=str))
-                  else:
-                      print("CAPABILITIES="+json.dumps(j,ensure_ascii=False,sort_keys=True,default=str))
-              else:
-                  print("BODY="+r.text[:1000].replace("\n"," "))
-          print("RESULT=PASS_2026_OBJECTIVE_READINESS_AUDIT")
+          for no in range(1,83):
+              f=facts[no]; p=potentials[no]; m=measurements[no]
+              assert norm_name(f["display_name"])==norm_name(p["name"]), (no,f["display_name"],p["name"])
+              assert abs(float(p["height"])-m["height_cm"])<1e-9, (no,p["height"],m["height_cm"])
+              assert abs(float(p["cannon"])-m["cannon_cm"])<1e-9, (no,p["cannon"],m["cannon_cm"])
+              assert abs(float(p["ScaleFrame_6"])+float(p["Rear_10"])+float(p["Trunk_8"])+float(p["Front_6"])-float(p["Potential_30_Beta48"]))<1e-9, no
+          print("FACT_POTENTIAL_MEASUREMENT_IDENTITY=PASS_82")
+          print("MEASUREMENT_PDF_SHA256="+MEASUREMENT_PDF_SHA)
+
+          runtime_facts=[{
+              "recruitment_number":no,
+              "display_name":facts[no]["display_name"],
+              "dam":facts[no]["dam"],
+              "sire":facts[no]["sire"],
+              "birth_date":facts[no]["birth_date"],
+          } for no in range(1,83)]
+
+          bound=build_pedigree_scores_for_dataset(DATASET,catalog_sha256=CATALOG_SHA,catalog_records=runtime_facts)
+          assert bound.get("status")=="PASS", bound
+          assert int(bound.get("pass_count") or 0)==82, bound
+          pedigree_runtime={}
+          for row in bound["records"]:
+              no=int(row["recruitment_number"])
+              result=(row["score"] or {}).get("result") or {}
+              static=pedigree_static[no]
+              assert static["status"]=="PASS"
+              assert abs(float(result["total"])-float(static["pedigree_20"]))<1e-9
+              ss=result["subitems"]
+              assert abs(float(ss["mother"])-float(static["mother_score"]))<1e-9
+              assert abs(float(ss["sibling"])-float(static["sibling_score"]))<1e-9
+              assert abs(float(ss["sibling_winup"])-float(static["sibling_winup_score"]))<1e-9
+              assert abs(float(ss["nicks"])-float(static["nicks_score"]))<1e-9
+              pedigree_runtime[no]=result
+          print("PEDIGREE_CURRENT_RUNTIME=PASS_82")
+
+          suitability=load_suitability_for_dataset(DATASET,expected_numbers=expected)
+          assert len(suitability)==82
+          assert all(suitability[n]["growth_type"]=="unknown" and suitability[n]["target_races"]==[] for n in expected)
+          print("OBJECTIVE_SUITABILITY_ACTIVE=PASS_82")
+
+          records=[]
+          for no in range(1,83):
+              f=facts[no]; p=potentials[no]; ped=pedigree_runtime[no]; suit=suitability[no]; m=measurements[no]
+              assert norm_name(suit.get("name"))==norm_name(f["display_name"])
+              if str(suit.get("sex") or "").strip():
+                  assert str(suit["sex"])==str(f["sex"])
+              total_price=int(f["total_price_yen"])
+              assert total_price==int(f["share_price_yen"])*int(f["shares"])
+              pot_small={
+                  "scale_frame":float(p["ScaleFrame_6"]),
+                  "rear":float(p["Rear_10"]),
+                  "trunk":float(p["Trunk_8"]),
+                  "front":float(p["Front_6"]),
+              }
+              ped_small={k:float(v) for k,v in ped["subitems"].items()}
+              evidence_hash=_canonical_digest({
+                  "catalog_sha256":CATALOG_SHA,
+                  "horse_no":no,
+                  "potential":{"total":float(p["Potential_30_Beta48"]),"subitems":pot_small},
+                  "pedigree":{"total":float(ped["total"]),"subitems":ped_small},
+                  "suitability":suit,
+              })
+              score=auto_score_horse({
+                  "horse_id":f"SILK_2026_{no:03d}",
+                  "name":f["display_name"],
+                  "potential":float(p["Potential_30_Beta48"]),
+                  "pedigree":float(ped["total"]),
+                  "recruitment_total_yen":total_price,
+                  "suitability":{
+                      "preferred_surfaces":suit.get("preferred_surfaces") or [],
+                      "distance_min_m":suit.get("distance_min_m"),
+                      "distance_max_m":suit.get("distance_max_m"),
+                      "growth_type":suit.get("growth_type"),
+                      "sex":str(f.get("sex") or ""),
+                      "target_races":suit.get("target_races") or [],
+                  },
+                  "evidence_hash":evidence_hash,
+              })
+              assert score["status"]=="AUTO_SCORED"
+              records.append({
+                  "no":no,
+                  "status":"FROZEN_FINAL",
+                  "potential":float(score["potential_official"]),
+                  "pedigree":float(score["pedigree_official"]),
+                  "dream_middle":float(score["dream_middle"]),
+                  "dream_high":float(score["dream_high"]),
+                  "dream_official":float(score["dream_official"]),
+                  "roi_middle_pct":float(score["middle"]["roi"]),
+                  "roi_high_pct":float(score["high"]["roi"]),
+                  "roi_official_pct":float(score["official"]["roi"]),
+                  "iv_middle":float(score["middle"]["investment_value"]),
+                  "iv_high":float(score["high"]["investment_value"]),
+                  "investment_value":float(score["official"]["investment_value"]),
+                  "rar_total":float(score["official"]["rar_total"]),
+                  "middle_prize_yen":float(score["middle"]["prize_yen"]),
+                  "high_prize_yen":float(score["high"]["prize_yen"]),
+                  "middle_starts":int(score["middle"]["starts"]),
+                  "high_starts":int(score["high"]["starts"]),
+                  "surface":_surface_label(suit),
+                  "growth":suit.get("growth_type"),
+                  "target_races":list(suit.get("target_races") or []),
+                  "identity":{
+                      "name":f["display_name"],"sex":f["sex"],"sire":f["sire"],"dam":f["dam"],
+                      "birth":f["birth_date"],"trainer":f["trainer"],"breeder":f["breeder"],"color":f["color"],
+                      "share_price_yen":int(f["share_price_yen"]),"total_price_yen":total_price,
+                  },
+                  "measurements":m,
+                  "potential_small":pot_small,
+                  "pedigree_small":ped_small,
+                  "provenance":score.get("provenance") or {},
+              })
+
+          ordered=sorted(records,key=lambda r:(-r["rar_total"],-r["potential"],-r["pedigree"],-r["dream_official"],-r["investment_value"],r["no"]))
+          rank_map={r["no"]:idx for idx,r in enumerate(ordered,1)}
+          for r in records:
+              r["official_rank"]=rank_map[r["no"]]
+
+          payload={
+              "schema_version":"rar-frozen-100-transfer-v2",
+              "source_catalog_sha256":CATALOG_SHA,
+              "score_schema":"RAR_100_FROZEN_20260914",
+              "submission_id":SUBMISSION_ID,
+              "potential_run_id":RUN_ID,
+              "evaluation_run_namespace":EVALUATION_RUN_NAMESPACE,
+              "final_engine_id":FINAL_ENGINE_ID,
+              "season_year":2026,
+              "club_id":"silk",
+              "club_name":"シルク",
+              "dataset_key":DATASET,
+              "horse_count":82,
+              "records":records,
+          }
+
+          preview=validate_frozen_v2(payload)
+          assert preview["status"]=="PASS_DRY_RUN" and preview["record_count"]==82
+          assert _canonical_digest(payload)==preview["payload_sha256"]
+          candidate=build_frozen_v2_dataset(payload,"dry-run-owner")
+
+          if not firebase_admin._apps:
+              firebase_admin.initialize_app()
+          old=load_dataset(DATASET)
+          assert old and int(old.get("record_count") or 0)==82
+          old_by={int(r["no"]):r for r in old["records"]}
+          new_by={int(r["no"]):r for r in candidate["records"]}
+
+          potential_stable=sum(abs(float(old_by[n]["potential"])-float(new_by[n]["potential"]))<1e-9 for n in range(1,83))
+          pedigree_stable=sum(abs(float(old_by[n]["pedigree"])-float(new_by[n]["pedigree"]))<1e-9 for n in range(1,83))
+          identity_stable=sum(norm_name(old_by[n]["name"])==norm_name(new_by[n]["name"]) and str(old_by[n]["sex"])==str(new_by[n]["sex"]) and str(old_by[n]["dam"])==str(new_by[n]["dam"]) for n in range(1,83))
+          assert potential_stable==82
+          assert pedigree_stable==82
+          assert identity_stable==82
+
+          changed=sum(abs(float(old_by[n]["total"])-float(new_by[n]["total"]))>1e-9 for n in range(1,83))
+          rank_changed=sum(int(old_by[n]["officialRank"])!=int(new_by[n]["officialRank"]) for n in range(1,83))
+          print("FROZEN_FINAL_REBUILD=PASS_82")
+          print("TRANSFER_DRY_RUN=PASS")
+          print("POTENTIAL_STABLE=PASS_82")
+          print("PEDIGREE_STABLE=PASS_82")
+          print("IDENTITY_STABLE=PASS_82")
+          print("RAR_TOTAL_CHANGED_COUNT="+str(changed))
+          print("RANK_CHANGED_COUNT="+str(rank_changed))
+          print("OLD_VERSION_ID="+str(old.get("version_id")))
+          print("NEW_VERSION_ID="+str(preview["payload_sha256"]))
+          print("TOP10_NEW="+json.dumps([
+              {"rank":r["officialRank"],"no":r["no"],"name":r["name"],"rar":r["total"]}
+              for r in sorted(candidate["records"],key=lambda x:int(x["officialRank"]))[:10]
+          ],ensure_ascii=False,separators=(",",":")))
+          focus={40,59,62,66,74,75,80,82}
+          print("FOCUS="+json.dumps([
+              {"no":n,"name":new_by[n]["name"],"rar":new_by[n]["total"],"rank":new_by[n]["officialRank"],"old_rar":old_by[n]["total"],"old_rank":old_by[n]["officialRank"]}
+              for n in sorted(focus)
+          ],ensure_ascii=False,separators=(",",":")))
+          print("RESULT=PASS_SILK2026_OBJECTIVE_RESCORE_DRY_RUN")
           PY
