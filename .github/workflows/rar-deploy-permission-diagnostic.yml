@@ -25,6 +25,46 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
           gcloud config set project rar-project-5a27e --quiet
 
+      - name: Inspect base credential deploy permissions
+        run: |
+          set -euo pipefail
+          TOKEN="$(gcloud auth print-access-token)"
+          export TOKEN
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          token=os.environ["TOKEN"]
+          checks={
+            "PROJECT":(
+              "https://cloudresourcemanager.googleapis.com/v1/projects/rar-project-5a27e:testIamPermissions",
+              [
+                "cloudbuild.builds.create","cloudbuild.builds.get",
+                "artifactregistry.repositories.downloadArtifacts",
+                "artifactregistry.repositories.uploadArtifacts",
+                "iam.serviceAccounts.actAs"
+              ]
+            ),
+            "RUN":(
+              "https://run.googleapis.com/v1/projects/rar-project-5a27e/locations/asia-northeast1/services/rar-builder-runtime:testIamPermissions",
+              ["run.services.get","run.services.update"]
+            )
+          }
+          for label,(url,perms) in checks.items():
+            req=urllib.request.Request(
+              url,
+              data=json.dumps({"permissions":perms}).encode(),
+              headers={"Authorization":"Bearer "+token,"Content-Type":"application/json"},
+              method="POST",
+            )
+            try:
+              with urllib.request.urlopen(req,timeout=30) as r:
+                got=set(json.load(r).get("permissions",[]))
+            except urllib.error.HTTPError as exc:
+              print("BASE_"+label+"_HTTP="+str(exc.code))
+              got=set()
+            for p in perms:
+              print("BASE_PERM_"+p+"="+("YES" if p in got else "NO"))
+          PY
+
       - name: Inspect impersonated deploy path
         run: |
           set -euo pipefail
