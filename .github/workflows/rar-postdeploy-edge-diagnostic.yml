@@ -1,0 +1,66 @@
+name: RAR Post Deploy Edge Diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-postdeploy-edge-diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Authenticate read credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-gcp.json
+          gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
+          gcloud config set project rar-project-5a27e --quiet
+
+      - name: Inspect live Cloud Run edge
+        run: |
+          set -euo pipefail
+          SERVICE=rar-builder-runtime
+          REGION=asia-northeast1
+          gcloud run services describe "$SERVICE" --region="$REGION" --format=json > /tmp/service.json
+          python - <<'PY'
+          import json
+          d=json.load(open("/tmp/service.json"))
+          meta=d.get("metadata") or {}
+          status=d.get("status") or {}
+          spec=d.get("spec") or {}
+          ann=meta.get("annotations") or {}
+          tmpl=((spec.get("template") or {}).get("metadata") or {}).get("annotations") or {}
+          containers=(((spec.get("template") or {}).get("spec") or {}).get("containers") or [])
+          print("SERVICE_URL="+str(status.get("url") or ""))
+          print("LATEST_READY="+str(status.get("latestReadyRevisionName") or ""))
+          print("LATEST_CREATED="+str(status.get("latestCreatedRevisionName") or ""))
+          print("INGRESS="+str(ann.get("run.googleapis.com/ingress") or "UNSET"))
+          print("DEFAULT_URL_DISABLED="+str(ann.get("run.googleapis.com/default-url-disabled") or "UNSET"))
+          print("INVOKER_IAM_DISABLED="+str(ann.get("run.googleapis.com/invoker-iam-disabled") or "UNSET"))
+          print("IMAGE="+str(containers[0].get("image") if containers else ""))
+          for i,t in enumerate(status.get("traffic") or [],1):
+              print("TRAFFIC_%d="%i+json.dumps(t,sort_keys=True))
+          PY
+
+          SERVICE_URL="$(python -c 'import json; print((json.load(open("/tmp/service.json")).get("status") or {}).get("url") or "")')"
+          OLD_URL="https://rar-builder-runtime-gddodhkfiq-an.a.run.app"
+          for label in SERVICE OLD; do
+            if [ "$label" = SERVICE ]; then u="$SERVICE_URL"; else u="$OLD_URL"; fi
+            echo "=== $label $u ==="
+            for p in / /healthz /runtime-evidence-healthz /openapi.json; do
+              code="$(curl -sS --max-time 20 -o /tmp/out -w '%{http_code}' "$u$p" || true)"
+              ctype="$(curl -sSI --max-time 20 "$u$p" 2>/dev/null | awk -F': ' 'tolower($1)=="content-type"{print $2}' | tr -d '\r' | tail -1 || true)"
+              echo "$label $p HTTP=$code CTYPE=$ctype"
+              head -c 200 /tmp/out | tr '\n' ' '; echo
+            done
+          done
+          echo "RESULT=PASS_POSTDEPLOY_EDGE_DIAGNOSTIC"
