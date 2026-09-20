@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Authenticate
@@ -27,7 +31,7 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
           gcloud config set project rar-project-5a27e --quiet
 
-      - name: Inspect live Objective v1 source for 2026 reuse
+      - name: Inspect live 2026 Objective readiness
         run: |
           set -euo pipefail
           SERVICE=rar-builder-runtime
@@ -38,32 +42,156 @@ jobs:
           gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
           docker pull "$IMAGE" >/dev/null
 
-          echo "=== MATCHING FILES ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            find /app -type f \( -name "*.py" -o -name "*.json" \) 2>/dev/null |
-              grep -Ei "suit|objective|final|career|dream|roi|dataset|silk_2025|silk_2026" |
-              sort | head -400
-          '
+          docker run --rm --entrypoint python "$IMAGE" - <<'PY'
+          import json
+          from builder_runtime.dataset_runtime_registry import dataset_runtime_readiness
+          for key in ("2025:silk","2026:silk"):
+              print("RUNTIME_READINESS="+json.dumps(dataset_runtime_readiness(key),ensure_ascii=False,sort_keys=True))
+          PY
 
-          echo "=== SUITABILITY REFERENCES ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            grep -R -n -E "Objective Suitability|objective_suit|suitability|preferred_surfaces|distance_min_m|distance_max_m|growth_type|target_races"               /app/builder_runtime /app/builder_app/python /app/engine /app/rules /app/data 2>/dev/null |
-              head -800 || true
-          '
+          CID="$(docker create "$IMAGE")"
+          docker cp "$CID":/app/builder_app/web/silk_2026_suitability_objective_v1.json /tmp/objective2026.json
+          docker cp "$CID":/app/builder_app/web/silk_2025_suitability_objective_v1.json /tmp/objective2025.json
+          docker rm "$CID" >/dev/null
 
-          echo "=== DATASET ROUTING REFERENCES ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            grep -R -n -E "2025:silk|2026:silk|dataset_key|OFFICIAL_URL_IMPORT|final-score|final_score"               /app/builder_runtime /app/builder_app/python 2>/dev/null |
-              head -1000 || true
-          '
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
 
-          echo "=== CANDIDATE PYTHON SOURCES ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            files=$(grep -R -l -E "preferred_surfaces|distance_min_m|objective_suit|suitability" /app/builder_runtime /app/builder_app/python 2>/dev/null | head -20 || true)
-            for f in $files; do
-              echo "----- FILE:$f -----"
-              sed -n "1,420p" "$f"
-            done
-          '
+          def load(path):
+              return json.loads(Path(path).read_text(encoding="utf-8"))
+          def records(x):
+              if isinstance(x,list): return x
+              return x.get("records") or x.get("items") or []
+          def by_no(xs):
+              out={}
+              for r in xs:
+                  if isinstance(r,dict):
+                      n=r.get("no",r.get("recruitment_number"))
+                      if n is not None: out[int(n)]=r
+              return out
 
-          echo "RESULT=PASS_OBJECTIVE_V1_2026_SOURCE_AUDIT"
+          obj=load("/tmp/objective2026.json")
+          obj25=load("/tmp/objective2025.json")
+          legacy=load("rar-beta-release/silk_2026_suitability_v1.json")
+          print("OBJECTIVE_2026_META="+json.dumps({k:obj.get(k) for k in obj.keys() if k!="records"},ensure_ascii=False,sort_keys=True))
+          print("OBJECTIVE_2026_COUNT="+str(len(records(obj))))
+          print("OBJECTIVE_2025_COUNT="+str(len(records(obj25))))
+          print("OBJECTIVE_2026_SHA256="+hashlib.sha256(Path("/tmp/objective2026.json").read_bytes()).hexdigest())
+
+          a=by_no(records(legacy)); b=by_no(records(obj))
+          fields=["preferred_surfaces","distance_min_m","distance_max_m","growth_type","target_races"]
+          changed=[]
+          for n in sorted(set(a)|set(b)):
+              old=a.get(n) or {}; new=b.get(n) or {}
+              diffs={f:[old.get(f),new.get(f)] for f in fields if old.get(f)!=new.get(f)}
+              if diffs:
+                  changed.append({"no":n,"name":new.get("name") or old.get("name"),"diffs":diffs})
+          print("LEGACY_OBJECTIVE_CHANGED_COUNT="+str(len(changed)))
+          for row in changed[:25]:
+              print("SUITABILITY_DIFF="+json.dumps(row,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Inspect 2026 stored state
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-gcp.json
+          GOOGLE_CLOUD_PROJECT: rar-project-5a27e
+        run: |
+          python -m pip install --disable-pip-version-check --quiet firebase-admin google-cloud-firestore requests
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          import firebase_admin, requests
+          from firebase_admin import auth, credentials, firestore
+
+          PROJECT="rar-project-5a27e"
+          DATASET="2026:silk"
+          WEB="https://rar-project-5a27e.web.app"
+
+          cred=credentials.Certificate("/tmp/rar-gcp.json")
+          firebase_admin.initialize_app(cred, {"projectId":PROJECT})
+          db=firestore.client()
+
+          rows=[]
+          for snap in db.collection("builderSubmissions").where("dataset_key","==",DATASET).stream():
+              d=snap.to_dict() or {}
+              rows.append((str(d.get("updated_at") or ""),snap.id,d))
+          rows.sort()
+          print("SUBMISSION_COUNT="+str(len(rows)))
+          for _,sid,d in rows[-8:]:
+              print("SUBMISSION="+json.dumps({
+                  "id":sid,
+                  "status":d.get("status"),
+                  "source_mode":d.get("source_mode"),
+                  "run_id":d.get("run_id"),
+                  "claimed_by":bool(d.get("claimed_by")),
+                  "pdf_deleted":bool(d.get("pdf_deleted_at")),
+                  "updated_at":d.get("updated_at"),
+              },ensure_ascii=False,sort_keys=True,default=str))
+
+          candidate_uid=None
+          for _,_,d in reversed(rows):
+              if d.get("claimed_by"):
+                  candidate_uid=str(d.get("claimed_by")); break
+          if not candidate_uid:
+              for snap in db.collection("builderSubmissions").where("dataset_key","==","2025:silk").stream():
+                  d=snap.to_dict() or {}
+                  if d.get("claimed_by"):
+                      candidate_uid=str(d.get("claimed_by")); break
+
+          if rows:
+              _,sid,latest=rows[-1]
+              rid=str(latest.get("run_id") or "")
+              if rid:
+                  rs=db.collection("builderPotentialRuns").document(rid).get()
+                  rd=rs.to_dict() or {} if rs.exists else {}
+                  print("LATEST_RUN="+json.dumps({
+                    "run_id":rid,
+                    "exists":rs.exists,
+                    "processed":rd.get("processed"),
+                    "passed":rd.get("passed"),
+                    "crosscheck_status":rd.get("crosscheck_status"),
+                    "status":rd.get("status"),
+                    "dataset_key":rd.get("dataset_key"),
+                  },ensure_ascii=False,sort_keys=True,default=str))
+
+          html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
+          m=re.search(r"apiKey\s*:\s*['\"]([^'\"]+)['\"]",html)
+          if not m:
+              raise SystemExit("Firebase web API key not found")
+          if not candidate_uid:
+              raise SystemExit("No owner UID available for authenticated API audit")
+          custom=auth.create_custom_token(candidate_uid).decode()
+          ex=requests.post(
+              "https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken",
+              params={"key":m.group(1)},
+              json={"token":custom,"returnSecureToken":True},
+              timeout=30,
+          )
+          ex.raise_for_status()
+          token=ex.json()["idToken"]
+          h={"Authorization":"Bearer "+token}
+
+          for path in ["/v1/runtime/capabilities","/v1/consumer-data/current","/v1/consumer-data/dataset/2026%3Asilk"]:
+              r=requests.get(WEB+path,headers=h,timeout=120)
+              print("API="+path+"|HTTP="+str(r.status_code))
+              if r.ok:
+                  j=r.json()
+                  if "consumer-data" in path:
+                      recs=j.get("records") or []
+                      print("CONSUMER="+json.dumps({
+                        "schema_version":j.get("schema_version"),
+                        "dataset_key":j.get("dataset_key"),
+                        "record_count":j.get("record_count"),
+                        "version_id":j.get("version_id"),
+                        "payload_sha256":j.get("payload_sha256"),
+                        "generated_at":j.get("generated_at"),
+                        "updated_at":j.get("updated_at"),
+                        "first_record_keys":sorted((recs[0] if recs else {}).keys()),
+                      },ensure_ascii=False,sort_keys=True,default=str))
+                  else:
+                      print("CAPABILITIES="+json.dumps(j,ensure_ascii=False,sort_keys=True,default=str))
+              else:
+                  print("BODY="+r.text[:1000].replace("\n"," "))
+          print("RESULT=PASS_2026_OBJECTIVE_READINESS_AUDIT")
+          PY
