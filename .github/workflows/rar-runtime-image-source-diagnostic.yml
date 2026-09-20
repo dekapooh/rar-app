@@ -25,32 +25,50 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
           gcloud config set project rar-project-5a27e --quiet
 
-      - name: Pull live image and locate pedigree identity gate
+      - name: Inspect live pedigree gate source
         run: |
           set -euo pipefail
           SA="574526681741-compute@developer.gserviceaccount.com"
           IMAGE="asia-northeast1-docker.pkg.dev/rar-project-5a27e/rar-builder/rar-builder-runtime:objective-v1-67a7225301eb"
           gcloud auth print-access-token --impersonate-service-account="$SA" \
             | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
-          docker pull "$IMAGE"
-          echo "=== IMAGE INSPECT ==="
-          docker inspect "$IMAGE" --format='ENTRYPOINT={{json .Config.Entrypoint}} CMD={{json .Config.Cmd}} WORKDIR={{.Config.WorkingDir}}'
-          echo "=== ERROR STRING ==="
+          docker pull "$IMAGE" >/dev/null
+
+          echo "=== REFERENCES ==="
           docker run --rm --entrypoint sh "$IMAGE" -lc '
-            for d in /app /workspace /srv /opt /usr/src; do
-              [ -d "$d" ] || continue
-              grep -R -n -F "fresh catalog-bound Pedigree did not pass 82/82" "$d" 2>/dev/null || true
-            done
+            grep -R -n -E "silk_2025_pedigree_binding|pedigree_binding_v1|catalog.bound|catalog_bound|identity|Pedigree did not pass"               /app/builder_runtime /app/builder_app/python 2>/dev/null | head -300 || true
           '
-          echo "=== FOREIGN SIRE STRINGS ==="
+
+          echo "=== BINDING MODULE ==="
           docker run --rm --entrypoint sh "$IMAGE" -lc '
-            for d in /app /workspace /srv /opt /usr/src; do
-              [ -d "$d" ] || continue
-              grep -R -n -E "Pinatubo|Frankel|Justify|Mehmas|ピナツボ|フランケル|ジャスティファイ|メーマス" "$d" 2>/dev/null | head -200 || true
-            done
+            sed -n "1,280p" /app/builder_app/python/silk_2025_pedigree_binding.py
           '
-          echo "=== PYTHON FILES ==="
+
+          echo "=== BINDING TEST ==="
           docker run --rm --entrypoint sh "$IMAGE" -lc '
-            find /app /workspace /srv /opt /usr/src -maxdepth 4 -type f \( -name "*.py" -o -name "*.json" \) 2>/dev/null | head -300
+            sed -n "1,340p" /app/builder_app/python/test_silk_2025_pedigree_binding.py
           '
-          echo "RESULT=PASS_RUNTIME_IMAGE_SOURCE_DIAGNOSTIC"
+
+          echo "=== FINAL SCORE REFERENCES ==="
+          docker run --rm --entrypoint sh "$IMAGE" -lc '
+            grep -n -E "final.score|pedigree|catalog.bound|catalog_bound" /app/builder_runtime/app_with_submission.py | tail -200 || true
+          '
+
+          echo "=== TARGET BINDING ROWS ==="
+          docker run --rm --entrypoint sh "$IMAGE" -lc '
+            python - <<"PY"
+import json
+p="/app/data/confirmed/silk_2025_pedigree_binding_v1.json"
+d=json.load(open(p))
+def walk(x):
+    if isinstance(x,dict):
+        no=x.get("no",x.get("recruitment_number"))
+        if no in (43,80,81,82):
+            print(json.dumps(x,ensure_ascii=False,sort_keys=True))
+        for v in x.values(): walk(v)
+    elif isinstance(x,list):
+        for v in x: walk(v)
+walk(d)
+PY
+          '
+          echo "RESULT=PASS_TARGETED_RUNTIME_SOURCE_DIAGNOSTIC"
