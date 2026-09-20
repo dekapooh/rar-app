@@ -1,4 +1,4 @@
-name: RAR Objective v1 2026 Commit Resume
+name: RAR Objective v1 2026 Live Verify
 
 on:
   push:
@@ -11,61 +11,46 @@ permissions:
   contents: read
 
 jobs:
-  resume:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: google-github-actions/setup-gcloud@v2
-
-      - name: Authenticate
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+      - name: Verify public 2026 dataset adoption
         run: |
           set -euo pipefail
-          test -n "$FIREBASE_SERVICE_ACCOUNT"
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-gcp.json
-          gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
-          gcloud config set project rar-project-5a27e --quiet
-
-      - name: Pull live runtime image
-        run: |
-          set -euo pipefail
-          SA="574526681741-compute@developer.gserviceaccount.com"
-          IMAGE="$(gcloud run services describe rar-builder-runtime --region=asia-northeast1 --format='value(spec.template.spec.containers[0].image)')"
-          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
-          echo "LIVE_IMAGE=$IMAGE"
-          gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
-          docker pull "$IMAGE" >/dev/null
-
-      - name: Recover audited rescore script
-        run: |
+          curl -fsS --retry 5 --retry-delay 2 "https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2026%3Asilk" -o /tmp/2026.json
+          curl -fsS --retry 5 --retry-delay 2 "https://rar-project-5a27e.web.app/v1/consumer-data/current" -o /tmp/current.json
+          curl -fsS --retry 5 --retry-delay 2 "https://rar-project-5a27e.web.app/v1/consumer-data/datasets" -o /tmp/catalog.json
           python - <<'PY'
-          from pathlib import Path
-          import textwrap
-          src=Path(".github/workflows/rar-objective-v1-2026-audit.yml").read_text(encoding="utf-8")
-          start=src.index('            "$IMAGE" - <<\'PY\'')+len('            "$IMAGE" - <<\'PY\'')
-          end=src.index("\n          PY",start)
-          script=textwrap.dedent(src[start:].split("\n          PY",1)[0].lstrip("\n"))
-          bad="import firebase_admin\\n          from firebase_admin import firestore\\n          from datetime import datetime, timezone"
-          good="import firebase_admin\nfrom firebase_admin import firestore\nfrom datetime import datetime, timezone"
-          if bad not in script:
-              raise SystemExit("expected recoverable import marker not found")
-          script=script.replace(bad,good)
-          compile(script,"/tmp/rescore.py","exec")
-          Path("/tmp/rescore.py").write_text(script,encoding="utf-8")
-          print("RESCORE_SCRIPT_RECOVERY=PASS")
+          import json
+          EXPECTED="977cd338fa5585bb2c9332af45eb0683627ce140323a4d1412d509d00e850e3b"
+          d=json.load(open("/tmp/2026.json",encoding="utf-8"))
+          c=json.load(open("/tmp/current.json",encoding="utf-8"))
+          cat=json.load(open("/tmp/catalog.json",encoding="utf-8"))
+          assert d["dataset_key"]=="2026:silk"
+          assert d["version_id"]==EXPECTED
+          assert int(d["record_count"])==82 and len(d["records"])==82
+          assert c["dataset_key"]=="2026:silk" and c["version_id"]==EXPECTED and int(c["record_count"])==82
+          by_no={int(r["no"]):r for r in d["records"]}
+          assert set(by_no)==set(range(1,83))
+          assert int(by_no[44]["officialRank"])==1
+          assert int(by_no[80]["officialRank"])==2
+          assert int(by_no[59]["officialRank"])==3
+          assert abs(float(by_no[59]["total"])-61.047975)<1e-9
+          entries=cat.get("datasets") or []
+          hit=[x for x in entries if x.get("dataset_key")=="2026:silk"]
+          assert hit and hit[0].get("version_id")==EXPECTED and int(hit[0].get("record_count") or 0)==82
+          print("LIVE_DATASET_2026_SILK=PASS_82")
+          print("LIVE_CURRENT_2026_SILK=PASS_82")
+          print("LIVE_DATASET_CATALOG_2026_SILK=PASS")
+          print("LIVE_VERSION_ID="+EXPECTED)
+          print("RESULT=PASS_LIVE_RAR_2026_OBJECTIVE_ADOPTION")
           PY
 
-      - name: Execute clean Objective v1 commit
+      - name: Verify public RAR app
         run: |
           set -euo pipefail
-          docker run --rm \
-            --entrypoint python \
-            -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/rar-gcp.json \
-            -e GOOGLE_CLOUD_PROJECT=rar-project-5a27e \
-            -e PYTHONPATH=/app/builder_app/python:/app \
-            -v /tmp/rar-gcp.json:/tmp/rar-gcp.json:ro \
-            -v /tmp/rescore.py:/tmp/rescore.py:ro \
-            "$IMAGE" /tmp/rescore.py
+          curl -fsS --retry 5 --retry-delay 2 "https://dekapooh.github.io/rar-app/" -o /tmp/index.html
+          grep -Fq "2026:silk" /tmp/index.html
+          grep -Fq "2025:silk" /tmp/index.html
+          echo "LIVE_APP_DATASET_SELECTOR=PASS"
