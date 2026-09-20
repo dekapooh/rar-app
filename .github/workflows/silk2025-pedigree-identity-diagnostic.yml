@@ -1,0 +1,88 @@
+name: Silk 2025 Pedigree Identity Diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/silk2025-pedigree-identity-diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --quiet pymupdf requests
+      - name: Compare live catalog identities to frozen binding
+        run: |
+          python - <<'PY'
+          import hashlib, json, re
+          import fitz, requests
+
+          URL="https://www.silkhorseclub.jp/assets_static/pdf/silkhorseclub_2025_yearlings.pdf"
+          DAMS=["","プティフォリー","アーモンドアイ","シャトーブランシュ","ポジティブマインド","ヴォーセル","エスケイプクローズ","アルジャンテ","アトリビュート","ユナカイト","セレスタ","ビオグラフィー","ムーンライトナイト","シーブルック","ラストプリマドンナ","ルシルク","モルジアナ","ギルデッドミラー","ロッテンマイヤー","シャクンタラー","スナッチマインド","スカイグルーヴ","ディアンドル","スイープセレリタス","サンテローズ","リアアントニア","ピュアブレンド","マース","マイエンフェルト","ヴィルトゥオシタ","レディホークフィールド","レスペランス","アグレアーブル","ルコントブルー","イストワールファム","ソーディヴァイン","ブロセリアンド","ブランノワール","ルナシオン","コロナシオン","ソニックベガ","スプリングゲイル","クラーベセクレタ","ジルファ","ウィクトーリア","ミスビアンカ","サピアウォーフ","シャンパンルーム","スクールミストレス","リアアメリア","ユーロシャーリーン","バラーディスト","ソブラドラインク","チャームドヴェール","ポレンティア","クリッパークラス","アンティフォナ","ポーレン","プロミストリープ","クインズムーン","グランデストラーダ","リズムオブラヴ","トレジャーステイト","セリユーズ","シャンボールフィズ","サラキア","ローブティサージュ","ロザリンド","ラシンティランテ","キャンディケイン","ミッキーオリーブ","ジャズエチュード","エノラ","ジャポニカーラ","アーデルワイゼ","アルコレーヌ","バルバレスコ","メリーウィドウ","クインアマランサス","ヴェルスパー","ゴーイングトゥベガス","シンプリーグロリアス","クリアウイング"]
+          SIRES=["","キタサンブラック","キタサンブラック","キタサンブラック","コントレイル","キズナ","キズナ","エピファネイア","エピファネイア","ロードカナロア","ロードカナロア","モーリス","モーリス","モーリス","ドレフォン","アドマイヤマーズ","サリオス","クリソベリル","クリソベリル","リオンディーズ","リオンディーズ","シルバーステート","シルバーステート","レイデオロ","レイデオロ","レイデオロ","ニューイヤーズデイ","サートゥルナーリア","サートゥルナーリア","ナダル","ナダル","ブリックスアンドモルタル","ブリックスアンドモルタル","イスラボニータ","ビッグアーサー","フィエールマン","スワーヴリチャード","エフフォーリア","エフフォーリア","グローリーヴェイズ","ミッキーアイル","アルアイン","ルヴァンスレーヴ","Pinatubo","キタサンブラック","キタサンブラック","コントレイル","コントレイル","キズナ","エピファネイア","エピファネイア","ロードカナロア","モーリス","モーリス","ドレフォン","アドマイヤマーズ","サリオス","リアルスティール","クリソベリル","クリソベリル","リオンディーズ","リオンディーズ","シルバーステート","レイデオロ","ニューイヤーズデイ","サートゥルナーリア","オルフェーヴル","オルフェーヴル","フィエールマン","マインドユアビスケッツ","インディチャンプ","インディチャンプ","エフフォーリア","エフフォーリア","ワールドプレミア","アジアエクスプレス","アルアイン","ルヴァンスレーヴ","ゴールドドリーム","ゴールドシップ","Frankel","Justify","Mehmas"]
+          p="/tmp/silk2025.pdf"
+          r=requests.get(URL,headers={"User-Agent":"RAR-Builder/1.0 (+official-source-import)","Accept":"application/pdf"},timeout=180)
+          r.raise_for_status()
+          open(p,"wb").write(r.content)
+          sha=hashlib.sha256(r.content).hexdigest()
+          print("CATALOG_SHA="+sha)
+          if sha!="29198bb4836b57453f1022797692bc953be682545d84afcc9853184ba5835381":
+              raise SystemExit("unexpected catalog SHA")
+
+          def lines(text):
+              return [x.strip() for x in (text or "").splitlines() if x.strip()]
+          def is_detail(text):
+              xs=lines(text); joined="\n".join(xs)
+              names=[x for x in xs if re.search(r"の24$",x)]
+              centers=[x for x in xs if x in ("美浦入厩","栗東入厩")]
+              trainers=[x for x in xs if x.endswith("厩舎予定")]
+              births=[x for x in xs if re.fullmatch(r"24\.\d{1,2}\.\d{1,2}生",x)]
+              return len(names)==len(centers)==len(trainers)==len(births)==1 and "総口数" in joined and "一口価格" in joined
+          def has_raster(doc,i):
+              seen=set()
+              for image in doc.load_page(i).get_images(full=True):
+                  xref=int(image[0])
+                  if xref in seen: continue
+                  seen.add(xref)
+                  try: meta=doc.extract_image(xref)
+                  except Exception: continue
+                  if int(meta.get("width") or 0)>int(meta.get("height") or 0) and int(meta.get("width") or 0)>=1000 and int(meta.get("height") or 0)>=700:
+                      return True
+              return False
+          def norm(v):
+              return "" if v is None else str(v).strip().lstrip("*＊")
+
+          doc=fitz.open(p)
+          pages=[]
+          for i in range(doc.page_count):
+              text=doc.load_page(i).get_text("text") or ""
+              if is_detail(text) and has_raster(doc,i):
+                  pages.append(i+1)
+          print("DETAIL_PAGES="+str(len(pages)))
+          if len(pages)!=82:
+              raise SystemExit("detail page count mismatch")
+
+          mism=[]
+          for no,page_no in enumerate(pages,1):
+              xs=lines(doc.load_page(page_no-1).get_text("text") or "")
+              center_i=next(i for i,x in enumerate(xs) if x in ("美浦入厩","栗東入厩"))
+              sire=xs[center_i+1].lstrip("＊*").strip()
+              display=next(x for x in xs if re.search(r"の24$",x)).replace("○外","外").strip()
+              dam=re.sub(r"^外","",display[:-3]).strip()
+              bad=[]
+              if norm(dam)!=norm(DAMS[no]): bad.append("dam")
+              if norm(sire)!=norm(SIRES[no]): bad.append("sire")
+              if bad:
+                  mism.append({"no":no,"fields":bad,"catalog_dam":dam,"frozen_dam":DAMS[no],"catalog_sire":sire,"frozen_sire":SIRES[no],"page":page_no})
+          print("MISMATCH_COUNT="+str(len(mism)))
+          print("MISMATCHES="+json.dumps(mism,ensure_ascii=False,separators=(",",":")))
+          doc.close()
+          PY
