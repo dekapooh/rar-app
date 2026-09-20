@@ -16,6 +16,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: google-github-actions/setup-gcloud@v2
+
       - name: Authenticate base credential
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
@@ -30,45 +31,22 @@ jobs:
           set -euo pipefail
           SA="574526681741-compute@developer.gserviceaccount.com"
           IMAGE="asia-northeast1-docker.pkg.dev/rar-project-5a27e/rar-builder/rar-builder-runtime:objective-v1-67a7225301eb"
-          gcloud auth print-access-token --impersonate-service-account="$SA" \
-            | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
+          gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
           docker pull "$IMAGE" >/dev/null
 
           echo "=== REFERENCES ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            grep -R -n -E "silk_2025_pedigree_binding|pedigree_binding_v1|catalog.bound|catalog_bound|identity|Pedigree did not pass"               /app/builder_runtime /app/builder_app/python 2>/dev/null | head -300 || true
-          '
+          docker run --rm --entrypoint sh "$IMAGE" -lc 'grep -R -n -E "silk_2025_pedigree_binding|pedigree_binding_v1|catalog.bound|catalog_bound|identity|Pedigree did not pass" /app/builder_runtime /app/builder_app/python 2>/dev/null | head -300 || true'
 
           echo "=== BINDING MODULE ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            sed -n "1,280p" /app/builder_app/python/silk_2025_pedigree_binding.py
-          '
+          docker run --rm --entrypoint sh "$IMAGE" -lc 'sed -n "1,280p" /app/builder_app/python/silk_2025_pedigree_binding.py'
 
           echo "=== BINDING TEST ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            sed -n "1,340p" /app/builder_app/python/test_silk_2025_pedigree_binding.py
-          '
+          docker run --rm --entrypoint sh "$IMAGE" -lc 'sed -n "1,340p" /app/builder_app/python/test_silk_2025_pedigree_binding.py'
 
           echo "=== FINAL SCORE REFERENCES ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            grep -n -E "final.score|pedigree|catalog.bound|catalog_bound" /app/builder_runtime/app_with_submission.py | tail -200 || true
-          '
+          docker run --rm --entrypoint sh "$IMAGE" -lc 'grep -n -E "final.score|pedigree|catalog.bound|catalog_bound" /app/builder_runtime/app_with_submission.py | tail -200 || true'
 
           echo "=== TARGET BINDING ROWS ==="
-          docker run --rm --entrypoint sh "$IMAGE" -lc '
-            python - <<"PY"
-import json
-p="/app/data/confirmed/silk_2025_pedigree_binding_v1.json"
-d=json.load(open(p))
-def walk(x):
-    if isinstance(x,dict):
-        no=x.get("no",x.get("recruitment_number"))
-        if no in (43,80,81,82):
-            print(json.dumps(x,ensure_ascii=False,sort_keys=True))
-        for v in x.values(): walk(v)
-    elif isinstance(x,list):
-        for v in x: walk(v)
-walk(d)
-PY
-          '
+          docker run --rm --entrypoint sh "$IMAGE" -lc 'grep -n -E -A30 -B5 "\"(no|recruitment_number)\"[[:space:]]*:[[:space:]]*(43|80|81|82)" /app/data/confirmed/silk_2025_pedigree_binding_v1.json || true'
+
           echo "RESULT=PASS_TARGETED_RUNTIME_SOURCE_DIAGNOSTIC"
