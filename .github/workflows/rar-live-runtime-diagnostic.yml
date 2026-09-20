@@ -34,6 +34,26 @@ jobs:
             gcloud run services describe "$svc"               --region=asia-northeast1               --project=rar-project-5a27e               --format='yaml(status.latestReadyRevisionName,status.url,spec.template.spec.timeoutSeconds,spec.template.spec.containerConcurrency,spec.template.spec.containers[0].resources.limits)'
           done
 
+
+      - name: Test deploy permissions without mutation
+        run: |
+          set -euo pipefail
+          TOKEN="$(gcloud auth print-access-token)"
+          echo "=== PROJECT TEST IAM ==="
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://cloudresourcemanager.googleapis.com/v1/projects/rar-project-5a27e:testIamPermissions" \
+            -d '{"permissions":["cloudbuild.builds.create","artifactregistry.repositories.downloadArtifacts","artifactregistry.repositories.uploadArtifacts","iam.serviceAccounts.actAs"]}'
+          echo
+          echo "=== CLOUD RUN SERVICE TEST IAM ==="
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://run.googleapis.com/v1/projects/rar-project-5a27e/locations/asia-northeast1/services/rar-builder-runtime:testIamPermissions" \
+            -d '{"permissions":["run.services.get","run.services.update"]}'
+          echo
+
       - name: Inspect persisted Silk 2025 final E2E state
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-gcp.json
