@@ -39,7 +39,7 @@ jobs:
           gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
           docker pull "$IMAGE" >/dev/null
 
-      - name: Objective v1 Silk 2026 dry-run rebuild
+      - name: Objective v1 Silk 2026 rebuild and commit
         run: |
           set -euo pipefail
           docker run --rm -i \
@@ -52,11 +52,11 @@ jobs:
           import json
           from pathlib import Path
 
-          import firebase_admin
+          import firebase_admin\n          from firebase_admin import firestore\n          from datetime import datetime, timezone
 
           from auto_score import auto_score_horse
-          from builder_runtime.consumer_persistence import load_dataset
-          from builder_runtime.consumer_transfer_frozen_v2 import build_frozen_v2_dataset, validate_frozen_v2
+          from builder_runtime.consumer_persistence import VERSION_COLLECTION, load_dataset
+          from builder_runtime.consumer_transfer_frozen_v2 import build_frozen_v2_dataset, persist_frozen_v2, validate_frozen_v2
           from builder_runtime.final_scoring_gateway import EVALUATION_RUN_NAMESPACE, FINAL_ENGINE_ID, _canonical_digest, _surface_label
           from builder_runtime.pedigree_registry import build_pedigree_scores_for_dataset
           from builder_runtime.suitability_registry import load_suitability_for_dataset
@@ -265,5 +265,81 @@ jobs:
               {"no":n,"name":new_by[n]["name"],"rar":new_by[n]["total"],"rank":new_by[n]["officialRank"],"old_rar":old_by[n]["total"],"old_rank":old_by[n]["officialRank"]}
               for n in sorted(focus)
           ],ensure_ascii=False,separators=(",",":")))
-          print("RESULT=PASS_SILK2026_OBJECTIVE_RESCORE_DRY_RUN")
+          owner_uid=str(old.get("transferred_by") or "").strip()
+          if not owner_uid:
+              db=firestore.client()
+              owners=set()
+              for snap in db.collection("builderFinalRuns").stream():
+                  d=snap.to_dict() or {}
+                  if str(d.get("dataset_key") or "")=="2025:silk" and str(d.get("status") or "")=="FROZEN_FINAL":
+                      uid=str(d.get("owner_uid") or "").strip()
+                      if uid:
+                          owners.add(uid)
+              assert len(owners)==1, f"Owner resolution failed: count={len(owners)}"
+              owner_uid=next(iter(owners))
+          assert owner_uid
+
+          db=firestore.client()
+          old_version=str(old.get("version_id") or "")
+          assert old_version and old_version!=preview["payload_sha256"]
+          assert db.collection(VERSION_COLLECTION).document(old_version).get().exists
+
+          transfer=persist_frozen_v2(payload,owner_uid)
+          assert transfer["status"]=="PASS_TRANSFER"
+          assert transfer["version_id"]==preview["payload_sha256"]
+          assert transfer["dataset_key"]==DATASET
+          assert int(transfer["record_count"])==82
+
+          now=datetime.now(timezone.utc).isoformat()
+          db.collection("builderFinalRuns").document(SUBMISSION_ID).set({
+              "status":"FROZEN_FINAL",
+              "owner_uid":owner_uid,
+              "submission_id":SUBMISSION_ID,
+              "potential_run_id":RUN_ID,
+              "catalog_sha256":CATALOG_SHA,
+              "measurement_pdf_sha256":MEASUREMENT_PDF_SHA,
+              "evaluation_run_namespace":EVALUATION_RUN_NAMESPACE,
+              "final_engine_id":FINAL_ENGINE_ID,
+              "season_year":2026,
+              "club_id":"silk",
+              "club_name":"シルク",
+              "dataset_key":DATASET,
+              "horse_count":82,
+              "payload_sha256":preview["payload_sha256"],
+              "payload":payload,
+              "migration_mode":"OBJECTIVE_V1_REUSE_EXISTING_FROZEN_POTENTIAL",
+              "updated_at":now,
+          })
+          db.collection("builderSubmissions").document(SUBMISSION_ID).set({
+              "status":"TRANSFER_READY",
+              "claimed_by":owner_uid,
+              "dataset_key":DATASET,
+              "dataset_identity_status":"AUTO_PASS",
+              "dataset_identity":{
+                  "status":"AUTO_PASS","season_year":2026,"club_id":"silk","club_name":"シルク","dataset_key":DATASET
+              },
+              "source_mode":"MIGRATION_EXISTING_FROZEN",
+              "source_catalog_sha256":CATALOG_SHA,
+              "measurement_pdf_sha256":MEASUREMENT_PDF_SHA,
+              "run_id":RUN_ID,
+              "processed":82,
+              "final_payload_sha256":preview["payload_sha256"],
+              "final_scoring_completed_at":now,
+              "migration_transfer_completed_at":now,
+              "updated_at":now,
+          },merge=True)
+
+          fresh=load_dataset(DATASET)
+          assert fresh and fresh["version_id"]==preview["payload_sha256"]
+          assert int(fresh["record_count"])==82
+          fresh_by={int(r["no"]):r for r in fresh["records"]}
+          assert fresh_by==new_by
+          assert db.collection(VERSION_COLLECTION).document(old_version).get().exists
+          assert db.collection(VERSION_COLLECTION).document(preview["payload_sha256"]).get().exists
+
+          print("TRANSFER_COMMIT=PASS")
+          print("OLD_VERSION_PRESERVED=PASS")
+          print("CONSUMER_ADOPTION=PASS_82")
+          print("COMMITTED_VERSION_ID="+preview["payload_sha256"])
+          print("RESULT=PASS_SILK2026_OBJECTIVE_RESCORE_COMMIT")
           PY
