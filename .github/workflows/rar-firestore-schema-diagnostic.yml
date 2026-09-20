@@ -1,0 +1,108 @@
+name: RAR Firestore Schema Diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-firestore-schema-diagnostic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prepare Firebase Admin credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check --quiet firebase-admin google-cloud-firestore
+
+      - name: Locate Silk 2025 pedigree binding storage
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+          GOOGLE_CLOUD_PROJECT: rar-project-5a27e
+        run: |
+          python - <<'PY'
+          import json
+          from firebase_admin import credentials, firestore, initialize_app
+          from google.cloud.firestore_v1.base_query import FieldFilter
+
+          PROJECT="rar-project-5a27e"
+          DATASET="2025:silk"
+          TARGETS={"Pinatubo","Frankel","Justify","Mehmas","ピナツボ","フランケル","ジャスティファイ","メーマス"}
+
+          initialize_app(credentials.Certificate("/tmp/rar-firebase-service-account.json"), {"projectId":PROJECT})
+          db=firestore.client()
+
+          roots=sorted([c.id for c in db.collections()])
+          print("ROOT_COLLECTIONS="+json.dumps(roots, ensure_ascii=False))
+
+          def contains_target(value):
+              if isinstance(value, str):
+                  return value in TARGETS
+              if isinstance(value, dict):
+                  return any(contains_target(v) for v in value.values())
+              if isinstance(value, list):
+                  return any(contains_target(v) for v in value)
+              return False
+
+          candidates=[c for c in roots if any(k in c.lower() for k in ("pedigree","frozen","dataset","master","fact"))]
+          print("CANDIDATE_COLLECTIONS="+json.dumps(candidates, ensure_ascii=False))
+
+          hits=[]
+          for cname in candidates:
+              coll=db.collection(cname)
+              docs=[]
+              try:
+                  docs=list(coll.where(filter=FieldFilter("dataset_key","==",DATASET)).limit(200).stream())
+              except Exception as exc:
+                  print(f"QUERY_SKIP={cname}|{type(exc).__name__}")
+                  docs=[]
+              if not docs:
+                  # Read only a small sample from candidate collections when dataset_key is absent.
+                  try:
+                      docs=list(coll.limit(120).stream())
+                  except Exception as exc:
+                      print(f"SAMPLE_SKIP={cname}|{type(exc).__name__}")
+                      continue
+              for snap in docs:
+                  data=snap.to_dict() or {}
+                  if contains_target(data):
+                      hits.append({"collection":cname,"id":snap.id,"data":data})
+
+          print("TARGET_HIT_COUNT="+str(len(hits)))
+          for h in hits:
+              print("TARGET_HIT="+json.dumps(h, ensure_ascii=False, default=str))
+
+          # Also inspect exact known E2E documents without scanning unrelated collections.
+          known=[
+              ("builderSubmissions","ef29943b664547428cd3be4899602a2a"),
+              ("builderPotentialRuns","87254bfc6c25cc27307681ee90c8a5a6"),
+              ("builderFinalRuns","ef29943b664547428cd3be4899602a2a"),
+          ]
+          for cname,docid in known:
+              snap=db.collection(cname).document(docid).get()
+              if not snap.exists:
+                  print(f"KNOWN={cname}/{docid}|MISSING")
+                  continue
+              data=snap.to_dict() or {}
+              slim={}
+              for k,v in data.items():
+                  if k in ("dataset_key","status","processed","passed","run_id","pedigree","pedigree_status","pedigree_checked","catalog","source_mode") or contains_target(v):
+                      slim[k]=v
+              print("KNOWN="+json.dumps({"collection":cname,"id":docid,"data":slim},ensure_ascii=False,default=str))
+
+          print("RESULT=PASS_SCHEMA_DIAGNOSTIC")
+          PY
