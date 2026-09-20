@@ -49,3 +49,11 @@ jobs:
           gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="rar-potential-runtime" AND severity>=ERROR' \
             --project=rar-project-5a27e --freshness=20m --limit=30 --order=desc \
             --format='value(timestamp,severity,textPayload)' || true
+          echo "=== FIREBASE ADMIN PROJECT ROLES ==="
+          gcloud projects get-iam-policy rar-project-5a27e \
+            --flatten='bindings[].members' \
+            --filter='bindings.members:firebase-adminsdk-fbsvc@rar-project-5a27e.iam.gserviceaccount.com' \
+            --format='value(bindings.role)' || true
+          echo "=== CLOUD BUILD TRIGGERS ==="
+          gcloud builds triggers list --project=rar-project-5a27e \
+            --format='table(id,name,github.owner,github.name,github.push.branch,filename)' || true
