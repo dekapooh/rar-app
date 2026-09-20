@@ -1,0 +1,71 @@
+name: RAR Objective v1 2026 Commit Resume
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rar-objective-v1-2026-resume.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  resume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          set -euo pipefail
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-gcp.json
+          gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
+          gcloud config set project rar-project-5a27e --quiet
+
+      - name: Pull live runtime image
+        run: |
+          set -euo pipefail
+          SA="574526681741-compute@developer.gserviceaccount.com"
+          IMAGE="$(gcloud run services describe rar-builder-runtime --region=asia-northeast1 --format='value(spec.template.spec.containers[0].image)')"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+          echo "LIVE_IMAGE=$IMAGE"
+          gcloud auth print-access-token --impersonate-service-account="$SA" | docker login -u oauth2accesstoken --password-stdin https://asia-northeast1-docker.pkg.dev
+          docker pull "$IMAGE" >/dev/null
+
+      - name: Recover audited rescore script
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import textwrap
+          src=Path(".github/workflows/rar-objective-v1-2026-audit.yml").read_text(encoding="utf-8")
+          start=src.index('            "$IMAGE" - <<\'PY\'')+len('            "$IMAGE" - <<\'PY\'')
+          end=src.index("\n          PY",start)
+          script=textwrap.dedent(src[start:].split("\n          PY",1)[0].lstrip("\n"))
+          bad="import firebase_admin\\n          from firebase_admin import firestore\\n          from datetime import datetime, timezone"
+          good="import firebase_admin\nfrom firebase_admin import firestore\nfrom datetime import datetime, timezone"
+          if bad not in script:
+              raise SystemExit("expected recoverable import marker not found")
+          script=script.replace(bad,good)
+          compile(script,"/tmp/rescore.py","exec")
+          Path("/tmp/rescore.py").write_text(script,encoding="utf-8")
+          print("RESCORE_SCRIPT_RECOVERY=PASS")
+          PY
+
+      - name: Execute clean Objective v1 commit
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            --entrypoint python \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/rar-gcp.json \
+            -e GOOGLE_CLOUD_PROJECT=rar-project-5a27e \
+            -e PYTHONPATH=/app/builder_app/python:/app \
+            -v /tmp/rar-gcp.json:/tmp/rar-gcp.json:ro \
+            -v /tmp/rescore.py:/tmp/rescore.py:ro \
+            "$IMAGE" /tmp/rescore.py
