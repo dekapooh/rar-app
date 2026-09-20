@@ -64,3 +64,40 @@ jobs:
             done
           done
           echo "RESULT=PASS_POSTDEPLOY_EDGE_DIAGNOSTIC"
+
+      - name: Verify live RAR 2025 adoption
+        run: |
+          set -euo pipefail
+          STAMP="$(date +%s%N)"
+          APP="https://dekapooh.github.io/rar-app/"
+          SYNC="https://dekapooh.github.io/rar-app/system-master-sync.js"
+          API="https://rar-project-5a27e.web.app/v1/consumer-data"
+
+          curl -fsS --max-time 30 "$APP?v=$STAMP" -o /tmp/rar-index.html
+          grep -Fq 'system-master-sync.js?v=dataset-selectors-20260918' /tmp/rar-index.html
+          echo "LIVE_APP_DATASET_SYNC_SCRIPT=PASS"
+
+          curl -fsS --max-time 30 "$SYNC?v=$STAMP" -o /tmp/system-master-sync.js
+          grep -Fq 'rar:dataset-selection-requested' /tmp/system-master-sync.js
+          grep -Fq 'DATASET_API_BASE' /tmp/system-master-sync.js
+          echo "LIVE_DATASET_SELECTOR_RUNTIME=PASS"
+
+          curl -fsS --max-time 30 "$API/datasets?v=$STAMP" -o /tmp/datasets.json
+          curl -fsS --max-time 60 "$API/dataset/2025%3Asilk?v=$STAMP" -o /tmp/silk2025.json
+          python - <<'PY'
+          import json
+          catalog=json.load(open("/tmp/datasets.json"))
+          data=json.load(open("/tmp/silk2025.json"))
+          datasets=catalog.get("datasets") or []
+          keys={str(x.get("dataset_key") or "") for x in datasets if isinstance(x,dict)}
+          assert "2025:silk" in keys, keys
+          assert data.get("dataset_key")=="2025:silk", data.get("dataset_key")
+          assert int(data.get("record_count") or 0)==82, data.get("record_count")
+          records=data.get("records") or []
+          assert len(records)==82, len(records)
+          assert {int(r.get("no")) for r in records}==set(range(1,83))
+          print("LIVE_DATASET_CATALOG_2025_SILK=PASS")
+          print("LIVE_2025_SILK_RECORDS=82/82")
+          print("RESULT=PASS_LIVE_RAR_2025_ADOPTION")
+          PY
+
