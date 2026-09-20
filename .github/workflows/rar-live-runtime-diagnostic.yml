@@ -77,6 +77,8 @@ jobs:
           print("SUBMISSION_ID="+sid)
           print("SUBMISSION_STATUS="+str(sub.get("status") or ""))
           print("SUBMISSION_PROCESSED="+str(sub.get("processed") or ""))
+          print("CATALOG_SHA="+str((sub.get("catalog") or {}).get("sha256") or ""))
+          print("PEDIGREE_LOCKED_SHA=29198bb4836b57453f1022797692bc953be682545d84afcc9853184ba5835381")
           print("RUN_ID="+rid)
           if rid:
               snap=db.collection("builderPotentialRuns").document(rid).get()
