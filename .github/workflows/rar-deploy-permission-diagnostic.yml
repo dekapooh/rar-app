@@ -25,27 +25,55 @@ jobs:
           gcloud auth activate-service-account --key-file=/tmp/rar-gcp.json --quiet
           gcloud config set project rar-project-5a27e --quiet
 
-      - name: Test deploy service-account permissions
+      - name: Inspect impersonated deploy path
         run: |
           set -euo pipefail
           DEPLOY_SA="rar-github-deploy@rar-project-5a27e.iam.gserviceaccount.com"
           TOKEN="$(gcloud auth print-access-token --impersonate-service-account="$DEPLOY_SA")"
-          echo "=== PROJECT ==="
-          curl -fsS -X POST \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            "https://cloudresourcemanager.googleapis.com/v1/projects/rar-project-5a27e:testIamPermissions" \
-            -d '{"permissions":["cloudbuild.builds.create","artifactregistry.repositories.downloadArtifacts","artifactregistry.repositories.uploadArtifacts","iam.serviceAccounts.actAs"]}'
-          echo
-          echo "=== CLOUD RUN ==="
-          curl -fsS -X POST \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            "https://run.googleapis.com/v1/projects/rar-project-5a27e/locations/asia-northeast1/services/rar-builder-runtime:testIamPermissions" \
-            -d '{"permissions":["run.services.get","run.services.update"]}'
-          echo
-          echo "=== SERVICE SNAPSHOT ==="
+          export TOKEN
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          token=os.environ["TOKEN"]
+          checks={
+            "PROJECT":(
+              "https://cloudresourcemanager.googleapis.com/v1/projects/rar-project-5a27e:testIamPermissions",
+              [
+                "cloudbuild.builds.create","cloudbuild.builds.get",
+                "cloudbuild.triggers.get","cloudbuild.triggers.list","cloudbuild.triggers.run",
+                "artifactregistry.repositories.downloadArtifacts",
+                "artifactregistry.repositories.uploadArtifacts",
+                "iam.serviceAccounts.actAs"
+              ]
+            ),
+            "RUN":(
+              "https://run.googleapis.com/v1/projects/rar-project-5a27e/locations/asia-northeast1/services/rar-builder-runtime:testIamPermissions",
+              ["run.services.get","run.services.update"]
+            )
+          }
+          for label,(url,perms) in checks.items():
+            req=urllib.request.Request(
+              url,
+              data=json.dumps({"permissions":perms}).encode(),
+              headers={"Authorization":"Bearer "+token,"Content-Type":"application/json"},
+              method="POST",
+            )
+            try:
+              with urllib.request.urlopen(req,timeout=30) as r:
+                got=set(json.load(r).get("permissions",[]))
+            except urllib.error.HTTPError as exc:
+              print(label+"_HTTP="+str(exc.code))
+              got=set()
+            for p in perms:
+              print("PERM_"+p+"="+("YES" if p in got else "NO"))
+          PY
+
+          echo "=== CLOUD BUILD TRIGGERS ==="
+          gcloud --impersonate-service-account="$DEPLOY_SA" builds triggers list \
+            --project=rar-project-5a27e \
+            --format='csv[no-heading](id,name,filename,serviceAccount)' || true
+
+          echo "=== SERVICE IMAGE ==="
           gcloud --impersonate-service-account="$DEPLOY_SA" run services describe rar-builder-runtime \
             --project=rar-project-5a27e --region=asia-northeast1 \
-            --format='yaml(spec.template.spec.serviceAccountName,spec.template.spec.timeoutSeconds,spec.template.spec.containers[0].image,spec.template.spec.containers[0].env,status.latestReadyRevisionName,status.traffic)'
-          echo "RESULT=PASS_DEPLOY_PERMISSION_DIAGNOSTIC"
+            --format='value(spec.template.spec.containers[0].image)'
+          echo "RESULT=PASS_DEPLOY_PATH_DIAGNOSTIC"
