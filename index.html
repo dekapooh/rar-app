@@ -1572,7 +1572,7 @@ main{padding-top:84px}
 
   <div id="searchActive" class="search-active"></div>
   <div id="searchMeta" class="search-meta"></div>
-  <div class="note" id="searchPlanNote">検索対象は全82頭。募集馬名・No.・父・母に加え、性別・芝/ダート・一口価格で絞り込めます。評価点の表示範囲は契約プランに準拠します。</div>
+  <div class="note" id="searchPlanNote">検索対象は現在datasetの全募集馬。募集馬名・No.・父・母に加え、性別・芝/ダート・一口価格で絞り込めます。評価点の表示範囲は契約プランに準拠します。</div>
   <div id="searchResults"></div>
 </section>
 
@@ -1583,8 +1583,8 @@ main{padding-top:84px}
     <option value="free">FREE</option><option value="light">LIGHT</option>
     <option value="standard">STANDARD</option><option value="premium" selected>PREMIUM</option>
   </select><div class="note" style="margin-top:3px">Build: β Ver.1.0 RC64</div>
-  <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭</div>
-  <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note">DATA QA：82/82 ✓</div></div>
+  <div class="note" style="margin-top:4px">β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全募集馬</div>
+  <div class="mypage-storage-note">保存先：この端末</div> <div class="mypage-storage-note">PWA更新：自動確認</div> <div class="mypage-storage-note" id="datasetQaNote">DATA QA：dataset確認中</div></div>
   <div class="kpis" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
     <div class="kpi active" data-myview="favorites"><b id="favCount">0</b><span>お気に</span></div>
     <div class="kpi" data-myview="finalists"><b id="finalistCount">0</b><span>最終候補</span></div>
@@ -1658,8 +1658,8 @@ main{padding-top:84px}
   </div>
   <div class="backup-scope" style="margin-top:9px"><b>① FREE</b><span>ランキング・検索・閲覧制限</span></div>
   <div class="backup-scope" style="margin-top:7px"><b>② LIGHT</b><span>TOP30・Personal Point上限・募集中抽出</span></div>
-  <div class="backup-scope" style="margin-top:7px"><b>③ STANDARD</b><span>全82頭・4大項目・Personal機能・お気に入り抽出</span></div>
-  <div class="backup-scope" style="margin-top:7px"><b>④ PREMIUM</b><span>全82頭・小項目表示・上位Personal機能</span></div>
+  <div class="backup-scope" style="margin-top:7px"><b>③ STANDARD</b><span>全募集馬・4大項目・Personal機能・お気に入り抽出</span></div>
+  <div class="backup-scope" style="margin-top:7px"><b>④ PREMIUM</b><span>全募集馬・小項目表示・上位Personal機能</span></div>
   <div class="backup-scope" style="margin-top:7px"><b>⑤ 共通</b><span>出資管理・メモ・バックアップ／復元・PWA更新・オフライン</span></div>
 </div>
 <div class="card" id="betaStatusCard">
@@ -1672,7 +1672,7 @@ main{padding-top:84px}
   </div>
   <div class="backup-scope" style="margin-top:9px">
     <b>実装済み</b>
-    <span>82頭Official・ランキング・検索・Personal機能・出資管理・メモ・LOCAL保存・バックアップ／復元・PWA更新・自己診断</span>
+    <span>全募集馬Official・ランキング・検索・Personal機能・出資管理・メモ・LOCAL保存・バックアップ／復元・PWA更新・自己診断</span>
   </div>
   <div class="backup-scope" style="margin-top:7px">
     <b>β公開前</b>
@@ -1698,10 +1698,10 @@ main{padding-top:84px}
     <b>LIGHT</b><span>Official TOP30＋カスタム機能</span>
   </div>
   <div class="backup-scope" style="margin-top:7px">
-    <b>STANDARD</b><span>全82頭＋Personal Point等の拡張機能</span>
+    <b>STANDARD</b><span>全募集馬＋Personal Point等の拡張機能</span>
   </div>
   <div class="backup-scope" style="margin-top:7px">
-    <b>PREMIUM</b><span>全82頭＋上位Personal機能（開発中を含む）</span>
+    <b>PREMIUM</b><span>全募集馬＋上位Personal機能（開発中を含む）</span>
   </div>
   <div class="backup-picker-note">正式版では購入前に、価格・請求周期・自動更新・解約方法・各プランの提供機能を明示します。</div>
 </div>
@@ -2192,18 +2192,68 @@ dreamScenario=state.rankBaseScenario.dream;
 ivScenario=state.rankBaseScenario.iv;
 delete state.dreamScenario;
 delete state.ivScenario;
+
+const DATASET_PERSONAL_KEYS=[
+ "points","memos","favorites","excluded","finalists",
+ "invested","registeredNames","categoryPoints","smallPoints"
+];
+let activePersonalDatasetKey="2026:silk";
+function clonePersonalValue(v){
+ try{return structuredClone(v)}catch{return JSON.parse(JSON.stringify(v??{}))}
+}
+function normalizePersonalObject(v){return v&&typeof v==="object"&&!Array.isArray(v)?v:{}}
+function ensureDatasetPersonalStore(){
+ if(!state.datasetPersonal||typeof state.datasetPersonal!=="object"||Array.isArray(state.datasetPersonal))state.datasetPersonal={};
+ return state.datasetPersonal;
+}
+function syncActivePersonalBucket(){
+ const store=ensureDatasetPersonalStore();
+ const key=String(activePersonalDatasetKey||"2026:silk").trim().toLowerCase()||"2026:silk";
+ const bucket=normalizePersonalObject(store[key]);
+ for(const name of DATASET_PERSONAL_KEYS)bucket[name]=normalizePersonalObject(state[name]);
+ store[key]=bucket;
+ state.activePersonalDatasetKey=key;
+}
+function bindPersonalDataset(datasetKey,{seedCurrent=false}={}){
+ const key=String(datasetKey||"").trim().toLowerCase();
+ if(!/^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(key))throw new Error("invalid Personal dataset_key");
+ const store=ensureDatasetPersonalStore();
+ let bucket=normalizePersonalObject(store[key]);
+ const hasBucket=Object.keys(bucket).length>0;
+ if(!hasBucket){
+   bucket={};
+   for(const name of DATASET_PERSONAL_KEYS){
+     bucket[name]=seedCurrent?clonePersonalValue(normalizePersonalObject(state[name])):{};
+   }
+   store[key]=bucket;
+ }
+ for(const name of DATASET_PERSONAL_KEYS){
+   bucket[name]=normalizePersonalObject(bucket[name]);
+   state[name]=bucket[name];
+ }
+ activePersonalDatasetKey=key;
+ state.activePersonalDatasetKey=key;
+}
+function persistState(){
+ syncActivePersonalBucket();
+ localStorage.setItem("rarBetaState",JSON.stringify(state));
+}
+// Existing flat Personal data belongs to the completed legacy dataset.
+// This migrates it once without losing the user's current 2026 settings.
+bindPersonalDataset("2026:silk",{seedCurrent:true});
+
 const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914_R2";
 if(state.scoreArchitecture!==SCORE_ARCHITECTURE){
   state.categoryPoints={};
   state.smallPoints={};
   state.scoreArchitecture=SCORE_ARCHITECTURE;
-  localStorage.setItem("rarBetaState",JSON.stringify(state));
+  persistState();
 }
 const PLAN_RULES={
  free:{rankLimit:10,canOpenFilter:false,canFavoriteFilter:false,canCategoryToggle:false,canCategoryScores:false,canPriceRange:false,canExcludeHorse:false,pointLimit:10},
  light:{rankLimit:30,canOpenFilter:true,canFavoriteFilter:false,canCategoryToggle:true,canCategoryScores:true,canPriceRange:false,canExcludeHorse:false,pointLimit:30},
- standard:{rankLimit:82,canOpenFilter:true,canFavoriteFilter:true,canCategoryToggle:true,canCategoryScores:true,canPriceRange:true,canExcludeHorse:true,pointLimit:100},
- premium:{rankLimit:82,canOpenFilter:true,canFavoriteFilter:true,canCategoryToggle:true,canCategoryScores:true,canPriceRange:true,canExcludeHorse:true,pointLimit:Infinity}
+ standard:{rankLimit:Infinity,canOpenFilter:true,canFavoriteFilter:true,canCategoryToggle:true,canCategoryScores:true,canPriceRange:true,canExcludeHorse:true,pointLimit:100},
+ premium:{rankLimit:Infinity,canOpenFilter:true,canFavoriteFilter:true,canCategoryToggle:true,canCategoryScores:true,canPriceRange:true,canExcludeHorse:true,pointLimit:Infinity}
 };
 function planRules(){return PLAN_RULES[state.plan]||PLAN_RULES.free}
 function planName(){return ({free:"FREE",light:"LIGHT",standard:"STANDARD",premium:"PREMIUM"})[state.plan]||"FREE"}
@@ -2270,15 +2320,19 @@ const BACKUP_KEYS=[
  "rankBase","filterBase","priceRange"
 ];
 function buildBackupPayload(){
+ syncActivePersonalBucket();
  const data={};
- BACKUP_KEYS.forEach(k=>{data[k]=structuredClone(state[k]??{});});
+ BACKUP_KEYS.forEach(k=>{data[k]=clonePersonalValue(state[k]??{});});
  return {
    app:"RAR",
    format:"rar-personal-backup",
-   version:1,    backupSchema:1,
+   version:2,
+   backupSchema:2,
    build:"β Ver.1.0 RC64",
    localProfileId:ensureLocalProfileId(),
    exportedAt:new Date().toISOString(),
+   activeDatasetKey:activePersonalDatasetKey,
+   datasetPersonal:clonePersonalValue(state.datasetPersonal||{}),
    data
  };
 }
@@ -2318,12 +2372,38 @@ function validateBackupPayload(payload){
  if(payload.format!=="rar-personal-backup")return false;
  const schema=Number(payload.backupSchema||payload.version||1);
  if(!Number.isFinite(schema)||schema<1)return false;
- if(schema>1){alert("このバックアップは新しいRARで作成されています。アプリを更新してください");return false;}
+ if(schema>2){alert("このバックアップは新しいRARで作成されています。アプリを更新してください");return false;}
  if(!payload.data || typeof payload.data!=="object")return false;
  return true;
 }
 function normalizeBackupObject(v){
  return v && typeof v==="object" && !Array.isArray(v) ? v : {};
+}
+function applyBackupPayloadToState(payload){
+ const keepPlan=state.plan;
+ const currentKey=activePersonalDatasetKey;
+ const schema=Number(payload.backupSchema||payload.version||1);
+ for(const k of ["rankBase","filterBase","priceRange"])state[k]=normalizeBackupObject(payload.data?.[k]);
+ if(schema>=2){
+   state.datasetPersonal=clonePersonalValue(normalizeBackupObject(payload.datasetPersonal));
+   const backupKey=String(payload.activeDatasetKey||currentKey).trim().toLowerCase();
+   if(/^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(backupKey) && !state.datasetPersonal[backupKey]){
+     const bucket={};
+     for(const name of DATASET_PERSONAL_KEYS)bucket[name]=clonePersonalValue(normalizeBackupObject(payload.data?.[name]));
+     state.datasetPersonal[backupKey]=bucket;
+   }
+   bindPersonalDataset(currentKey);
+ }else{
+   // Schema 1 predates multi-dataset support, so its horse-number keyed
+   // Personal data can only belong to the completed 2026 Silk dataset.
+   const store=ensureDatasetPersonalStore();
+   const legacyBucket={};
+   for(const name of DATASET_PERSONAL_KEYS)legacyBucket[name]=clonePersonalValue(normalizeBackupObject(payload.data?.[name]));
+   store["2026:silk"]=legacyBucket;
+   bindPersonalDataset(currentKey);
+ }
+ state.plan=keepPlan;
+ persistState();
 }
 function countObjectTruthy(obj){return Object.values(obj||{}).filter(Boolean).length}
 function countPointHorses(data){const set=new Set();for(const k of Object.keys(data.points||{}))if(Number(data.points[k]||0)!==0)set.add(k);for(const [k,obj] of Object.entries(data.categoryPoints||{}))if(Object.values(obj||{}).some(v=>Number(v)!==0))set.add(k);for(const [k,obj] of Object.entries(data.smallPoints||{}))if(Object.values(obj||{}).some(v=>Number(v)!==0))set.add(k);return set.size;}
@@ -2363,12 +2443,7 @@ async function restoreBackupFile(file){
      return;
    }
 
-   const keepPlan=state.plan;
-   BACKUP_KEYS.forEach(k=>{
-     state[k]=normalizeBackupObject(payload.data[k]);
-   });
-   state.plan=keepPlan; // 契約プランはバックアップ対象外
-   localStorage.setItem("rarBetaState",JSON.stringify(state));
+   applyBackupPayloadToState(payload); // 契約プランはバックアップ対象外
 
    applyRankBase();
    syncBaseControls();
@@ -2398,7 +2473,7 @@ async function restoreBackupFile(file){
 }
 
 function saveState(){
- if(!localStorage.getItem("rarPersistAsked")){localStorage.setItem("rarPersistAsked","1");requestPersistentStorage();}localStorage.setItem("rarBetaState",JSON.stringify(state)); updateMyPage();}
+ if(!localStorage.getItem("rarPersistAsked")){localStorage.setItem("rarPersistAsked","1");requestPersistentStorage();}persistState(); updateMyPage();}
 function selectedCats(){return [...document.querySelectorAll(".cat:checked")].map(x=>x.value)}
 function applyRankBase(){
  const rules=planRules();
@@ -2548,7 +2623,10 @@ function renderRanking(){
  const officialRankMap=new Map(official.map(x=>[x.no,x.rank]));
  const visibleRanked=ranked;
  list.innerHTML=visibleRanked.map((h,i)=>{
- const baseName=String(h.name||"").replace(/の25$/,"");
+ const displayName=String(h.name||"");
+ const suffixMatch=displayName.match(/(の\d{2})$/);
+ const nameSuffix=suffixMatch?suffixMatch[1]:"";
+ const baseName=nameSuffix?displayName.slice(0,-nameSuffix.length):displayName;
  const longClass=baseName.length>=12?" long":"";
  return `<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
  ${rankEmblemHTML(h.rank,"personal")}
@@ -2560,7 +2638,7 @@ function renderRanking(){
    </div>
    <div class="rank-horse-name${longClass}">${baseName}</div>
    <div class="rank-info-bottom">
-     <span class="rank-info-suffix">の25</span>
+     <span class="rank-info-suffix">${nameSuffix}</span>
      <span class="rank-info-price">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</span>
    </div>
    <div class="rank-info-scenarios">
@@ -2749,8 +2827,8 @@ function renderSearch(){
 
  const searchPlanNote=document.getElementById("searchPlanNote");
  if(searchPlanNote)searchPlanNote.textContent=state.plan==="free"
-   ?"検索対象は全82頭。FREEでは芝／ダート適性フィルターは利用できません。評価点の表示範囲は契約プランに準拠します。"
-   :"検索対象は全82頭。募集馬名・No.・父・母に加え、性別・芝/ダート・一口価格で絞り込めます。評価点の表示範囲は契約プランに準拠します。";
+   ?`検索対象は全${HORSES.length}頭。FREEでは芝／ダート適性フィルターは利用できません。評価点の表示範囲は契約プランに準拠します。`
+   :`検索対象は全${HORSES.length}頭。募集馬名・No.・父・母に加え、性別・芝/ダート・一口価格で絞り込めます。評価点の表示範囲は契約プランに準拠します。`;
  document.getElementById("searchMeta").textContent=`${xs.length}頭表示`;
  document.getElementById("searchResults").innerHTML=xs.map(h=>`<div class="search-result" onclick="openHorse(${h.no},'search')">
    <div class="ranknum">${h.no}</div>
@@ -3550,14 +3628,18 @@ async function updateAppDiagnostics(){
    dataHealth.textContent=`Personalデータ：${health.label}`;
  }
  if(ready){
+   const expectedCount=Number(window.__RAR_SYSTEM_MASTER__?.record_count||HORSES.length);
    const ok=
      !!document.getElementById("exportBackupBtn") &&
      !!document.getElementById("importBackupBtn") &&
      typeof renderRanking==="function" &&
      typeof renderSearch==="function" &&
      typeof updateMyPage==="function" &&
-     HORSES.length===82;
+     HORSES.length>0 &&
+     HORSES.length===expectedCount;
    ready.textContent=`β公開準備：${ok ? "CORE OK／RC60実機テスト" : "要確認"}`;
+   const qa=document.getElementById("datasetQaNote");
+   if(qa)qa.textContent=`DATA QA：${HORSES.length}/${expectedCount} ${HORSES.length===expectedCount?"✓":"要確認"}`;
  }
  if(quota){
    try{
@@ -3592,10 +3674,7 @@ function undoLastRestore(){
  try{payload=JSON.parse(raw);}catch(e){alert("退避データを読み込めません");return;}
  if(!validateBackupPayload(payload)){alert("退避データの形式を確認できません");return;}
  if(!confirm("直前の復元前のPersonalデータへ戻します。よろしいですか？"))return;
- const keepPlan=state.plan;
- BACKUP_KEYS.forEach(k=>{state[k]=normalizeBackupObject(payload.data[k]);});
- state.plan=keepPlan;
- localStorage.setItem("rarBetaState",JSON.stringify(state));
+ applyBackupPayloadToState(payload);
  localStorage.removeItem("rarPreRestoreSnapshot");
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();renderRanking();renderSearch();updateMyPage();
  if(currentHorse)openHorse(currentHorse.no,previousScreen||"mypage");
@@ -3624,9 +3703,31 @@ if(backupFileInput)backupFileInput.addEventListener("change",async e=>{
  e.target.value="";
 });
 
+window.addEventListener("rar:dataset-selection-requested",()=>persistState());
+window.addEventListener("rar:dataset-before-apply",e=>{
+ const nextKey=String(e.detail?.dataset_key||"").trim().toLowerCase();
+ if(!nextKey || nextKey===activePersonalDatasetKey)return;
+ persistState();
+ bindPersonalDataset(nextKey);
+ persistState();
+ currentHorse=null;
+});
+window.addEventListener("rar:dataset-apply-failed",e=>{
+ const rollbackKey=String(e.detail?.dataset_key||"").trim().toLowerCase();
+ if(!rollbackKey || rollbackKey===activePersonalDatasetKey)return;
+ bindPersonalDataset(rollbackKey);
+ persistState();
+});
+window.addEventListener("rar:dataset-changed",()=>{
+ applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();syncScenarioButtons();syncBaseScenarioButtons();
+ renderRanking();renderSearch();updateMyPage();updateAppDiagnostics();
+});
+
 applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syncBaseScenarioButtons(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
+
+<script src="./system-master-sync.js?v=dataset-selectors-20260918" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

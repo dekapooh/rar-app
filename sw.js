@@ -1,8 +1,8 @@
-const CACHE_NAME="rar-rc66-public-beta-v12-system-master";
+const CACHE_NAME="rar-rc66-public-beta-v13-dataset-multikey";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=20260917"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=dataset-selectors-20260918"><\/script>';
 function injectSystemMasterSync(html){
   if(html.includes('system-master-sync.js')) return html;
   return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;
@@ -29,7 +29,7 @@ function makeRC66(html){
   out=out
     .replace('<div class="plan-card"><span class="plan-badge">BETA ACCESS</span> <b id="currentPlanName">PREMIUM</b>','<div class="plan-card"><span class="plan-badge">PUBLIC BETA</span> <b id="currentPlanName">STANDARD</b>')
     .replace('<select id="betaPlanSelect" class="search-filter" style="margin-left:8px;max-width:135px">','<select id="betaPlanSelect" class="search-filter" style="display:none;margin-left:8px;max-width:135px" aria-hidden="true">')
-    .replace('β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭','Public Beta期間中はSTANDARD相当の機能を無料開放しています。PREMIUM機能は正式版に向けた予定機能です。')
+    .replace('β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全募集馬','Public Beta期間中はSTANDARD相当の機能を無料開放しています。PREMIUM機能は正式版に向けた予定機能です。')
     .replace('if(!state.points || typeof state.points!=="object") state.points={};','state.plan="standard";\nif(!state.points || typeof state.points!=="object") state.points={};')
     .replace('state.plan="premium"; // BETA: 全機能確認用。正式リリース時は契約プラン判定へ戻す','state.plan="standard"; // PUBLIC BETA: STANDARD相当を無料開放');
 
@@ -92,7 +92,7 @@ function makeAdminRC66(html){
   out=out
     .replace('<div class="plan-card"><span class="plan-badge">BETA ACCESS</span> <b id="currentPlanName">PREMIUM</b>',
              '<div class="plan-card"><span class="plan-badge">ADMIN / INTERNAL</span> <b id="currentPlanName">PREMIUM</b>')
-    .replace('β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全82頭',
+    .replace('β版は全機能開放。正式版はFREE＝Official TOP10内、LIGHT＝Official TOP30内でカスタム、STANDARD以上＝全募集馬',
              '管理者確認モード：FREE / LIGHT / STANDARD / PREMIUM の表示・挙動を切り替えて確認できます。公開Public Betaとは別の内部確認画面です。');
 
   // ADMIN: Public Beta側のSTANDARD強制を適用せず、元のプラン切替を利用。

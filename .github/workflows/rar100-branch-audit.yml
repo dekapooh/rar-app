@@ -5,9 +5,11 @@ on:
     branches:
       - main
       - rar100-integration-20260915
+      - feature/dataset-selectors-20260918
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
+      - "system-master-sync.js"
       - "rar100-preview.html"
       - "sw.js"
       - "rar-v2-summaries.json"
@@ -55,7 +57,20 @@ jobs:
           assert 'const fmt1=v=>Number(v).toFixed(1);' in s
           assert 'currentHorse.dream+"/25"' not in s
           assert 'currentHorse.roi+"/25"' not in s
-          print(f"RAR100 preview audit PASS: {target} 82/82")
+          index_s=pathlib.Path("index.html").read_text(encoding="utf-8")
+          assert '<script src="./system-master-sync.js' in index_s, "SYSTEM MASTER sync is not loaded by index.html"
+          assert 'standard:{rankLimit:Infinity' in index_s and 'premium:{rankLimit:Infinity' in index_s
+          assert 'const DATASET_PERSONAL_KEYS=[' in index_s
+          assert 'window.addEventListener("rar:dataset-before-apply"' in index_s
+          assert 'window.addEventListener("rar:dataset-apply-failed"' in index_s
+          assert 'window.addEventListener("rar:dataset-changed"' in index_s
+          assert 'backupSchema:2' in index_s and 'datasetPersonal:' in index_s
+          assert 'rankLimit:82' not in index_s
+          assert 'HORSES.length===82' not in index_s
+          persist=re.search(r'function persistState\(\)\{(.*?)\n\}',index_s,re.S)
+          assert persist and 'localStorage.setItem("rarBetaState",JSON.stringify(state))' in persist.group(1)
+          assert 'persistState();\n}' not in persist.group(1), "persistState recursion"
+          print(f"RAR100 preview audit PASS: {target} 82/82 + index dataset multikey guards")
           PY
       - name: JavaScript syntax audit
         run: |
@@ -74,5 +89,39 @@ jobs:
           print(f"extracted {count} script blocks")
           PY
           for f in /tmp/rar-script-*.js; do node --check "$f"; done
+      - name: Dataset selector runtime contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("system-master-sync.js").read_text(encoding="utf-8")
+          required=[
+            "DATASET_API_BASE",
+            "rar:dataset-selection-requested",
+            "rar:dataset-before-apply",
+            "rar:dataset-apply-failed",
+            "rar:dataset-changed",
+            "window.__RAR_SYSTEM_MASTER__",
+            "record_count: data.record_count",
+            "dataset_key: data.dataset_key",
+            "const API_URL = 'https://rar-project-5a27e.web.app/v1/consumer-data/current'",
+            "dataset_key: '2026:silk'",
+            "sync failed; static fallback kept",
+          ]
+          missing=[x for x in required if x not in s]
+          assert not missing, f"dataset selector runtime missing: {missing}"
+          assert s.index("window.__RAR_SYSTEM_MASTER__ = {") < s.index("for (const fn of ['syncBaseControls'"), "dataset metadata must publish before UI refresh"
+          print("Dataset selector runtime contract PASS")
+          PY
+      - name: SYSTEM MASTER sync syntax audit
+        run: node --check system-master-sync.js
+      - name: Service worker dataset cache contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("sw.js").read_text(encoding="utf-8")
+          assert 'rar-rc66-public-beta-v13-dataset-multikey' in s
+          assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
+          print("Service worker dataset cache contract PASS")
+          PY
       - name: Service worker syntax audit
         run: node --check sw.js
