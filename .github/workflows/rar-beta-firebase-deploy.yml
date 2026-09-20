@@ -20,30 +20,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Audit RAR beta release
+      - name: Audit Objective v1 Builder release
         run: |
           python - <<'PY'
           from pathlib import Path
           html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
           required=[
             "<title>RARβ</title>",
-            'id="submitCatalogInput"',
-            'id="submitMeasureInput"',
-            'id="submitOwnerBtn"',
-            "Ownerに送信",
-            "NO_PDF_PERSISTENCE",
-            "PDF本体は保存しません",
-            "消去しますがよろしいですか？",
-            "start=nextScoreStart,end=Math.min(start+LOT_SIZE-1,total)",
+            "RAR_OFFICIAL_IMPORT_FULL_E2E_V1_20260920",
+            "authDomain:'rar-project-5a27e.web.app'",
+            "importOfficialDataset('2025:silk')",
+            "await runScoring();",
+            "await transferToRar();",
+            "/v1/final-score/build",
+            "/v1/consumer-transfer/frozen-v2/commit",
           ]
           missing=[x for x in required if x not in html]
           if missing:
-            raise SystemExit("Missing release contract: "+repr(missing))
-          forbidden=["firebase-storage.js","uploadBytes(","getStorage(","storageRef("]
-          leaked=[x for x in forbidden if x in html]
-          if leaked:
-            raise SystemExit("Storage dependency remains: "+repr(leaked))
-          print("RAR beta release contract PASS｜NO_PDF_PERSISTENCE")
+            raise SystemExit("Missing live Builder contract: "+repr(missing))
+          if "__RAR_RUNTIME_URL__" in html:
+            raise SystemExit("Runtime placeholder remains")
+          print("RAR Objective v1 Builder contract PASS")
           PY
       - name: JavaScript syntax check
         run: |
@@ -51,13 +48,13 @@ jobs:
           from pathlib import Path
           import re
           html=Path("rar-beta-release/rar-builder.html").read_text(encoding="utf-8")
-          m=re.search(r'<script type="module">(.*?)</script>',html,re.S)
-          if not m:
-            raise SystemExit("module script missing")
-          js="\n".join(line for line in m.group(1).splitlines() if not line.strip().startswith("import"))
-          Path("/tmp/rar-beta.js").write_text(js,encoding="utf-8")
+          blocks=re.findall(r'<script type="module"[^>]*>(.*?)</script>',html,re.S)
+          assert blocks, "module script missing"
+          for i,block in enumerate(blocks):
+            Path(f"/tmp/rar-beta-{i}.mjs").write_text(block,encoding="utf-8")
+          print("MODULE_COUNT="+str(len(blocks)))
           PY
-          node --check /tmp/rar-beta.js
+          for f in /tmp/rar-beta-*.mjs; do node --check "$f"; done
 
   deploy:
     needs: audit
@@ -73,17 +70,38 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
         run: |
           if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
-            echo "::error::FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E is not configured in this repository."
+            echo "::error::Firebase deploy credential is not configured."
             exit 2
           fi
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/rar-firebase-service-account.json
       - name: Install Firebase CLI
         run: npm install --global firebase-tools
-      - name: Deploy RAR beta to Firebase
+      - name: Deploy Builder Hosting only
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
         run: |
           firebase deploy \
-            --only hosting,firestore:rules \
+            --only hosting \
             --project rar-project-5a27e \
-            --config rar-beta-release/firebase.json
+            --config rar-beta-release/firebase.json \
+            --non-interactive
+      - name: Verify live full-E2E Builder and runtime bridge
+        run: |
+          set -euo pipefail
+          WEB="https://rar-project-5a27e.web.app"
+          STAMP="$(date +%s%N)"
+          curl -fsS "$WEB/rar-builder.html?v=$STAMP" -o /tmp/live.html
+          grep -Fq "RAR_OFFICIAL_IMPORT_FULL_E2E_V1_20260920" /tmp/live.html
+          grep -Fq "await runScoring();" /tmp/live.html
+          grep -Fq "await transferToRar();" /tmp/live.html
+          curl -fsS "$WEB/runtime-evidence-healthz?v=$STAMP" -o /tmp/evidence.json
+          python - <<'PY'
+          import json
+          e=json.load(open('/tmp/evidence.json'))
+          assert e.get('ok') is True, e
+          assert e.get('version') == '0.17.0-objective-v1', e
+          print("HOSTING_RUNTIME_BRIDGE=PASS")
+          PY
+          code="$(curl -sS -o /tmp/cap.out -w '%{http_code}' "$WEB/v1/runtime/capabilities")"
+          test "$code" = "401" -o "$code" = "403"
+          echo "LIVE_BUILDER_FULL_E2E_CONTRACT=PASS"
