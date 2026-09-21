@@ -246,6 +246,12 @@
     const dreamSc = scenarios.dream || {};
     const invSc = scenarios.investment || {};
     const small = r.small || {};
+    const smallStatus = r.small_status || {};
+    const potentialSmallKeys = ['scale_frame', 'rear', 'trunk', 'front'];
+    const pedigreeSmallKeys = ['mother', 'sibling', 'sibling_winup', 'nicks'];
+    const hasNumericSmall = (obj, key) => obj[key] !== null && obj[key] !== undefined && obj[key] !== '' && Number.isFinite(Number(obj[key]));
+    const inferredPotentialSmallStatus = potentialSmallKeys.every(key => hasNumericSmall(small, key)) ? 'AVAILABLE' : 'UNKNOWN';
+    const inferredPedigreeSmallStatus = pedigreeSmallKeys.every(key => hasNumericSmall(small, key)) ? 'AVAILABLE' : 'UNKNOWN';
 
     Object.assign(h, {
       name: r.name ?? h.name,
@@ -284,8 +290,12 @@
     });
 
     h.small = h.small || {};
+    h.smallStatus = {
+      potential: String(smallStatus.potential || inferredPotentialSmallStatus),
+      pedigree: String(smallStatus.pedigree || inferredPedigreeSmallStatus)
+    };
     for (const key of ['scale_frame', 'rear', 'trunk', 'front', 'mother', 'sibling', 'sibling_winup', 'nicks']) {
-      if (Number.isFinite(Number(small[key]))) h.small[key] = Number(small[key]);
+      if (hasNumericSmall(small, key)) h.small[key] = Number(small[key]);
     }
     if (Number.isFinite(Number(dreamSc.middle))) h.small.dream_middle = Number(dreamSc.middle);
     if (Number.isFinite(Number(dreamSc.high))) h.small.dream_high = Number(dreamSc.high);
@@ -306,7 +316,8 @@
       prizeMiddleYen: 0, prizeHighYen: 0, prizeOfficialYen: 0,
       expectedPrize: 0, returnRate: 0, full: false,
       turf: '', dirt: '', distance: '', category: '', growth: '', targets: '', comment: '',
-      small: {}
+      small: {},
+      smallStatus: { potential: 'UNKNOWN', pedigree: 'UNKNOWN' }
     };
   }
 
