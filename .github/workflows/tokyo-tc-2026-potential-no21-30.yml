@@ -132,16 +132,48 @@ jobs:
               _,w,h,_,xref,blob=candidates[0]
               image_sha=hashlib.sha256(blob).hexdigest()
               pil=Image.open(io.BytesIO(blob)).convert("RGB")
+              canonical_route="ORIGINAL_EMBEDDED_IMAGE"
+              canonical_sha=image_sha
+              canonical_w=w
+              canonical_h=h
 
-              result=score_image(
-                  pil,
-                  height_cm=m["height_cm"],
-                  girth_cm=m["girth_cm"],
-                  cannon_cm=m["cannon_cm"],
-                  model=model,
-                  horse_idx=horse_idx,
-                  q8_status="PASS",
-              )
+              try:
+                  result=score_image(
+                      pil,
+                      height_cm=m["height_cm"],
+                      girth_cm=m["girth_cm"],
+                      cannon_cm=m["cannon_cm"],
+                      model=model,
+                      horse_idx=horse_idx,
+                      q8_status="PASS",
+                  )
+              except ValueError as exc:
+                  if "insufficient hoof-support groups" not in str(exc):
+                      raise
+                  rects=page.get_image_rects(xref)
+                  if not rects:
+                      raise RuntimeError(f"No.{no}: canonical image rect unavailable")
+                  rect=max(rects,key=lambda rr: rr.width*rr.height)
+                  matrix=fitz.Matrix(150/72,150/72)
+                  pix=page.get_pixmap(matrix=matrix,clip=rect,alpha=False)
+                  rendered=Image.frombytes("RGB",[pix.width,pix.height],pix.samples)
+                  buf=io.BytesIO()
+                  rendered.save(buf,format="PNG")
+                  rendered_bytes=buf.getvalue()
+                  canonical_route="PDF_IMAGE_RECT_RENDER_150DPI_FALLBACK_V1"
+                  canonical_sha=hashlib.sha256(rendered_bytes).hexdigest()
+                  canonical_w=pix.width
+                  canonical_h=pix.height
+                  result=score_image(
+                      rendered,
+                      height_cm=m["height_cm"],
+                      girth_cm=m["girth_cm"],
+                      cannon_cm=m["cannon_cm"],
+                      model=model,
+                      horse_idx=horse_idx,
+                      q8_status="PASS",
+                  )
+
               if result.get("status")!="CONFIRMED":
                   raise RuntimeError(f"No.{no}: Potential REVIEW {result.get('qa')}")
               rows.append({
@@ -150,10 +182,12 @@ jobs:
                   "cancelled":cancelled,
                   "measurements":m,
                   "canonical":{
-                      "width":w,
-                      "height":h,
+                      "width":canonical_w,
+                      "height":canonical_h,
                       "xref":xref,
-                      "sha256":image_sha,
+                      "sha256":canonical_sha,
+                      "route":canonical_route,
+                      "original_embedded_sha256":image_sha,
                   },
                   "potential_total":float(result["total"]),
                   "subitems":result["subitems"],
@@ -181,6 +215,7 @@ jobs:
               "record_count":10,
               "confirmed_count":10,
               "cancelled_no27_preserved":True,
+              "canonical_fallback_policy":"Only on frozen frame error: insufficient hoof-support groups; render exact PDF image rectangle at fixed 150 DPI; no manual crop; no score-based retry",
               "result":"PASS_TOKYO_TC_2026_POTENTIAL_NO21_30",
               "records":rows,
           }
