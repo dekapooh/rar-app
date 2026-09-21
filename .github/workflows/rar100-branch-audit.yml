@@ -6,6 +6,7 @@ on:
       - main
       - rar100-integration-20260915
       - feature/dataset-selectors-20260918
+      - feature/header-dataset-history-suitability-20260922
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
