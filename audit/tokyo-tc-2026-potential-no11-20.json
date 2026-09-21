@@ -1,0 +1,434 @@
+{
+  "dataset_key": "2026:tokyo_tc",
+  "scope": "No.11-20",
+  "engine": "RAR Potential Ver.4.4 Beta / CLPP Beta4.9",
+  "torch": "2.7.1",
+  "torchvision": "0.22.1",
+  "model_weight_sha256": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+  "q8_status": "PASS",
+  "record_count": 10,
+  "confirmed_count": 10,
+  "result": "PASS_TOKYO_TC_2026_POTENTIAL_NO11_20",
+  "records": [
+    {
+      "no": 11,
+      "name": "レッドヴァールの25",
+      "measurements": {
+        "height_cm": 151.0,
+        "girth_cm": 168.0,
+        "cannon_cm": 20.5
+      },
+      "canonical": {
+        "width": 1654,
+        "height": 1103,
+        "xref": 38,
+        "sha256": "6ebef58c75dd0d48443019482086c0ae11db8da5ffb88d28d73038067d7c22e3"
+      },
+      "potential_total": 14.0,
+      "subitems": {
+        "scale_frame": 2,
+        "rear": 7,
+        "trunk": 3,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 2,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 0,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9997170567512512
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 12,
+      "name": "レッドアヴァンセの25",
+      "measurements": {
+        "height_cm": 153.0,
+        "girth_cm": 173.5,
+        "cannon_cm": 20.1
+      },
+      "canonical": {
+        "width": 1586,
+        "height": 1058,
+        "xref": 40,
+        "sha256": "413b1be3250ca2e4600da36cf1f47f4d87d6efcd326dddcbeeb6a586761cd15b"
+      },
+      "potential_total": 11.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 3,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 0,
+        "R3": 1,
+        "R4": 0,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996852874755859
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 13,
+      "name": "レッドラヴィータの25",
+      "measurements": {
+        "height_cm": 152.0,
+        "girth_cm": 172.0,
+        "cannon_cm": 20.2
+      },
+      "canonical": {
+        "width": 1586,
+        "height": 1057,
+        "xref": 39,
+        "sha256": "753a5d239e32460ca0bf52bc777e54d42eb64d20393e08a18a6a6c6b9ef18000"
+      },
+      "potential_total": 12.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 4,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 0,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9997586607933044
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 14,
+      "name": "レッドフラヴィアの25",
+      "measurements": {
+        "height_cm": 152.0,
+        "girth_cm": 172.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1659,
+        "height": 1129,
+        "xref": 45,
+        "sha256": "a5e7ee242e430c5efe2c14cbc689581f50df06627ca5a6e73d639688e3cfc453"
+      },
+      "potential_total": 16.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 8,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 3,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9997597336769104
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 15,
+      "name": "レッドアネラの25",
+      "measurements": {
+        "height_cm": 154.0,
+        "girth_cm": 175.0,
+        "cannon_cm": 20.2
+      },
+      "canonical": {
+        "width": 1716,
+        "height": 1144,
+        "xref": 40,
+        "sha256": "199c59be26bddcfa8f2d9a4bcef453c58d0bee1856234cd8cfdf7fab8a628468"
+      },
+      "potential_total": 17.5,
+      "subitems": {
+        "scale_frame": 2.5,
+        "rear": 8,
+        "trunk": 5,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 1,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 2,
+        "R3": 2,
+        "R4": 2,
+        "T1": 2,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996176958084106
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 16,
+      "name": "ラストグルーヴの25",
+      "measurements": {
+        "height_cm": 153.0,
+        "girth_cm": 172.0,
+        "cannon_cm": 20.1
+      },
+      "canonical": {
+        "width": 1705,
+        "height": 1136,
+        "xref": 43,
+        "sha256": "8c4fd5e8dae9152d47afc361e44cd559b0ab644ee1436a4c5e59c043bcb92156"
+      },
+      "potential_total": 13.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 5,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 1,
+        "R4": 1,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996688365936279
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 17,
+      "name": "レッドクラウディアの25",
+      "measurements": {
+        "height_cm": 153.0,
+        "girth_cm": 177.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1576,
+        "height": 1051,
+        "xref": 40,
+        "sha256": "0baafe63051deffb279d453ec0db4524b1cbad61e7b11c71ebe53ea1c9876793"
+      },
+      "potential_total": 16.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 6,
+        "trunk": 5,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 2,
+        "T2": 1,
+        "T3-G": 2,
+        "F1-G": 1,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996986389160156
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 18,
+      "name": "レジェンディストの25",
+      "measurements": {
+        "height_cm": 156.0,
+        "girth_cm": 169.0,
+        "cannon_cm": 21.3
+      },
+      "canonical": {
+        "width": 1595,
+        "height": 1063,
+        "xref": 40,
+        "sha256": "56cba5d2b044ec26a817e7d9697c091b877625b194a64667412c0bff099afa40"
+      },
+      "potential_total": 17.5,
+      "subitems": {
+        "scale_frame": 4.5,
+        "rear": 7,
+        "trunk": 3,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 1.5,
+        "SC2": 3,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 0,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996024966239929
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 19,
+      "name": "マレーナの25",
+      "measurements": {
+        "height_cm": 150.5,
+        "girth_cm": 170.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1705,
+        "height": 1136,
+        "xref": 43,
+        "sha256": "1eb432a7307142e12a0282bc5ee1bd68be042340fefc377801d345532730e779"
+      },
+      "potential_total": 12.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 5,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996780157089233
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 20,
+      "name": "ルージュレイアの25",
+      "measurements": {
+        "height_cm": 150.0,
+        "girth_cm": 170.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1608,
+        "height": 1072,
+        "xref": 40,
+        "sha256": "0940e2ef603a208bb42460666b79f03de9afd066f3b17a3efacd098cb0c5f9ea"
+      },
+      "potential_total": 12.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 5,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996153116226196
+      },
+      "status": "CONFIRMED"
+    }
+  ]
+}
