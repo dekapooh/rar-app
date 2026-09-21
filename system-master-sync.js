@@ -12,36 +12,60 @@
     dataset_key: '2026:silk'
   });
 
+  // Header selector palette. Add future clubs here; selector logic stays generic.
+  const CLUB_THEMES = Object.freeze({
+    silk: Object.freeze({
+      accent: '#6F91B0',
+      bg: 'rgba(235,242,248,.97)',
+      border: 'rgba(143,169,193,.72)',
+      text: '#244B67'
+    }),
+    tokyo_tc: Object.freeze({
+      accent: '#B0444B',
+      bg: 'rgba(249,235,236,.97)',
+      border: 'rgba(190,111,117,.68)',
+      text: '#6D272C'
+    }),
+    default: Object.freeze({
+      accent: '#6F897C',
+      bg: 'rgba(235,243,238,.97)',
+      border: 'rgba(145,170,157,.64)',
+      text: '#294B3D'
+    })
+  });
+
   let availableDatasets = [LEGACY_DATASET];
   let activeDatasetKey = LEGACY_DATASET.dataset_key;
   let staticHorseSnapshot = null;
 
-  function ensureStatusEl() {
-    let el = document.getElementById('rarSystemMasterUpdatedAt');
-    if (el) return el;
+  function ensureHeaderMetaBlock() {
+    let block = document.getElementById('rarHeaderMetaBlock');
+    if (block) return block;
     const header = document.querySelector('header');
-    if (!header) return null;
+    const sub = header?.querySelector('.sub');
+    if (!header || !sub) return null;
     if (getComputedStyle(header).position === 'static') header.style.position = 'relative';
-    el = document.createElement('div');
-    el.id = 'rarSystemMasterUpdatedAt';
-    el.setAttribute('aria-live', 'polite');
-    Object.assign(el.style, {
-      position: 'absolute',
-      right: '12px',
-      top: '11px',
-      maxWidth: '46%',
-      textAlign: 'right',
-      fontSize: '9px',
-      lineHeight: '1.35',
-      fontWeight: '800',
-      color: '#315d4c',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    });
-    el.textContent = '最終更新 確認中…';
-    header.appendChild(el);
-    return el;
+
+    const raw = String(sub.textContent || '').trim();
+    const parts = raw.split('｜').map(x => x.trim()).filter(Boolean);
+    const title = parts[0] || 'Racehorse Analysis Rating';
+    const version = parts.slice(1).join('｜') || 'β Ver.1.0';
+
+    block = document.createElement('div');
+    block.id = 'rarHeaderMetaBlock';
+    block.className = 'rar-header-meta rar-version-block';
+    block.innerHTML = `
+      <div id="rarSystemMasterUpdatedAt" class="rar-header-meta-line rar-header-status" aria-live="polite">最終更新 確認中…</div>
+      <div class="rar-header-meta-line rar-version-title">${title}</div>
+      <div class="rar-header-meta-line rar-version-value">${version}</div>
+    `;
+    header.appendChild(block);
+    return block;
+  }
+
+  function ensureStatusEl() {
+    const block = ensureHeaderMetaBlock();
+    return block?.querySelector('#rarSystemMasterUpdatedAt') || null;
   }
 
   function setStatus(text, state = 'ok') {
@@ -49,7 +73,6 @@
     if (!el) return;
     el.textContent = text;
     el.dataset.state = state;
-    el.style.color = state === 'error' ? '#9b2c2c' : state === 'fallback' ? '#7c5b00' : '#315d4c';
   }
 
   function n(value, name) {
@@ -124,47 +147,90 @@
     style.textContent = `
       header.rar-dataset-header-ready{position:fixed}
       header.rar-dataset-header-ready .sub{display:none!important}
-      .rar-dataset-selectors{position:absolute;left:16px;right:auto;bottom:7px;width:57%;display:grid;grid-template-columns:82px minmax(0,1fr);gap:6px;margin:0;padding:0;border:0;background:transparent;z-index:3}
-      .rar-version-block{position:absolute;right:12px;bottom:7px;width:36%;text-align:right;z-index:2;color:#315d4c;line-height:1.15;pointer-events:none}
-      .rar-version-title{display:block;font-size:8.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .rar-version-value{display:block;margin-top:2px;font-size:9.5px;font-weight:900;white-space:nowrap}
+
+      .rar-dataset-selectors{
+        position:absolute;left:16px;right:auto;bottom:8px;width:55%;
+        display:grid;grid-template-columns:80px minmax(0,1fr);gap:6px;
+        margin:0;padding:0;border:0;background:transparent;z-index:4
+      }
       .rar-dataset-field{display:block;min-width:0}
-      .rar-dataset-field label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-      .rar-dataset-field select{min-width:0;width:100%;height:28px;padding:0 22px 0 8px;border:1px solid rgba(49,93,76,.35);border-radius:9px;background:#fff;color:#173d30;font-size:10.5px;font-weight:900}
-      .rar-dataset-field select:disabled{opacity:.72}
+      .rar-dataset-field label{
+        position:absolute!important;width:1px!important;height:1px!important;
+        padding:0!important;margin:-1px!important;overflow:hidden!important;
+        clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important
+      }
+      .rar-dataset-field--year{
+        --rar-selector-accent:#D4AF37;
+        --rar-selector-bg:rgba(235,244,238,.97);
+        --rar-selector-border:rgba(212,175,55,.58);
+        --rar-selector-text:#173D30
+      }
+      .rar-dataset-field--club{
+        --rar-selector-accent:var(--rar-club-accent,#6F897C);
+        --rar-selector-bg:var(--rar-club-bg,rgba(235,243,238,.97));
+        --rar-selector-border:var(--rar-club-border,rgba(145,170,157,.64));
+        --rar-selector-text:var(--rar-club-text,#294B3D)
+      }
+      .rar-dataset-field select{
+        appearance:auto;min-width:0;width:100%;height:26px;
+        padding:0 21px 0 9px;border:1px solid var(--rar-selector-border);
+        border-radius:8px;background-color:var(--rar-selector-bg);
+        color:var(--rar-selector-text);font-size:10px;font-weight:900;line-height:1;
+        box-shadow:inset 3px 0 0 var(--rar-selector-accent),0 1px 2px rgba(3,31,21,.10);
+        outline:none
+      }
+      .rar-dataset-field select:focus{
+        box-shadow:inset 3px 0 0 var(--rar-selector-accent),0 0 0 2px rgba(243,215,120,.18)
+      }
+      .rar-dataset-field select:disabled{opacity:.9}
+
+      .rar-header-meta{
+        position:absolute;right:12px;top:8px;width:38%;
+        display:grid;grid-template-rows:repeat(3,minmax(0,auto));gap:2px;
+        text-align:right;z-index:3;pointer-events:none
+      }
+      .rar-header-meta-line{
+        min-height:10px;font-size:8.8px;line-height:1.15;font-weight:800;
+        letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        color:rgba(239,246,242,.9)
+      }
+      .rar-header-status{color:#DCE8E1}
+      .rar-header-status[data-state="error"]{color:#FFD0D0}
+      .rar-header-status[data-state="fallback"]{color:#F2D891}
+      .rar-version-title{font-weight:800}
+      .rar-version-value{font-weight:850;color:#F1D47B}
+
       .rar-update-history{display:grid;gap:7px;margin-top:7px}
       .rar-update-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #e5ece8}
       .rar-update-row:last-child{border-bottom:0}
       .rar-update-name{font-size:12px;font-weight:900;color:#173d30}
       .rar-update-meta{font-size:9.5px;color:#6f7f77;margin-top:2px}
       .rar-update-date{font-size:10px;font-weight:850;color:#315d4c;white-space:nowrap}
+
       @media(max-width:390px){
-        .rar-dataset-selectors{left:12px;bottom:7px;width:59%;grid-template-columns:80px minmax(0,1fr);gap:4px}
-        .rar-dataset-field select{height:26px;font-size:9.5px;padding-left:7px;padding-right:18px}
-        .rar-version-block{right:9px;bottom:7px;width:36%}
-        .rar-version-title{font-size:7.8px}
-        .rar-version-value{font-size:9px}
+        .rar-dataset-selectors{left:12px;bottom:8px;width:55%;grid-template-columns:76px minmax(0,1fr);gap:4px}
+        .rar-dataset-field select{height:25px;font-size:9.5px;padding-left:8px;padding-right:18px}
+        .rar-header-meta{right:8px;top:8px;width:38%;gap:2px}
+        .rar-header-meta-line{font-size:8.2px;line-height:1.15}
       }
     `;
     document.head.appendChild(style);
   }
 
   function ensureVersionBlock() {
-    let block = document.getElementById('rarHeaderVersionBlock');
-    if (block) return block;
-    const header = document.querySelector('header');
-    const sub = header?.querySelector('.sub');
-    if (!header || !sub) return null;
-    const raw = String(sub.textContent || '').trim();
-    const parts = raw.split('｜').map(x => x.trim()).filter(Boolean);
-    const title = parts[0] || 'Racehorse Analysis Rating';
-    const version = parts.slice(1).join('｜') || 'β Ver.1.0';
-    block = document.createElement('div');
-    block.id = 'rarHeaderVersionBlock';
-    block.className = 'rar-version-block';
-    block.innerHTML = `<span class="rar-version-title">${title}</span><span class="rar-version-value">${version}</span>`;
-    header.appendChild(block);
-    return block;
+    return ensureHeaderMetaBlock();
+  }
+
+  function applyClubTheme(clubId) {
+    const root = document.getElementById('rarDatasetSelectors');
+    if (!root) return;
+    const key = String(clubId || '').trim().toLowerCase();
+    const theme = CLUB_THEMES[key] || CLUB_THEMES.default;
+    root.style.setProperty('--rar-club-accent', theme.accent);
+    root.style.setProperty('--rar-club-bg', theme.bg);
+    root.style.setProperty('--rar-club-border', theme.border);
+    root.style.setProperty('--rar-club-text', theme.text);
+    root.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
   }
 
   function ensureDatasetSelectors() {
@@ -180,11 +246,11 @@
     root.id = 'rarDatasetSelectors';
     root.className = 'rar-dataset-selectors';
     root.innerHTML = `
-      <div class="rar-dataset-field">
+      <div class="rar-dataset-field rar-dataset-field--year">
         <label for="rarSeasonSelect">年代</label>
         <select id="rarSeasonSelect" aria-label="募集年代"></select>
       </div>
-      <div class="rar-dataset-field">
+      <div class="rar-dataset-field rar-dataset-field--club">
         <label for="rarClubSelect">クラブ</label>
         <select id="rarClubSelect" aria-label="クラブ"></select>
       </div>
@@ -238,6 +304,9 @@
 
     seasonSelect.disabled = years.length <= 1;
     clubSelect.disabled = clubs.length <= 1;
+
+    const themedClub = clubs.find(d => d.dataset_key === clubSelect.value) || activeMeta || clubs[0] || null;
+    applyClubTheme(themedClub?.club_id);
   }
 
   function renderDatasetUpdateHistory() {
