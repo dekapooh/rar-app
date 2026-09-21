@@ -1,0 +1,466 @@
+{
+  "dataset_key": "2026:tokyo_tc",
+  "scope": "No.21-30",
+  "engine": "RAR Potential Ver.4.4 Beta / CLPP Beta4.9",
+  "torch": "2.7.1",
+  "torchvision": "0.22.1",
+  "model_weight_sha256": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+  "q8_status": "PASS",
+  "record_count": 10,
+  "confirmed_count": 10,
+  "cancelled_no27_preserved": true,
+  "canonical_fallback_policy": "Only on frozen frame error: insufficient hoof-support groups; render exact PDF image rectangle at fixed 150 DPI; no manual crop; no score-based retry",
+  "result": "PASS_TOKYO_TC_2026_POTENTIAL_NO21_30",
+  "records": [
+    {
+      "no": 21,
+      "name": "トップライセンスの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 155.0,
+        "girth_cm": 170.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1718,
+        "height": 1146,
+        "xref": 43,
+        "sha256": "b3b4a5174a48d67b9b6747bedab5ec5dad6049cec1560d6867a72a577d067066",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "b3b4a5174a48d67b9b6747bedab5ec5dad6049cec1560d6867a72a577d067066"
+      },
+      "potential_total": 15.5,
+      "subitems": {
+        "scale_frame": 2.5,
+        "rear": 7,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 1,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9997493624687195
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 22,
+      "name": "ダンシングラグズの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 160.0,
+        "girth_cm": 173.0,
+        "cannon_cm": 20.5
+      },
+      "canonical": {
+        "width": 1655,
+        "height": 1364,
+        "xref": 41,
+        "sha256": "51b2c79c147442c3963a2cae54a1f5d4a8e67e66615413d4210944711d27fdd9",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "51b2c79c147442c3963a2cae54a1f5d4a8e67e66615413d4210944711d27fdd9"
+      },
+      "potential_total": 17.5,
+      "subitems": {
+        "scale_frame": 4.5,
+        "rear": 6,
+        "trunk": 4,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 2.5,
+        "SC2": 2,
+        "R1-G": 1,
+        "R2-G": 2,
+        "R3": 2,
+        "R4": 1,
+        "T1": 1,
+        "T2": 1,
+        "T3-G": 2,
+        "F1-G": 1,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996778964996338
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 23,
+      "name": "レッドエルザの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 157.0,
+        "girth_cm": 169.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1636,
+        "height": 1091,
+        "xref": 39,
+        "sha256": "ebfa360c16f282f79d72894b50ae56bf1f6978403a9ab8f004bd6588ce098837",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "ebfa360c16f282f79d72894b50ae56bf1f6978403a9ab8f004bd6588ce098837"
+      },
+      "potential_total": 17.0,
+      "subitems": {
+        "scale_frame": 3.0,
+        "rear": 8,
+        "trunk": 3,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 1.5,
+        "SC2": 1.5,
+        "R1-G": 3,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 0,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 2,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9994515776634216
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 24,
+      "name": "アスタウンドメントの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 156.0,
+        "girth_cm": 174.0,
+        "cannon_cm": 20.8
+      },
+      "canonical": {
+        "width": 2887,
+        "height": 1925,
+        "xref": 46,
+        "sha256": "a07426bbe937cbc73e7bbf4237cb8c6591272d745f1422c5329a2ef302451269",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "a07426bbe937cbc73e7bbf4237cb8c6591272d745f1422c5329a2ef302451269"
+      },
+      "potential_total": 7.5,
+      "subitems": {
+        "scale_frame": 3.5,
+        "rear": 1,
+        "trunk": 3,
+        "front": 0
+      },
+      "terminal": {
+        "SC1": 1.5,
+        "SC2": 2,
+        "R1-G": 1,
+        "R2-G": 0,
+        "R3": 0,
+        "R4": 0,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 0,
+        "F1-G": 0,
+        "F2-G": 0
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996734857559204
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 25,
+      "name": "レッドシャーロットの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 150.0,
+        "girth_cm": 165.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 2355,
+        "height": 1570,
+        "xref": 47,
+        "sha256": "1ee1c235be4d036f8a30b4f996230545399dd344c18526d48aa618fc80a44ba2",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "1ee1c235be4d036f8a30b4f996230545399dd344c18526d48aa618fc80a44ba2"
+      },
+      "potential_total": 3.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 0,
+        "trunk": 2,
+        "front": 0
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 0,
+        "R2-G": 0,
+        "R3": 0,
+        "R4": 0,
+        "T1": 0,
+        "T2": 2,
+        "T3-G": 0,
+        "F1-G": 0,
+        "F2-G": 0
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9953967928886414
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 26,
+      "name": "プラヤデシエルタの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 151.5,
+        "girth_cm": 170.0,
+        "cannon_cm": 19.8
+      },
+      "canonical": {
+        "width": 1762,
+        "height": 1175,
+        "xref": 39,
+        "sha256": "d0c591159d7ac5929883b66c6e3a6d7743a64119e605c3c84d753b3eaa0037a1",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "d0c591159d7ac5929883b66c6e3a6d7743a64119e605c3c84d753b3eaa0037a1"
+      },
+      "potential_total": 13.0,
+      "subitems": {
+        "scale_frame": 1,
+        "rear": 7,
+        "trunk": 3,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1,
+        "R1-G": 3,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 0,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.99985671043396
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 27,
+      "name": "ダーヌビウスの25",
+      "cancelled": true,
+      "measurements": {
+        "height_cm": 152.0,
+        "girth_cm": 175.2,
+        "cannon_cm": 20.6
+      },
+      "canonical": {
+        "width": 1620,
+        "height": 1080,
+        "xref": 39,
+        "sha256": "9d44d5290a42fb0b0a43bb9a6107712b236c8d4630a03008971e78b4c242ded5",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "9d44d5290a42fb0b0a43bb9a6107712b236c8d4630a03008971e78b4c242ded5"
+      },
+      "potential_total": 13.5,
+      "subitems": {
+        "scale_frame": 2.5,
+        "rear": 5,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 2,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 0,
+        "T1": 2,
+        "T2": 2,
+        "T3-G": 0,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.999657154083252
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 28,
+      "name": "リュズキナの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 158.0,
+        "girth_cm": 179.0,
+        "cannon_cm": 20.6
+      },
+      "canonical": {
+        "width": 1247,
+        "height": 1010,
+        "xref": 41,
+        "sha256": "d8beac11a38e44df813521cc5f1b9c1a96b8deec69497283070045d04c3a73be",
+        "route": "PDF_IMAGE_RECT_RENDER_150DPI_FALLBACK_V1",
+        "original_embedded_sha256": "17cc8d2359da4bc43a165512956bc4af6747ae04c1049cece08929e9adc879ba"
+      },
+      "potential_total": 17.0,
+      "subitems": {
+        "scale_frame": 4,
+        "rear": 7,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 2,
+        "SC2": 2,
+        "R1-G": 2,
+        "R2-G": 2,
+        "R3": 2,
+        "R4": 1,
+        "T1": 2,
+        "T2": 1,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9994776844978333
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 29,
+      "name": "インデリブルの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 153.5,
+        "girth_cm": 179.0,
+        "cannon_cm": 20.1
+      },
+      "canonical": {
+        "width": 1597,
+        "height": 1064,
+        "xref": 41,
+        "sha256": "9d09e21d4c2418eba4d151e00a00a34324597a45e78f2886abdd7f7bcc117106",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "9d09e21d4c2418eba4d151e00a00a34324597a45e78f2886abdd7f7bcc117106"
+      },
+      "potential_total": 14.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 6,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 2,
+        "T2": 1,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9998335838317871
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 30,
+      "name": "レッドオルガの25",
+      "cancelled": false,
+      "measurements": {
+        "height_cm": 155.5,
+        "girth_cm": 168.5,
+        "cannon_cm": 19.8
+      },
+      "canonical": {
+        "width": 1610,
+        "height": 1304,
+        "xref": 37,
+        "sha256": "2683f191b2f29f5f5111d780effe046844c73e58486604185556fadbdea18c71",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "2683f191b2f29f5f5111d780effe046844c73e58486604185556fadbdea18c71"
+      },
+      "potential_total": 9.0,
+      "subitems": {
+        "scale_frame": 2,
+        "rear": 3,
+        "trunk": 3,
+        "front": 1
+      },
+      "terminal": {
+        "SC1": 1,
+        "SC2": 1,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 1,
+        "R4": 0,
+        "T1": 0,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 0,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9995895028114319
+      },
+      "status": "CONFIRMED"
+    }
+  ]
+}
