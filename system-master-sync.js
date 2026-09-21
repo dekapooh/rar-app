@@ -96,7 +96,10 @@
       season_year: normalized.season_year,
       club_id: normalized.club_id,
       club_name: normalized.club_name,
-      dataset_key: normalized.dataset_key
+      dataset_key: normalized.dataset_key,
+      version_id: normalized.version_id || null,
+      record_count: Number(normalized.record_count || 0),
+      transferred_at: normalized.transferred_at || null
     };
   }
 
@@ -333,7 +336,9 @@
       turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? '◎' : '') : h.turf,
       dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? '◎' : '') : h.dirt,
       distance: hasDistance ? `${surfacePrefix}${distanceMin}～${distanceMax}m` : h.distance,
-      growth: (suitability.growth_type && suitability.growth_type !== 'unknown' ? suitability.growth_type : career.growth) || h.growth,
+      growth: (suitability.growth_type && suitability.growth_type !== 'unknown')
+        ? suitability.growth_type
+        : (career.growth && career.growth !== 'unknown' ? career.growth : h.growth),
       targets: Array.isArray(suitability.target_races) && suitability.target_races.length
         ? suitability.target_races.join('・')
         : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・') : h.targets)
