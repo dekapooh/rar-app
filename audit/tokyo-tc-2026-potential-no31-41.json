@@ -1,0 +1,499 @@
+{
+  "dataset_key": "2026:tokyo_tc",
+  "scope": "No.31-41",
+  "engine": "RAR Potential Ver.4.4 Beta / CLPP Beta4.9",
+  "torch": "2.7.1",
+  "torchvision": "0.22.1",
+  "model_weight_sha256": "73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+  "q8_status": "PASS",
+  "record_count": 11,
+  "confirmed_count": 11,
+  "canonical_fallback_policy": "Only on frozen frame error: insufficient hoof-support groups; render exact PDF image rectangle at fixed 150 DPI; no manual crop; no score-based retry",
+  "result": "PASS_TOKYO_TC_2026_POTENTIAL_NO31_41",
+  "records": [
+    {
+      "no": 31,
+      "name": "イッツオンリーアクティングダッドの25",
+      "measurements": {
+        "height_cm": 156.0,
+        "girth_cm": 177.0,
+        "cannon_cm": 20.5
+      },
+      "canonical": {
+        "width": 1776,
+        "height": 1184,
+        "xref": 40,
+        "sha256": "6bc7083678fcfaf71752adcf0507f9e98df37b9a25d362e0c964a4d4c1a02fd3",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "6bc7083678fcfaf71752adcf0507f9e98df37b9a25d362e0c964a4d4c1a02fd3"
+      },
+      "potential_total": 20.5,
+      "subitems": {
+        "scale_frame": 3.5,
+        "rear": 8,
+        "trunk": 5,
+        "front": 4
+      },
+      "terminal": {
+        "SC1": 1.5,
+        "SC2": 2,
+        "R1-G": 3,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 2,
+        "T2": 1,
+        "T3-G": 2,
+        "F1-G": 2,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996916055679321
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 32,
+      "name": "レッドイリーゼの25",
+      "measurements": {
+        "height_cm": 151.0,
+        "girth_cm": 172.0,
+        "cannon_cm": 20.1
+      },
+      "canonical": {
+        "width": 1784,
+        "height": 1189,
+        "xref": 39,
+        "sha256": "11542464d68dc72313bf7367e5c8efb4e8697e7cd2bffe20b30a0326a5b1a2c6",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "11542464d68dc72313bf7367e5c8efb4e8697e7cd2bffe20b30a0326a5b1a2c6"
+      },
+      "potential_total": 10.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 4,
+        "trunk": 3,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 1,
+        "R4": 0,
+        "T1": 1,
+        "T2": 1,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9995813965797424
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 33,
+      "name": "ルージュスティリアの25",
+      "measurements": {
+        "height_cm": 151.0,
+        "girth_cm": 172.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1782,
+        "height": 1189,
+        "xref": 38,
+        "sha256": "223e90f8bc1d71f6f03975c0b7c5fddf6e1a997cc26afdc34784c25a6b5ebf05",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "223e90f8bc1d71f6f03975c0b7c5fddf6e1a997cc26afdc34784c25a6b5ebf05"
+      },
+      "potential_total": 12.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 6,
+        "trunk": 3,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 1,
+        "T2": 1,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9995418787002563
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 34,
+      "name": "エバーブロッサムの25",
+      "measurements": {
+        "height_cm": 150.5,
+        "girth_cm": 172.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1556,
+        "height": 1037,
+        "xref": 39,
+        "sha256": "a71ac0c7461e790f4572e864cc132167c295f2ef9ab87103037c17720d643441",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "a71ac0c7461e790f4572e864cc132167c295f2ef9ab87103037c17720d643441"
+      },
+      "potential_total": 9.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 2,
+        "trunk": 4,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 1,
+        "R2-G": 0,
+        "R3": 1,
+        "R4": 0,
+        "T1": 1,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 0,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9994587302207947
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 35,
+      "name": "レッドシェリールの25",
+      "measurements": {
+        "height_cm": 153.0,
+        "girth_cm": 168.5,
+        "cannon_cm": 19.5
+      },
+      "canonical": {
+        "width": 1621,
+        "height": 1081,
+        "xref": 39,
+        "sha256": "6ed80b30688e59cd68051ce45c47fcc680ceee16f81b40694f17ef9789e60f42",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "6ed80b30688e59cd68051ce45c47fcc680ceee16f81b40694f17ef9789e60f42"
+      },
+      "potential_total": 12.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 7,
+        "trunk": 2,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1,
+        "R1-G": 3,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 0,
+        "T2": 2,
+        "T3-G": 0,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9995953440666199
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 36,
+      "name": "ライヴリーの25",
+      "measurements": {
+        "height_cm": 151.5,
+        "girth_cm": 175.5,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1600,
+        "height": 1107,
+        "xref": 42,
+        "sha256": "3878d37c784c5bc1fe6fa045b7e2d71c198d330121bed7f4c3808580f04b5f25",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "3878d37c784c5bc1fe6fa045b7e2d71c198d330121bed7f4c3808580f04b5f25"
+      },
+      "potential_total": 11.5,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 4,
+        "trunk": 5,
+        "front": 1
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 1.5,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 1,
+        "R4": 1,
+        "T1": 2,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 0,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9997605681419373
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 37,
+      "name": "ファビュラスギフトの25",
+      "measurements": {
+        "height_cm": 156.0,
+        "girth_cm": 175.0,
+        "cannon_cm": 21.0
+      },
+      "canonical": {
+        "width": 1598,
+        "height": 1065,
+        "xref": 40,
+        "sha256": "24b88cfdbc5003a6e86dc0de468407a33b8eed852f934217a714756f3caeb28b",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "24b88cfdbc5003a6e86dc0de468407a33b8eed852f934217a714756f3caeb28b"
+      },
+      "potential_total": 19.5,
+      "subitems": {
+        "scale_frame": 4.5,
+        "rear": 7,
+        "trunk": 5,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 1.5,
+        "SC2": 3,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 2,
+        "T1": 2,
+        "T2": 1,
+        "T3-G": 2,
+        "F1-G": 1,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9995813965797424
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 38,
+      "name": "メジャーマジックの25",
+      "measurements": {
+        "height_cm": 154.0,
+        "girth_cm": 177.0,
+        "cannon_cm": 20.2
+      },
+      "canonical": {
+        "width": 1615,
+        "height": 1077,
+        "xref": 40,
+        "sha256": "ba33e30fffcee6d726988da7a99687746af7e9529d26223208fcd11f89fa295e",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "ba33e30fffcee6d726988da7a99687746af7e9529d26223208fcd11f89fa295e"
+      },
+      "potential_total": 16.5,
+      "subitems": {
+        "scale_frame": 2.5,
+        "rear": 5,
+        "trunk": 6,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 1,
+        "SC2": 1.5,
+        "R1-G": 2,
+        "R2-G": 1,
+        "R3": 1,
+        "R4": 1,
+        "T1": 2,
+        "T2": 2,
+        "T3-G": 2,
+        "F1-G": 1,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9998167157173157
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 39,
+      "name": "レディオブフィフティの25",
+      "measurements": {
+        "height_cm": 162.0,
+        "girth_cm": 176.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1578,
+        "height": 1052,
+        "xref": 42,
+        "sha256": "5649a97724db5b84b2c80afdf7fa1e03b576d6a01c6be4ef50339f5c6cf5dab2",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "5649a97724db5b84b2c80afdf7fa1e03b576d6a01c6be4ef50339f5c6cf5dab2"
+      },
+      "potential_total": 18.5,
+      "subitems": {
+        "scale_frame": 4.5,
+        "rear": 7,
+        "trunk": 4,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 3,
+        "SC2": 1.5,
+        "R1-G": 3,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 2,
+        "T2": 1,
+        "T3-G": 1,
+        "F1-G": 2,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9996962547302246
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 40,
+      "name": "ベガスマジックの25",
+      "measurements": {
+        "height_cm": 150.0,
+        "girth_cm": 168.0,
+        "cannon_cm": 20.5
+      },
+      "canonical": {
+        "width": 1583,
+        "height": 1055,
+        "xref": 38,
+        "sha256": "a2875e7da346444b507d8c8b1a44a4d622951d9926d2d6ab436aafee38bb35e0",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "a2875e7da346444b507d8c8b1a44a4d622951d9926d2d6ab436aafee38bb35e0"
+      },
+      "potential_total": 11.0,
+      "subitems": {
+        "scale_frame": 2,
+        "rear": 4,
+        "trunk": 2,
+        "front": 3
+      },
+      "terminal": {
+        "SC1": 0,
+        "SC2": 2,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 1,
+        "R4": 1,
+        "T1": 0,
+        "T2": 1,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 2
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9995079040527344
+      },
+      "status": "CONFIRMED"
+    },
+    {
+      "no": 41,
+      "name": "アストロロジャーの25",
+      "measurements": {
+        "height_cm": 153.0,
+        "girth_cm": 178.0,
+        "cannon_cm": 20.0
+      },
+      "canonical": {
+        "width": 1570,
+        "height": 1047,
+        "xref": 40,
+        "sha256": "db7f9a6f2d098a318f86683332d40c1fc90c76827dfff7816e9b62f364f9f1c1",
+        "route": "ORIGINAL_EMBEDDED_IMAGE",
+        "original_embedded_sha256": "db7f9a6f2d098a318f86683332d40c1fc90c76827dfff7816e9b62f364f9f1c1"
+      },
+      "potential_total": 14.0,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 5,
+        "trunk": 5,
+        "front": 2
+      },
+      "terminal": {
+        "SC1": 0.5,
+        "SC2": 1.5,
+        "R1-G": 1,
+        "R2-G": 1,
+        "R3": 2,
+        "R4": 1,
+        "T1": 2,
+        "T2": 2,
+        "T3-G": 1,
+        "F1-G": 1,
+        "F2-G": 1
+      },
+      "qa": {
+        "Q7": "PASS",
+        "Q8": "PASS",
+        "route": "BETA_OFFICIAL",
+        "detection_score": 0.9997761845588684
+      },
+      "status": "CONFIRMED"
+    }
+  ]
+}
