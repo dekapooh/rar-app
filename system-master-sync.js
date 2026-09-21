@@ -96,7 +96,10 @@
       season_year: normalized.season_year,
       club_id: normalized.club_id,
       club_name: normalized.club_name,
-      dataset_key: normalized.dataset_key
+      dataset_key: normalized.dataset_key,
+      version_id: normalized.version_id || null,
+      record_count: Number(normalized.record_count || 0),
+      transferred_at: normalized.transferred_at || null
     };
   }
 
@@ -119,12 +122,22 @@
     const style = document.createElement('style');
     style.id = 'rarDatasetSelectorStyle';
     style.textContent = `
-      .rar-dataset-selectors{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 10px;padding:8px 10px;border:1px solid rgba(49,93,76,.18);border-radius:10px;background:rgba(255,255,255,.72)}
-      .rar-dataset-field{display:flex;align-items:center;gap:6px;min-width:0}
-      .rar-dataset-field label{flex:0 0 auto;font-size:11px;font-weight:800;color:#315d4c;white-space:nowrap}
-      .rar-dataset-field select{min-width:0;width:100%;height:32px;padding:0 28px 0 9px;border:1px solid rgba(49,93,76,.28);border-radius:8px;background:#fff;color:#173d30;font-size:13px;font-weight:800}
+      header.rar-dataset-header-ready{position:fixed}
+      .rar-dataset-selectors{position:absolute;right:12px;bottom:8px;width:min(245px,58%);display:grid;grid-template-columns:86px minmax(0,1fr);gap:6px;margin:0;padding:0;border:0;background:transparent;z-index:3}
+      .rar-dataset-field{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px;min-width:0}
+      .rar-dataset-field label{font-size:8.5px;font-weight:900;color:#315d4c;white-space:nowrap}
+      .rar-dataset-field select{min-width:0;width:100%;height:28px;padding:0 22px 0 7px;border:1px solid rgba(49,93,76,.35);border-radius:9px;background:#fff;color:#173d30;font-size:10.5px;font-weight:900}
       .rar-dataset-field select:disabled{opacity:.72}
-      @media(max-width:420px){.rar-dataset-selectors{gap:6px;padding:7px 8px}.rar-dataset-field{gap:4px}.rar-dataset-field label{font-size:10px}.rar-dataset-field select{font-size:12px}}
+      .rar-update-history{display:grid;gap:7px;margin-top:7px}
+      .rar-update-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #e5ece8}
+      .rar-update-row:last-child{border-bottom:0}
+      .rar-update-name{font-size:12px;font-weight:900;color:#173d30}
+      .rar-update-meta{font-size:9.5px;color:#6f7f77;margin-top:2px}
+      .rar-update-date{font-size:10px;font-weight:850;color:#315d4c;white-space:nowrap}
+      @media(max-width:390px){
+        .rar-dataset-selectors{right:8px;bottom:7px;width:min(220px,61%);grid-template-columns:78px minmax(0,1fr);gap:4px}
+        .rar-dataset-field label{font-size:8px}.rar-dataset-field select{height:26px;font-size:9.5px;padding-left:5px}
+      }
     `;
     document.head.appendChild(style);
   }
@@ -132,10 +145,11 @@
   function ensureDatasetSelectors() {
     let root = document.getElementById('rarDatasetSelectors');
     if (root) return root;
-    const rankingTop = document.querySelector('#ranking .rank-top-sticky') || document.querySelector('#ranking');
-    if (!rankingTop) return null;
+    const header = document.querySelector('header');
+    if (!header) return null;
 
     ensureDatasetSelectorStyle();
+    header.classList.add('rar-dataset-header-ready');
     root = document.createElement('div');
     root.id = 'rarDatasetSelectors';
     root.className = 'rar-dataset-selectors';
@@ -149,10 +163,7 @@
         <select id="rarClubSelect" aria-label="クラブ"></select>
       </div>
     `;
-
-    const title = rankingTop.querySelector('h1,h2,h3');
-    if (title && title.parentNode === rankingTop) title.insertAdjacentElement('afterend', root);
-    else rankingTop.insertBefore(root, rankingTop.firstChild);
+    header.appendChild(root);
 
     const seasonSelect = root.querySelector('#rarSeasonSelect');
     const clubSelect = root.querySelector('#rarClubSelect');
@@ -203,8 +214,35 @@
     clubSelect.disabled = clubs.length <= 1;
   }
 
+  function renderDatasetUpdateHistory() {
+    ensureDatasetSelectorStyle();
+    const home = document.getElementById('home');
+    if (!home) return;
+    let card = document.getElementById('rarDatasetUpdateHistory');
+    if (!card) {
+      const titles = [...home.querySelectorAll('.home-section-title')];
+      const updateTitle = titles.find(el => String(el.textContent || '').includes('更新情報'));
+      if (!updateTitle) return;
+      card = document.createElement('div');
+      card.id = 'rarDatasetUpdateHistory';
+      card.className = 'topic-card';
+      card.innerHTML = '<div class="topic-meta">DATASET UPDATE</div><b>RARデータ更新履歴</b><div class="rar-update-history"></div>';
+      updateTitle.insertAdjacentElement('afterend', card);
+    }
+    const rows = [...availableDatasets]
+      .filter(d => d.transferred_at)
+      .sort((x, y) => new Date(y.transferred_at).getTime() - new Date(x.transferred_at).getTime());
+    const wrap = card.querySelector('.rar-update-history');
+    wrap.innerHTML = rows.length ? rows.map(d => `
+      <div class="rar-update-row">
+        <div><div class="rar-update-name">${d.season_year} ${d.club_name}</div><div class="rar-update-meta">${Number(d.record_count || 0)}頭｜${d.dataset_key}</div></div>
+        <div class="rar-update-date">${formatTokyo(d.transferred_at)}</div>
+      </div>`).join('') : '<div class="rar-update-meta">更新履歴を取得中…</div>';
+  }
+
   function updateDatasetCatalog(data) {
     availableDatasets = catalogFromDataset(data);
+    renderDatasetUpdateHistory();
   }
 
   function validateDataset(rawData) {
@@ -247,6 +285,16 @@
     const invSc = scenarios.investment || {};
     const small = r.small || {};
     const smallStatus = r.small_status || {};
+    const suitability = r.suitability || {};
+    const preferredSurfaces = Array.isArray(suitability.preferred_surfaces)
+      ? suitability.preferred_surfaces.map(x => String(x || '').toLowerCase())
+      : (Array.isArray(career.preferred_surfaces) ? career.preferred_surfaces.map(x => String(x || '').toLowerCase()) : []);
+    const distanceMin = Number(suitability.distance_min_m ?? career.distance_min_m);
+    const distanceMax = Number(suitability.distance_max_m ?? career.distance_max_m);
+    const hasDistance = Number.isFinite(distanceMin) && Number.isFinite(distanceMax) && distanceMin > 0 && distanceMax >= distanceMin;
+    const surfacePrefix = preferredSurfaces.includes('turf') && preferredSurfaces.includes('dirt')
+      ? '芝・ダ'
+      : preferredSurfaces.includes('dirt') ? 'ダ' : preferredSurfaces.includes('turf') ? '芝' : '';
     const potentialSmallKeys = ['scale_frame', 'rear', 'trunk', 'front'];
     const pedigreeSmallKeys = ['mother', 'sibling', 'sibling_winup', 'nicks'];
     const hasNumericSmall = (obj, key) => obj[key] !== null && obj[key] !== undefined && obj[key] !== '' && Number.isFinite(Number(obj[key]));
@@ -285,8 +333,15 @@
       expectedPrize: Number.isFinite(Number(career.official_prize_yen)) ? Number(career.official_prize_yen) / 10000 : h.expectedPrize,
       returnRate: Number.isFinite(Number(career.roi_official_pct)) ? Number(career.roi_official_pct) / 100 : h.returnRate,
       rarStatus: r.manager_status || h.rarStatus,
-      growth: career.growth || h.growth,
-      targets: Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・') : h.targets
+      turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? '◎' : '') : h.turf,
+      dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? '◎' : '') : h.dirt,
+      distance: hasDistance ? `${surfacePrefix}${distanceMin}～${distanceMax}m` : h.distance,
+      growth: (suitability.growth_type && suitability.growth_type !== 'unknown')
+        ? suitability.growth_type
+        : (career.growth && career.growth !== 'unknown' ? career.growth : h.growth),
+      targets: Array.isArray(suitability.target_races) && suitability.target_races.length
+        ? suitability.target_races.join('・')
+        : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・') : h.targets)
     });
 
     h.small = h.small || {};
@@ -333,8 +388,9 @@
         ? cloneHorse(legacyByNo.get(no))
         : blankHorse(no);
       patchHorse(base, r);
-      if (!base.turf && r.career?.surface === 'turf') base.turf = '◎';
-      if (!base.dirt && r.career?.surface === 'dirt') base.dirt = '◎';
+      if (!base.turf && !base.dirt && r.career?.surface === 'turf') base.turf = '◎';
+      if (!base.turf && !base.dirt && r.career?.surface === 'dirt') base.dirt = '◎';
+      if (!base.turf && !base.dirt && r.career?.surface === 'both') { base.turf = '◎'; base.dirt = '◎'; }
       return base;
     });
     HORSES.splice(0, HORSES.length, ...nextHorses);
@@ -425,7 +481,9 @@
 
   async function sync() {
     ensureStatusEl();
+    ensureDatasetSelectorStyle();
     renderDatasetSelectorOptions(LEGACY_DATASET.season_year, LEGACY_DATASET.dataset_key);
+    renderDatasetUpdateHistory();
     setStatus('最終更新 確認中…');
     try {
       const res = await fetch(API_URL, { cache: 'no-store', mode: 'cors' });
