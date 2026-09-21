@@ -123,8 +123,11 @@
     style.id = 'rarDatasetSelectorStyle';
     style.textContent = `
       header.rar-dataset-header-ready{position:fixed}
-      header.rar-dataset-header-ready .sub{max-width:43%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .rar-dataset-selectors{position:absolute;right:10px;bottom:7px;width:54%;display:grid;grid-template-columns:74px minmax(0,1fr);gap:6px;margin:0;padding:0;border:0;background:transparent;z-index:3}
+      header.rar-dataset-header-ready .sub{display:none!important}
+      .rar-dataset-selectors{position:absolute;left:16px;right:auto;bottom:7px;width:57%;display:grid;grid-template-columns:82px minmax(0,1fr);gap:6px;margin:0;padding:0;border:0;background:transparent;z-index:3}
+      .rar-version-block{position:absolute;right:12px;bottom:7px;width:36%;text-align:right;z-index:2;color:#315d4c;line-height:1.15;pointer-events:none}
+      .rar-version-title{display:block;font-size:8.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .rar-version-value{display:block;margin-top:2px;font-size:9.5px;font-weight:900;white-space:nowrap}
       .rar-dataset-field{display:block;min-width:0}
       .rar-dataset-field label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
       .rar-dataset-field select{min-width:0;width:100%;height:28px;padding:0 22px 0 8px;border:1px solid rgba(49,93,76,.35);border-radius:9px;background:#fff;color:#173d30;font-size:10.5px;font-weight:900}
@@ -136,12 +139,32 @@
       .rar-update-meta{font-size:9.5px;color:#6f7f77;margin-top:2px}
       .rar-update-date{font-size:10px;font-weight:850;color:#315d4c;white-space:nowrap}
       @media(max-width:390px){
-        header.rar-dataset-header-ready .sub{max-width:42%;font-size:9px}
-        .rar-dataset-selectors{right:8px;bottom:7px;width:55%;grid-template-columns:68px minmax(0,1fr);gap:4px}
-        .rar-dataset-field select{height:26px;font-size:9.5px;padding-left:6px;padding-right:18px}
+        .rar-dataset-selectors{left:12px;bottom:7px;width:59%;grid-template-columns:80px minmax(0,1fr);gap:4px}
+        .rar-dataset-field select{height:26px;font-size:9.5px;padding-left:7px;padding-right:18px}
+        .rar-version-block{right:9px;bottom:7px;width:36%}
+        .rar-version-title{font-size:7.8px}
+        .rar-version-value{font-size:9px}
       }
     `;
     document.head.appendChild(style);
+  }
+
+  function ensureVersionBlock() {
+    let block = document.getElementById('rarHeaderVersionBlock');
+    if (block) return block;
+    const header = document.querySelector('header');
+    const sub = header?.querySelector('.sub');
+    if (!header || !sub) return null;
+    const raw = String(sub.textContent || '').trim();
+    const parts = raw.split('｜').map(x => x.trim()).filter(Boolean);
+    const title = parts[0] || 'Racehorse Analysis Rating';
+    const version = parts.slice(1).join('｜') || 'β Ver.1.0';
+    block = document.createElement('div');
+    block.id = 'rarHeaderVersionBlock';
+    block.className = 'rar-version-block';
+    block.innerHTML = `<span class="rar-version-title">${title}</span><span class="rar-version-value">${version}</span>`;
+    header.appendChild(block);
+    return block;
   }
 
   function ensureDatasetSelectors() {
@@ -152,6 +175,7 @@
 
     ensureDatasetSelectorStyle();
     header.classList.add('rar-dataset-header-ready');
+    ensureVersionBlock();
     root = document.createElement('div');
     root.id = 'rarDatasetSelectors';
     root.className = 'rar-dataset-selectors';
