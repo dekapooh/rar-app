@@ -1,0 +1,174 @@
+name: Tokyo TC 2026 Potential No1-10
+
+on:
+  push:
+    branches:
+      - audit/tokyo-tc-2026-potential-no1-10-20260921
+    paths:
+      - '.github/workflows/tokyo-tc-2026-potential-no1-10.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install exact Potential runtime
+        run: |
+          python -m pip install --quiet --index-url https://download.pytorch.org/whl/cpu torch==2.7.1 torchvision==0.22.1
+          python -m pip install --quiet "numpy>=2.0,<3" "Pillow>=10,<12" "opencv-python-headless>=4.10,<5" requests PyMuPDF
+
+      - name: Fetch and verify frozen Mask R-CNN weight
+        run: |
+          mkdir -p /tmp/rar-model
+          curl -L --fail --retry 3 \
+            -o /tmp/rar-model/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth \
+            https://download.pytorch.org/models/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth
+          python - <<'PY'
+          import hashlib
+          p="/tmp/rar-model/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth"
+          h=hashlib.sha256(open(p,"rb").read()).hexdigest()
+          assert h=="73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e", h
+          print("MODEL_SHA256=PASS")
+          PY
+
+      - name: Score official Tokyo TC No.1-10
+        env:
+          PYTHONPATH: audit_tmp/tokyo_tc_potential
+        run: |
+          python - <<'PY'
+          import hashlib, io, json
+          from pathlib import Path
+
+          import fitz, requests
+          from PIL import Image
+          from potential_beta49_runtime import build_model, score_image
+
+          weight="/tmp/rar-model/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth"
+          model,horse_idx=build_model(weight)
+
+          horses={
+            1:("レッドファンタジアの25","https://www.tokyo-tc.com/api/media/share/horse/XdceyRT3lnmugfcvTAy5xWGfjhkvG0psnHAfXFks.pdf",157.0,171.0,21.2),
+            2:("レッドレグナントの25","https://www.tokyo-tc.com/api/media/share/horse/hbmhwvYeteW4IApUfw9wZAqRwNj4odJmLIppbILr.pdf",153.0,178.0,20.0),
+            3:("クイーンズアドヴァイスの25","https://www.tokyo-tc.com/api/media/share/horse/OYqcL0UK1PpHbQ1tqbTyYic21tvzhQrgLvkMVsgc.pdf",154.0,179.0,20.4),
+            4:("ソラリアの25","https://www.tokyo-tc.com/api/media/share/horse/eApXOVbj5PkV4UukD7qGW3KK3bpezFBlmGOC4HVh.pdf",160.0,173.0,21.0),
+            5:("レッドベレーザの25","https://www.tokyo-tc.com/api/media/share/horse/89Lj09QYvWibxRGyVgartuoMHerjdrqL1taaMpWE.pdf",154.0,175.3,20.4),
+            6:("オリンピックラスパルマスの25","https://www.tokyo-tc.com/api/media/share/horse/xSr7eUvnxYsnHfIdTVHKmq6TGztZEy1Zx6CR0OY0.pdf",153.0,170.2,20.0),
+            7:("レッドルレーヴの25","https://www.tokyo-tc.com/api/media/share/horse/I4egb20d0XwQnfFuRAqmf8DvQeBRiGUph9Sxb8uB.pdf",154.0,177.5,21.0),
+            8:("ペイフォワードの25","https://www.tokyo-tc.com/api/media/share/horse/NCThjUBJGkb5yjxaETGDcpaNEJBZg06KU8CG5YJn.pdf",153.0,170.0,20.1),
+            9:("レッドベルディエスの25","https://www.tokyo-tc.com/api/media/share/horse/zEb1h2jlc1U7Nrfb7NQCbONV8QOj2iWHkAVDWS77.pdf",153.0,171.0,20.0),
+            10:("ロシアンサモワールの25","https://www.tokyo-tc.com/api/media/share/horse/CptVM9R2TWhiCaOgdBp0tvSavxWhFgbcAke6jPLr.pdf",154.0,182.5,21.0),
+          }
+
+          sess=requests.Session()
+          sess.headers.update({"User-Agent":"RAR-Potential-Audit/1.0"})
+          rows=[]
+          for no,(name,url,height,girth,cannon) in horses.items():
+              r=sess.get(url,timeout=90)
+              r.raise_for_status()
+              data=r.content
+              if not data.startswith(b"%PDF-"):
+                  raise RuntimeError(f"No.{no}: official source is not PDF")
+              doc=fitz.open(stream=data,filetype="pdf")
+              if doc.page_count!=1:
+                  raise RuntimeError(f"No.{no}: unexpected page count {doc.page_count}")
+              page=doc[0]
+              if name[:-3] not in (page.get_text("text") or ""):
+                  raise RuntimeError(f"No.{no}: identity mismatch")
+
+              candidates=[]
+              seen=set()
+              for img in page.get_images(full=True):
+                  xref=int(img[0])
+                  if xref in seen:
+                      continue
+                  seen.add(xref)
+                  meta=doc.extract_image(xref)
+                  w,h=int(meta["width"]),int(meta["height"])
+                  blob=meta["image"]
+                  if w>h and w>=800 and h>=500:
+                      candidates.append((w*h,w,h,-xref,xref,blob))
+              if not candidates:
+                  raise RuntimeError(f"No.{no}: no canonical landscape image")
+              candidates.sort(reverse=True)
+              _,w,h,_,xref,blob=candidates[0]
+              image_sha=hashlib.sha256(blob).hexdigest()
+              pil=Image.open(io.BytesIO(blob)).convert("RGB")
+
+              result=score_image(
+                  pil,
+                  height_cm=height,
+                  girth_cm=girth,
+                  cannon_cm=cannon,
+                  model=model,
+                  horse_idx=horse_idx,
+                  q8_status="PASS",
+              )
+              if result.get("status")!="CONFIRMED":
+                  raise RuntimeError(f"No.{no}: Potential REVIEW {result.get('qa')}")
+              rows.append({
+                  "no":no,
+                  "name":name,
+                  "measurements":{
+                      "height_cm":height,
+                      "girth_cm":girth,
+                      "cannon_cm":cannon,
+                  },
+                  "canonical":{
+                      "width":w,
+                      "height":h,
+                      "xref":xref,
+                      "sha256":image_sha,
+                  },
+                  "potential_total":float(result["total"]),
+                  "subitems":result["subitems"],
+                  "terminal":result["terminal"],
+                  "qa":result["qa"],
+                  "status":result["status"],
+              })
+              doc.close()
+              print(f'POTENTIAL_PASS={no}|{name}|{result["total"]}')
+
+          if len(rows)!=10 or any(r["status"]!="CONFIRMED" for r in rows):
+              raise RuntimeError("Potential did not confirm 10/10")
+
+          out={
+              "dataset_key":"2026:tokyo_tc",
+              "scope":"No.1-10",
+              "engine":"RAR Potential Ver.4.4 Beta / CLPP Beta4.9",
+              "torch":"2.7.1",
+              "torchvision":"0.22.1",
+              "model_weight_sha256":"73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+              "q8_status":"PASS",
+              "record_count":10,
+              "confirmed_count":10,
+              "result":"PASS_TOKYO_TC_2026_POTENTIAL_NO1_10",
+              "records":rows,
+          }
+          Path("audit").mkdir(exist_ok=True)
+          Path("audit/tokyo-tc-2026-potential-no1-10.json").write_text(
+              json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"
+          )
+          print(out["result"])
+          PY
+
+      - name: Record pass and clean temporary engine
+        run: |
+          set -euo pipefail
+          rm -rf audit_tmp/tokyo_tc_potential
+          rm -f .github/workflows/tokyo-tc-2026-potential-no1-10.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/tokyo-tc-2026-potential-no1-10.json audit_tmp .github/workflows/tokyo-tc-2026-potential-no1-10.yml
+          git commit -m "audit: pass Tokyo TC 2026 Potential No1-10"
+          git push
