@@ -2890,11 +2890,20 @@ function isCategoryTopScore(no,key){
  const top=Math.max(...HORSES.map(x=>Number(x[key]||0)));
  return Number(h[key]||0)===top;
 }
+function smallOfficialValue(h,key){
+ if(!h)return null;
+ const raw=(h.small||{})[key];
+ if(raw===null || raw===undefined || raw==="")return null;
+ const value=Number(raw);
+ return Number.isFinite(value)?value:null;
+}
 function isSmallTopScore(no,key){
  const h=HORSES.find(x=>x.no===no);
- if(!h)return false;
- const top=Math.max(...HORSES.map(x=>Number((x.small||{})[key]||0)));
- return Number((h.small||{})[key]||0)===top;
+ const target=smallOfficialValue(h,key);
+ if(target===null)return false;
+ const values=HORSES.map(x=>smallOfficialValue(x,key)).filter(v=>v!==null);
+ if(!values.length)return false;
+ return target===Math.max(...values);
 }
 function strongPointMarkHTML(small=false){
  return `<span class="strong-point-mark${small?" small":""}" title="Strong Point"></span>`;
@@ -2903,7 +2912,12 @@ function categoryOfficialRank(no,key){
  return competitionRankForValues(HORSES,h=>Number(h[key]||0),no);
 }
 function smallOfficialRank(no,key){
- return competitionRankForValues(HORSES,h=>Number((h.small||{})[key]||0),no);
+ const h=HORSES.find(x=>x.no===no);
+ const target=smallOfficialValue(h,key);
+ if(target===null)return null;
+ const values=HORSES.map(x=>smallOfficialValue(x,key)).filter(v=>v!==null);
+ const higher=new Set(values.filter(v=>v>target));
+ return 1+higher.size;
 }
 function top5Badge(rank,small=false){
  if(!rank || rank>5)return "";
@@ -2977,6 +2991,7 @@ function adjustCategoryPoint(key,delta){
 }
 function adjustSmallPoint(key,delta){
  if(!currentHorse || state.plan!=="premium")return;
+ if(smallOfficialValue(currentHorse,key)===null)return;
  const no=currentHorse.no, obj=state.smallPoints[no]||(state.smallPoints[no]={});
  const old=Number(obj[key]||0);
  const neu=Math.max(-2,Math.min(2,old+delta));
@@ -3011,11 +3026,24 @@ function renderPremiumSmallOfficial(){
  let html="";
  for(const catKey of ["potential","pedigree"]){
    html+=`<div class="small-group-title">${CATEGORY_LABELS[catKey]}</div>`;
+   if(catKey==="potential" && currentHorse.smallStatus?.potential==="NOT_PERSISTED"){
+     html+=`<div class="note">Potential小項目は元実行時に保存されていないため「—」表示。Potential /30の確定値はそのまま使用します。</div>`;
+   }
    html+=SMALL_META[catKey].map(([key,label,max])=>{
-     const base=currentHorse.small[key];
-     const adj=smallPoint(currentHorse.no,key);
+     const base=smallOfficialValue(currentHorse,key);
+     const available=base!==null;
+     const adj=available?smallPoint(currentHorse.no,key):0;
      const resultClass=adj>0?"positive":(adj<0?"negative":"");
-     const isStrong=isSmallTopScore(currentHorse.no,key);
+     const isStrong=available && isSmallTopScore(currentHorse.no,key);
+     if(!available){
+       return `<div class="small-row">
+         <span class="small-rank-slot"></span>
+         <div class="small-content"><b>${label}</b><div class="base">Official —/${max}（未保存）</div></div>
+         <button disabled>−</button>
+         <b class="small-after">—</b>
+         <button disabled>＋</button>
+       </div>`;
+     }
      return `<div class="small-row">
        <span class="small-rank-slot">${isStrong?strongPointMarkHTML(true):""}</span>
        <div class="small-content"><b>${label}</b><div class="base">Official ${fmt1(base)}/${max}</div></div>
