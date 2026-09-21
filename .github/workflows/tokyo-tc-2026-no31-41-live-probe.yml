@@ -1,0 +1,146 @@
+name: Tokyo TC 2026 No31-41 Live Probe
+
+on:
+  push:
+    branches:
+      - audit/tokyo-tc-2026-no31-41-20260921
+    paths:
+      - '.github/workflows/tokyo-tc-2026-no31-41-live-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install probe dependencies
+        run: python -m pip install --quiet requests beautifulsoup4 PyMuPDF
+      - name: Probe live Tokyo TC No.31-41
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          import fitz, requests
+          from bs4 import BeautifulSoup
+
+          lineup_url="https://www.tokyo-tc.com/lineup/2026"
+          horses={
+            31:("イッツオンリーアクティングダッドの25","https://www.tokyo-tc.com/api/media/share/horse/yNWrgKZevGdvCaDoAvKm0Ao10p34KschCpY6dSrH.pdf"),
+            32:("レッドイリーゼの25","https://www.tokyo-tc.com/api/media/share/horse/WlEZtz7mMRv3d4NJdd9NGCQeQTAQrOYBvkr2y8JP.pdf"),
+            33:("ルージュスティリアの25","https://www.tokyo-tc.com/api/media/share/horse/4crGxeMypEtoi3jhf1b3g3LQPMxIm8F84IdLG8m2.pdf"),
+            34:("エバーブロッサムの25","https://www.tokyo-tc.com/api/media/share/horse/QLGDlAxUHqfwfl3dSf2G3aQWN3uDadxag4MVTEog.pdf"),
+            35:("レッドシェリールの25","https://www.tokyo-tc.com/api/media/share/horse/0bLFMVFeHgXdr6L5nSClJ2I0yoaTEeqWDoG4vEON.pdf"),
+            36:("ライヴリーの25","https://www.tokyo-tc.com/api/media/share/horse/CdomQenXKC1fb5Lcx7yh3Ws97e7K42HhMAc5REx5.pdf"),
+            37:("ファビュラスギフトの25","https://www.tokyo-tc.com/api/media/share/horse/uZqS0QKmLzXy9ekxMqGYBSEMZkWNWyduzmnexZxS.pdf"),
+            38:("メジャーマジックの25","https://www.tokyo-tc.com/api/media/share/horse/d5Du6ZH6NEmfletDiBVIndQA3vmlwDuYwkshUvfn.pdf"),
+            39:("レディオブフィフティの25","https://www.tokyo-tc.com/api/media/share/horse/bnuT3G7z5FArwH94mauyTqFqvjEqfyN5QPUMMJTh.pdf"),
+            40:("ベガスマジックの25","https://www.tokyo-tc.com/api/media/share/horse/nOZcQgR3WN7Wee1QVif9PbS4Eyxxq06rB8zwazzV.pdf"),
+            41:("アストロロジャーの25","https://www.tokyo-tc.com/api/media/share/horse/G1qhbOcky2jBJDsIP0PJRYQKaMbcqJTeX4NMi8UE.pdf"),
+          }
+
+          sess=requests.Session()
+          sess.headers.update({"User-Agent":"RAR-Audit/1.0"})
+          html=sess.get(lineup_url,timeout=45)
+          html.raise_for_status()
+          lineup_text=BeautifulSoup(html.text,"html.parser").get_text("\n",strip=True)
+
+          rows=[]
+          hashes=[]
+          for no,(name,pdf_url) in horses.items():
+              pos=lineup_text.find(name)
+              if pos<0:
+                  raise RuntimeError(f"No.{no} lineup name missing: {name}")
+              window=lineup_text[pos:pos+1800]
+              measurement_ok=all(label in window for label in ("体重","体高","胸囲","管囲"))
+
+              resp=sess.get(pdf_url,timeout=60)
+              resp.raise_for_status()
+              data=resp.content
+              if not data.startswith(b"%PDF-"):
+                  raise RuntimeError(f"No.{no} did not return PDF")
+              doc=fitz.open(stream=data,filetype="pdf")
+              if doc.page_count!=1:
+                  raise RuntimeError(f"No.{no} page_count={doc.page_count}")
+              page=doc[0]
+              page_text=page.get_text("text") or ""
+              dam=name[:-3]
+              identity_ok=dam in page_text
+
+              candidates=[]
+              seen=set()
+              for image in page.get_images(full=True):
+                  xref=int(image[0])
+                  if xref in seen:
+                      continue
+                  seen.add(xref)
+                  meta=doc.extract_image(xref)
+                  w,h=int(meta["width"]),int(meta["height"])
+                  blob=meta["image"]
+                  if w>h and w>=800 and h>=500:
+                      candidates.append((w*h,w,h,-xref,xref,blob))
+              if not candidates:
+                  raise RuntimeError(f"No.{no} no landscape candidate")
+              candidates.sort(reverse=True)
+              _,w,h,_,xref,blob=candidates[0]
+              digest=hashlib.sha256(blob).hexdigest()
+              hashes.append(digest)
+              image_ok=w>h and w>=800 and h>=500 and len(blob)>0
+              preprocess_pass=measurement_ok and identity_ok and image_ok
+              rows.append({
+                  "no":no,
+                  "name":name,
+                  "lineup_measurements_present":measurement_ok,
+                  "pdf_page_count":1,
+                  "pdf_identity_pass":identity_ok,
+                  "image_candidate_count":len(candidates),
+                  "selected_width":w,
+                  "selected_height":h,
+                  "selected_xref":xref,
+                  "selected_sha256":digest,
+                  "preprocess_pass":preprocess_pass,
+              })
+              doc.close()
+
+          if len(set(hashes))!=11:
+              raise RuntimeError("selected horse image hashes are not unique 11/11")
+          passed=sum(1 for r in rows if r["preprocess_pass"])
+          if passed!=11:
+              raise RuntimeError(f"preprocess pass {passed}/11")
+
+          out={
+              "dataset_key":"2026:tokyo_tc",
+              "scope":"No.31-41",
+              "source":"Tokyo TC official live lineup + individual official catalog PDFs",
+              "fact_measurement_presence":"11/11",
+              "pdf_identity":"11/11",
+              "canonical_horse_image":"11/11",
+              "unique_image_hashes":"11/11",
+              "potential_preprocess":"11/11",
+              "result":"PASS_TOKYO_TC_2026_NO31_41_LIVE_PREPROCESS",
+              "records":rows,
+          }
+          Path("audit").mkdir(exist_ok=True)
+          Path("audit/tokyo-tc-2026-no31-41-live-preprocess.json").write_text(
+              json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"
+          )
+          print(out["result"])
+          PY
+
+      - name: Record pass and remove one-shot workflow
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/tokyo-tc-2026-no31-41-live-probe.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/tokyo-tc-2026-no31-41-live-preprocess.json .github/workflows/tokyo-tc-2026-no31-41-live-probe.yml
+          git commit -m "audit: pass Tokyo TC 2026 No31-41 live preprocess"
+          git push
