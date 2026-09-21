@@ -107,6 +107,13 @@ jobs:
             "dataset_key: '2026:silk'",
             "sync failed; static fallback kept",
           ]
+          required += [
+            "header.classList.add('rar-dataset-header-ready')",
+            "rarDatasetUpdateHistory",
+            "suitability = r.suitability || {}",
+            "distance_min_m",
+            "preferred_surfaces",
+          ]
           missing=[x for x in required if x not in s]
           assert not missing, f"dataset selector runtime missing: {missing}"
           assert s.index("window.__RAR_SYSTEM_MASTER__ = {") < s.index("for (const fn of ['syncBaseControls'"), "dataset metadata must publish before UI refresh"
@@ -119,7 +126,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v13-dataset-multikey' in s
+          assert 'rar-rc66-public-beta-v14-header-history-suitability' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
           print("Service worker dataset cache contract PASS")
           PY
