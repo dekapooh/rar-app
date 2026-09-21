@@ -1,0 +1,830 @@
+{
+  "snapshot_type": "RAR_SILK_2026_OBJECTIVE_V1_BASELINE",
+  "dataset_key": "2026:silk",
+  "version_id": "977cd338fa5585bb2c9332af45eb0683627ce140323a4d1412d509d00e850e3b",
+  "payload_sha256": "977cd338fa5585bb2c9332af45eb0683627ce140323a4d1412d509d00e850e3b",
+  "record_count": 82,
+  "transferred_at": "2026-09-20T23:37:25.118675+00:00",
+  "records": [
+    {
+      "rank": 1,
+      "no": 44,
+      "name": "サロミナの25",
+      "total": 67.02833333333334,
+      "potential": 24.5,
+      "pedigree": 20.0,
+      "dream": 12.5,
+      "investment": 10.028333333333332
+    },
+    {
+      "rank": 2,
+      "no": 80,
+      "name": "キープシークレットの25",
+      "total": 65.49918,
+      "potential": 21.0,
+      "pedigree": 11.0,
+      "dream": 11.45,
+      "investment": 22.04918
+    },
+    {
+      "rank": 3,
+      "no": 59,
+      "name": "ステップオブダンスの25",
+      "total": 61.047975,
+      "potential": 24.0,
+      "pedigree": 9.0,
+      "dream": 11.7,
+      "investment": 16.347974999999998
+    },
+    {
+      "rank": 4,
+      "no": 40,
+      "name": "キラープレゼンスの25",
+      "total": 60.652359999999994,
+      "potential": 25.0,
+      "pedigree": 3.5,
+      "dream": 11.55,
+      "investment": 20.602359999999997
+    },
+    {
+      "rank": 5,
+      "no": 21,
+      "name": "アイアゲートの25",
+      "total": 60.581966666666666,
+      "potential": 23.0,
+      "pedigree": 7.0,
+      "dream": 11.5,
+      "investment": 19.081966666666666
+    },
+    {
+      "rank": 6,
+      "no": 79,
+      "name": "グリモリオの25",
+      "total": 60.18063333333333,
+      "potential": 25.0,
+      "pedigree": 5.5,
+      "dream": 11.55,
+      "investment": 18.130633333333332
+    },
+    {
+      "rank": 7,
+      "no": 75,
+      "name": "バラダガールの25",
+      "total": 58.44168571428571,
+      "potential": 22.5,
+      "pedigree": 5.0,
+      "dream": 11.3,
+      "investment": 19.641685714285714
+    },
+    {
+      "rank": 8,
+      "no": 18,
+      "name": "レディホークフィールドの25",
+      "total": 58.361475,
+      "potential": 15.0,
+      "pedigree": 11.0,
+      "dream": 10.3,
+      "investment": 22.061475
+    },
+    {
+      "rank": 9,
+      "no": 61,
+      "name": "メジロマリアンの25",
+      "total": 58.33063333333333,
+      "potential": 19.5,
+      "pedigree": 10.5,
+      "dream": 11.1,
+      "investment": 17.23063333333333
+    },
+    {
+      "rank": 10,
+      "no": 42,
+      "name": "クイーンブロッサムの25",
+      "total": 58.136759999999995,
+      "potential": 21.5,
+      "pedigree": 6.5,
+      "dream": 11.3,
+      "investment": 18.836759999999998
+    },
+    {
+      "rank": 11,
+      "no": 63,
+      "name": "パーシステントリーの25",
+      "total": 57.94918,
+      "potential": 19.0,
+      "pedigree": 12.0,
+      "dream": 11.1,
+      "investment": 15.849179999999999
+    },
+    {
+      "rank": 12,
+      "no": 65,
+      "name": "プリモシーンの25",
+      "total": 57.649179999999994,
+      "potential": 20.5,
+      "pedigree": 10.0,
+      "dream": 11.3,
+      "investment": 15.849179999999999
+    },
+    {
+      "rank": 13,
+      "no": 6,
+      "name": "ロッテンマイヤーの25",
+      "total": 57.322975,
+      "potential": 24.0,
+      "pedigree": 11.0,
+      "dream": 11.75,
+      "investment": 10.572975000000001
+    },
+    {
+      "rank": 14,
+      "no": 82,
+      "name": "外セサの25",
+      "total": 57.061475,
+      "potential": 18.5,
+      "pedigree": 10.0,
+      "dream": 10.9,
+      "investment": 17.661475000000003
+    },
+    {
+      "rank": 15,
+      "no": 8,
+      "name": "マハゴニーの25",
+      "total": 56.49098333333333,
+      "potential": 22.5,
+      "pedigree": 6.5,
+      "dream": 11.45,
+      "investment": 16.040983333333333
+    },
+    {
+      "rank": 16,
+      "no": 30,
+      "name": "エレクトラムの25",
+      "total": 56.29882857142857,
+      "potential": 18.0,
+      "pedigree": 9.5,
+      "dream": 10.7,
+      "investment": 18.09882857142857
+    },
+    {
+      "rank": 17,
+      "no": 26,
+      "name": "トーセンソレイユの25",
+      "total": 56.21147499999999,
+      "potential": 20.5,
+      "pedigree": 6.5,
+      "dream": 11.1,
+      "investment": 18.111474999999995
+    },
+    {
+      "rank": 18,
+      "no": 73,
+      "name": "ステファニーズキトゥンの25",
+      "total": 56.181966666666675,
+      "potential": 16.0,
+      "pedigree": 11.0,
+      "dream": 10.5,
+      "investment": 18.681966666666675
+    },
+    {
+      "rank": 19,
+      "no": 66,
+      "name": "イスパニダの25",
+      "total": 55.90245833333333,
+      "potential": 20.5,
+      "pedigree": 10.0,
+      "dream": 11.3,
+      "investment": 14.102458333333335
+    },
+    {
+      "rank": 20,
+      "no": 16,
+      "name": "ルーツドールの25",
+      "total": 55.772975,
+      "potential": 20.5,
+      "pedigree": 8.5,
+      "dream": 11.1,
+      "investment": 15.672974999999997
+    },
+    {
+      "rank": 21,
+      "no": 19,
+      "name": "スイープセレリタスの25",
+      "total": 55.72995454545455,
+      "potential": 21.0,
+      "pedigree": 8.5,
+      "dream": 11.3,
+      "investment": 14.929954545454546
+    },
+    {
+      "rank": 22,
+      "no": 50,
+      "name": "ピクシーホロウの25",
+      "total": 54.64196666666667,
+      "potential": 20.5,
+      "pedigree": 15.0,
+      "dream": 11.5,
+      "investment": 7.64196666666667
+    },
+    {
+      "rank": 23,
+      "no": 74,
+      "name": "ワイルドラズベリーの25",
+      "total": 54.40196666666667,
+      "potential": 18.5,
+      "pedigree": 8.0,
+      "dream": 10.7,
+      "investment": 17.201966666666664
+    },
+    {
+      "rank": 24,
+      "no": 9,
+      "name": "ワディハッタの25",
+      "total": 54.366392857142856,
+      "potential": 18.5,
+      "pedigree": 12.5,
+      "dream": 10.95,
+      "investment": 12.416392857142853
+    },
+    {
+      "rank": 25,
+      "no": 27,
+      "name": "ラストプリマドンナの25",
+      "total": 54.23454285714286,
+      "potential": 17.5,
+      "pedigree": 8.5,
+      "dream": 10.65,
+      "investment": 17.584542857142864
+    },
+    {
+      "rank": 26,
+      "no": 37,
+      "name": "メリーウィドウの25",
+      "total": 53.994937500000006,
+      "potential": 15.5,
+      "pedigree": 13.0,
+      "dream": 10.5,
+      "investment": 14.994937500000008
+    },
+    {
+      "rank": 27,
+      "no": 48,
+      "name": "ピュアブレンドの25",
+      "total": 53.840983333333334,
+      "potential": 18.5,
+      "pedigree": 9.0,
+      "dream": 10.9,
+      "investment": 15.440983333333335
+    },
+    {
+      "rank": 28,
+      "no": 69,
+      "name": "チャーチクワイアの25",
+      "total": 53.60318,
+      "potential": 19.5,
+      "pedigree": 8.0,
+      "dream": 10.95,
+      "investment": 15.153179999999997
+    },
+    {
+      "rank": 29,
+      "no": 47,
+      "name": "エクセレンスⅡの25",
+      "total": 53.58934375,
+      "potential": 20.0,
+      "pedigree": 11.0,
+      "dream": 11.1,
+      "investment": 11.489343749999996
+    },
+    {
+      "rank": 30,
+      "no": 41,
+      "name": "アグレアーブルの25",
+      "total": 53.584542857142864,
+      "potential": 16.0,
+      "pedigree": 9.5,
+      "dream": 10.5,
+      "investment": 17.584542857142864
+    },
+    {
+      "rank": 31,
+      "no": 62,
+      "name": "ウィクトーリアの25",
+      "total": 53.53904545454545,
+      "potential": 21.0,
+      "pedigree": 7.0,
+      "dream": 11.1,
+      "investment": 14.439045454545449
+    },
+    {
+      "rank": 32,
+      "no": 17,
+      "name": "インヘリットデールの25",
+      "total": 53.06911428571429,
+      "potential": 16.0,
+      "pedigree": 11.0,
+      "dream": 10.5,
+      "investment": 15.569114285714289
+    },
+    {
+      "rank": 33,
+      "no": 52,
+      "name": "アルルの25",
+      "total": 52.75925000000001,
+      "potential": 14.5,
+      "pedigree": 16.5,
+      "dream": 10.5,
+      "investment": 11.259250000000005
+    },
+    {
+      "rank": 34,
+      "no": 25,
+      "name": "サンテローズの25",
+      "total": 52.60245833333333,
+      "potential": 19.0,
+      "pedigree": 9.0,
+      "dream": 10.95,
+      "investment": 13.652458333333328
+    },
+    {
+      "rank": 35,
+      "no": 34,
+      "name": "クインアマランサスの25",
+      "total": 52.5774,
+      "potential": 13.0,
+      "pedigree": 11.5,
+      "dream": 10.15,
+      "investment": 17.9274
+    },
+    {
+      "rank": 36,
+      "no": 12,
+      "name": "リンフォルツァンドの25",
+      "total": 52.16918,
+      "potential": 19.0,
+      "pedigree": 6.5,
+      "dream": 10.7,
+      "investment": 15.969179999999998
+    },
+    {
+      "rank": 37,
+      "no": 32,
+      "name": "レオパルディナの25",
+      "total": 51.007400000000004,
+      "potential": 16.0,
+      "pedigree": 8.5,
+      "dream": 10.5,
+      "investment": 16.007400000000004
+    },
+    {
+      "rank": 38,
+      "no": 67,
+      "name": "ドリームローパーの25",
+      "total": 50.880678571428575,
+      "potential": 17.5,
+      "pedigree": 9.5,
+      "dream": 10.65,
+      "investment": 13.23067857142858
+    },
+    {
+      "rank": 39,
+      "no": 29,
+      "name": "グランデストラーダの25",
+      "total": 50.83063333333334,
+      "potential": 17.0,
+      "pedigree": 7.0,
+      "dream": 10.5,
+      "investment": 16.33063333333334
+    },
+    {
+      "rank": 40,
+      "no": 15,
+      "name": "ビオグラフィーの25",
+      "total": 50.49595000000001,
+      "potential": 16.0,
+      "pedigree": 11.0,
+      "dream": 10.5,
+      "investment": 12.995950000000006
+    },
+    {
+      "rank": 41,
+      "no": 4,
+      "name": "クリーンスイープの25",
+      "total": 50.102458333333345,
+      "potential": 16.5,
+      "pedigree": 8.5,
+      "dream": 10.5,
+      "investment": 14.602458333333345
+    },
+    {
+      "rank": 42,
+      "no": 71,
+      "name": "サラキアの25",
+      "total": 50.04917999999999,
+      "potential": 14.0,
+      "pedigree": 10.5,
+      "dream": 10.3,
+      "investment": 15.249179999999999
+    },
+    {
+      "rank": 43,
+      "no": 24,
+      "name": "シーヴの25",
+      "total": 49.89918,
+      "potential": 12.5,
+      "pedigree": 12.0,
+      "dream": 10.15,
+      "investment": 15.249179999999999
+    },
+    {
+      "rank": 44,
+      "no": 81,
+      "name": "アルコレーヌの25",
+      "total": 49.33676,
+      "potential": 17.0,
+      "pedigree": 5.0,
+      "dream": 10.3,
+      "investment": 17.03676
+    },
+    {
+      "rank": 45,
+      "no": 35,
+      "name": "スイの25",
+      "total": 49.33676,
+      "potential": 15.5,
+      "pedigree": 6.5,
+      "dream": 10.3,
+      "investment": 17.03676
+    },
+    {
+      "rank": 46,
+      "no": 64,
+      "name": "ローズウィスパーの25",
+      "total": 49.23661111111112,
+      "potential": 17.5,
+      "pedigree": 6.5,
+      "dream": 10.5,
+      "investment": 14.736611111111118
+    },
+    {
+      "rank": 47,
+      "no": 22,
+      "name": "カラパタールの25",
+      "total": 48.608314285714286,
+      "potential": 14.0,
+      "pedigree": 7.0,
+      "dream": 10.0,
+      "investment": 17.608314285714286
+    },
+    {
+      "rank": 48,
+      "no": 45,
+      "name": "ドリームアンドドゥの25",
+      "total": 48.35184375000001,
+      "potential": 18.0,
+      "pedigree": 7.5,
+      "dream": 10.65,
+      "investment": 12.201843750000007
+    },
+    {
+      "rank": 49,
+      "no": 43,
+      "name": "ホットンヘクティックの25",
+      "total": 48.15995454545454,
+      "potential": 14.5,
+      "pedigree": 11.5,
+      "dream": 10.3,
+      "investment": 11.859954545454546
+    },
+    {
+      "rank": 50,
+      "no": 68,
+      "name": "パタゴニアの25",
+      "total": 47.96631818181819,
+      "potential": 17.5,
+      "pedigree": 7.0,
+      "dream": 10.5,
+      "investment": 12.966318181818188
+    },
+    {
+      "rank": 51,
+      "no": 70,
+      "name": "セリユーズの25",
+      "total": 47.936611111111105,
+      "potential": 15.0,
+      "pedigree": 8.5,
+      "dream": 10.3,
+      "investment": 14.13661111111111
+    },
+    {
+      "rank": 52,
+      "no": 39,
+      "name": "ルコントブルーの25",
+      "total": 47.83676,
+      "potential": 17.5,
+      "pedigree": 3.0,
+      "dream": 10.3,
+      "investment": 17.03676
+    },
+    {
+      "rank": 53,
+      "no": 10,
+      "name": "アルビアーノの25",
+      "total": 47.807227272727275,
+      "potential": 13.5,
+      "pedigree": 9.5,
+      "dream": 10.15,
+      "investment": 14.657227272727273
+    },
+    {
+      "rank": 54,
+      "no": 28,
+      "name": "クードラパンの25",
+      "total": 47.7097,
+      "potential": 13.5,
+      "pedigree": 6.5,
+      "dream": 10.0,
+      "investment": 17.7097
+    },
+    {
+      "rank": 55,
+      "no": 49,
+      "name": "バラーディストの25",
+      "total": 47.66329166666667,
+      "potential": 15.5,
+      "pedigree": 10.0,
+      "dream": 10.5,
+      "investment": 11.663291666666673
+    },
+    {
+      "rank": 56,
+      "no": 78,
+      "name": "グラマラスライフの25",
+      "total": 47.039964285714284,
+      "potential": 15.0,
+      "pedigree": 5.5,
+      "dream": 10.15,
+      "investment": 16.389964285714285
+    },
+    {
+      "rank": 57,
+      "no": 46,
+      "name": "ロザリンドの25",
+      "total": 46.688964285714285,
+      "potential": 12.0,
+      "pedigree": 12.5,
+      "dream": 10.0,
+      "investment": 12.188964285714286
+    },
+    {
+      "rank": 58,
+      "no": 5,
+      "name": "シャトーブランシュの25",
+      "total": 46.532275,
+      "potential": 10.5,
+      "pedigree": 16.0,
+      "dream": 10.0,
+      "investment": 10.032275
+    },
+    {
+      "rank": 59,
+      "no": 33,
+      "name": "サラーブの25",
+      "total": 46.522949999999994,
+      "potential": 16.0,
+      "pedigree": 7.0,
+      "dream": 10.3,
+      "investment": 13.222949999999999
+    },
+    {
+      "rank": 60,
+      "no": 54,
+      "name": "ジャポニカーラの25",
+      "total": 46.47684375,
+      "potential": 15.5,
+      "pedigree": 10.0,
+      "dream": 10.5,
+      "investment": 10.476843750000004
+    },
+    {
+      "rank": 61,
+      "no": 51,
+      "name": "マイアミバウンドの25",
+      "total": 46.29651111111111,
+      "potential": 12.0,
+      "pedigree": 9.5,
+      "dream": 9.649999999999999,
+      "investment": 15.14651111111111
+    },
+    {
+      "rank": 62,
+      "no": 77,
+      "name": "アンティフォナの25",
+      "total": 46.24735714285714,
+      "potential": 11.5,
+      "pedigree": 11.0,
+      "dream": 9.649999999999999,
+      "investment": 14.09735714285714
+    },
+    {
+      "rank": 63,
+      "no": 36,
+      "name": "テキサスルビーの25",
+      "total": 46.131640000000004,
+      "potential": 14.5,
+      "pedigree": 4.5,
+      "dream": 10.0,
+      "investment": 17.13164
+    },
+    {
+      "rank": 64,
+      "no": 14,
+      "name": "ベルゼールの25",
+      "total": 46.0824375,
+      "potential": 14.0,
+      "pedigree": 7.5,
+      "dream": 10.15,
+      "investment": 14.4324375
+    },
+    {
+      "rank": 65,
+      "no": 55,
+      "name": "ノワールドゥジェの25",
+      "total": 45.525819999999996,
+      "potential": 14.0,
+      "pedigree": 6.5,
+      "dream": 10.0,
+      "investment": 15.02582
+    },
+    {
+      "rank": 66,
+      "no": 72,
+      "name": "グラヴィタスの25",
+      "total": 45.27043333333334,
+      "potential": 11.0,
+      "pedigree": 9.5,
+      "dream": 9.6,
+      "investment": 15.170433333333333
+    },
+    {
+      "rank": 67,
+      "no": 38,
+      "name": "ジュディッタの25",
+      "total": 44.600234375,
+      "potential": 12.0,
+      "pedigree": 8.0,
+      "dream": 9.649999999999999,
+      "investment": 14.950234374999997
+    },
+    {
+      "rank": 68,
+      "no": 20,
+      "name": "ソニックベガの25",
+      "total": 44.43661111111111,
+      "potential": 16.0,
+      "pedigree": 4.0,
+      "dream": 10.3,
+      "investment": 14.13661111111111
+    },
+    {
+      "rank": 69,
+      "no": 60,
+      "name": "スカイグルーヴの25",
+      "total": 44.34595,
+      "potential": 16.0,
+      "pedigree": 5.5,
+      "dream": 10.3,
+      "investment": 12.54595
+    },
+    {
+      "rank": 70,
+      "no": 3,
+      "name": "ディアンドルの25",
+      "total": 43.95245833333334,
+      "potential": 17.5,
+      "pedigree": 8.5,
+      "dream": 10.65,
+      "investment": 7.302458333333339
+    },
+    {
+      "rank": 71,
+      "no": 7,
+      "name": "ギルデッドミラーの25",
+      "total": 43.762950000000004,
+      "potential": 16.0,
+      "pedigree": 8.5,
+      "dream": 10.5,
+      "investment": 8.762950000000007
+    },
+    {
+      "rank": 72,
+      "no": 53,
+      "name": "イーヴンソーの25",
+      "total": 43.631499999999996,
+      "potential": 12.0,
+      "pedigree": 8.5,
+      "dream": 9.649999999999999,
+      "investment": 13.481499999999997
+    },
+    {
+      "rank": 73,
+      "no": 23,
+      "name": "ドナウデルタの25",
+      "total": 43.12534615384615,
+      "potential": 16.0,
+      "pedigree": 5.5,
+      "dream": 10.3,
+      "investment": 11.325346153846153
+    },
+    {
+      "rank": 74,
+      "no": 76,
+      "name": "ピュアブラックの25",
+      "total": 42.982214285714285,
+      "potential": 15.0,
+      "pedigree": 3.0,
+      "dream": 10.0,
+      "investment": 14.982214285714285
+    },
+    {
+      "rank": 75,
+      "no": 31,
+      "name": "クリッパークラスの25",
+      "total": 41.749766666666666,
+      "potential": 8.0,
+      "pedigree": 9.0,
+      "dream": 9.25,
+      "investment": 15.499766666666666
+    },
+    {
+      "rank": 76,
+      "no": 11,
+      "name": "ラヴユーライヴの25",
+      "total": 41.022949999999994,
+      "potential": 15.5,
+      "pedigree": 7.0,
+      "dream": 10.3,
+      "investment": 8.222949999999999
+    },
+    {
+      "rank": 77,
+      "no": 56,
+      "name": "アルジャンテの25",
+      "total": 40.352318181818184,
+      "potential": 13.5,
+      "pedigree": 5.5,
+      "dream": 10.0,
+      "investment": 11.352318181818182
+    },
+    {
+      "rank": 78,
+      "no": 2,
+      "name": "ソーディヴァインの25",
+      "total": 38.326653846153846,
+      "potential": 14.0,
+      "pedigree": 2.5,
+      "dream": 9.649999999999999,
+      "investment": 12.176653846153844
+    },
+    {
+      "rank": 79,
+      "no": 58,
+      "name": "アーデルワイゼの25",
+      "total": 37.9195625,
+      "potential": 12.0,
+      "pedigree": 3.5,
+      "dream": 9.6,
+      "investment": 12.8195625
+    },
+    {
+      "rank": 80,
+      "no": 1,
+      "name": "アーモンドアイの25",
+      "total": 37.54098333333333,
+      "potential": 14.5,
+      "pedigree": 10.0,
+      "dream": 10.3,
+      "investment": 2.7409833333333333
+    },
+    {
+      "rank": 81,
+      "no": 57,
+      "name": "リズムオブラヴの25",
+      "total": 36.54315,
+      "potential": 10.0,
+      "pedigree": 6.0,
+      "dream": 9.4,
+      "investment": 11.14315
+    },
+    {
+      "rank": 82,
+      "no": 13,
+      "name": "モーベットの25",
+      "total": 33.89315,
+      "potential": 9.0,
+      "pedigree": 4.5,
+      "dream": 9.25,
+      "investment": 11.14315
+    }
+  ]
+}
