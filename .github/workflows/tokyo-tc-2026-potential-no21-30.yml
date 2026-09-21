@@ -1,0 +1,203 @@
+name: Tokyo TC 2026 Potential No21-30
+
+on:
+  push:
+    branches:
+      - audit/tokyo-tc-2026-potential-no21-30-20260921
+    paths:
+      - '.github/workflows/tokyo-tc-2026-potential-no21-30.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install exact Potential runtime
+        run: |
+          python -m pip install --quiet --index-url https://download.pytorch.org/whl/cpu torch==2.7.1 torchvision==0.22.1
+          python -m pip install --quiet "numpy>=2.0,<3" "Pillow>=10,<12" "opencv-python-headless>=4.10,<5" requests beautifulsoup4 PyMuPDF
+
+      - name: Fetch and verify frozen Mask R-CNN weight
+        run: |
+          mkdir -p /tmp/rar-model
+          curl -L --fail --retry 3 \
+            -o /tmp/rar-model/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth \
+            https://download.pytorch.org/models/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth
+          python - <<'PY'
+          import hashlib
+          p="/tmp/rar-model/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth"
+          h=hashlib.sha256(open(p,"rb").read()).hexdigest()
+          assert h=="73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e", h
+          print("MODEL_SHA256=PASS")
+          PY
+
+      - name: Score official Tokyo TC No.21-30
+        env:
+          PYTHONPATH: audit_tmp/tokyo_tc_potential
+        run: |
+          python - <<'PY'
+          import hashlib, io, json, re
+          from pathlib import Path
+
+          import fitz, requests
+          from bs4 import BeautifulSoup
+          from PIL import Image
+          from potential_beta49_runtime import build_model, score_image
+
+          weight="/tmp/rar-model/maskrcnn_resnet50_fpn_v2_coco-73cbd019.pth"
+          model,horse_idx=build_model(weight)
+
+          horses={
+            21:("トップライセンスの25","https://www.tokyo-tc.com/api/media/share/horse/PVMmARoTEEohCmmAPADP5FIZIluH1D2dtNP4PDMQ.pdf"),
+            22:("ダンシングラグズの25","https://www.tokyo-tc.com/api/media/share/horse/0Pu9iXA7U7bwzVtMJf5k2rFeZNodP3R0mNl6MAhe.pdf"),
+            23:("レッドエルザの25","https://www.tokyo-tc.com/api/media/share/horse/UvIGePwGZy2OjBC7qzDPsEHDEvic5L4LGpyFJC75.pdf"),
+            24:("アスタウンドメントの25","https://www.tokyo-tc.com/api/media/share/horse/8Dj3fxbtlSFxvZa5cNGWItYAVT1KyG8i3oG8Q7rM.pdf"),
+            25:("レッドシャーロットの25","https://www.tokyo-tc.com/api/media/share/horse/rFbXnrGTj7S5TRYA6TOqjZeLz8BI8Ejp5nJhN7uT.pdf"),
+            26:("プラヤデシエルタの25","https://www.tokyo-tc.com/api/media/share/horse/gW7nDrEO8iPXfDffoccO73p8wUj2MIUvnjzW2JRu.pdf"),
+            27:("ダーヌビウスの25","https://www.tokyo-tc.com/api/media/share/horse/ASn2zoI3zqfNzZqCr3800UJglPWxMhWUetCwX3Sw.pdf"),
+            28:("リュズキナの25","https://www.tokyo-tc.com/api/media/share/horse/6BdZnZpDpb4g5ITXyUaH6eHIvhArD5O6wKifCshh.pdf"),
+            29:("インデリブルの25","https://www.tokyo-tc.com/api/media/share/horse/TQStI1WQABqjuCnHxn1Q8N54lLx8Er2SsB5VWxqD.pdf"),
+            30:("レッドオルガの25","https://www.tokyo-tc.com/api/media/share/horse/JmGhVf7NdV9n4w26uJGnYOaFqQzpWSqLGhPqtX3X.pdf"),
+          }
+
+          sess=requests.Session()
+          sess.headers.update({"User-Agent":"RAR-Potential-Audit/1.0"})
+          lineup=sess.get("https://prod.tokyo-tc.com/lineup/2026",timeout=60)
+          lineup.raise_for_status()
+          soup=BeautifulSoup(lineup.text,"html.parser")
+
+          def row_text_for(name):
+              for tr in soup.find_all("tr"):
+                  txt=" ".join(tr.stripped_strings)
+                  if name in txt:
+                      return txt
+              raise RuntimeError(f"{name}: lineup row not found")
+
+          def measurements_for(name):
+              row=row_text_for(name)
+              def grab(label):
+                  m=re.search(rf"{label}[:：]\s*(\d+(?:\.\d+)?)",row)
+                  if not m:
+                      raise RuntimeError(f"{name}: {label} missing")
+                  return float(m.group(1))
+              return {
+                  "height_cm":grab("体高"),
+                  "girth_cm":grab("胸囲"),
+                  "cannon_cm":grab("管囲"),
+              }, row
+
+          rows=[]
+          for no,(name,url) in horses.items():
+              m,lineup_row=measurements_for(name)
+              cancelled=("募集中止" in lineup_row) if no==27 else False
+
+              r=sess.get(url,timeout=90)
+              r.raise_for_status()
+              data=r.content
+              if not data.startswith(b"%PDF-"):
+                  raise RuntimeError(f"No.{no}: official source is not PDF")
+              doc=fitz.open(stream=data,filetype="pdf")
+              if doc.page_count!=1:
+                  raise RuntimeError(f"No.{no}: unexpected page count {doc.page_count}")
+              page=doc[0]
+              if name[:-3] not in (page.get_text("text") or ""):
+                  raise RuntimeError(f"No.{no}: identity mismatch")
+
+              candidates=[]
+              seen=set()
+              for img in page.get_images(full=True):
+                  xref=int(img[0])
+                  if xref in seen:
+                      continue
+                  seen.add(xref)
+                  meta=doc.extract_image(xref)
+                  w,h=int(meta["width"]),int(meta["height"])
+                  blob=meta["image"]
+                  if w>h and w>=800 and h>=500:
+                      candidates.append((w*h,w,h,-xref,xref,blob))
+              if not candidates:
+                  raise RuntimeError(f"No.{no}: no canonical landscape image")
+              candidates.sort(reverse=True)
+              _,w,h,_,xref,blob=candidates[0]
+              image_sha=hashlib.sha256(blob).hexdigest()
+              pil=Image.open(io.BytesIO(blob)).convert("RGB")
+
+              result=score_image(
+                  pil,
+                  height_cm=m["height_cm"],
+                  girth_cm=m["girth_cm"],
+                  cannon_cm=m["cannon_cm"],
+                  model=model,
+                  horse_idx=horse_idx,
+                  q8_status="PASS",
+              )
+              if result.get("status")!="CONFIRMED":
+                  raise RuntimeError(f"No.{no}: Potential REVIEW {result.get('qa')}")
+              rows.append({
+                  "no":no,
+                  "name":name,
+                  "cancelled":cancelled,
+                  "measurements":m,
+                  "canonical":{
+                      "width":w,
+                      "height":h,
+                      "xref":xref,
+                      "sha256":image_sha,
+                  },
+                  "potential_total":float(result["total"]),
+                  "subitems":result["subitems"],
+                  "terminal":result["terminal"],
+                  "qa":result["qa"],
+                  "status":result["status"],
+              })
+              doc.close()
+              print(f'POTENTIAL_PASS={no}|{name}|{result["total"]}')
+
+          if len(rows)!=10 or any(r["status"]!="CONFIRMED" for r in rows):
+              raise RuntimeError("Potential did not confirm 10/10")
+          no27=next(r for r in rows if r["no"]==27)
+          if not no27["cancelled"]:
+              raise RuntimeError("No.27 cancellation marker was not preserved")
+
+          out={
+              "dataset_key":"2026:tokyo_tc",
+              "scope":"No.21-30",
+              "engine":"RAR Potential Ver.4.4 Beta / CLPP Beta4.9",
+              "torch":"2.7.1",
+              "torchvision":"0.22.1",
+              "model_weight_sha256":"73cbd0190fcbe3ba339921fbce2c3a0b6bb9126c9a133c85e43a2a8e060a109e",
+              "q8_status":"PASS",
+              "record_count":10,
+              "confirmed_count":10,
+              "cancelled_no27_preserved":True,
+              "result":"PASS_TOKYO_TC_2026_POTENTIAL_NO21_30",
+              "records":rows,
+          }
+          Path("audit").mkdir(exist_ok=True)
+          Path("audit/tokyo-tc-2026-potential-no21-30.json").write_text(
+              json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"
+          )
+          print(out["result"])
+          PY
+
+      - name: Record pass and clean temporary engine
+        run: |
+          set -euo pipefail
+          rm -rf audit_tmp/tokyo_tc_potential
+          rm -f .github/workflows/tokyo-tc-2026-potential-no21-30.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/tokyo-tc-2026-potential-no21-30.json audit_tmp .github/workflows/tokyo-tc-2026-potential-no21-30.yml
+          git commit -m "audit: pass Tokyo TC 2026 Potential No21-30"
+          git push
