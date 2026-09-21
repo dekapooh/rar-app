@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v16-header-meta-layout";
+const CACHE_NAME="rar-rc66-public-beta-v17-header-final-theme";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js"
 ];
