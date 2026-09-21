@@ -9,6 +9,7 @@ on:
       - feature/header-dataset-history-suitability-20260922
       - fix/header-selector-mobile-20260922
       - fix/header-two-row-meta-20260922
+      - fix/header-final-theme-20260922
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -117,8 +118,13 @@ jobs:
             "distance_min_m",
             "preferred_surfaces",
             "left:16px",
-            "grid-template-columns:82px minmax(0,1fr)",
-            "rar-version-block",
+            "grid-template-columns:80px minmax(0,1fr)",
+            "rar-header-meta-line",
+            "const CLUB_THEMES = Object.freeze({",
+            "tokyo_tc: Object.freeze({",
+            "rar-dataset-field--year",
+            "rar-dataset-field--club",
+            "applyClubTheme",
             "ensureVersionBlock",
           ]
           missing=[x for x in required if x not in s]
@@ -133,7 +139,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v16-header-meta-layout' in s
+          assert 'rar-rc66-public-beta-v17-header-final-theme' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
           print("Service worker dataset cache contract PASS")
           PY
