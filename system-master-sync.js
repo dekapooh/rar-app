@@ -14,23 +14,31 @@
 
   // Header selector palette. Add future clubs here; selector logic stays generic.
   const CLUB_THEMES = Object.freeze({
+    // Silk Racing silks: light blue, red arare dots, red sleeve band.
     silk: Object.freeze({
-      accent: '#6F91B0',
-      bg: 'rgba(235,242,248,.97)',
-      border: 'rgba(143,169,193,.72)',
-      text: '#244B67'
+      accent: '#CF4B55',
+      bg: '#DDF2F8',
+      border: 'rgba(93,154,177,.72)',
+      text: '#244B67',
+      pattern: 'radial-gradient(circle at 5px 5px, rgba(207,75,85,.28) 0 1.35px, transparent 1.5px)',
+      patternSize: '11px 11px'
     }),
+    // Tokyo Horse Racing silks: red, white stars, white sleeve band.
     tokyo_tc: Object.freeze({
-      accent: '#B0444B',
-      bg: 'rgba(249,235,236,.97)',
-      border: 'rgba(190,111,117,.68)',
-      text: '#6D272C'
+      accent: '#FFFFFF',
+      bg: '#A9343E',
+      border: 'rgba(122,34,42,.78)',
+      text: '#FFFFFF',
+      pattern: 'url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2218%22 height=%2218%22 viewBox=%220 0 18 18%22%3E%3Cpath fill=%22%23fff%22 fill-opacity=%22.28%22 d=%22M9 1.6l1.85 4 4.35.42-3.2 2.98.86 4.3L9 11.12 5.14 13.3 6 9 2.8 6.02l4.35-.42L9 1.6z%22/%3E%3C/svg%3E")',
+      patternSize: '18px 18px'
     }),
     default: Object.freeze({
       accent: '#6F897C',
       bg: 'rgba(235,243,238,.97)',
       border: 'rgba(145,170,157,.64)',
-      text: '#294B3D'
+      text: '#294B3D',
+      pattern: 'none',
+      patternSize: 'auto'
     })
   });
 
@@ -149,8 +157,8 @@
       header.rar-dataset-header-ready .sub{display:none!important}
 
       .rar-dataset-selectors{
-        position:absolute;left:16px;right:auto;bottom:8px;width:55%;
-        display:grid;grid-template-columns:80px minmax(0,1fr);gap:6px;
+        position:absolute;left:16px;right:auto;bottom:8px;width:47%;
+        display:grid;grid-template-columns:76px minmax(0,1fr);gap:6px;
         margin:0;padding:0;border:0;background:transparent;z-index:4
       }
       .rar-dataset-field{display:block;min-width:0}
@@ -169,7 +177,9 @@
         --rar-selector-accent:var(--rar-club-accent,#6F897C);
         --rar-selector-bg:var(--rar-club-bg,rgba(235,243,238,.97));
         --rar-selector-border:var(--rar-club-border,rgba(145,170,157,.64));
-        --rar-selector-text:var(--rar-club-text,#294B3D)
+        --rar-selector-text:var(--rar-club-text,#294B3D);
+        --rar-selector-pattern:var(--rar-club-pattern,none);
+        --rar-selector-pattern-size:var(--rar-club-pattern-size,auto)
       }
       .rar-dataset-field select{
         appearance:auto;min-width:0;width:100%;height:26px;
@@ -179,26 +189,32 @@
         box-shadow:inset 3px 0 0 var(--rar-selector-accent),0 1px 2px rgba(3,31,21,.10);
         outline:none
       }
+      .rar-dataset-field--club select{
+        background-image:var(--rar-selector-pattern);
+        background-size:var(--rar-selector-pattern-size);
+        background-repeat:repeat;
+        background-blend-mode:normal
+      }
       .rar-dataset-field select:focus{
         box-shadow:inset 3px 0 0 var(--rar-selector-accent),0 0 0 2px rgba(243,215,120,.18)
       }
       .rar-dataset-field select:disabled{opacity:.9}
 
       .rar-header-meta{
-        position:absolute;right:12px;top:8px;width:38%;
-        display:grid;grid-template-rows:repeat(3,minmax(0,auto));gap:2px;
+        position:absolute;right:14px;top:10px;width:43%;
+        display:grid;grid-template-rows:repeat(3,minmax(0,auto));gap:1px;
         text-align:right;z-index:3;pointer-events:none
       }
       .rar-header-meta-line{
-        min-height:10px;font-size:8.8px;line-height:1.15;font-weight:800;
-        letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-        color:rgba(239,246,242,.9)
+        min-height:11px;font-size:9.4px;line-height:1.22;font-weight:800;
+        letter-spacing:.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        color:#315D4C
       }
-      .rar-header-status{color:#DCE8E1}
-      .rar-header-status[data-state="error"]{color:#FFD0D0}
-      .rar-header-status[data-state="fallback"]{color:#F2D891}
-      .rar-version-title{font-weight:800}
-      .rar-version-value{font-weight:850;color:#F1D47B}
+      .rar-header-status{font-weight:760;color:#315D4C}
+      .rar-header-status[data-state="error"]{color:#9B2C2C}
+      .rar-header-status[data-state="fallback"]{color:#7C5B00}
+      .rar-version-title{font-weight:800;color:#315D4C}
+      .rar-version-value{font-weight:850;color:#315D4C}
 
       .rar-update-history{display:grid;gap:7px;margin-top:7px}
       .rar-update-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #e5ece8}
@@ -208,10 +224,10 @@
       .rar-update-date{font-size:10px;font-weight:850;color:#315d4c;white-space:nowrap}
 
       @media(max-width:390px){
-        .rar-dataset-selectors{left:12px;bottom:8px;width:55%;grid-template-columns:76px minmax(0,1fr);gap:4px}
+        .rar-dataset-selectors{left:12px;bottom:8px;width:48%;grid-template-columns:72px minmax(0,1fr);gap:4px}
         .rar-dataset-field select{height:25px;font-size:9.5px;padding-left:8px;padding-right:18px}
-        .rar-header-meta{right:8px;top:8px;width:38%;gap:2px}
-        .rar-header-meta-line{font-size:8.2px;line-height:1.15}
+        .rar-header-meta{right:9px;top:10px;width:44%;gap:1px}
+        .rar-header-meta-line{font-size:8.8px;line-height:1.2}
       }
     `;
     document.head.appendChild(style);
@@ -230,6 +246,8 @@
     root.style.setProperty('--rar-club-bg', theme.bg);
     root.style.setProperty('--rar-club-border', theme.border);
     root.style.setProperty('--rar-club-text', theme.text);
+    root.style.setProperty('--rar-club-pattern', theme.pattern);
+    root.style.setProperty('--rar-club-pattern-size', theme.patternSize);
     root.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
   }
 
