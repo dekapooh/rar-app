@@ -137,6 +137,8 @@ jobs:
             "silkAsset: './assets/header-silks/tokyo-tc.webp'",
             "rar-header-silk-img",
             "mask-image:linear-gradient(90deg",
+            "object-fit:cover",
+            "object-position:50% 55%",
             "tokyo_tc: Object.freeze({",
             "rar-dataset-field--year",
             "rar-dataset-field--club",
