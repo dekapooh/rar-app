@@ -10,6 +10,7 @@ on:
       - fix/header-selector-mobile-20260922
       - fix/header-two-row-meta-20260922
       - fix/header-final-theme-20260922
+      - fix/header-silks-balance-20260922
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -118,9 +119,16 @@ jobs:
             "distance_min_m",
             "preferred_surfaces",
             "left:16px",
-            "grid-template-columns:80px minmax(0,1fr)",
+            "width:47%",
+            "grid-template-columns:76px minmax(0,1fr)",
             "rar-header-meta-line",
+            "font-size:9.4px",
+            "color:#315D4C",
             "const CLUB_THEMES = Object.freeze({",
+            "Silk Racing silks: light blue, red arare dots",
+            "Tokyo Horse Racing silks: red, white stars",
+            "--rar-club-pattern",
+            "background-image:var(--rar-selector-pattern)",
             "tokyo_tc: Object.freeze({",
             "rar-dataset-field--year",
             "rar-dataset-field--club",
@@ -139,7 +147,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v17-header-final-theme' in s
+          assert 'rar-rc66-public-beta-v18-header-silks-balance' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
           print("Service worker dataset cache contract PASS")
           PY
