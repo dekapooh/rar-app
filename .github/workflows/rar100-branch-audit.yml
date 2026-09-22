@@ -162,8 +162,10 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v20-header-mock-match' in s
+          assert 'rar-rc66-public-beta-v21-3d-header-silks' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
+          assert './assets/header-silks/silk.webp' in s
+          assert './assets/header-silks/tokyo-tc.webp' in s
           print("Service worker dataset cache contract PASS")
           PY
       - name: Service worker syntax audit
