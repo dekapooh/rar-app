@@ -172,10 +172,10 @@
         position:absolute;
         z-index:2;
         pointer-events:none;
-        width:260px;
-        height:105px;
-        right:-10px;
-        top:-6px;
+        width:190px;
+        height:110px;
+        right:-5px;
+        top:-18px;
         opacity:.98;
         -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,1) 0%,rgba(0,0,0,.98) 54%,rgba(0,0,0,.62) 82%,rgba(0,0,0,.08) 100%);
         mask-image:linear-gradient(90deg,rgba(0,0,0,1) 0%,rgba(0,0,0,.98) 54%,rgba(0,0,0,.62) 82%,rgba(0,0,0,.08) 100%)
@@ -184,8 +184,8 @@
         display:block;
         width:100%;
         height:100%;
-        object-fit:fill;
-        object-position:center center;
+        object-fit:cover;
+        object-position:50% 55%;
         filter:drop-shadow(0 3px 5px rgba(10,35,30,.18))
       }
 
@@ -250,7 +250,7 @@
         .rar-dataset-field select{height:25px;font-size:9.5px;padding-left:8px;padding-right:18px}
         .rar-header-meta{right:9px;top:10px;width:44%;gap:1px}
         .rar-header-meta-line{font-size:8.8px;line-height:1.2}
-        .rar-header-silk{width:246px;height:100px;right:-8px;top:-4px}
+        .rar-header-silk{width:180px;height:105px;right:-4px;top:-16px}
       }
     `;
     document.head.appendChild(style);
