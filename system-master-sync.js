@@ -14,31 +14,79 @@
 
   // Header selector palette. Add future clubs here; selector logic stays generic.
   const CLUB_THEMES = Object.freeze({
-    // Silk Racing silks: light blue, red arare dots, red sleeve band.
     silk: Object.freeze({
-      accent: '#CF4B55',
-      bg: '#DDF2F8',
-      border: 'rgba(93,154,177,.72)',
-      text: '#244B67',
-      pattern: 'radial-gradient(circle at 5px 5px, rgba(207,75,85,.28) 0 1.35px, transparent 1.5px)',
-      patternSize: '11px 11px'
+      headerLight: '#DDF2F8',
+      headerMid: '#6EA8E3',
+      headerDark: '#174C99',
+      metaText: '#F7FBFF',
+      silkSvg: `
+        <svg viewBox="0 0 260 180" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="rarSilkFade" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#fff" stop-opacity=".98"/>
+              <stop offset="46%" stop-color="#fff" stop-opacity=".82"/>
+              <stop offset="76%" stop-color="#fff" stop-opacity=".34"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".05"/>
+            </linearGradient>
+            <mask id="rarSilkMask">
+              <rect width="260" height="180" fill="url(#rarSilkFade)"/>
+            </mask>
+          </defs>
+          <g mask="url(#rarSilkMask)">
+            <path d="M83 16h94l24 36-13 112H72L59 52z" fill="#69BFE6"/>
+            <path d="M83 20L59 52 13 110l24 15 43-58z" fill="#69BFE6"/>
+            <path d="M177 20l24 32 46 58-24 15-43-58z" fill="#69BFE6"/>
+            <path d="M37 78l22-29 18 24-22 30z" fill="#D94B52"/>
+            <path d="M223 78l-22-29-18 24 22 30z" fill="#D94B52"/>
+            <path d="M126 16h8v31h-8z" fill="rgba(255,255,255,.72)"/>
+            <circle cx="111" cy="58" r="12" fill="#D94B52"/>
+            <circle cx="149" cy="58" r="12" fill="#D94B52"/>
+            <circle cx="111" cy="96" r="12" fill="#D94B52"/>
+            <circle cx="149" cy="96" r="12" fill="#D94B52"/>
+            <circle cx="111" cy="134" r="12" fill="#D94B52"/>
+            <circle cx="149" cy="134" r="12" fill="#D94B52"/>
+          </g>
+        </svg>`
     }),
-    // Tokyo Horse Racing silks: red, white stars, white sleeve band.
     tokyo_tc: Object.freeze({
-      accent: '#FFFFFF',
-      bg: '#A9343E',
-      border: 'rgba(122,34,42,.78)',
-      text: '#FFFFFF',
-      pattern: 'url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2218%22 height=%2218%22 viewBox=%220 0 18 18%22%3E%3Cpath fill=%22%23fff%22 fill-opacity=%22.28%22 d=%22M9 1.6l1.85 4 4.35.42-3.2 2.98.86 4.3L9 11.12 5.14 13.3 6 9 2.8 6.02l4.35-.42L9 1.6z%22/%3E%3C/svg%3E")',
-      patternSize: '18px 18px'
+      headerLight: '#F9D8DA',
+      headerMid: '#E66C72',
+      headerDark: '#8E1F2B',
+      metaText: '#FFF9F9',
+      silkSvg: `
+        <svg viewBox="0 0 260 180" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="rarSilkFade" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#fff" stop-opacity=".98"/>
+              <stop offset="46%" stop-color="#fff" stop-opacity=".82"/>
+              <stop offset="76%" stop-color="#fff" stop-opacity=".34"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".05"/>
+            </linearGradient>
+            <mask id="rarSilkMask">
+              <rect width="260" height="180" fill="url(#rarSilkFade)"/>
+            </mask>
+          </defs>
+          <g mask="url(#rarSilkMask)">
+            <path d="M83 16h94l24 36-13 112H72L59 52z" fill="#D83B43"/>
+            <path d="M83 20L59 52 13 110l24 15 43-58z" fill="#D83B43"/>
+            <path d="M177 20l24 32 46 58-24 15-43-58z" fill="#D83B43"/>
+            <path d="M38 78l20-27 18 24-21 28z" fill="#F7F7F7"/>
+            <path d="M222 78l-20-27-18 24 21 28z" fill="#F7F7F7"/>
+            <path d="M126 16h8v31h-8z" fill="rgba(255,255,255,.65)"/>
+            <path d="M110 48l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
+            <path d="M150 48l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
+            <path d="M130 82l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
+            <path d="M110 118l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
+            <path d="M150 118l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
+          </g>
+        </svg>`
     }),
     default: Object.freeze({
-      accent: '#6F897C',
-      bg: 'rgba(235,243,238,.97)',
-      border: 'rgba(145,170,157,.64)',
-      text: '#294B3D',
-      pattern: 'none',
-      patternSize: 'auto'
+      headerLight: '#E5EFE9',
+      headerMid: '#8AB29C',
+      headerDark: '#315D4C',
+      metaText: '#F8FBF9',
+      silkSvg: ''
     })
   });
 
@@ -153,8 +201,37 @@
     const style = document.createElement('style');
     style.id = 'rarDatasetSelectorStyle';
     style.textContent = `
-      header.rar-dataset-header-ready{position:fixed}
+      header.rar-dataset-header-ready{
+        position:fixed;
+        overflow:hidden;
+        --rar-header-light:#E5EFE9;
+        --rar-header-mid:#8AB29C;
+        --rar-header-dark:#315D4C;
+        --rar-header-meta:#F8FBF9;
+        background:
+          linear-gradient(
+            90deg,
+            #FAFCF8 0%,
+            #FFFFFF 48%,
+            var(--rar-header-light) 68%,
+            var(--rar-header-mid) 82%,
+            var(--rar-header-dark) 100%
+          )!important
+      }
       header.rar-dataset-header-ready .sub{display:none!important}
+      header.rar-dataset-header-ready .brand{position:relative;z-index:4}
+
+      .rar-header-silk{
+        position:absolute;
+        z-index:1;
+        pointer-events:none;
+        width:248px;
+        height:171px;
+        right:-30px;
+        top:-37px;
+        opacity:.95
+      }
+      .rar-header-silk svg{display:block;width:100%;height:100%;overflow:visible}
 
       .rar-dataset-selectors{
         position:absolute;left:16px;right:auto;bottom:8px;width:47%;
@@ -167,19 +244,13 @@
         padding:0!important;margin:-1px!important;overflow:hidden!important;
         clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important
       }
-      .rar-dataset-field--year{
+
+      .rar-dataset-field--year,
+      .rar-dataset-field--club{
         --rar-selector-accent:#D4AF37;
-        --rar-selector-bg:rgba(235,244,238,.97);
+        --rar-selector-bg:rgba(250,252,248,.97);
         --rar-selector-border:rgba(212,175,55,.58);
         --rar-selector-text:#173D30
-      }
-      .rar-dataset-field--club{
-        --rar-selector-accent:var(--rar-club-accent,#6F897C);
-        --rar-selector-bg:var(--rar-club-bg,rgba(235,243,238,.97));
-        --rar-selector-border:var(--rar-club-border,rgba(145,170,157,.64));
-        --rar-selector-text:var(--rar-club-text,#294B3D);
-        --rar-selector-pattern:var(--rar-club-pattern,none);
-        --rar-selector-pattern-size:var(--rar-club-pattern-size,auto)
       }
       .rar-dataset-field select{
         appearance:auto;min-width:0;width:100%;height:26px;
@@ -188,12 +259,6 @@
         color:var(--rar-selector-text);font-size:10px;font-weight:900;line-height:1;
         box-shadow:inset 3px 0 0 var(--rar-selector-accent),0 1px 2px rgba(3,31,21,.10);
         outline:none
-      }
-      .rar-dataset-field--club select{
-        background-image:var(--rar-selector-pattern);
-        background-size:var(--rar-selector-pattern-size);
-        background-repeat:repeat;
-        background-blend-mode:normal
       }
       .rar-dataset-field select:focus{
         box-shadow:inset 3px 0 0 var(--rar-selector-accent),0 0 0 2px rgba(243,215,120,.18)
@@ -208,13 +273,14 @@
       .rar-header-meta-line{
         min-height:11px;font-size:9.4px;line-height:1.22;font-weight:800;
         letter-spacing:.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-        color:#315D4C
+        color:var(--rar-header-meta);
+        text-shadow:0 1px 2px rgba(18,45,35,.24)
       }
-      .rar-header-status{font-weight:760;color:#315D4C}
-      .rar-header-status[data-state="error"]{color:#9B2C2C}
-      .rar-header-status[data-state="fallback"]{color:#7C5B00}
-      .rar-version-title{font-weight:800;color:#315D4C}
-      .rar-version-value{font-weight:850;color:#315D4C}
+      .rar-header-status{font-weight:760;color:var(--rar-header-meta)}
+      .rar-header-status[data-state="error"]{color:#FFE0E0}
+      .rar-header-status[data-state="fallback"]{color:#FFF0B3}
+      .rar-version-title{font-weight:800;color:var(--rar-header-meta)}
+      .rar-version-value{font-weight:850;color:var(--rar-header-meta)}
 
       .rar-update-history{display:grid;gap:7px;margin-top:7px}
       .rar-update-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #e5ece8}
@@ -228,6 +294,7 @@
         .rar-dataset-field select{height:25px;font-size:9.5px;padding-left:8px;padding-right:18px}
         .rar-header-meta{right:9px;top:10px;width:44%;gap:1px}
         .rar-header-meta-line{font-size:8.8px;line-height:1.2}
+        .rar-header-silk{width:228px;height:158px;right:-28px;top:-34px}
       }
     `;
     document.head.appendChild(style);
@@ -237,18 +304,37 @@
     return ensureHeaderMetaBlock();
   }
 
+  function ensureHeaderSilk() {
+    let el = document.getElementById('rarHeaderSilk');
+    if (el) return el;
+    const header = document.querySelector('header');
+    if (!header) return null;
+    el = document.createElement('div');
+    el.id = 'rarHeaderSilk';
+    el.className = 'rar-header-silk';
+    header.appendChild(el);
+    return el;
+  }
+
   function applyClubTheme(clubId) {
     const root = document.getElementById('rarDatasetSelectors');
-    if (!root) return;
+    const header = document.querySelector('header');
+    if (!header) return;
     const key = String(clubId || '').trim().toLowerCase();
     const theme = CLUB_THEMES[key] || CLUB_THEMES.default;
-    root.style.setProperty('--rar-club-accent', theme.accent);
-    root.style.setProperty('--rar-club-bg', theme.bg);
-    root.style.setProperty('--rar-club-border', theme.border);
-    root.style.setProperty('--rar-club-text', theme.text);
-    root.style.setProperty('--rar-club-pattern', theme.pattern);
-    root.style.setProperty('--rar-club-pattern-size', theme.patternSize);
-    root.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
+
+    header.style.setProperty('--rar-header-light', theme.headerLight);
+    header.style.setProperty('--rar-header-mid', theme.headerMid);
+    header.style.setProperty('--rar-header-dark', theme.headerDark);
+    header.style.setProperty('--rar-header-meta', theme.metaText);
+
+    const silk = ensureHeaderSilk();
+    if (silk) {
+      silk.innerHTML = theme.silkSvg || '';
+      silk.hidden = !theme.silkSvg;
+      silk.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
+    }
+    if (root) root.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
   }
 
   function ensureDatasetSelectors() {
