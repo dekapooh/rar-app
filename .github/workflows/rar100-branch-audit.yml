@@ -12,6 +12,7 @@ on:
       - fix/header-final-theme-20260922
       - fix/header-silks-balance-20260922
       - feature/header-club-silks-final-20260922
+      - fix/header-match-approved-mock-20260922
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -124,7 +125,7 @@ jobs:
             "grid-template-columns:76px minmax(0,1fr)",
             "rar-header-meta-line",
             "font-size:9.4px",
-            "var(--rar-header-mid) 82%",
+            "var(--rar-header-mid) 92%",
             "const CLUB_THEMES = Object.freeze({",
             "headerLight: '#DDF2F8'",
             "headerLight: '#F9D8DA'",
@@ -150,7 +151,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v19-final-club-header' in s
+          assert 'rar-rc66-public-beta-v20-header-mock-match' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
           print("Service worker dataset cache contract PASS")
           PY

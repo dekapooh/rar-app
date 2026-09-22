@@ -23,10 +23,10 @@
         <svg viewBox="0 0 260 180" aria-hidden="true" focusable="false">
           <defs>
             <linearGradient id="rarSilkFade" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fff" stop-opacity=".98"/>
-              <stop offset="46%" stop-color="#fff" stop-opacity=".82"/>
-              <stop offset="76%" stop-color="#fff" stop-opacity=".34"/>
-              <stop offset="100%" stop-color="#fff" stop-opacity=".05"/>
+              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+              <stop offset="48%" stop-color="#fff" stop-opacity=".92"/>
+              <stop offset="74%" stop-color="#fff" stop-opacity=".48"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".08"/>
             </linearGradient>
             <mask id="rarSilkMask">
               <rect width="260" height="180" fill="url(#rarSilkFade)"/>
@@ -57,10 +57,10 @@
         <svg viewBox="0 0 260 180" aria-hidden="true" focusable="false">
           <defs>
             <linearGradient id="rarSilkFade" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fff" stop-opacity=".98"/>
-              <stop offset="46%" stop-color="#fff" stop-opacity=".82"/>
-              <stop offset="76%" stop-color="#fff" stop-opacity=".34"/>
-              <stop offset="100%" stop-color="#fff" stop-opacity=".05"/>
+              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+              <stop offset="48%" stop-color="#fff" stop-opacity=".92"/>
+              <stop offset="74%" stop-color="#fff" stop-opacity=".48"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".08"/>
             </linearGradient>
             <mask id="rarSilkMask">
               <rect width="260" height="180" fill="url(#rarSilkFade)"/>
@@ -212,9 +212,9 @@
           linear-gradient(
             90deg,
             #FAFCF8 0%,
-            #FFFFFF 48%,
-            var(--rar-header-light) 68%,
-            var(--rar-header-mid) 82%,
+            #FFFFFF 58%,
+            var(--rar-header-light) 76%,
+            var(--rar-header-mid) 92%,
             var(--rar-header-dark) 100%
           )!important
       }
@@ -225,11 +225,11 @@
         position:absolute;
         z-index:1;
         pointer-events:none;
-        width:248px;
-        height:171px;
-        right:-30px;
-        top:-37px;
-        opacity:.95
+        width:172px;
+        height:119px;
+        right:-8px;
+        top:-26px;
+        opacity:.94
       }
       .rar-header-silk svg{display:block;width:100%;height:100%;overflow:visible}
 
@@ -294,7 +294,7 @@
         .rar-dataset-field select{height:25px;font-size:9.5px;padding-left:8px;padding-right:18px}
         .rar-header-meta{right:9px;top:10px;width:44%;gap:1px}
         .rar-header-meta-line{font-size:8.8px;line-height:1.2}
-        .rar-header-silk{width:228px;height:158px;right:-28px;top:-34px}
+        .rar-header-silk{width:164px;height:114px;right:-7px;top:-23px}
       }
     `;
     document.head.appendChild(style);
