@@ -127,7 +127,7 @@ jobs:
             "grid-template-columns:76px minmax(0,1fr)",
             "rar-header-meta-line",
             "font-size:9.4px",
-            "var(--rar-header-mid) 92%",
+            "var(--rar-header-light) 50%",
             "const CLUB_THEMES = Object.freeze({",
             "headerLight: '#DDF2F8'",
             "headerLight: '#F9D8DA'",
@@ -162,7 +162,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v21-3d-header-silks' in s
+          assert 'rar-rc66-public-beta-v22-header-gradient-center' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
           assert './assets/header-silks/silk.webp' in s
           assert './assets/header-silks/tokyo-tc.webp' in s
