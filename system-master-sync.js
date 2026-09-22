@@ -159,9 +159,9 @@
           linear-gradient(
             90deg,
             #FAFCF8 0%,
-            #FFFFFF 58%,
-            var(--rar-header-light) 76%,
-            var(--rar-header-mid) 92%,
+            #FFFFFF 25%,
+            var(--rar-header-light) 50%,
+            var(--rar-header-mid) 75%,
             var(--rar-header-dark) 100%
           )!important
       }
