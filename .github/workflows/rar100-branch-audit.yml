@@ -13,6 +13,7 @@ on:
       - fix/header-silks-balance-20260922
       - feature/header-club-silks-final-20260922
       - fix/header-match-approved-mock-20260922
+      - feature/header-3d-silks-assets-20260922
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -20,6 +21,7 @@ on:
       - "rar100-preview.html"
       - "sw.js"
       - "rar-v2-summaries.json"
+      - "assets/header-silks/**"
   workflow_dispatch:
 
 jobs:
@@ -131,8 +133,12 @@ jobs:
             "headerLight: '#F9D8DA'",
             "rar-header-silk",
             "ensureHeaderSilk()",
-            "circle cx=\"111\" cy=\"134\"",
-            "path d=\"M130 82",
+            "silkAsset: './assets/header-silks/silk.webp'",
+            "silkAsset: './assets/header-silks/tokyo-tc.webp'",
+            "rar-header-silk-img",
+            "mask-image:linear-gradient(90deg",
+            "object-fit:cover",
+            "object-position:50% 55%",
             "tokyo_tc: Object.freeze({",
             "rar-dataset-field--year",
             "rar-dataset-field--club",
@@ -142,7 +148,12 @@ jobs:
           missing=[x for x in required if x not in s]
           assert not missing, f"dataset selector runtime missing: {missing}"
           assert s.index("window.__RAR_SYSTEM_MASTER__ = {") < s.index("for (const fn of ['syncBaseControls'"), "dataset metadata must publish before UI refresh"
-          print("Dataset selector runtime contract PASS")
+          assert "silkSvg" not in s, "legacy inline silk SVG must stay removed"
+          for asset in [Path("assets/header-silks/silk.webp"), Path("assets/header-silks/tokyo-tc.webp")]:
+              data=asset.read_bytes()
+              assert len(data) > 5000, f"header silk asset unexpectedly small: {asset}"
+              assert data[:4] == b"RIFF" and data[8:12] == b"WEBP", f"invalid WebP asset: {asset}"
+          print("Dataset selector runtime contract PASS + 3D header assets PASS")
           PY
       - name: SYSTEM MASTER sync syntax audit
         run: node --check system-master-sync.js
@@ -151,8 +162,10 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v20-header-mock-match' in s
+          assert 'rar-rc66-public-beta-v21-3d-header-silks' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
+          assert './assets/header-silks/silk.webp' in s
+          assert './assets/header-silks/tokyo-tc.webp' in s
           print("Service worker dataset cache contract PASS")
           PY
       - name: Service worker syntax audit
