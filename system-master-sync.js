@@ -19,74 +19,21 @@
       headerMid: '#6EA8E3',
       headerDark: '#174C99',
       metaText: '#F7FBFF',
-      silkSvg: `
-        <svg viewBox="0 0 260 180" aria-hidden="true" focusable="false">
-          <defs>
-            <linearGradient id="rarSilkFade" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
-              <stop offset="48%" stop-color="#fff" stop-opacity=".92"/>
-              <stop offset="74%" stop-color="#fff" stop-opacity=".48"/>
-              <stop offset="100%" stop-color="#fff" stop-opacity=".08"/>
-            </linearGradient>
-            <mask id="rarSilkMask">
-              <rect width="260" height="180" fill="url(#rarSilkFade)"/>
-            </mask>
-          </defs>
-          <g mask="url(#rarSilkMask)">
-            <path d="M83 16h94l24 36-13 112H72L59 52z" fill="#69BFE6"/>
-            <path d="M83 20L59 52 13 110l24 15 43-58z" fill="#69BFE6"/>
-            <path d="M177 20l24 32 46 58-24 15-43-58z" fill="#69BFE6"/>
-            <path d="M37 78l22-29 18 24-22 30z" fill="#D94B52"/>
-            <path d="M223 78l-22-29-18 24 22 30z" fill="#D94B52"/>
-            <path d="M126 16h8v31h-8z" fill="rgba(255,255,255,.72)"/>
-            <circle cx="111" cy="58" r="12" fill="#D94B52"/>
-            <circle cx="149" cy="58" r="12" fill="#D94B52"/>
-            <circle cx="111" cy="96" r="12" fill="#D94B52"/>
-            <circle cx="149" cy="96" r="12" fill="#D94B52"/>
-            <circle cx="111" cy="134" r="12" fill="#D94B52"/>
-            <circle cx="149" cy="134" r="12" fill="#D94B52"/>
-          </g>
-        </svg>`
+      silkAsset: './assets/header-silks/silk.webp'
     }),
     tokyo_tc: Object.freeze({
       headerLight: '#F9D8DA',
       headerMid: '#E66C72',
       headerDark: '#8E1F2B',
       metaText: '#FFF9F9',
-      silkSvg: `
-        <svg viewBox="0 0 260 180" aria-hidden="true" focusable="false">
-          <defs>
-            <linearGradient id="rarSilkFade" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
-              <stop offset="48%" stop-color="#fff" stop-opacity=".92"/>
-              <stop offset="74%" stop-color="#fff" stop-opacity=".48"/>
-              <stop offset="100%" stop-color="#fff" stop-opacity=".08"/>
-            </linearGradient>
-            <mask id="rarSilkMask">
-              <rect width="260" height="180" fill="url(#rarSilkFade)"/>
-            </mask>
-          </defs>
-          <g mask="url(#rarSilkMask)">
-            <path d="M83 16h94l24 36-13 112H72L59 52z" fill="#D83B43"/>
-            <path d="M83 20L59 52 13 110l24 15 43-58z" fill="#D83B43"/>
-            <path d="M177 20l24 32 46 58-24 15-43-58z" fill="#D83B43"/>
-            <path d="M38 78l20-27 18 24-21 28z" fill="#F7F7F7"/>
-            <path d="M222 78l-20-27-18 24 21 28z" fill="#F7F7F7"/>
-            <path d="M126 16h8v31h-8z" fill="rgba(255,255,255,.65)"/>
-            <path d="M110 48l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
-            <path d="M150 48l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
-            <path d="M130 82l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
-            <path d="M110 118l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
-            <path d="M150 118l4.4 9 9.9 1.4-7.2 7 1.7 9.8-8.8-4.7-8.8 4.7 1.7-9.8-7.2-7 9.9-1.4z" fill="#FFF"/>
-          </g>
-        </svg>`
+      silkAsset: './assets/header-silks/tokyo-tc.webp'
     }),
     default: Object.freeze({
       headerLight: '#E5EFE9',
       headerMid: '#8AB29C',
       headerDark: '#315D4C',
       metaText: '#F8FBF9',
-      silkSvg: ''
+      silkAsset: ''
     })
   });
 
@@ -105,7 +52,7 @@
     const raw = String(sub.textContent || '').trim();
     const parts = raw.split('｜').map(x => x.trim()).filter(Boolean);
     const title = parts[0] || 'Racehorse Analysis Rating';
-    const version = parts.slice(1).join('｜') || 'β Ver.1.0';
+    const version = 'β Ver.1.0 RC66';
 
     block = document.createElement('div');
     block.id = 'rarHeaderMetaBlock';
@@ -223,15 +170,24 @@
 
       .rar-header-silk{
         position:absolute;
-        z-index:1;
+        z-index:2;
         pointer-events:none;
-        width:172px;
-        height:119px;
-        right:-8px;
-        top:-26px;
-        opacity:.94
+        width:260px;
+        height:105px;
+        right:-10px;
+        top:-6px;
+        opacity:.98;
+        -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,1) 0%,rgba(0,0,0,.98) 54%,rgba(0,0,0,.62) 82%,rgba(0,0,0,.08) 100%);
+        mask-image:linear-gradient(90deg,rgba(0,0,0,1) 0%,rgba(0,0,0,.98) 54%,rgba(0,0,0,.62) 82%,rgba(0,0,0,.08) 100%)
       }
-      .rar-header-silk svg{display:block;width:100%;height:100%;overflow:visible}
+      .rar-header-silk-img{
+        display:block;
+        width:100%;
+        height:100%;
+        object-fit:fill;
+        object-position:center center;
+        filter:drop-shadow(0 3px 5px rgba(10,35,30,.18))
+      }
 
       .rar-dataset-selectors{
         position:absolute;left:16px;right:auto;bottom:8px;width:47%;
@@ -274,7 +230,7 @@
         min-height:11px;font-size:9.4px;line-height:1.22;font-weight:800;
         letter-spacing:.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
         color:var(--rar-header-meta);
-        text-shadow:0 1px 2px rgba(18,45,35,.24)
+        text-shadow:0 1px 3px rgba(8,25,22,.42),0 0 8px rgba(8,25,22,.18)
       }
       .rar-header-status{font-weight:760;color:var(--rar-header-meta)}
       .rar-header-status[data-state="error"]{color:#FFE0E0}
@@ -294,7 +250,7 @@
         .rar-dataset-field select{height:25px;font-size:9.5px;padding-left:8px;padding-right:18px}
         .rar-header-meta{right:9px;top:10px;width:44%;gap:1px}
         .rar-header-meta-line{font-size:8.8px;line-height:1.2}
-        .rar-header-silk{width:164px;height:114px;right:-7px;top:-23px}
+        .rar-header-silk{width:246px;height:100px;right:-8px;top:-4px}
       }
     `;
     document.head.appendChild(style);
@@ -312,6 +268,13 @@
     el = document.createElement('div');
     el.id = 'rarHeaderSilk';
     el.className = 'rar-header-silk';
+    const img = document.createElement('img');
+    img.className = 'rar-header-silk-img';
+    img.alt = '';
+    img.setAttribute('aria-hidden', 'true');
+    img.decoding = 'async';
+    img.loading = 'eager';
+    el.appendChild(img);
     header.appendChild(el);
     return el;
   }
@@ -330,8 +293,13 @@
 
     const silk = ensureHeaderSilk();
     if (silk) {
-      silk.innerHTML = theme.silkSvg || '';
-      silk.hidden = !theme.silkSvg;
+      const asset = String(theme.silkAsset || '');
+      const img = silk.querySelector('.rar-header-silk-img');
+      if (img) {
+        if (asset && img.getAttribute('src') !== asset) img.setAttribute('src', asset);
+        if (!asset) img.removeAttribute('src');
+      }
+      silk.hidden = !asset;
       silk.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
     }
     if (root) root.dataset.clubTheme = CLUB_THEMES[key] ? key : 'default';
