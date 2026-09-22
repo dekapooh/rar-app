@@ -14,6 +14,7 @@ on:
       - feature/header-club-silks-final-20260922
       - fix/header-match-approved-mock-20260922
       - feature/header-3d-silks-assets-20260922
+      - fix/header-gradient-center-20260922
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
