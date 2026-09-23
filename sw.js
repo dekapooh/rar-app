@@ -1,6 +1,6 @@
-const CACHE_NAME="rar-rc66-public-beta-v23-header-gradient-true-center";
+const CACHE_NAME="rar-rc66-public-beta-v24-carrot-silk";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
 const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=dataset-selectors-20260918"><\/script>';
 function injectSystemMasterSync(html){
