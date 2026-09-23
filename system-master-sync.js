@@ -44,6 +44,51 @@
     })
   });
 
+  // Official recruitment-status snapshot. Scoring/FROZEN data is never changed here.
+  const RECRUITMENT_SNAPSHOTS = Object.freeze({
+    '2026:carrot': Object.freeze({
+      source_date: '2026-09-23',
+      open_nos: Object.freeze([12,20,26,30,31,34,37,38,61,79,82,91,92,93,94]),
+      cancelled_nos: Object.freeze([56,62])
+    }),
+    '2026:tokyo_tc': Object.freeze({
+      source_date: '2026-09-23',
+      open_nos: Object.freeze([2,5,6,8,9,16,17,21,24,25,26,29,32,34,35,36,37,39,41]),
+      cancelled_nos: Object.freeze([27])
+    })
+  });
+
+  function applyRecruitmentSnapshot(h, datasetKey) {
+    const snapshot = RECRUITMENT_SNAPSHOTS[String(datasetKey || '')];
+    if (!snapshot) return h;
+    const no = Number(h.no);
+    if (snapshot.cancelled_nos.includes(no)) {
+      h.recruitmentStatus = 'cancelled';
+      h.full = true;
+      return h;
+    }
+    if (snapshot.open_nos.includes(no)) {
+      h.recruitmentStatus = 'open';
+      h.full = false;
+      return h;
+    }
+    h.recruitmentStatus = 'full';
+    h.full = true;
+    return h;
+  }
+
+  function renderRecruitmentUpdate() {
+    if (typeof HORSES === 'undefined' || !Array.isArray(HORSES)) return;
+    const cards = [...document.querySelectorAll('#home .topic-card')];
+    const card = cards.find(el => String(el.querySelector('.topic-meta')?.textContent || '').includes('募集状況 UPDATE'));
+    if (!card) return;
+    const title = card.querySelector('b');
+    const copy = card.querySelector('p');
+    const openCount = HORSES.filter(h => !h.full).length;
+    if (title) title.textContent = '最新の募集状況を反映';
+    if (copy) copy.textContent = `現在の募集中は${openCount}頭。満口除外フィルタにも選択中クラブの最新状況を反映しました。`;
+  }
+
   let availableDatasets = [LEGACY_DATASET];
   let activeDatasetKey = LEGACY_DATASET.dataset_key;
   let staticHorseSnapshot = null;
@@ -562,12 +607,14 @@
         ? cloneHorse(legacyByNo.get(no))
         : blankHorse(no);
       patchHorse(base, r);
+      applyRecruitmentSnapshot(base, data.dataset_key);
       if (!base.turf && !base.dirt && r.career?.surface === 'turf') base.turf = '◎';
       if (!base.turf && !base.dirt && r.career?.surface === 'dirt') base.dirt = '◎';
       if (!base.turf && !base.dirt && r.career?.surface === 'both') { base.turf = '◎'; base.dirt = '◎'; }
       return base;
     });
     HORSES.splice(0, HORSES.length, ...nextHorses);
+    renderRecruitmentUpdate();
 
     if (typeof CAREER_META !== 'undefined' && CAREER_META) {
       for (const key of Object.keys(CAREER_META)) delete CAREER_META[key];
