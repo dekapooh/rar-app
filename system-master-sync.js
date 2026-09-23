@@ -28,6 +28,13 @@
       metaText: '#FFF9F9',
       silkAsset: './assets/header-silks/tokyo-tc.webp'
     }),
+    carrot: Object.freeze({
+      headerLight: '#E5EFE9',
+      headerMid: '#8AB29C',
+      headerDark: '#315D4C',
+      metaText: '#F8FBF9',
+      silkAsset: './assets/header-silks/carrot.webp'
+    }),
     default: Object.freeze({
       headerLight: '#E5EFE9',
       headerMid: '#8AB29C',
