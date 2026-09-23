@@ -16,6 +16,7 @@ on:
       - feature/header-3d-silks-assets-20260922
       - fix/header-gradient-center-20260922
       - fix/header-gradient-true-center-20260922
+      - feature/header-carrot-silk-20260923
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -137,6 +138,7 @@ jobs:
             "ensureHeaderSilk()",
             "silkAsset: './assets/header-silks/silk.webp'",
             "silkAsset: './assets/header-silks/tokyo-tc.webp'",
+            "silkAsset: './assets/header-silks/carrot.webp'",
             "rar-header-silk-img",
             "mask-image:linear-gradient(90deg",
             "object-fit:cover",
@@ -151,7 +153,7 @@ jobs:
           assert not missing, f"dataset selector runtime missing: {missing}"
           assert s.index("window.__RAR_SYSTEM_MASTER__ = {") < s.index("for (const fn of ['syncBaseControls'"), "dataset metadata must publish before UI refresh"
           assert "silkSvg" not in s, "legacy inline silk SVG must stay removed"
-          for asset in [Path("assets/header-silks/silk.webp"), Path("assets/header-silks/tokyo-tc.webp")]:
+          for asset in [Path("assets/header-silks/silk.webp"), Path("assets/header-silks/tokyo-tc.webp"), Path("assets/header-silks/carrot.webp")]:
               data=asset.read_bytes()
               assert len(data) > 5000, f"header silk asset unexpectedly small: {asset}"
               assert data[:4] == b"RIFF" and data[8:12] == b"WEBP", f"invalid WebP asset: {asset}"
@@ -164,10 +166,11 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v23-header-gradient-true-center' in s
+          assert 'rar-rc66-public-beta-v24-carrot-silk' in s
           assert 'system-master-sync.js?v=dataset-selectors-20260918' in s
           assert './assets/header-silks/silk.webp' in s
           assert './assets/header-silks/tokyo-tc.webp' in s
+          assert './assets/header-silks/carrot.webp' in s
           print("Service worker dataset cache contract PASS")
           PY
       - name: Service worker syntax audit
