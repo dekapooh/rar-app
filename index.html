@@ -2834,7 +2834,7 @@ function renderSearch(){
    <div class="ranknum">${h.no}</div>
    <div>
      <div class="hname">${h.name}${state.favorites[h.no]?' ★':''}${state.excluded[h.no]?' <span class="excluded-note">除外</span>':''}</div>
-     <div class="hmeta">${h.sex}｜${h.full?'満口':'募集中'}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
+     <div class="hmeta">${h.sex}｜${h.recruitmentStatus==="cancelled"?'募集取消':(h.full?'満口':'募集中')}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
    </div>
    <div class="score">${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}<small>${canViewHorseOfficial(h.no)?" Official":" PLAN"}</small></div>
  </div>`).join("") || '<div class="empty">該当する募集馬がありません</div>';
@@ -3497,7 +3497,7 @@ function updateMyPage(){
      const point=effectivePersonalPoint(no);
      const memo=state.memos[no]||"";
      let right=myPageView==="points" ? `${point>0?"+":""}${point} pt` : (canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
-     const normalSub=`${h.sex}｜${h.full?"満口":"募集中"}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
+     const normalSub=`${h.sex}｜${h.recruitmentStatus==="cancelled"?"募集取消":(h.full?"満口":"募集中")}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
      const subHtml=myPageView==="memos"
        ? `<div class="memo-preview">${escapeHTML(memo)}</div>`
        : `<div class="myhorse-note">${normalSub}</div>`;
