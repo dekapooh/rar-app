@@ -557,9 +557,11 @@
       turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? '◎' : '') : h.turf,
       dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? '◎' : '') : h.dirt,
       distance: hasDistance ? `${surfacePrefix}${distanceMin}～${distanceMax}m` : h.distance,
-      growth: (suitability.growth_type && suitability.growth_type !== 'unknown')
-        ? suitability.growth_type
-        : (career.growth && career.growth !== 'unknown' ? career.growth : h.growth),
+      category: suitability.category || career.category || r.category || h.category,
+      growth: suitability.growth_display
+        || ((suitability.growth_type && suitability.growth_type !== 'unknown') ? suitability.growth_type : '')
+        || ((career.growth && career.growth !== 'unknown') ? career.growth : '')
+        || h.growth,
       targets: Array.isArray(suitability.target_races) && suitability.target_races.length
         ? suitability.target_races.join('・')
         : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・') : h.targets)
