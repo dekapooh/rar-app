@@ -1,0 +1,24 @@
+{
+  "schema_version": "rar-silk-2025-live-e2e-v1",
+  "status": "PASS_RAR_APP_E2E_95",
+  "dataset_key": "2025:silk",
+  "record_count": 95,
+  "version_id": "6e26bf5396d7d8d9b8d8b1863dc402840ee591efd4a99167e0ee4e665eac7046",
+  "consumer_records_sha256": "ce95c072fff8e63a50fa9b88d431b44d779a296019d8ba4d17aa0f0962d624b3",
+  "transferred_at": "2026-09-26T14:46:40.607947+00:00",
+  "numbers_complete": true,
+  "official_ranks_complete": true,
+  "search_targets": {
+    "83": "バタフライノット",
+    "92": "バードギール",
+    "95": "アンソフィリア"
+  },
+  "rank1": {
+    "no": 87,
+    "name": "ミラベルプラム",
+    "total": 66.16230555555555
+  },
+  "live_app_contract": "DYNAMIC_RECORD_COUNT_PASS",
+  "live_app_url": "https://dekapooh.github.io/rar-app/",
+  "live_api_url": "https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2025%3Asilk"
+}
