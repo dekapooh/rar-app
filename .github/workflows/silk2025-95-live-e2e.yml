@@ -116,11 +116,113 @@ jobs:
           print("RESULT=PASS_RAR_APP_E2E_95")
           PY
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Browser E2E - select Silk 2025 and search No.83/92/95
+        run: |
+          cat > /tmp/rar-live-browser-e2e.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const expected = new Map([
+            ['83', 'バタフライノット'],
+            ['92', 'バードギール'],
+            ['95', 'アンソフィリア'],
+          ]);
+
+          const browser = await chromium.launch({headless:true});
+          const context = await browser.newContext({
+            viewport: { width: 390, height: 844 },
+            serviceWorkers: 'block',
+          });
+          const page = await context.newPage();
+          const stamp = Date.now();
+          const appUrl = 'https://dekapooh.github.io/rar-app/?live-e2e=' + stamp;
+
+          const consoleErrors = [];
+          page.on('console', msg => {
+            if (msg.type() === 'error') consoleErrors.push(msg.text());
+          });
+          page.on('pageerror', err => consoleErrors.push(String(err)));
+
+          await page.goto(appUrl, {waitUntil:'domcontentloaded', timeout:60000});
+          await page.waitForFunction(() =>
+            window.__RAR_SYSTEM_MASTER__ &&
+            window.__RAR_SYSTEM_MASTER__.dataset_key === '2026:silk'
+          , null, {timeout:60000});
+
+          await page.waitForSelector('#rarSeasonSelect', {timeout:30000});
+          await page.selectOption('#rarSeasonSelect', '2025');
+          await page.waitForFunction(() =>
+            window.__RAR_SYSTEM_MASTER__ &&
+            window.__RAR_SYSTEM_MASTER__.dataset_key === '2025:silk' &&
+            Number(window.__RAR_SYSTEM_MASTER__.record_count) === 95
+          , null, {timeout:60000});
+
+          const master = await page.evaluate(() => ({...window.__RAR_SYSTEM_MASTER__}));
+          if (master.version_id !== '6e26bf5396d7d8d9b8d8b1863dc402840ee591efd4a99167e0ee4e665eac7046') {
+            throw new Error('unexpected version_id: ' + master.version_id);
+          }
+
+          await page.click('.nav button[data-screen="search"]');
+          await page.waitForSelector('#searchInput');
+          const note = await page.locator('#searchPlanNote').innerText();
+          if (!note.includes('全95頭')) throw new Error('search note is not 95-head: ' + note);
+
+          const searches = {};
+          for (const [no, name] of expected) {
+            await page.locator('#searchInput').fill(no);
+            await page.waitForFunction(
+              ([n]) => document.querySelector('#searchMeta')?.textContent?.includes('1頭表示'),
+              [no],
+              {timeout:10000}
+            );
+            const text = await page.locator('#searchResults').innerText();
+            if (!text.includes(name) || !text.includes(no)) {
+              throw new Error('search failed No.' + no + ': ' + text);
+            }
+            searches[no] = text.replace(/\s+/g,' ').trim();
+          }
+
+          await page.click('.nav button[data-screen="ranking"]');
+          await page.waitForFunction(() => document.querySelectorAll('#rankList .rankrow').length === 95, null, {timeout:30000});
+          const firstRank = (await page.locator('#rankList .rankrow').first().innerText()).replace(/\s+/g,' ').trim();
+          if (!firstRank.includes('ミラベルプラム')) {
+            throw new Error('rank1 is not ミラベルプラム: ' + firstRank);
+          }
+
+          const report = {
+            schema_version: 'rar-silk-2025-browser-e2e-v1',
+            status: 'PASS_RAR_APP_BROWSER_E2E_95',
+            app_url: 'https://dekapooh.github.io/rar-app/',
+            dataset_key: master.dataset_key,
+            record_count: master.record_count,
+            version_id: master.version_id,
+            search_note: note,
+            search_results: searches,
+            ranking_rows: 95,
+            rank1_contains: 'ミラベルプラム',
+            console_errors: consoleErrors,
+          };
+          fs.writeFileSync('audit/silk-2025-95-browser-e2e.json', JSON.stringify(report,null,2)+'\n');
+          console.log(JSON.stringify(report,null,2));
+          console.log('RESULT=PASS_RAR_APP_BROWSER_E2E_95');
+          await browser.close();
+          JS
+          node /tmp/rar-live-browser-e2e.mjs
+
       - name: Commit E2E evidence
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add audit/silk-2025-95-live-e2e.json
+          git add audit/silk-2025-95-live-e2e.json audit/silk-2025-95-browser-e2e.json
           if git diff --cached --quiet; then
             echo "No audit changes."
           else
