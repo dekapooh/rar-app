@@ -1,0 +1,116 @@
+name: RAR UI Live 20260927
+
+on:
+  push:
+    branches:
+      - audit/ui-live-20260927
+    paths:
+      - ".github/workflows/ui-live-20260927.yml"
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Wait for live Pages and verify contracts
+        run: |
+          set -euo pipefail
+          PAGE="https://dekapooh.github.io/rar-app/"
+          for i in $(seq 1 18); do
+            curl -fsSL "${PAGE}system-master-sync.js?ts=$(date +%s%N)" -o /tmp/sync.js || true
+            curl -fsSL "${PAGE}index.html?ts=$(date +%s%N)" -o /tmp/index.html || true
+            curl -fsSL "${PAGE}sw.js?ts=$(date +%s%N)" -o /tmp/sw.js || true
+            if grep -Fq "rarLastDatasetKey" /tmp/sync.js               && grep -Fq "detailRegisteredName" /tmp/index.html               && grep -Fq "pushAppHistory" /tmp/index.html               && grep -Fq "rar-rc66-public-beta-v27-ui-state-history" /tmp/sw.js; then
+              echo "LIVE_PAGES_CONTRACT=PASS"
+              break
+            fi
+            if [ "$i" = "18" ]; then
+              echo "Live Pages did not update in retry window"
+              exit 1
+            fi
+            sleep 5
+          done
+
+          curl -fsSL "https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2025%3Asilk?ts=$(date +%s%N)" -o /tmp/silk25.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open("/tmp/silk25.json"))
+          assert d["dataset_key"]=="2025:silk"
+          assert d["record_count"]==95
+          by={int(r["no"]):r for r in d["records"]}
+          assert by[83]["name"]=="メジロツボネの24"
+          assert by[83]["registered_name"]=="バタフライノット"
+          assert by[85]["name"]=="ガラアフェアーの24"
+          assert by[85]["registered_name"]=="ガンサルート"
+          assert by[94]["name"]=="エンドタイムズの24"
+          assert by[94]["registered_name"]=="トップエンドパワー"
+          print("LIVE_API_NAME_BINDING=PASS")
+          PY
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Live browser E2E
+        run: |
+          cat > ./ui-live-e2e.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({
+            viewport:{width:390,height:844},
+            serviceWorkers:'block',
+          });
+          const page=await context.newPage();
+          await page.addInitScript(() => localStorage.setItem('rarLastDatasetKey','2025:silk'));
+
+          await page.goto('https://dekapooh.github.io/rar-app/?ui-live='+Date.now(),{
+            waitUntil:'domcontentloaded',
+            timeout:60000
+          });
+          await page.waitForFunction(() =>
+            window.__RAR_SYSTEM_MASTER__?.dataset_key==='2025:silk' &&
+            Number(window.__RAR_SYSTEM_MASTER__?.record_count)===95
+          ,null,{timeout:60000});
+
+          const season=await page.locator('#rarSeasonSelect').inputValue();
+          const club=await page.locator('#rarClubSelect').inputValue();
+          if(season!=='2025' || club!=='2025:silk') throw new Error('startup restore failed');
+
+          await page.click('.nav button[data-screen="search"]');
+          await page.locator('#searchInput').fill('バタフライノット');
+          await page.waitForFunction(()=>document.querySelector('#searchMeta')?.textContent?.includes('1頭表示'));
+          const result=(await page.locator('#searchResults').innerText()).replace(/\s+/g,' ');
+          if(!result.includes('メジロツボネの24')) throw new Error('recruitment name missing: '+result);
+          if(!result.includes('登録名：バタフライノット')) throw new Error('registered name missing: '+result);
+
+          await page.locator('#searchResults .search-result').click();
+          await page.waitForSelector('#detail.active');
+          if((await page.locator('#detailName').innerText())!=='メジロツボネの24') throw new Error('detail primary mismatch');
+          if(!(await page.locator('#detailRegisteredName').innerText()).includes('バタフライノット')) throw new Error('detail registered mismatch');
+
+          await page.goBack();
+          await page.waitForSelector('#search.active');
+          await page.goBack();
+          await page.waitForSelector('#home.active');
+
+          await page.selectOption('#rarSeasonSelect','2026');
+          await page.waitForFunction(()=>window.__RAR_SYSTEM_MASTER__?.dataset_key==='2026:silk',null,{timeout:60000});
+          if(await page.evaluate(()=>localStorage.getItem('rarLastDatasetKey'))!=='2026:silk') throw new Error('latest selection not stored');
+
+          await page.reload({waitUntil:'domcontentloaded',timeout:60000});
+          await page.waitForFunction(()=>window.__RAR_SYSTEM_MASTER__?.dataset_key==='2026:silk',null,{timeout:60000});
+          if((await page.locator('#rarSeasonSelect').inputValue())!=='2026') throw new Error('reload restore failed');
+
+          console.log('RESULT=PASS_RAR_UI_LIVE_20260927');
+          await browser.close();
+          JS
+          node ./ui-live-e2e.mjs
