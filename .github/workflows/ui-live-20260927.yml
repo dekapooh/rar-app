@@ -103,6 +103,11 @@ jobs:
           await page.waitForSelector('#home.active');
 
           await page.selectOption('#rarSeasonSelect','2026');
+          await page.waitForFunction(()=>Number(window.__RAR_SYSTEM_MASTER__?.season_year)===2026,null,{timeout:60000});
+          await page.waitForFunction(()=>[...document.querySelectorAll('#rarClubSelect option')].some(o=>o.value==='2026:silk'),null,{timeout:10000});
+          if((await page.locator('#rarClubSelect').inputValue())!=='2026:silk'){
+            await page.selectOption('#rarClubSelect','2026:silk');
+          }
           await page.waitForFunction(()=>window.__RAR_SYSTEM_MASTER__?.dataset_key==='2026:silk',null,{timeout:60000});
           if(await page.evaluate(()=>localStorage.getItem('rarLastDatasetKey'))!=='2026:silk') throw new Error('latest selection not stored');
 
