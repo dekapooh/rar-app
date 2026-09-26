@@ -1,0 +1,97 @@
+name: Live PWA Startup Audit
+
+on:
+  push:
+    branches:
+      - audit/live-pwa-startup-20260927
+    paths:
+      - ".github/workflows/live-pwa-startup-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Wait for production files
+        run: |
+          set -euo pipefail
+          BASE="https://dekapooh.github.io/rar-app/"
+          for i in $(seq 1 24); do
+            curl -fsSL "${BASE}sw.js?ts=$(date +%s%N)" -o /tmp/sw.js || true
+            curl -fsSL "${BASE}index.html?ts=$(date +%s%N)" -o /tmp/index.html || true
+            if grep -Fq "rar-rc66-public-beta-v28-pwa-startup-recovery" /tmp/sw.js               && grep -Fq "pwa-startup-recovery-20260927" /tmp/index.html               && ! grep -Fq "location.reload();" /tmp/index.html; then
+              echo "LIVE_FILES=PASS"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Production files did not update"
+          exit 1
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Verify production PWA startup with Service Worker
+        run: |
+          cat > ./live-pwa-startup.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({
+            viewport:{width:390,height:844},
+            serviceWorkers:'allow',
+          });
+          const page=await context.newPage();
+
+          let navCount=0;
+          const errors=[];
+          page.on('framenavigated',f=>{ if(f===page.mainFrame()) navCount++; });
+          page.on('pageerror',e=>errors.push(String(e)));
+
+          const url='https://dekapooh.github.io/rar-app/?live-pwa='+Date.now();
+
+          await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
+          await page.waitForSelector('#app',{state:'visible',timeout:20000});
+          await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:20000});
+          await page.waitForFunction(async()=>!!(await navigator.serviceWorker.ready)?.active,null,{timeout:30000});
+
+          if(!await page.evaluate(()=>!!navigator.serviceWorker.controller)){
+            await page.reload({waitUntil:'domcontentloaded',timeout:30000});
+            await page.waitForSelector('#app',{state:'visible',timeout:10000});
+          }
+
+          const before=navCount;
+          const t=Date.now();
+          await page.reload({waitUntil:'domcontentloaded',timeout:15000});
+          const elapsed=Date.now()-t;
+          await page.waitForSelector('#app',{state:'visible',timeout:10000});
+          await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:10000});
+          await page.waitForTimeout(4000);
+
+          const state=await page.evaluate(async()=>({
+            controller:!!navigator.serviceWorker.controller,
+            readyState:document.readyState,
+            active:[...document.querySelectorAll('.screen.active')].map(x=>x.id),
+            sw:(await navigator.serviceWorker.getRegistration('./'))?.active?.scriptURL||null,
+          }));
+
+          if(!state.controller) throw new Error('production PWA not controlled');
+          if(!state.active.includes('home')) throw new Error('home not visible');
+          if(navCount-before>2) throw new Error('reload loop detected');
+          if(elapsed>14000) throw new Error('startup exceeded bound: '+elapsed);
+          if(errors.length) throw new Error('page errors: '+JSON.stringify(errors));
+
+          console.log(JSON.stringify({status:'PASS_LIVE_PWA_STARTUP',elapsed,navDelta:navCount-before,state},null,2));
+          console.log('RESULT=PASS_LIVE_PWA_STARTUP');
+          await browser.close();
+          JS
+          node ./live-pwa-startup.mjs
