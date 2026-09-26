@@ -127,7 +127,7 @@ jobs:
 
       - name: Browser E2E - select Silk 2025 and search No.83/92/95
         run: |
-          cat > /tmp/rar-live-browser-e2e.mjs <<'JS'
+          cat > ./rar-live-browser-e2e.mjs <<'JS'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
 
@@ -216,7 +216,7 @@ jobs:
           console.log('RESULT=PASS_RAR_APP_BROWSER_E2E_95');
           await browser.close();
           JS
-          node /tmp/rar-live-browser-e2e.mjs
+          node ./rar-live-browser-e2e.mjs
 
       - name: Commit E2E evidence
         run: |
