@@ -244,5 +244,5 @@ self.addEventListener("fetch",event=>{
       }
     })());return;
   }
-  if(url.origin===self.location.origin){event.respondWith((async()=>{const cached=await caches.match(req);if(cached) return cached;try{const response=await fetch(req);if(response && response.ok){const cache=await caches.open(CACHE_NAME);cache.put(req,response.clone()).catch(()=>{});}return response;}catch{return new Response("",{status:504});}})());}
+  if(url.origin===self.location.origin){event.respondWith((async()=>{const cached=await caches.match(req,{ignoreSearch:true});if(cached) return cached;try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),5000);const response=await fetch(req,{signal:controller.signal});clearTimeout(timer);if(response && response.ok){const cache=await caches.open(CACHE_NAME);cache.put(req,response.clone()).catch(()=>{});}return response;}catch{return new Response("",{status:504});}})());}
 });
