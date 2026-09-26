@@ -70,7 +70,7 @@ jobs:
             serviceWorkers:'block',
           });
           const page=await context.newPage();
-          await page.addInitScript(() => localStorage.setItem('rarLastDatasetKey','2025:silk'));
+          await page.addInitScript(() => { if(!localStorage.getItem('rarLastDatasetKey')) localStorage.setItem('rarLastDatasetKey','2025:silk'); });
 
           await page.goto('https://dekapooh.github.io/rar-app/?ui-live='+Date.now(),{
             waitUntil:'domcontentloaded',
