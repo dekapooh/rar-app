@@ -1,0 +1,19 @@
+{
+  "schema_version": "rar-silk-2025-browser-e2e-v1",
+  "status": "PASS_RAR_APP_BROWSER_E2E_95",
+  "app_url": "https://dekapooh.github.io/rar-app/",
+  "dataset_key": "2025:silk",
+  "record_count": 95,
+  "version_id": "6e26bf5396d7d8d9b8d8b1863dc402840ee591efd4a99167e0ee4e665eac7046",
+  "search_note": "検索対象は全95頭。募集馬名・No.・父・母に加え、性別・芝/ダート・一口価格で絞り込めます。評価点の表示範囲は契約プランに準拠します。",
+  "search_results": {
+    "83": "83 バタフライノット 牡｜募集中｜キズナ × メジロツボネ12万円 54.8 Official",
+    "92": "92 バードギール メス｜募集中｜タワーオブロンドン × クールアイランド5.6万円 57.3 Official",
+    "95": "95 アンソフィリア メス｜募集中｜Jack Christopher × Fate of Ophelia7.6万円 57.0 Official"
+  },
+  "ranking_rows": 95,
+  "rank1_contains": "ミラベルプラム",
+  "console_errors": [
+    "Service Worker registration failed TypeError: Cannot read properties of undefined (reading 'update')\n    at https://dekapooh.github.io/rar-app/?live-e2e=1790434400535:3766:11"
+  ]
+}
