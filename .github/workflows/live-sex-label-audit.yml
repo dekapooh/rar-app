@@ -1,0 +1,95 @@
+name: Live Sex Label Audit
+
+on:
+  push:
+    branches:
+      - audit/live-sex-label-20260927
+    paths:
+      - ".github/workflows/live-sex-label-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Wait for live release
+        run: |
+          set -euo pipefail
+          BASE="https://dekapooh.github.io/rar-app/"
+          for i in $(seq 1 24); do
+            curl -fsSL "${BASE}index.html?ts=$(date +%s%N)" -o /tmp/index.html || true
+            curl -fsSL "${BASE}sw.js?ts=$(date +%s%N)" -o /tmp/sw.js || true
+            if grep -Fq "function sexLabel(value)" /tmp/index.html               && grep -Fq '<option value="female">メス</option>' /tmp/index.html               && grep -Fq "rar-rc66-public-beta-v29-sex-label" /tmp/sw.js; then
+              echo "LIVE_RELEASE=PASS"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Verify live labels on all datasets
+        run: |
+          cat > ./live-sex-label.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const keys=['2025:silk','2026:silk','2026:tokyo_tc','2026:carrot'];
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
+          const page=await context.newPage();
+
+          await page.goto('https://dekapooh.github.io/rar-app/?sex-live='+Date.now(),{
+            waitUntil:'domcontentloaded',timeout:60000
+          });
+          await page.waitForFunction(()=>!!window.__RAR_SYSTEM_MASTER__,null,{timeout:60000});
+
+          for(const key of keys){
+            await page.evaluate(async key=>{
+              if(window.__RAR_SYSTEM_MASTER__.dataset_key!==key){
+                await window.RARDatasetSelector.select(key);
+              }
+            },key);
+            await page.waitForFunction(key=>window.__RAR_SYSTEM_MASTER__?.dataset_key===key,key,{timeout:60000});
+
+            await page.click('.nav button[data-screen="search"]');
+            const femaleOption=await page.locator('#searchSex option[value="female"]').innerText();
+            if(femaleOption.trim()!=='メス') throw new Error(key+' filter label mismatch');
+            await page.locator('#searchSex').selectOption('female');
+            await page.waitForFunction(()=>{
+              const t=document.querySelector('#searchMeta')?.textContent||'';
+              const n=parseInt(t,10);
+              return Number.isFinite(n)&&n>0;
+            },null,{timeout:10000});
+
+            const text=(await page.locator('#searchResults').innerText()).replace(/\s+/g,' ');
+            if(!text.includes('メス｜')) throw new Error(key+' no メス result: '+text.slice(0,300));
+            if(text.includes('牝｜')||text.includes('♀｜')) throw new Error(key+' raw female label leaked: '+text.slice(0,300));
+
+            await page.locator('#searchResults .search-result').first().click();
+            await page.waitForSelector('#detail.active');
+            if((await page.locator('#dSex').innerText()).trim()!=='メス') throw new Error(key+' detail not メス');
+            if(!(await page.locator('#detailBasic').innerText()).startsWith('メス｜')) throw new Error(key+' detail basic raw');
+
+            await page.goBack();
+            await page.waitForSelector('#search.active');
+            await page.locator('#searchSex').selectOption('');
+            await page.click('.nav button[data-screen="ranking"]');
+            const rank=(await page.locator('#rankList').innerText()).replace(/\s+/g,' ');
+            if(!rank.includes('メス｜Official')) throw new Error(key+' ranking missing メス');
+            if(rank.includes('牝｜Official')||rank.includes('♀｜Official')) throw new Error(key+' ranking raw female label leaked');
+          }
+
+          console.log('RESULT=PASS_LIVE_SEX_LABEL_ALL_DATASETS');
+          await browser.close();
+          JS
+          node ./live-sex-label.mjs
