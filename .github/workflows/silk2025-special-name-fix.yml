@@ -1,0 +1,205 @@
+name: Silk 2025 Special Name Fix
+
+on:
+  push:
+    branches:
+      - ops/silk2025-name-fix-20260927
+    paths:
+      - ".github/workflows/silk2025-special-name-fix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: /tmp/rar-firebase-service-account.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ops/silk2025-name-fix-20260927
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify Firebase credential
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RAR_PROJECT_5A27E }}
+        run: |
+          set -euo pipefail
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$GOOGLE_APPLICATION_CREDENTIALS"
+
+      - name: Install Firestore client
+        run: python -m pip install --disable-pip-version-check google-cloud-firestore
+
+      - name: Guarded Firestore migration
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import copy, hashlib, json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from google.cloud import firestore
+
+          PROJECT="rar-project-5a27e"
+          DATASET="2025:silk"
+          POINTERS="rarConsumerDatasetPointers"
+          VERSIONS="rarConsumerDatasetVersions"
+          EXPECTED_BASE="6e26bf5396d7d8d9b8d8b1863dc402840ee591efd4a99167e0ee4e665eac7046"
+
+          names={
+            83:("メジロツボネの24","バタフライノット"),
+            84:("プリモシーンの24","プリモヴィータ"),
+            85:("ガラアフェアーの24","ガンサルート"),
+            86:("ルールブリタニアの24","ヴィクトリアルール"),
+            87:("プラムアリの24","ミラベルプラム"),
+            88:("モーベットの24","ガリアルダ"),
+            89:("レディデラウェアの24","ファーストステイト"),
+            90:("ウイングステルスの24","エボニーウイング"),
+            91:("リアリサトリスの24","ベルジャンブ"),
+            92:("クールアイランドの24","バードギール"),
+            93:("オパリアの24","オプレンシア"),
+            94:("エンドタイムズの24","トップエンドパワー"),
+            95:("フェイトオブオフィーリアの24","アンソフィリア"),
+          }
+
+          def canon(v):
+            return json.dumps(v,ensure_ascii=False,sort_keys=True,separators=(",",":"),default=str)
+          def digest(v):
+            return hashlib.sha256(canon(v).encode("utf-8")).hexdigest()
+
+          db=firestore.Client(project=PROJECT)
+          pref=db.collection(POINTERS).document(DATASET)
+          ps=pref.get()
+          assert ps.exists
+          pointer=ps.to_dict() or {}
+          assert pointer.get("version_id")==EXPECTED_BASE, pointer.get("version_id")
+          vref=db.collection(VERSIONS).document(EXPECTED_BASE)
+          vs=vref.get()
+          assert vs.exists
+          base=vs.to_dict() or {}
+          assert base.get("dataset_key")==DATASET
+          assert int(base.get("record_count") or 0)==95
+          before={int(r["no"]):copy.deepcopy(r) for r in base["records"]}
+          assert set(before)==set(range(1,96))
+
+          fixed=copy.deepcopy(base)
+          by={int(r["no"]):r for r in fixed["records"]}
+          for no,(recruitment,registered) in names.items():
+            assert str(by[no].get("name") or "")==registered,(no,by[no].get("name"),registered)
+            by[no]["name"]=recruitment
+            by[no]["registered_name"]=registered
+
+          for no in range(1,83):
+            assert canon(before[no])==canon(by[no]),f"No.{no} changed"
+
+          for no in range(83,96):
+            b=copy.deepcopy(before[no])
+            a=copy.deepcopy(by[no])
+            b.pop("name",None); b.pop("registered_name",None)
+            a.pop("name",None); a.pop("registered_name",None)
+            assert canon(b)==canon(a),f"No.{no} changed outside name fields"
+
+          fixed["consumer_records_sha256"]=digest(fixed["records"])
+          identity={
+            "schema_version":"rar-silk-2025-special-name-fix-v1",
+            "dataset_key":DATASET,
+            "base_version_id":EXPECTED_BASE,
+            "consumer_records_sha256":fixed["consumer_records_sha256"],
+            "name_map":names,
+          }
+          new_version=digest(identity)
+          now=datetime.now(timezone.utc).isoformat()
+          fixed["payload_sha256"]=new_version
+          fixed["version_id"]=new_version
+          fixed["transferred_at"]=now
+          fixed["name_binding"]={
+            "policy":"RECRUITMENT_NAME_PRIMARY_REGISTERED_NAME_SECONDARY",
+            "base_version_id":EXPECTED_BASE,
+            "special_nos":list(range(83,96)),
+            "applied_at":now,
+          }
+
+          fresh=pref.get().to_dict() or {}
+          assert fresh.get("version_id")==EXPECTED_BASE,"pointer changed before commit"
+
+          target=db.collection(VERSIONS).document(new_version)
+          next_pointer=copy.deepcopy(pointer)
+          next_pointer.update({
+            "version_id":new_version,
+            "record_count":95,
+            "payload_sha256":new_version,
+            "consumer_records_sha256":fixed["consumer_records_sha256"],
+            "transferred_at":now,
+            "name_binding_status":"PASS",
+          })
+
+          batch=db.batch()
+          if not target.get().exists:
+            batch.set(target,fixed)
+          batch.set(pref,next_pointer)
+          batch.commit()
+
+          check_pointer=pref.get().to_dict() or {}
+          assert check_pointer.get("version_id")==new_version
+          check=db.collection(VERSIONS).document(new_version).get().to_dict() or {}
+          rows={int(r["no"]):r for r in check.get("records") or []}
+          assert len(rows)==95
+          for no,(recruitment,registered) in names.items():
+            assert rows[no]["name"]==recruitment
+            assert rows[no]["registered_name"]==registered
+
+          report={
+            "schema_version":"rar-silk-2025-special-name-fix-live-v1",
+            "status":"PASS_NAME_FIX_COMMITTED",
+            "dataset_key":DATASET,
+            "base_version_id":EXPECTED_BASE,
+            "new_version_id":new_version,
+            "record_count":95,
+            "base_1_82_change_count":0,
+            "special_non_name_change_count":0,
+            "consumer_records_sha256":fixed["consumer_records_sha256"],
+            "transferred_at":now,
+            "changed":{
+              str(no):{"recruitment_name":r,"registered_name":n}
+              for no,(r,n) in names.items()
+            },
+          }
+          Path("audit").mkdir(exist_ok=True)
+          Path("audit/silk-2025-special-name-fix-live.json").write_text(
+              json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"
+          )
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          print("RESULT=PASS_SILK2025_SPECIAL_NAME_FIX_LIVE")
+          PY
+
+      - name: Verify public API
+        run: |
+          set -euo pipefail
+          sleep 2
+          curl -fsSL "https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2025%3Asilk?ts=$(date +%s%N)" -o /tmp/live.json
+          python - <<'PY'
+          import json
+          d=json.load(open("/tmp/live.json"))
+          assert d["dataset_key"]=="2025:silk"
+          assert d["record_count"]==95
+          by={int(r["no"]):r for r in d["records"]}
+          assert by[83]["name"]=="メジロツボネの24"
+          assert by[83]["registered_name"]=="バタフライノット"
+          assert by[94]["name"]=="エンドタイムズの24"
+          assert by[94]["registered_name"]=="トップエンドパワー"
+          print("RESULT=PASS_PUBLIC_API_NAME_FIX")
+          PY
+
+      - name: Commit audit evidence
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/silk-2025-special-name-fix-live.json
+          git commit -m "audit: record Silk 2025 special name fix"
+          git push origin HEAD:ops/silk2025-name-fix-20260927
