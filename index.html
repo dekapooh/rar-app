@@ -1555,7 +1555,7 @@ main{padding-top:84px}
   </div>
   <div class="search-toolbar-rc23">
     <label class="search-filter compact"><select id="searchSex" aria-label="性別">
-      <option value="">性別</option><option value="牡">牡</option><option value="牝">牝</option>
+      <option value="">性別</option><option value="male">牡</option><option value="female">メス</option>
     </select></label>
     <label class="search-filter compact"><select id="searchStatus" aria-label="募集状態">
       <option value="">募集</option><option value="open">募集中</option><option value="full">満口</option>
@@ -2635,7 +2635,7 @@ function renderRanking(){
  <div class="rank-horse-info">
    <div class="rank-info-top">
      <span class="rank-info-no">No.${h.no}</span>
-     <span class="rank-info-official">${h.sex}｜Official ${Number(h.total).toFixed(1)}</span>
+     <span class="rank-info-official">${sexLabel(h.sex)}｜Official ${Number(h.total).toFixed(1)}</span>
    </div>
    <div class="rank-horse-name${longClass}">${baseName}</div>
    ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
@@ -2753,6 +2753,18 @@ function renderFavoriteCompare(){
 function datasetRegisteredName(h){
  return String(h?.registeredNameOfficial||"").trim();
 }
+function sexKind(value){
+ const v=String(value??"").trim().toLowerCase();
+ if(["牝","メス","♀","female","filly","mare"].includes(v))return "female";
+ if(["牡","オス","♂","male","colt","stallion"].includes(v))return "male";
+ return v;
+}
+function sexLabel(value){
+ const kind=sexKind(value);
+ if(kind==="female")return "メス";
+ if(kind==="male")return "牡";
+ return String(value??"").trim()||"－";
+}
 function effectiveRegisteredName(h){
  if(!h)return "";
  return String((state.registeredNames||{})[h.no]||datasetRegisteredName(h)||"").trim();
@@ -2838,7 +2850,7 @@ function renderSearch(){
  let xs=HORSES.filter(h=>{
    const textHit=!q || String(h.no)===q || String(h.no).includes(q) ||
      [h.name,h.registeredNameOfficial,h.sire,h.dam].some(v=>String(v||"").toLowerCase().includes(q));
-   const sexHit=!sex || h.sex===sex;
+   const sexHit=!sex || sexKind(h.sex)===sex;
    const statusHit=!status || (status==="open" ? !h.full : h.full);
    const favHit=!favOnly || !!state.favorites[h.no];
 
@@ -2864,7 +2876,7 @@ function renderSearch(){
 
  const chips=[];
  if(q) chips.push(`検索：${q}`);
- if(sex) chips.push(sex==="牡"?"牡のみ":"牝のみ");
+ if(sex) chips.push(sex==="male"?"牡のみ":"メスのみ");
  if(status) chips.push(status==="open"?"募集中":"満口");
  if(favOnly) chips.push("お気に入り");
  if(surface) chips.push({turf:"芝向き",dirt:"ダート向き",both:"芝・ダート両方"}[surface]);
@@ -2881,7 +2893,7 @@ function renderSearch(){
    <div>
      <div class="hname">${h.name}${state.favorites[h.no]?' ★':''}${state.excluded[h.no]?' <span class="excluded-note">除外</span>':''}</div>
      ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
-     <div class="hmeta">${h.sex}｜${h.recruitmentStatus==="cancelled"?'募集取消':(h.full?'満口':'募集中')}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
+     <div class="hmeta">${sexLabel(h.sex)}｜${h.recruitmentStatus==="cancelled"?'募集取消':(h.full?'満口':'募集中')}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
    </div>
    <div class="score">${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}<small>${canViewHorseOfficial(h.no)?" Official":" PLAN"}</small></div>
  </div>`).join("") || '<div class="empty">該当する募集馬がありません</div>';
@@ -3244,11 +3256,11 @@ function openHorse(no,from,options={}){
  const officialRegistered=datasetRegisteredName(currentHorse);
  const registeredLine=document.getElementById("detailRegisteredName");
  if(registeredLine)registeredLine.textContent=officialRegistered?`登録名：${officialRegistered}`:"";
- document.getElementById("detailBasic").textContent=`${currentHorse.sex}｜${currentHorse.sire} × ${currentHorse.dam}｜募集総額 ${Number(currentHorse.price).toLocaleString()}万円`;
+ document.getElementById("detailBasic").textContent=`${sexLabel(currentHorse.sex)}｜${currentHorse.sire} × ${currentHorse.dam}｜募集総額 ${Number(currentHorse.price).toLocaleString()}万円`;
  const bd=new Date(currentHorse.birth+"T00:00:00");
  document.getElementById("dBirth").textContent=`${bd.getFullYear()}年${bd.getMonth()+1}月${bd.getDate()}日`;
  document.getElementById("dSharePrice").textContent=`${Number(currentHorse.sharePrice).toFixed(1).replace(".0","")}万円`;
- document.getElementById("dSex").textContent=currentHorse.sex==="牝"?"メス":"牡";
+ document.getElementById("dSex").textContent=sexLabel(currentHorse.sex);
  document.getElementById("dTrainer").textContent=currentHorse.trainer||"－";
  document.getElementById("dBreeder").textContent=currentHorse.breeder||"－";
   document.getElementById("dHeight").textContent=Number(currentHorse.height).toFixed(1)+"cm";
@@ -3541,7 +3553,7 @@ function updateMyPage(){
        <div class="ranknum">${h.no}</div>
        <div>
          <div class="invested-name-main">${h.name}</div>
-         <span class="invested-recruit-name">${registered}｜${h.sex}</span>
+         <span class="invested-recruit-name">${registered}｜${sexLabel(h.sex)}</span>
        </div>
        <div class="score">${right}</div>
      </div>`;
@@ -3553,7 +3565,7 @@ function updateMyPage(){
      const memo=state.memos[no]||"";
      let right=myPageView==="points" ? `${point>0?"+":""}${point} pt` : (canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
      const officialName=datasetRegisteredName(h);
-     const normalSub=`${officialName?`登録名：${escapeHTML(officialName)}｜`:""}${h.sex}｜${h.recruitmentStatus==="cancelled"?"募集取消":(h.full?"満口":"募集中")}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
+     const normalSub=`${officialName?`登録名：${escapeHTML(officialName)}｜`:""}${sexLabel(h.sex)}｜${h.recruitmentStatus==="cancelled"?"募集取消":(h.full?"満口":"募集中")}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
      const subHtml=myPageView==="memos"
        ? `<div class="memo-preview">${escapeHTML(memo)}</div>`
        : `<div class="myhorse-note">${normalSub}</div>`;
