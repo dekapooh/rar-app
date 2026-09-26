@@ -1,0 +1,153 @@
+name: PWA Startup Recovery Audit
+
+on:
+  push:
+    branches:
+      - fix/pwa-startup-recovery-20260927
+    paths:
+      - "index.html"
+      - "sw.js"
+      - "system-master-sync.js"
+      - ".github/workflows/pwa-startup-recovery-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Syntax and startup contracts
+        run: |
+          node --check sw.js
+          node --check system-master-sync.js
+          python3 - <<'PY'
+          from pathlib import Path
+          i=Path("index.html").read_text(encoding="utf-8")
+          s=Path("sw.js").read_text(encoding="utf-8")
+          assert 'location.reload()' not in i[i.index('navigator.serviceWorker.register'):]
+          assert 'rar-rc66-public-beta-v28-pwa-startup-recovery' in s
+          assert 'caches.match("./index.html")' in s
+          assert 'AbortController' in s
+          assert 'ignoreSearch:true' in s
+          assert 'pwa-startup-recovery-20260927' in i
+          print("STATIC=PASS")
+          PY
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: PWA startup online then offline
+        run: |
+          python3 -m http.server 8765 >/tmp/rar-pwa-http.log 2>&1 &
+          SERVER_PID=$!
+          echo "$SERVER_PID" >/tmp/rar-pwa-http.pid
+
+          cat > ./pwa-recovery-e2e.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({
+            viewport:{width:390,height:844},
+            serviceWorkers:'allow',
+          });
+          const page=await context.newPage();
+
+          let navCount=0;
+          const errors=[];
+          page.on('framenavigated',f=>{if(f===page.mainFrame())navCount++});
+          page.on('pageerror',e=>errors.push(String(e)));
+
+          await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'load',timeout:30000});
+          await page.waitForSelector('#app',{state:'visible',timeout:10000});
+          await page.waitForFunction(async()=>{
+            const r=await navigator.serviceWorker.ready;
+            return !!r?.active;
+          },null,{timeout:20000});
+
+          // One reload ensures this client is controlled by the installed SW.
+          await page.reload({waitUntil:'domcontentloaded',timeout:30000});
+          await page.waitForSelector('#app',{state:'visible',timeout:10000});
+          const controlled=await page.evaluate(()=>!!navigator.serviceWorker.controller);
+          if(!controlled) throw new Error('SW did not take control');
+
+          // Server will be killed outside Node before this marker is used.
+          console.log('ONLINE_READY');
+          await page.evaluate(()=>window.__PWA_AUDIT_READY__=true);
+
+          // Wait for test driver to cut the network server.
+          await page.waitForFunction(()=>window.__CUT_NETWORK__===true,null,{timeout:30000});
+
+          const before=navCount;
+          const started=Date.now();
+          await page.reload({waitUntil:'domcontentloaded',timeout:10000});
+          const elapsed=Date.now()-started;
+          await page.waitForSelector('#app',{state:'visible',timeout:5000});
+          await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:5000});
+
+          if(elapsed>9000) throw new Error('offline startup too slow: '+elapsed);
+          if(navCount-before>2) throw new Error('reload loop detected');
+          if(errors.length) throw new Error('page errors: '+JSON.stringify(errors));
+
+          console.log(JSON.stringify({status:'PASS_PWA_OFFLINE_STARTUP',elapsed,navCount}));
+          await browser.close();
+          JS
+
+          node ./pwa-recovery-e2e.mjs > /tmp/pwa-node.log 2>&1 &
+          NODE_PID=$!
+
+          for i in $(seq 1 30); do
+            if grep -q "ONLINE_READY" /tmp/pwa-node.log 2>/dev/null; then break; fi
+            if ! kill -0 "$NODE_PID" 2>/dev/null; then cat /tmp/pwa-node.log; exit 1; fi
+            sleep 1
+          done
+
+          kill "$SERVER_PID" || true
+
+          # Signal the already-open browser page through CDP is not available from shell,
+          # so use a tiny local flag file polled by the page through an exposed route is
+          # intentionally avoided. Restart Node with a self-contained offline sequence.
+          kill "$NODE_PID" || true
+
+          cat > ./pwa-recovery-e2e-2.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import { spawn } from 'node:child_process';
+
+          const server=spawn('python3',['-m','http.server','8765'],{stdio:'ignore'});
+          await new Promise(r=>setTimeout(r,800));
+
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
+          const page=await context.newPage();
+          let navCount=0;
+          page.on('framenavigated',f=>{if(f===page.mainFrame())navCount++});
+
+          await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'load',timeout:30000});
+          await page.waitForFunction(async()=>!!(await navigator.serviceWorker.ready)?.active,null,{timeout:20000});
+          await page.reload({waitUntil:'domcontentloaded',timeout:30000});
+          await page.waitForSelector('#app',{state:'visible',timeout:10000});
+          if(!await page.evaluate(()=>!!navigator.serviceWorker.controller)) throw new Error('not controlled');
+
+          server.kill('SIGTERM');
+          await new Promise(r=>setTimeout(r,500));
+
+          const before=navCount;
+          const t=Date.now();
+          await page.reload({waitUntil:'domcontentloaded',timeout:10000});
+          const elapsed=Date.now()-t;
+          await page.waitForSelector('#app',{state:'visible',timeout:5000});
+          await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:5000});
+
+          if(elapsed>9000) throw new Error('offline launch exceeded bound: '+elapsed);
+          if(navCount-before>2) throw new Error('reload loop detected');
+          console.log(JSON.stringify({status:'PASS_PWA_STARTUP_RECOVERY',elapsed,navDelta:navCount-before}));
+          await browser.close();
+          JS
+          node ./pwa-recovery-e2e-2.mjs
