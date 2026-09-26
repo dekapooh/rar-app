@@ -1,0 +1,97 @@
+name: PWA Startup Audit 20260927
+
+on:
+  push:
+    branches:
+      - audit/pwa-startup-20260927
+    paths:
+      - ".github/workflows/pwa-startup-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  pwa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Test live startup with service worker enabled
+        run: |
+          cat > ./pwa-startup-e2e.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({
+            viewport:{width:390,height:844},
+            serviceWorkers:'allow',
+          });
+          const page=await context.newPage();
+
+          let navCount=0;
+          const logs=[];
+          page.on('framenavigated', frame => {
+            if(frame===page.mainFrame()) {
+              navCount++;
+              logs.push('NAV '+navCount+' '+frame.url());
+            }
+          });
+          page.on('console', msg => logs.push('CONSOLE '+msg.type()+' '+msg.text()));
+          page.on('pageerror', err => logs.push('PAGEERROR '+String(err)));
+
+          const url='https://dekapooh.github.io/rar-app/?pwa-audit='+Date.now();
+
+          await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
+          await page.waitForSelector('#app',{state:'visible',timeout:30000});
+          await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:30000});
+
+          await page.waitForFunction(async()=>{
+            if(!('serviceWorker' in navigator)) return false;
+            const reg=await navigator.serviceWorker.ready;
+            return !!reg?.active;
+          },null,{timeout:30000});
+
+          // Give controllerchange/update logic enough time to settle.
+          await page.waitForTimeout(8000);
+
+          const controlled=await page.evaluate(()=>!!navigator.serviceWorker.controller);
+          if(!controlled) {
+            await page.reload({waitUntil:'domcontentloaded',timeout:60000});
+            await page.waitForSelector('#app',{state:'visible',timeout:30000});
+            await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:30000});
+          }
+
+          const beforeReloadNav=navCount;
+          await page.reload({waitUntil:'domcontentloaded',timeout:60000});
+          await page.waitForSelector('#app',{state:'visible',timeout:30000});
+          await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active'),null,{timeout:30000});
+          await page.waitForTimeout(8000);
+
+          const state=await page.evaluate(async()=>({
+            controller:!!navigator.serviceWorker.controller,
+            readyState:document.readyState,
+            visibility:getComputedStyle(document.querySelector('#app')).display,
+            activeScreen:[...document.querySelectorAll('.screen.active')].map(x=>x.id),
+            dataset:window.__RAR_SYSTEM_MASTER__?.dataset_key||null,
+            sw:(await navigator.serviceWorker.getRegistration('./'))?.active?.scriptURL||null,
+          }));
+
+          if(navCount-beforeReloadNav>3) {
+            throw new Error('possible reload loop: '+JSON.stringify({navCount,beforeReloadNav,logs}));
+          }
+          if(state.readyState!=='complete') throw new Error('page not complete '+JSON.stringify(state));
+          if(!state.controller) throw new Error('service worker does not control page '+JSON.stringify(state));
+          if(!state.activeScreen.includes('home')) throw new Error('home not visible '+JSON.stringify(state));
+
+          console.log(JSON.stringify({status:'PASS_PWA_STARTUP',navCount,state,logs},null,2));
+          await browser.close();
+          JS
+          node ./pwa-startup-e2e.mjs
