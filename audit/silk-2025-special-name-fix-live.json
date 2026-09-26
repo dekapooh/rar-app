@@ -1,0 +1,66 @@
+{
+  "schema_version": "rar-silk-2025-special-name-fix-live-v1",
+  "status": "PASS_NAME_FIX_COMMITTED",
+  "dataset_key": "2025:silk",
+  "base_version_id": "6e26bf5396d7d8d9b8d8b1863dc402840ee591efd4a99167e0ee4e665eac7046",
+  "new_version_id": "c88a2da3addbd4903adcff6c2e01149e08f8e6c9b56608a97a19cc7381250de4",
+  "record_count": 95,
+  "base_1_82_change_count": 0,
+  "special_non_name_change_count": 0,
+  "consumer_records_sha256": "90df6ceee75a9b2e9d3539eb16ce28d200e4a02ecb5bd77eec35c7fffc57165a",
+  "transferred_at": "2026-09-26T15:44:55.370537+00:00",
+  "changed": {
+    "83": {
+      "recruitment_name": "メジロツボネの24",
+      "registered_name": "バタフライノット"
+    },
+    "84": {
+      "recruitment_name": "プリモシーンの24",
+      "registered_name": "プリモヴィータ"
+    },
+    "85": {
+      "recruitment_name": "ガラアフェアーの24",
+      "registered_name": "ガンサルート"
+    },
+    "86": {
+      "recruitment_name": "ルールブリタニアの24",
+      "registered_name": "ヴィクトリアルール"
+    },
+    "87": {
+      "recruitment_name": "プラムアリの24",
+      "registered_name": "ミラベルプラム"
+    },
+    "88": {
+      "recruitment_name": "モーベットの24",
+      "registered_name": "ガリアルダ"
+    },
+    "89": {
+      "recruitment_name": "レディデラウェアの24",
+      "registered_name": "ファーストステイト"
+    },
+    "90": {
+      "recruitment_name": "ウイングステルスの24",
+      "registered_name": "エボニーウイング"
+    },
+    "91": {
+      "recruitment_name": "リアリサトリスの24",
+      "registered_name": "ベルジャンブ"
+    },
+    "92": {
+      "recruitment_name": "クールアイランドの24",
+      "registered_name": "バードギール"
+    },
+    "93": {
+      "recruitment_name": "オパリアの24",
+      "registered_name": "オプレンシア"
+    },
+    "94": {
+      "recruitment_name": "エンドタイムズの24",
+      "registered_name": "トップエンドパワー"
+    },
+    "95": {
+      "recruitment_name": "フェイトオブオフィーリアの24",
+      "registered_name": "アンソフィリア"
+    }
+  }
+}
