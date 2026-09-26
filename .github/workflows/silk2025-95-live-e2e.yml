@@ -1,0 +1,129 @@
+name: Silk 2025 95 Live E2E
+
+on:
+  push:
+    branches:
+      - audit/silk2025-95-e2e-20260926
+    paths:
+      - ".github/workflows/silk2025-95-live-e2e.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  live-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: audit/silk2025-95-e2e-20260926
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify live API and live RAR app contract
+        run: |
+          set -euo pipefail
+          STAMP="$(date +%s%N)"
+          API="https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2025%3Asilk?v=$STAMP"
+          APP="https://dekapooh.github.io/rar-app/?v=$STAMP"
+          SYNC="https://dekapooh.github.io/rar-app/system-master-sync.js?v=$STAMP"
+
+          curl -fsSL "$API" -o /tmp/silk2025.json
+          curl -fsSL "$APP" -o /tmp/rar-index.html
+          curl -fsSL "$SYNC" -o /tmp/system-master-sync.js
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          EXPECTED_VERSION = "6e26bf5396d7d8d9b8d8b1863dc402840ee591efd4a99167e0ee4e665eac7046"
+          EXPECTED_RECORD_SHA = "ce95c072fff8e63a50fa9b88d431b44d779a296019d8ba4d17aa0f0962d624b3"
+
+          data=json.loads(Path("/tmp/silk2025.json").read_text(encoding="utf-8"))
+          index=Path("/tmp/rar-index.html").read_text(encoding="utf-8")
+          sync=Path("/tmp/system-master-sync.js").read_text(encoding="utf-8")
+
+          assert data["schema_version"]=="rar-app-data-v3", data.get("schema_version")
+          assert data["release_class"]=="FROZEN_100_20260914", data.get("release_class")
+          assert data["dataset_key"]=="2025:silk", data.get("dataset_key")
+          assert int(data["record_count"])==95, data.get("record_count")
+          assert len(data["records"])==95
+          assert data["version_id"]==EXPECTED_VERSION, data.get("version_id")
+          assert data["consumer_records_sha256"]==EXPECTED_RECORD_SHA, data.get("consumer_records_sha256")
+          assert data.get("transferred_at")
+
+          by_no={int(r["no"]):r for r in data["records"]}
+          assert set(by_no)==set(range(1,96))
+          assert {int(r["officialRank"]) for r in data["records"]}==set(range(1,96))
+
+          expected_names={83:"バタフライノット",92:"バードギール",95:"アンソフィリア"}
+          for no,name in expected_names.items():
+              assert by_no[no]["name"]==name, (no,by_no[no].get("name"))
+              assert by_no[no]["manager_status"]=="FROZEN_FINAL"
+              total=sum(float(by_no[no][k]) for k in ("potential","pedigree","dream","investment"))
+              assert abs(total-float(by_no[no]["total"]))<1e-6, (no,total,by_no[no]["total"])
+
+          assert int(by_no[87]["officialRank"])==1, by_no[87]["officialRank"]
+          assert abs(float(by_no[87]["total"])-66.16230555555555)<1e-9
+
+          catalog=data.get("available_datasets") or []
+          silk25=[x for x in catalog if x.get("dataset_key")=="2025:silk"]
+          assert silk25 and int(silk25[0].get("record_count") or 0)==95, silk25
+
+          assert '<script src="./system-master-sync.js' in index
+          required=[
+              "const DATASET_API_BASE = 'https://rar-project-5a27e.web.app/v1/consumer-data/dataset/'",
+              "records length must equal record_count",
+              "record_count: data.record_count",
+              "data.records.map(r =>",
+              "HORSES.splice(0, HORSES.length, ...nextHorses)",
+              "rar:dataset-changed",
+          ]
+          missing=[x for x in required if x not in sync]
+          assert not missing, missing
+          forbidden=["HORSES.length===82","rankLimit:82"]
+          found=[x for x in forbidden if x in sync or x in index]
+          assert not found, found
+
+          report={
+              "schema_version":"rar-silk-2025-live-e2e-v1",
+              "status":"PASS_RAR_APP_E2E_95",
+              "dataset_key":"2025:silk",
+              "record_count":95,
+              "version_id":data["version_id"],
+              "consumer_records_sha256":data["consumer_records_sha256"],
+              "transferred_at":data["transferred_at"],
+              "numbers_complete":True,
+              "official_ranks_complete":True,
+              "search_targets":{
+                  "83":by_no[83]["name"],
+                  "92":by_no[92]["name"],
+                  "95":by_no[95]["name"],
+              },
+              "rank1":{"no":87,"name":by_no[87]["name"],"total":by_no[87]["total"]},
+              "live_app_contract":"DYNAMIC_RECORD_COUNT_PASS",
+              "live_app_url":"https://dekapooh.github.io/rar-app/",
+              "live_api_url":"https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2025%3Asilk",
+          }
+          Path("audit/silk-2025-95-live-e2e.json").write_text(
+              json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"
+          )
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          print("RESULT=PASS_RAR_APP_E2E_95")
+          PY
+
+      - name: Commit E2E evidence
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/silk-2025-95-live-e2e.json
+          if git diff --cached --quiet; then
+            echo "No audit changes."
+          else
+            git commit -m "audit: verify Silk 2025 95-head live E2E"
+            git push origin HEAD:audit/silk2025-95-e2e-20260926
+          fi
