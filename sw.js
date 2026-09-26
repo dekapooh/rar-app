@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc66-public-beta-v27-ui-state-history";
+const CACHE_NAME="rar-rc66-public-beta-v28-pwa-startup-recovery";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
@@ -185,26 +185,62 @@ self.addEventListener("fetch",event=>{
   if(req.mode==="navigate" || url.pathname.endsWith("/index.html")){
     event.respondWith((async()=>{
       const isAdmin=url.searchParams.get("rar_admin")==="1";
-      try{
-        const network=await fetch(req,{cache:"no-store"});
-        if(!network.ok) throw new Error("HTTP "+network.status);
-        const raw=await network.text();
-        const rendered=isAdmin ? makeAdminRC66(raw) : makeRC66(raw);
-        const headers=new Headers(network.headers);
+      const renderHtml=async(response,admin=false)=>{
+        const raw=await response.text();
+        const rendered=admin ? makeAdminRC66(raw) : makeRC66(raw);
+        const headers=new Headers(response.headers);
         headers.set("content-type","text/html; charset=utf-8");
-        const response=new Response(rendered,{status:network.status,statusText:network.statusText,headers});
-        // 管理者表示はPublic Betaのoffline cacheへ混ぜない。
-        if(!isAdmin){
-          const cache=await caches.open(CACHE_NAME);
-          cache.put("./index.html",response.clone()).catch(()=>{});
+        headers.set("cache-control","no-store");
+        return new Response(rendered,{status:200,headers});
+      };
+
+      // ADMIN is intentionally network-only.
+      if(isAdmin){
+        try{
+          const network=await fetch("./index.html",{cache:"no-store"});
+          if(!network.ok) throw new Error("HTTP "+network.status);
+          return await renderHtml(network,true);
+        }catch(e){
+          return new Response("RAR ADMIN requires network access.",{
+            status:503,headers:{"content-type":"text/plain; charset=utf-8"}
+          });
         }
-        return response;
+      }
+
+      // Public PWA startup must never wait on the network. Return the app shell
+      // immediately, then refresh the cached raw index in the background.
+      const cached=(await caches.match("./index.html")) || (await caches.match("./"));
+      if(cached){
+        event.waitUntil((async()=>{
+          try{
+            const controller=new AbortController();
+            const timer=setTimeout(()=>controller.abort(),5000);
+            const network=await fetch("./index.html",{cache:"no-store",signal:controller.signal});
+            clearTimeout(timer);
+            if(network.ok){
+              const cache=await caches.open(CACHE_NAME);
+              await cache.put("./index.html",network.clone());
+            }
+          }catch{}
+        })());
+        return await renderHtml(cached,false);
+      }
+
+      // First install fallback: bounded network wait so Android never remains
+      // indefinitely on the native PWA splash screen.
+      try{
+        const controller=new AbortController();
+        const timer=setTimeout(()=>controller.abort(),5000);
+        const network=await fetch(req,{cache:"no-store",signal:controller.signal});
+        clearTimeout(timer);
+        if(!network.ok) throw new Error("HTTP "+network.status);
+        const cache=await caches.open(CACHE_NAME);
+        await cache.put("./index.html",network.clone());
+        return await renderHtml(network,false);
       }catch(e){
-        // 管理者モードは内部確認用のため、ネットワーク必須。
-        if(isAdmin){
-          return new Response("RAR ADMIN requires network access.",{status:503,headers:{"content-type":"text/plain; charset=utf-8"}});
-        }
-        return (await caches.match("./index.html")) || new Response("Offline",{status:503,headers:{"content-type":"text/plain; charset=utf-8"}});
+        return new Response("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><body style='margin:0;background:#0F3D2E;color:white;font-family:sans-serif;display:grid;place-items:center;min-height:100vh'><div>RARを起動できませんでした。通信を確認して再度開いてください。</div></body>",{
+          status:503,headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store"}
+        });
       }
     })());return;
   }
