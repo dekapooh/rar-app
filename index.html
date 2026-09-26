@@ -3811,21 +3811,16 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync.js?v=dataset-selectors-20260918" defer></script>
+<script src="./system-master-sync.js?v=pwa-startup-recovery-20260927" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try{
       const reg=await navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"});
-      // 起動時に最新版SWを確認。古い画面へ張り付く事故を減らす。
+      // 起動中の強制リロードは行わない。Android PWAのスプラッシュ張り付き
+      // やcontrollerchange再読込ループを避け、更新SWは次回遷移から利用する。
       reg.update().catch(()=>{});
-      let refreshing=false;
-      navigator.serviceWorker.addEventListener("controllerchange",()=>{
-        if(refreshing)return;
-        refreshing=true;
-        location.reload();
-      });
     }catch(err){
       console.error("Service Worker registration failed",err);
     }
