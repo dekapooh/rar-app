@@ -1,0 +1,173 @@
+name: Sex Label Audit
+
+on:
+  push:
+    branches:
+      - fix/sex-label-female-20260927
+    paths:
+      - "index.html"
+      - "sw.js"
+      - ".github/workflows/sex-label-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Audit live dataset sex values
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse
+          BASE="https://rar-project-5a27e.web.app/v1/consumer-data/"
+          with urllib.request.urlopen(BASE+"current",timeout=30) as r:
+              current=json.load(r)
+          keys=[x["dataset_key"] for x in current.get("available_datasets",[]) if x.get("dataset_key")]
+          required={"2025:silk","2026:silk","2026:tokyo_tc","2026:carrot"}
+          assert required.issubset(set(keys)), (required,set(keys))
+          allowed={"牡","牝","オス","メス","♂","♀","male","female"}
+          report={}
+          for key in sorted(required):
+              url=BASE+"dataset/"+urllib.parse.quote(key,safe="")
+              with urllib.request.urlopen(url,timeout=30) as r:
+                  data=json.load(r)
+              vals=sorted({str(x.get("sex","")).strip() for x in data["records"]})
+              bad=[x for x in vals if x not in allowed]
+              assert not bad,(key,bad)
+              report[key]={"record_count":data["record_count"],"sex_values":vals}
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          print("RESULT=PASS_LIVE_SEX_VALUE_AUDIT")
+          PY
+
+      - name: Static display contracts
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("index.html").read_text(encoding="utf-8")
+          assert 'function sexKind(value)' in s
+          assert 'function sexLabel(value)' in s
+          assert '<option value="female">メス</option>' in s
+          assert '"メスのみ"' in s
+          forbidden=[
+            '${h.sex}｜Official',
+            '<div class="hmeta">${h.sex}｜',
+            '｜${h.sex}</span>',
+            '${currentHorse.sex}｜',
+          ]
+          found=[x for x in forbidden if x in s]
+          assert not found,found
+          print("RESULT=PASS_SEX_DISPLAY_STATIC")
+          PY
+
+      - name: JavaScript syntax
+        run: |
+          node --check sw.js
+          node --check system-master-sync.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path("index.html").read_text(encoding="utf-8")
+          for i,b in enumerate(re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>",s,re.S|re.I)):
+              Path(f"/tmp/sex-index-{i}.js").write_text(b,encoding="utf-8")
+          PY
+          for f in /tmp/sex-index-*.js; do node --check "$f"; done
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Browser display audit across clubs
+        run: |
+          python3 -m http.server 8765 >/tmp/sex-http.log 2>&1 &
+          cat > ./sex-label-e2e.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          const datasets=[
+            ['2026:silk','シルク','牝'],
+            ['2026:tokyo_tc','東京TC','メス'],
+            ['2026:carrot','キャロット','♀'],
+            ['2025:silk','シルク','牝'],
+          ];
+
+          function dataset(key,club,sex){
+            const year=Number(key.slice(0,4));
+            return {
+              schema_version:'rar-app-data-v3',
+              release_class:'FROZEN_100_20260914',
+              dataset_key:key,
+              season_year:year,
+              club_id:key.split(':')[1],
+              club_name:club,
+              record_count:2,
+              version_id:'mock-'+key,
+              payload_sha256:'p',
+              consumer_records_sha256:'c',
+              source_submission_id:'mock',
+              transferred_at:'2026-09-27T07:30:00+09:00',
+              available_datasets:datasets.map(([k,c])=>({
+                dataset_key:k,season_year:Number(k.slice(0,4)),club_id:k.split(':')[1],club_name:c,record_count:2,transferred_at:'2026-09-27T07:30:00+09:00'
+              })),
+              records:[
+                {no:1,name:'テスト牝馬',sex,sire:'父A',dam:'母A',birth:(year-1)+'-03-01',trainer:'厩舎',breeder:'牧場',sharePrice:10,price:5000,height:155,chest:180,cannon:20,weight:450,potential:10,pedigree:10,dream:10,investment:10,total:40,officialRank:1,manager_status:'FROZEN_FINAL',small:{},small_status:{potential:'UNKNOWN',pedigree:'UNKNOWN'},scenarios:{dream:{middle:9,official:10,high:11},investment:{middle:9,official:10,high:11}},career:{roi_middle_pct:90,roi_high_pct:110,roi_official_pct:100}},
+                {no:2,name:'テスト牡馬',sex:'牡',sire:'父B',dam:'母B',birth:(year-1)+'-03-02',trainer:'厩舎',breeder:'牧場',sharePrice:10,price:5000,height:156,chest:181,cannon:20.5,weight:460,potential:9,pedigree:9,dream:9,investment:9,total:36,officialRank:2,manager_status:'FROZEN_FINAL',small:{},small_status:{potential:'UNKNOWN',pedigree:'UNKNOWN'},scenarios:{dream:{middle:8,official:9,high:10},investment:{middle:8,official:9,high:10}},career:{roi_middle_pct:80,roi_high_pct:100,roi_official_pct:90}}
+              ]
+            };
+          }
+
+          const byKey=new Map(datasets.map(x=>[x[0],dataset(...x)]));
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+          const page=await context.newPage();
+
+          await page.route('**/v1/consumer-data/current',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(byKey.get('2026:silk'))}));
+          await page.route('**/v1/consumer-data/dataset/**',route=>{
+            const decoded=decodeURIComponent(route.request().url());
+            const key=[...byKey.keys()].find(k=>decoded.includes(k));
+            return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(byKey.get(key||'2026:silk'))});
+          });
+
+          await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded'});
+          await page.waitForFunction(()=>window.__RAR_SYSTEM_MASTER__?.dataset_key==='2026:silk',null,{timeout:30000});
+
+          for(const [key] of datasets){
+            await page.evaluate(async key=>{
+              if(window.__RAR_SYSTEM_MASTER__.dataset_key!==key) await window.RARDatasetSelector.select(key);
+            },key);
+            await page.waitForFunction(key=>window.__RAR_SYSTEM_MASTER__?.dataset_key===key,key);
+
+            await page.click('.nav button[data-screen="search"]');
+            await page.locator('#searchSex').selectOption('female');
+            await page.waitForFunction(()=>document.querySelector('#searchMeta')?.textContent?.includes('1頭表示'));
+            const searchText=(await page.locator('#searchResults').innerText()).replace(/\s+/g,' ');
+            if(!searchText.includes('メス｜')) throw new Error(key+' search female label failed: '+searchText);
+            if(searchText.includes('牝｜')||searchText.includes('♀｜')) throw new Error(key+' raw female label leaked: '+searchText);
+
+            await page.locator('#searchResults .search-result').click();
+            await page.waitForSelector('#detail.active');
+            if((await page.locator('#dSex').innerText()).trim()!=='メス') throw new Error(key+' detail sex failed');
+            const basic=(await page.locator('#detailBasic').innerText()).trim();
+            if(!basic.startsWith('メス｜')) throw new Error(key+' detail basic failed: '+basic);
+
+            await page.goBack();
+            await page.waitForSelector('#search.active');
+            await page.locator('#searchSex').selectOption('');
+            await page.click('.nav button[data-screen="ranking"]');
+            const ranking=(await page.locator('#rankList').innerText()).replace(/\s+/g,' ');
+            if(!ranking.includes('メス｜Official')) throw new Error(key+' ranking female label failed: '+ranking);
+          }
+
+          console.log('RESULT=PASS_SEX_LABEL_BROWSER_ALL_CLUBS');
+          await browser.close();
+          JS
+          node ./sex-label-e2e.mjs
