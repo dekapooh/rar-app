@@ -1,0 +1,186 @@
+name: UI State History Audit
+
+on:
+  push:
+    branches:
+      - feature/ui-state-history-20260927
+    paths:
+      - "index.html"
+      - "system-master-sync.js"
+      - "sw.js"
+      - ".github/workflows/ui-state-history-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Static contracts and syntax
+        run: |
+          node --check system-master-sync.js
+          node --check sw.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          index=Path("index.html").read_text(encoding="utf-8")
+          sync=Path("system-master-sync.js").read_text(encoding="utf-8")
+          sw=Path("sw.js").read_text(encoding="utf-8")
+          blocks=re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>",index,re.S|re.I)
+          assert blocks
+          for i,b in enumerate(blocks):
+              Path(f"/tmp/index-{i}.js").write_text(b,encoding="utf-8")
+          required_index=[
+              'id="detailRegisteredName"',
+              'function datasetRegisteredName(h)',
+              'function effectiveRegisteredName(h)',
+              'function pushAppHistory(screen,extra={})',
+              'function goHomeRoot()',
+              'window.addEventListener("popstate"',
+              'function openHorse(no,from,options={})',
+              'history.back()',
+              'h.registeredNameOfficial',
+              '登録名：',
+          ]
+          missing=[x for x in required_index if x not in index]
+          assert not missing, missing
+          required_sync=[
+              "LAST_DATASET_STORAGE_KEY = 'rarLastDatasetKey'",
+              "loadLastDatasetKey()",
+              "saveLastDatasetKey(activeDatasetKey)",
+              "registeredNameOfficial: String(r.registered_name",
+              "restored last dataset",
+          ]
+          missing=[x for x in required_sync if x not in sync]
+          assert not missing, missing
+          assert 'rar-rc66-public-beta-v27-ui-state-history' in sw
+          assert 'ui-state-history-20260927' in sw
+          print("STATIC_CONTRACT=PASS")
+          PY
+          for f in /tmp/index-*.js; do node --check "$f"; done
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run browser behavior audit
+        run: |
+          python3 -m http.server 8765 >/tmp/rar-ui-http.log 2>&1 &
+          echo $! >/tmp/rar-ui-http.pid
+          cat > ./ui-state-history-e2e.mjs <<'JS'
+          import { chromium } from 'playwright';
+
+          function makeDataset(year,count,key,name83=''){
+            const clubId=key.split(':')[1];
+            const records=[];
+            for(let no=1;no<=count;no++){
+              const special=no===83 && name83;
+              const potential=10, pedigree=10, dream=10, investment=10;
+              records.push({
+                no,
+                name:special ? 'メジロツボネの24' : `募集馬${no}の${String(year-2001).padStart(2,'0')}`,
+                ...(special ? {registered_name:'バタフライノット'} : {}),
+                sex:no%2?'牡':'牝',
+                sire:'父'+no,
+                dam:'母'+no,
+                birth:`${year-1}-03-01`,
+                trainer:'厩舎',
+                breeder:'牧場',
+                sharePrice:10,
+                price:5000,
+                height:155,
+                chest:180,
+                cannon:20,
+                weight:450,
+                potential,pedigree,dream,investment,
+                total:potential+pedigree+dream+investment,
+                officialRank:no,
+                manager_status:'FROZEN_FINAL',
+                small:{},
+                small_status:{potential:'UNKNOWN',pedigree:'UNKNOWN'},
+                scenarios:{dream:{middle:9,official:10,high:11},investment:{middle:9,official:10,high:11}},
+                career:{roi_middle_pct:90,roi_high_pct:110,roi_official_pct:100},
+              });
+            }
+            return {
+              schema_version:'rar-app-data-v3',
+              release_class:'FROZEN_100_20260914',
+              dataset_key:key,
+              season_year:year,
+              club_id:clubId,
+              club_name:'シルク',
+              record_count:count,
+              version_id:`mock-${key}`,
+              payload_sha256:'p',
+              consumer_records_sha256:'c',
+              source_submission_id:'mock',
+              transferred_at:'2026-09-27T00:00:00+09:00',
+              available_datasets:[
+                {dataset_key:'2026:silk',season_year:2026,club_id:'silk',club_name:'シルク',record_count:82,transferred_at:'2026-09-20T00:00:00+09:00'},
+                {dataset_key:'2025:silk',season_year:2025,club_id:'silk',club_name:'シルク',record_count:95,transferred_at:'2026-09-27T00:00:00+09:00'},
+              ],
+              records,
+            };
+          }
+
+          const current=makeDataset(2026,82,'2026:silk');
+          const silk25=makeDataset(2025,95,'2025:silk',true);
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+          const page=await context.newPage();
+
+          await page.addInitScript(() => localStorage.setItem('rarLastDatasetKey','2025:silk'));
+          await page.route('**/v1/consumer-data/current',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(current)}));
+          await page.route('**/v1/consumer-data/dataset/**',route=>{
+            const url=decodeURIComponent(route.request().url());
+            const body=url.includes('2025:silk')?silk25:current;
+            return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
+          });
+
+          await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded'});
+          await page.waitForFunction(() =>
+            window.__RAR_SYSTEM_MASTER__?.dataset_key === '2025:silk' &&
+            Number(window.__RAR_SYSTEM_MASTER__?.record_count) === 95
+          ,null,{timeout:30000});
+
+          const season=await page.locator('#rarSeasonSelect').inputValue();
+          const club=await page.locator('#rarClubSelect').inputValue();
+          if(season!=='2025' || club!=='2025:silk') throw new Error('last dataset not restored');
+          if(await page.evaluate(()=>localStorage.getItem('rarLastDatasetKey'))!=='2025:silk') throw new Error('last dataset key not persisted');
+
+          await page.click('.nav button[data-screen="search"]');
+          await page.locator('#searchInput').fill('バタフライノット');
+          await page.waitForFunction(()=>document.querySelector('#searchMeta')?.textContent?.includes('1頭表示'));
+          const result=(await page.locator('#searchResults').innerText()).replace(/\s+/g,' ');
+          if(!result.includes('メジロツボネの24') || !result.includes('登録名：バタフライノット')) {
+            throw new Error('recruitment/registered name display failed: '+result);
+          }
+
+          await page.locator('#searchResults .search-result').click();
+          await page.waitForSelector('#detail.active');
+          if((await page.locator('#detailName').innerText())!=='メジロツボネの24') throw new Error('detail primary name failed');
+          if(!(await page.locator('#detailRegisteredName').innerText()).includes('バタフライノット')) throw new Error('detail registered name failed');
+
+          await page.goBack();
+          await page.waitForSelector('#search.active');
+          await page.goBack();
+          await page.waitForSelector('#home.active');
+
+          await page.selectOption('#rarSeasonSelect','2026');
+          await page.waitForFunction(()=>window.__RAR_SYSTEM_MASTER__?.dataset_key==='2026:silk');
+          if(await page.evaluate(()=>localStorage.getItem('rarLastDatasetKey'))!=='2026:silk') throw new Error('new selection not stored');
+
+          console.log('RESULT=PASS_UI_STATE_HISTORY_BROWSER_E2E');
+          await browser.close();
+          JS
+          node ./ui-state-history-e2e.mjs
+
+      - name: Result
+        run: echo "RESULT=PASS_UI_STATE_HISTORY_AUDIT"

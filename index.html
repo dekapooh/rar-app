@@ -1868,6 +1868,7 @@ main{padding-top:84px}
     </div>
     <div id="detailNo" class="badge"></div>
     <h2 id="detailName" style="margin:8px 0 4px"></h2>
+    <div id="detailRegisteredName" class="note" style="font-weight:800;color:#315d4c;margin-bottom:3px"></div>
     <div id="detailBasic" class="note"></div>
   </div>
   <div class="detail-jumpbar">
@@ -2637,6 +2638,7 @@ function renderRanking(){
      <span class="rank-info-official">${h.sex}｜Official ${Number(h.total).toFixed(1)}</span>
    </div>
    <div class="rank-horse-name${longClass}">${baseName}</div>
+   ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
    <div class="rank-info-bottom">
      <span class="rank-info-suffix">${nameSuffix}</span>
      <span class="rank-info-price">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</span>
@@ -2748,13 +2750,57 @@ function renderFavoriteCompare(){
      </td>`).join("")}</tr>`).join("")}</tbody>
  </table>`;
 }
-function showScreen(id){
+function datasetRegisteredName(h){
+ return String(h?.registeredNameOfficial||"").trim();
+}
+function effectiveRegisteredName(h){
+ if(!h)return "";
+ return String((state.registeredNames||{})[h.no]||datasetRegisteredName(h)||"").trim();
+}
+
+let appHistoryApplying=false;
+function appHistoryDepth(){
+ const s=history.state;
+ return s&&s.rarApp?Number(s.depth||0):0;
+}
+function pushAppHistory(screen,extra={}){
+ if(appHistoryApplying)return;
+ const depth=appHistoryDepth()+1;
+ history.pushState({rarApp:true,screen,depth,...extra},"",location.href);
+}
+function showScreen(id,{historySilent=false}={}){
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
  if(id==="ranking"){applyRankBase();renderRanking();} if(id==="mypage"){syncBaseControls();updateMyPage();} if(id==="search")renderSearch();
  window.scrollTo(0,0);
+ if(!historySilent)pushAppHistory(id);
 }
+function goHomeRoot(){
+ const depth=appHistoryDepth();
+ if(depth>0){history.go(-depth);return;}
+ showScreen("home",{historySilent:true});
+}
+function applyAppHistoryState(s){
+ const screen=String(s?.screen||"home");
+ appHistoryApplying=true;
+ try{
+   if(screen==="detail" && Number.isInteger(Number(s.horseNo))){
+     openHorse(Number(s.horseNo),s.from||"ranking",{historySilent:true});
+   }else{
+     showScreen(document.getElementById(screen)?screen:"home",{historySilent:true});
+     if(screen==="compare")document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+   }
+ }finally{
+   appHistoryApplying=false;
+ }
+}
+history.replaceState({rarApp:true,screen:"home",depth:0},"",location.href);
+window.addEventListener("popstate",e=>{
+ if(!e.state?.rarApp)return;
+ applyAppHistoryState(e.state);
+});
+
 function openMyPageView(view){
  myPageView=view;
  
@@ -2772,7 +2818,7 @@ function openMyPageSettings(){
    if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
  },50);
 }
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>b.dataset.screen==="home"?goHomeRoot():showScreen(b.dataset.screen));
 
 function surfaceStrength(v){
  const s=String(v||"");
@@ -2791,7 +2837,7 @@ function renderSearch(){
 
  let xs=HORSES.filter(h=>{
    const textHit=!q || String(h.no)===q || String(h.no).includes(q) ||
-     [h.name,h.sire,h.dam].some(v=>String(v||"").toLowerCase().includes(q));
+     [h.name,h.registeredNameOfficial,h.sire,h.dam].some(v=>String(v||"").toLowerCase().includes(q));
    const sexHit=!sex || h.sex===sex;
    const statusHit=!status || (status==="open" ? !h.full : h.full);
    const favHit=!favOnly || !!state.favorites[h.no];
@@ -2834,6 +2880,7 @@ function renderSearch(){
    <div class="ranknum">${h.no}</div>
    <div>
      <div class="hname">${h.name}${state.favorites[h.no]?' ★':''}${state.excluded[h.no]?' <span class="excluded-note">除外</span>':''}</div>
+     ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
      <div class="hmeta">${h.sex}｜${h.recruitmentStatus==="cancelled"?'募集取消':(h.full?'満口':'募集中')}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
    </div>
    <div class="score">${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}<small>${canViewHorseOfficial(h.no)?" Official":" PLAN"}</small></div>
@@ -3190,10 +3237,13 @@ function syncDetailBrowseButtons(){
  prev.onclick=()=>browseHorse(-1);
  next.onclick=()=>browseHorse(1);
 }
-function openHorse(no,from){
+function openHorse(no,from,options={}){
  previousScreen=from||"ranking"; currentHorse=HORSES.find(h=>h.no===no); if(!currentHorse)return;
  document.getElementById("detailNo").textContent="No."+currentHorse.no;
  document.getElementById("detailName").textContent=currentHorse.name;
+ const officialRegistered=datasetRegisteredName(currentHorse);
+ const registeredLine=document.getElementById("detailRegisteredName");
+ if(registeredLine)registeredLine.textContent=officialRegistered?`登録名：${officialRegistered}`:"";
  document.getElementById("detailBasic").textContent=`${currentHorse.sex}｜${currentHorse.sire} × ${currentHorse.dam}｜募集総額 ${Number(currentHorse.price).toLocaleString()}万円`;
  const bd=new Date(currentHorse.birth+"T00:00:00");
  document.getElementById("dBirth").textContent=`${bd.getFullYear()}年${bd.getMonth()+1}月${bd.getDate()}日`;
@@ -3242,7 +3292,7 @@ function openHorse(no,from){
  investmentCard?.classList.toggle("access-locked",!canManaged);
  if(investmentLock)investmentLock.style.display=canManaged?"none":"block";
  document.getElementById("dInvested").checked=canManaged && !!state.invested[currentHorse.no];
- document.getElementById("dRegisteredName").value=canManaged?(state.registeredNames[currentHorse.no]||""):"";
+ document.getElementById("dRegisteredName").value=canManaged?effectiveRegisteredName(currentHorse):"";
  syncInvestmentUI();
  renderPersonalPointUI();
  const memoBox=document.getElementById("memoBox");
@@ -3279,11 +3329,12 @@ function openHorse(no,from){
    renderRanking();updateMyPage();syncPlanLocks(); if(document.getElementById("compare").classList.contains("active"))renderFavoriteCompare();
  };
  syncDetailBrowseButtons();
- showScreen("detail");
+ showScreen("detail",{historySilent:true});
+ if(!options.historySilent)pushAppHistory("detail",{horseNo:currentHorse.no,from:previousScreen||"ranking"});
  requestAnimationFrame(()=>requestAnimationFrame(updateMemoUI));
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 }
-function goBack(){showScreen(previousScreen)}
+function goBack(){history.back()}
 function changePoint(delta){
  if(!currentHorse)return;
  const k=currentHorse.no;
@@ -3375,10 +3426,13 @@ function syncInvestmentUI(){
    nameInput.disabled=!allowed || !invested;
    nameInput.placeholder=!allowed?"契約プラン対象外":(invested?"正式馬名を登録":"出資確定後に登録できます");
  }
- const name=String((state.registeredNames||{})[no]||"");
+ const manualName=String((state.registeredNames||{})[no]||"").trim();
+ const officialName=datasetRegisteredName(currentHorse);
+ const name=manualName||officialName;
+ if(nameInput && invested && !nameInput.value && name)nameInput.value=name;
  if(count)count.textContent=`${nameInput?nameInput.value.length:name.length} / 30`;
  if(nameState){
-   nameState.textContent=!invested?"出資確定後に登録できます":(name?"保存済み":"馬名決定後に登録できます");
+   nameState.textContent=!invested?"出資確定後に登録できます":(manualName?"保存済み":(officialName?"公式登録名":"馬名決定後に登録できます"));
    nameState.classList.toggle("saved",invested && !!name);
  }
 }
@@ -3390,8 +3444,9 @@ function saveRegisteredName(){
  if(!el)return;
  const v=el.value.slice(0,30).trim();
  el.value=v;
- if(v)state.registeredNames[no]=v;
+ if(v && v!==datasetRegisteredName(currentHorse))state.registeredNames[no]=v;
  else delete state.registeredNames[no];
+ if(!state.registeredNames[no] && datasetRegisteredName(currentHorse))el.value=datasetRegisteredName(currentHorse);
  saveState();
  syncInvestmentUI();
  updateMyPage();
@@ -3476,17 +3531,17 @@ function updateMyPage(){
    let lastYear=null;
    list.innerHTML=nos.map(no=>{
      const h=HORSES.find(x=>x.no===no);
-     const officialName=state.registeredNames[no]||"";
+     const officialName=effectiveRegisteredName(h);
      const year=horseBirthYear(h);
      const heading=year!==lastYear?`<div class="invested-generation-title"><span>${year}年産</span><span>${nos.filter(n=>{const x=HORSES.find(hh=>hh.no===n);return x&&horseBirthYear(x)===year}).length}頭</span></div>`:"";
      lastYear=year;
-     const main=officialName?officialName:`<span class="invested-official-pending">正式馬名 未登録</span>`;
+     const registered=officialName?`登録名：${escapeHTML(officialName)}`:`<span class="invested-official-pending">正式馬名 未登録</span>`;
      const right=canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒";
      return `${heading}<div class="myhorse-row invested-row" onclick="openHorse(${h.no},'mypage')">
        <div class="ranknum">${h.no}</div>
        <div>
-         <div class="invested-name-main">${main}</div>
-         <span class="invested-recruit-name">${h.name}｜${h.sex}</span>
+         <div class="invested-name-main">${h.name}</div>
+         <span class="invested-recruit-name">${registered}｜${h.sex}</span>
        </div>
        <div class="score">${right}</div>
      </div>`;
@@ -3497,7 +3552,8 @@ function updateMyPage(){
      const point=effectivePersonalPoint(no);
      const memo=state.memos[no]||"";
      let right=myPageView==="points" ? `${point>0?"+":""}${point} pt` : (canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
-     const normalSub=`${h.sex}｜${h.recruitmentStatus==="cancelled"?"募集取消":(h.full?"満口":"募集中")}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
+     const officialName=datasetRegisteredName(h);
+     const normalSub=`${officialName?`登録名：${escapeHTML(officialName)}｜`:""}${h.sex}｜${h.recruitmentStatus==="cancelled"?"募集取消":(h.full?"満口":"募集中")}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
      const subHtml=myPageView==="memos"
        ? `<div class="memo-preview">${escapeHTML(memo)}</div>`
        : `<div class="myhorse-note">${normalSub}</div>`;

@@ -5,6 +5,7 @@
   const DATASET_API_BASE = 'https://rar-project-5a27e.web.app/v1/consumer-data/dataset/';
   const EXPECTED_SCHEMA = 'rar-app-data-v3';
   const EXPECTED_RELEASE = 'FROZEN_100_20260914';
+  const LAST_DATASET_STORAGE_KEY = 'rarLastDatasetKey';
   const LEGACY_DATASET = Object.freeze({
     season_year: 2026,
     club_id: 'silk',
@@ -92,6 +93,21 @@
   let availableDatasets = [LEGACY_DATASET];
   let activeDatasetKey = LEGACY_DATASET.dataset_key;
   let staticHorseSnapshot = null;
+
+  function loadLastDatasetKey() {
+    try {
+      const key = String(localStorage.getItem(LAST_DATASET_STORAGE_KEY) || '').trim().toLowerCase();
+      return /^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(key) ? key : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveLastDatasetKey(datasetKey) {
+    const key = String(datasetKey || '').trim().toLowerCase();
+    if (!/^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(key)) return;
+    try { localStorage.setItem(LAST_DATASET_STORAGE_KEY, key); } catch {}
+  }
 
   function ensureHeaderMetaBlock() {
     let block = document.getElementById('rarHeaderMetaBlock');
@@ -522,6 +538,7 @@
 
     Object.assign(h, {
       name: r.name ?? h.name,
+      registeredNameOfficial: String(r.registered_name ?? h.registeredNameOfficial ?? '').trim(),
       sex: r.sex ?? h.sex,
       sire: r.sire ?? h.sire,
       dam: r.dam ?? h.dam,
@@ -586,7 +603,7 @@
 
   function blankHorse(no) {
     return {
-      no, name: '', sex: '', sire: '', dam: '', birth: '', trainer: '', breeder: '',
+      no, name: '', registeredNameOfficial: '', sex: '', sire: '', dam: '', birth: '', trainer: '', breeder: '',
       sharePrice: 0, price: 0, height: 0, chest: 0, cannon: 0, weight: 0,
       potential: 0, pedigree: 0, dream: 0, roi: 0, ivOfficial: 0, total: 0,
       officialRank: no, dreamMiddle: 0, dreamHigh: 0, dreamLower: 0, dreamUpper: 0,
@@ -688,6 +705,7 @@
       updateDatasetCatalog(data);
       applyDataset(data);
       activeDatasetKey = data.dataset_key;
+      saveLastDatasetKey(activeDatasetKey);
       renderDatasetSelectorOptions(data.season_year, data.dataset_key);
       setStatus(`最終更新 ${formatTokyo(data.transferred_at)}`);
       window.dispatchEvent(new CustomEvent('rar:dataset-changed', { detail: { ...window.__RAR_SYSTEM_MASTER__ } }));
@@ -726,6 +744,16 @@
       activeDatasetKey = data.dataset_key;
       renderDatasetSelectorOptions(data.season_year, data.dataset_key);
       setStatus(`最終更新 ${formatTokyo(data.transferred_at)}`);
+
+      const preferredKey = loadLastDatasetKey();
+      if (preferredKey && preferredKey !== activeDatasetKey && availableDatasets.some(d => d.dataset_key === preferredKey)) {
+        const restored = await selectDataset(preferredKey);
+        if (restored) {
+          console.info('[RAR SYSTEM MASTER] restored last dataset', restored);
+          return restored;
+        }
+      }
+      saveLastDatasetKey(activeDatasetKey);
       console.info('[RAR SYSTEM MASTER] synced', window.__RAR_SYSTEM_MASTER__);
       return window.__RAR_SYSTEM_MASTER__;
     } catch (e) {

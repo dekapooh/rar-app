@@ -17,6 +17,7 @@ on:
       - fix/header-gradient-center-20260922
       - fix/header-gradient-true-center-20260922
       - feature/header-carrot-silk-20260923
+      - feature/ui-state-history-20260927
     paths:
       - ".github/workflows/rar100-branch-audit.yml"
       - "index.html"
@@ -166,8 +167,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v26-silk2025-repair' in s
-          assert 'system-master-sync.js?v=silk2025-repair-20260925' in s
+          assert 'rar-rc66-public-beta-v27-ui-state-history' in s
+          assert 'system-master-sync.js?v=ui-state-history-20260927' in s
           assert './assets/header-silks/silk.webp' in s
           assert './assets/header-silks/tokyo-tc.webp' in s
           assert './assets/header-silks/carrot.webp' in s
