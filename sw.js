@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc67-ranking-personal-gutter-v36";
+const CACHE_NAME="rar-rc67-ranking-sticky-v37";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
