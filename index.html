@@ -1650,6 +1650,114 @@ main{padding-top:84px}
 .rar-scenario-toggle button{border:1px solid #ccd8d1;background:#fff;color:#51675d;border-radius:8px;padding:5px 3px;font-size:8.5px;font-weight:850;line-height:1.15;cursor:pointer}
 .rar-scenario-toggle button.active{background:#174d37;color:#fff;border-color:#174d37}
 .rar-scenario-value{min-height:16px;font-size:9px;line-height:1.35;color:#52685e;font-weight:800;text-align:center}
+
+/* RC67.6 ranking control consolidation — color-only categories + inline Dream/IV scenarios */
+#ranking .rank-main-controls{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:5px!important;
+  margin-bottom:4px!important;
+  align-items:stretch!important;
+}
+#ranking .rank-color-toggle{
+  min-width:0!important;
+  min-height:38px!important;
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  align-items:center!important;
+  padding:5px 7px!important;
+}
+#ranking .rank-color-toggle input.cat{
+  position:absolute!important;
+  opacity:0!important;
+  width:1px!important;
+  height:1px!important;
+  pointer-events:none!important;
+}
+#ranking .rank-color-toggle .toggle-main{
+  justify-content:flex-start!important;
+  gap:0!important;
+}
+#ranking .rank-color-toggle:not(.selected){
+  background:#fff!important;
+  color:#51675d!important;
+  border-color:#ccd8d1!important;
+}
+#ranking .rank-color-toggle.selected{
+  background:#0F4A35!important;
+  color:#fff!important;
+  border-color:#0F4A35!important;
+}
+#ranking .rank-hidden-cat-toggle{display:none!important}
+#ranking .rank-inline-scenario{
+  min-width:0;
+  min-height:38px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);
+  gap:2px;
+  align-items:center;
+  padding:3px 3px 3px 5px;
+  border:1px solid #ccd8d1;
+  border-radius:10px;
+  background:#f8fbf9;
+}
+#ranking .rank-inline-label{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  color:#40584d;
+  font-size:9px;
+  line-height:1;
+  font-weight:950;
+}
+#ranking .rank-inline-label small{
+  margin-top:2px;
+  font-size:6.5px;
+  font-weight:750;
+  color:#7b8d84;
+}
+#ranking .rank-inline-scenario button{
+  min-width:0;
+  height:30px;
+  padding:0 2px;
+  border:1px solid #ccd8d1;
+  border-radius:7px;
+  background:#fff;
+  color:#66766e;
+  font-size:7.5px;
+  font-weight:900;
+  line-height:1;
+  white-space:nowrap;
+  cursor:pointer;
+}
+#ranking .rank-inline-scenario button.active{
+  background:#0F4A35;
+  color:#fff;
+  border-color:#0F4A35;
+}
+@media(max-width:390px){
+  #ranking .rank-main-controls{gap:3px!important}
+  #ranking .rank-color-toggle{
+    min-height:36px!important;
+    padding:4px 5px!important;
+    font-size:10px!important;
+  }
+  #ranking .rank-inline-scenario{
+    min-height:36px;
+    grid-template-columns:18px minmax(0,1fr) minmax(0,1fr);
+    gap:1px;
+    padding:2px 2px 2px 3px;
+  }
+  #ranking .rank-inline-label{min-width:18px;font-size:8px}
+  #ranking .rank-inline-label small{font-size:6px}
+  #ranking .rank-inline-scenario button{
+    height:30px;
+    padding:0 1px;
+    font-size:6.8px;
+  }
+}
+
 </style></head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
@@ -1680,25 +1788,22 @@ main{padding-top:84px}
         <button id="resetRankFilters" class="rank-reset-btn" type="button">↻</button>
       </div>
     </div>
-    <div class="controls">
-      <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="potential" checked><span>潜在</span></span><span class="toggle-max">/30</span></label>
-      <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="pedigree" checked><span>血統</span></span><span class="toggle-max">/20</span></label>
-      <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="dream" checked><span>夢</span></span><span class="toggle-max">/20</span></label>
-      <label class="toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="roi" checked><span>IV</span></span><span class="toggle-max">/30</span></label>
-    </div>
-    <div class="rank-scenario-controls">
-      <div class="rank-scenario-group">
-        <span class="rank-scenario-label">夢</span>
+    <div class="controls rank-main-controls">
+      <label class="toggle rank-color-toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="potential" checked><span>潜在</span></span><span class="toggle-max">/30</span></label>
+      <label class="toggle rank-color-toggle"><span class="toggle-main"><input class="cat" type="checkbox" value="pedigree" checked><span>血統</span></span><span class="toggle-max">/20</span></label>
+      <div class="rank-inline-scenario">
+        <span class="rank-inline-label">夢<small>/20</small></span>
         <button id="rankDreamMiddle" type="button" onclick="setDreamScenario('middle')">Middle</button>
         <button id="rankDreamHigh" type="button" onclick="setDreamScenario('high')">High</button>
       </div>
-      <div class="rank-scenario-group">
-        <span class="rank-scenario-label">IV</span>
+      <div class="rank-inline-scenario">
+        <span class="rank-inline-label">IV<small>/30</small></span>
         <button id="rankIvMiddle" type="button" onclick="setIvScenario('middle')">Middle</button>
         <button id="rankIvHigh" type="button" onclick="setIvScenario('high')">High</button>
       </div>
+      <label class="toggle rank-hidden-cat-toggle"><input class="cat" type="checkbox" value="dream" checked><span>夢</span></label>
+      <label class="toggle rank-hidden-cat-toggle"><input class="cat" type="checkbox" value="roi" checked><span>IV</span></label>
     </div>
-    <div class="note" style="font-size:9px;margin:2px 2px 4px">Middle＋Highを両方選択するとOfficialで集計します。</div>
     <div class="summary"><span class="badge">SELECT</span><div id="selectionText" class="selection-inline"></div><div><strong id="maxScore">100</strong><small>点満点</small></div></div>
     <div id="priceFilterBar" class="price-filter-bar">
   <span class="price-filter-label">一口価格</span>
@@ -2271,13 +2376,19 @@ function syncBaseScenarioButtons(){
  }
 }
 function setDreamScenario(value){
+ const cat=document.querySelector('.cat[value="dream"]');
+ if(cat && !cat.checked)cat.checked=true;
  dreamScenario=nextScenarioMode(dreamScenario,value==="high"?"high":"middle");
+ syncCategoryStyles();
  syncScenarioButtons();
  renderScenarioSelectors();
  if(typeof renderRanking==="function")renderRanking();
 }
 function setIvScenario(value){
+ const cat=document.querySelector('.cat[value="roi"]');
+ if(cat && !cat.checked)cat.checked=true;
  ivScenario=nextScenarioMode(ivScenario,value==="high"?"high":"middle");
+ syncCategoryStyles();
  syncScenarioButtons();
  renderScenarioSelectors();
  if(typeof renderRanking==="function")renderRanking();
