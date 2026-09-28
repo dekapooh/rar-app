@@ -1451,6 +1451,114 @@ main{padding-top:84px}
   letter-spacing:-.25px;flex:0 1 auto;min-width:0
 }
 #officialAccessNote.compact-note{font-size:9px!important}
+
+/* RC67 compact ranking rows — 2-line horse info */
+#ranking .rankheader,
+#ranking .rankrow{
+  grid-template-columns:40px minmax(0,1fr) 56px!important;
+  gap:6px!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+#ranking .rankheader .rank-col-official{display:none!important}
+#ranking .rankheader>div:nth-child(2){text-align:left!important}
+#ranking .rankheader>div:last-child{text-align:right!important}
+#ranking .rankrow{padding:8px 0!important}
+#ranking .rank-badge-wrap{width:36px!important;height:38px!important}
+#ranking .rank-horse-info{
+  min-width:0!important;
+  display:grid!important;
+  grid-template-rows:auto auto!important;
+  row-gap:3px!important;
+}
+#ranking .rank-info-line1{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:baseline;
+  column-gap:8px;
+}
+#ranking .rank-info-no{
+  font-size:10px!important;
+  line-height:1.15;
+  font-weight:850!important;
+  color:#315E43!important;
+  white-space:nowrap;
+}
+#ranking .rank-registered-name{
+  min-width:0;
+  font-size:15.5px!important;
+  line-height:1.16;
+  font-weight:950!important;
+  color:var(--text)!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#ranking .rank-info-official{
+  margin-left:0!important;
+  font-size:10.5px!important;
+  line-height:1.15;
+  color:#74827B!important;
+  font-weight:650!important;
+  text-align:right!important;
+  white-space:nowrap;
+}
+#ranking .rank-info-line2{
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:baseline;
+  column-gap:8px;
+}
+#ranking .rank-recruitment-name{
+  min-width:0;
+  font-size:11.5px!important;
+  line-height:1.18;
+  color:#74827B!important;
+  font-weight:600!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:left!important;
+}
+#ranking .rank-info-price{
+  margin-left:0!important;
+  font-size:11px!important;
+  line-height:1.15;
+  font-weight:900!important;
+  color:var(--text)!important;
+  text-align:right!important;
+  white-space:nowrap;
+}
+#ranking .rank-info-scenarios{display:none!important}
+#ranking .rankrow>.score{
+  min-width:0!important;
+  font-size:17px!important;
+  line-height:1!important;
+  text-align:right!important;
+  white-space:normal!important;
+}
+#ranking .rankrow>.score small{
+  display:block!important;
+  margin-top:3px;
+  font-size:9.5px!important;
+  line-height:1!important;
+  font-weight:600!important;
+  color:#74827B!important;
+  opacity:1!important;
+}
+@media(max-width:390px){
+  #ranking .rankheader,
+  #ranking .rankrow{
+    grid-template-columns:38px minmax(0,1fr) 52px!important;
+    gap:5px!important;
+  }
+  #ranking .rank-registered-name{font-size:15px!important}
+  #ranking .rank-info-official{font-size:10px!important}
+  #ranking .rank-recruitment-name{font-size:11px!important}
+  #ranking .rankrow>.score{font-size:16px!important}
+}
 </style>
 <style>
 .career-sim{margin-top:10px;padding-top:9px;border-top:1px solid #e4ebe7}
@@ -1542,7 +1650,7 @@ main{padding-top:84px}
   <label>上限 <input id="maxSharePrice" type="number" min="0" step="0.1" placeholder="なし"><small>万円</small></label>
   <button id="clearPriceFilter" class="btn secondary" style="padding:6px 9px;font-size:10px">クリア</button>
 </div>
-<div id="rankHeader" class="rankheader"><div class="rank-col-personal">順位<small>Personal</small></div><div class="rank-col-official">順位<small>Official</small></div><div>募集馬</div><div style="text-align:right">点数</div></div>
+<div id="rankHeader" class="rankheader"><div class="rank-col-personal">順位<small>Personal</small></div><div>馬情報</div><div style="text-align:right">点数</div></div>
   </div>
   
   <div id="rankList" style="position:relative;z-index:1"></div>
@@ -2638,31 +2746,26 @@ function renderRanking(){
  const officialRankMap=new Map(official.map(x=>[x.no,x.rank]));
  const visibleRanked=ranked;
  list.innerHTML=visibleRanked.map((h,i)=>{
- const displayName=String(h.name||"");
- const suffixMatch=displayName.match(/(の\d{2})$/);
- const nameSuffix=suffixMatch?suffixMatch[1]:"";
- const baseName=nameSuffix?displayName.slice(0,-nameSuffix.length):displayName;
- const longClass=baseName.length>=12?" long":"";
+ const recruitmentName=String(h.name||"").trim();
+ const suffixMatch=recruitmentName.match(/(の\d{2})$/);
+ const suffix=suffixMatch?suffixMatch[1]:"";
+ const recruitmentBase=suffix?recruitmentName.slice(0,-suffix.length):recruitmentName;
+ const registeredName=effectiveRegisteredName(h)||recruitmentBase;
+ const officialRank=officialRankMap.get(h.no);
  return `<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
  ${rankEmblemHTML(h.rank,"personal")}
- ${rankEmblemHTML(officialRankMap.get(h.no),"official")}
  <div class="rank-horse-info">
-   <div class="rank-info-top">
+   <div class="rank-info-line1">
      <span class="rank-info-no">No.${h.no}</span>
-     <span class="rank-info-official">${sexLabel(h.sex)}｜Official ${Number(h.total).toFixed(1)}</span>
+     <span class="rank-registered-name">${escapeHTML(registeredName)}</span>
+     <span class="rank-info-official">${sexLabel(h.sex)}｜${officialRank}位｜${Number(h.total).toFixed(1)}</span>
    </div>
-   <div class="rank-horse-name${longClass}">${baseName}</div>
-   ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
-   <div class="rank-info-bottom">
-     <span class="rank-info-suffix">${nameSuffix}</span>
+   <div class="rank-info-line2">
+     <span class="rank-recruitment-name">${escapeHTML(recruitmentName)}</span>
      <span class="rank-info-price">${Number(h.sharePrice).toFixed(1).replace(".0","")}万円</span>
    </div>
-   <div class="rank-info-scenarios">
-     夢 M ${fmt1(h.dreamMiddle)} / H ${fmt1(h.dreamHigh)}
-     ｜ IV M ${fmt1(ivFromRoiPct(h.roiMiddlePct))} / H ${fmt1(ivFromRoiPct(h.roiHighPct))}
-   </div>
  </div>
- <div class="score ${effectivePersonalPoint(h.no)>0?'personal-adjusted':(effectivePersonalPoint(h.no)<0?'personal-negative':'')}">${h.selectedScore.toFixed(1)}<small> / ${max}</small></div>
+ <div class="score ${effectivePersonalPoint(h.no)>0?'personal-adjusted':(effectivePersonalPoint(h.no)<0?'personal-negative':'')}">${h.selectedScore.toFixed(1)}<small>/${max}</small></div>
  </div>`;
  }).join("");
 }
