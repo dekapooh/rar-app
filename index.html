@@ -1894,6 +1894,54 @@ main{padding-top:84px}
   }
 }
 
+
+/* RC67.9 My Page ranking-base layout — mirror ranking fixed controls */
+#mypage #baseControls.base-rank-main-controls{
+  grid-template-columns:.68fr .68fr 1.32fr 1.32fr!important;
+  gap:3px!important;
+  margin-bottom:2px!important;
+  align-items:stretch!important;
+}
+#mypage #baseControls .base-color-toggle{
+  min-width:0!important;
+  min-height:28px!important;
+  padding:1px 3px!important;
+  border-radius:8px!important;
+}
+#mypage #baseControls .base-color-toggle input.base-cat{
+  position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;pointer-events:none!important;
+}
+#mypage #baseControls .base-color-toggle .toggle-main{justify-content:flex-start!important;gap:0!important}
+#mypage #baseControls .base-color-toggle .toggle-main,
+#mypage #baseControls .base-color-toggle .toggle-max{font-size:10px!important;line-height:1!important}
+#mypage #baseControls .base-inline-scenario{
+  position:relative;min-width:0;min-height:28px;display:grid;
+  grid-template-columns:18px minmax(0,1fr) minmax(0,1fr);
+  gap:1px;align-items:center;padding:1px 1px 1px 2px;
+  border:1px solid #ccd8d1;border-radius:8px;background:#f8fbf9;
+}
+#mypage #baseControls .base-inline-cat{
+  position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;pointer-events:none!important;
+}
+#mypage #baseControls .base-inline-label{
+  min-width:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:8px;line-height:1;font-weight:950;color:#40584d;
+}
+#mypage #baseControls .base-inline-label small{margin-top:1px;font-size:6px;font-weight:750;color:#7b8d84}
+#mypage #baseControls .base-inline-scenario button{
+  min-width:0;height:24px;padding:0 1px;border:1px solid #ccd8d1;border-radius:6px;
+  background:#fff;color:#66766e;font-size:6.8px;font-weight:900;line-height:1;white-space:nowrap;cursor:pointer;
+}
+#mypage #baseControls .base-inline-scenario button.active{background:#0F4A35;color:#fff;border-color:#0F4A35}
+#mypage #baseControls .base-inline-scenario:not(.selected){background:#fff;opacity:.62}
+#mypage #baseControls .base-inline-scenario.selected{background:#f8fbf9;border-color:#ccd8d1}
+@media(max-width:390px){
+  #mypage #baseControls.base-rank-main-controls{grid-template-columns:.66fr .66fr 1.34fr 1.34fr!important;gap:2px!important}
+  #mypage #baseControls .base-color-toggle{min-height:27px!important;padding:1px 3px!important}
+  #mypage #baseControls .base-inline-scenario{min-height:27px;padding:1px!important}
+  #mypage #baseControls .base-inline-scenario button{height:23px!important}
+}
+
 </style></head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
@@ -2011,33 +2059,26 @@ main{padding-top:84px}
   <div class="card">
     <h3>ランキング表示ベース</h3>
     <div class="note" style="margin-bottom:7px">ここで選んだ項目・抽出条件を、ランキング画面の初期表示に自動反映します。</div>
-    <div class="controls" id="baseControls" style="grid-template-columns:repeat(4,1fr)">
-      <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="potential"><span>潜在</span></span><span class="toggle-max">/30</span></label>
-      <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="pedigree"><span>血統</span></span><span class="toggle-max">/20</span></label>
-      <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="dream"><span>夢</span></span><span class="toggle-max">/20</span></label>
-      <label class="toggle base-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="roi"><span>IV</span></span><span class="toggle-max">/30</span></label>
-    </div>
-    <div class="base-scenario-settings">
-      <div class="base-scenario-item">
-        <div class="base-scenario-head"><b>夢 標準値</b><span>/20</span></div>
-        <div class="base-scenario-buttons">
-          <button id="baseDreamMiddle" type="button" onclick="setBaseDreamScenario('middle')">Middle</button>
-          <button id="baseDreamHigh" type="button" onclick="setBaseDreamScenario('high')">High</button>
-        </div>
+    <div class="controls base-rank-main-controls" id="baseControls">
+      <label class="toggle base-toggle base-color-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="potential"><span>潜在</span></span><span class="toggle-max">/30</span></label>
+      <label class="toggle base-toggle base-color-toggle"><span class="toggle-main"><input class="base-cat" type="checkbox" value="pedigree"><span>血統</span></span><span class="toggle-max">/20</span></label>
+      <div class="base-inline-scenario base-toggle">
+        <input class="base-cat base-inline-cat" type="checkbox" value="dream" aria-label="夢をランキング表示ベースに含める">
+        <span class="base-inline-label">夢<small>/20</small></span>
+        <button id="baseDreamMiddle" type="button" onclick="setBaseDreamScenario('middle')">Middle</button>
+        <button id="baseDreamHigh" type="button" onclick="setBaseDreamScenario('high')">High</button>
       </div>
-      <div class="base-scenario-item">
-        <div class="base-scenario-head"><b>Investment Value 標準値</b><span>/30</span></div>
-        <div class="base-scenario-buttons">
-          <button id="baseIvMiddle" type="button" onclick="setBaseIvScenario('middle')">Middle</button>
-          <button id="baseIvHigh" type="button" onclick="setBaseIvScenario('high')">High</button>
-        </div>
+      <div class="base-inline-scenario base-toggle">
+        <input class="base-cat base-inline-cat" type="checkbox" value="roi" aria-label="IVをランキング表示ベースに含める">
+        <span class="base-inline-label">IV<small>/30</small></span>
+        <button id="baseIvMiddle" type="button" onclick="setBaseIvScenario('middle')">Middle</button>
+        <button id="baseIvHigh" type="button" onclick="setBaseIvScenario('high')">High</button>
       </div>
     </div>
     <div class="controls base-filter-row" style="grid-template-columns:repeat(2,1fr);margin-top:6px">
       <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="favoritesOnly"><span>お気に入り</span></span><span class="toggle-max"></span></label>
       <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="excludeFull"><span>募集中のみ</span></span><span class="toggle-max"></span></label>
     </div>
-    <div class="note">※Middleのみ＝Middle、Highのみ＝High、両方選択＝Official。ここで選んだ状態があなたの標準設定になります。</div>
   </div>
   <div class="card" id="accountReadyCard">
     <div class="data-manage-head">
@@ -2531,19 +2572,21 @@ function setIvScenario(value){
 }
 function setBaseDreamScenario(value){
  if(!state.rankBaseScenario)state.rankBaseScenario={dream:"official",iv:"official"};
+ state.rankBase.dream=true;
  const clicked=value==="high"?"high":"middle";
  state.rankBaseScenario.dream=nextScenarioMode(normalizeScenarioMode(state.rankBaseScenario.dream),clicked);
  dreamScenario=state.rankBaseScenario.dream;
  saveState();
- syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
+ syncBaseControls();applyRankBase();syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
 }
 function setBaseIvScenario(value){
  if(!state.rankBaseScenario)state.rankBaseScenario={dream:"official",iv:"official"};
+ state.rankBase.roi=true;
  const clicked=value==="high"?"high":"middle";
  state.rankBaseScenario.iv=nextScenarioMode(normalizeScenarioMode(state.rankBaseScenario.iv),clicked);
  ivScenario=state.rankBaseScenario.iv;
  saveState();
- syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
+ syncBaseControls();applyRankBase();syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
 }
 function renderScenarioSelectors(){
  syncScenarioButtons();
