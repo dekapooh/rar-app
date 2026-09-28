@@ -1452,11 +1452,11 @@ main{padding-top:84px}
 }
 #officialAccessNote.compact-note{font-size:9px!important}
 
-/* RC67.1 compact ranking rows — aligned official columns / balanced gutters */
+/* RC67.2 compact ranking rows — tighter gutters / wider registered-name area */
 #ranking .rankheader,
 #ranking .rankrow{
-  grid-template-columns:36px minmax(0,1fr) 56px!important;
-  gap:6px!important;
+  grid-template-columns:34px minmax(0,1fr) 56px!important;
+  gap:5px!important;
   padding-left:0!important;
   padding-right:0!important;
 }
@@ -1464,7 +1464,7 @@ main{padding-top:84px}
 #ranking .rankheader>div:nth-child(2){text-align:left!important}
 #ranking .rankheader>div:last-child{text-align:right!important}
 #ranking .rankrow{padding:8px 0!important}
-#ranking .rank-badge-wrap{width:36px!important;height:38px!important}
+#ranking .rank-badge-wrap{width:34px!important;height:38px!important}
 #ranking .rank-horse-info{
   min-width:0!important;
   display:grid!important;
@@ -1476,7 +1476,7 @@ main{padding-top:84px}
   display:grid;
   grid-template-columns:auto minmax(0,1fr) auto;
   align-items:baseline;
-  column-gap:8px;
+  column-gap:5px;
 }
 #ranking .rank-info-no{
   font-size:10px!important;
@@ -1487,7 +1487,7 @@ main{padding-top:84px}
 }
 #ranking .rank-registered-name{
   min-width:0;
-  font-size:15.5px!important;
+  font-size:15px!important;
   line-height:1.16;
   font-weight:950!important;
   color:var(--text)!important;
@@ -1498,17 +1498,18 @@ main{padding-top:84px}
 #ranking .rank-info-official{
   margin-left:0!important;
   display:grid!important;
-  grid-template-columns:3em 1em 3em 1em 3em;
+  grid-template-columns:2.8em .4em 2.6em .4em 2.8em;
   align-items:baseline;
   justify-content:end;
-  column-gap:0;
-  font-size:10.5px!important;
+  column-gap:0!important;
+  font-size:10.3px!important;
   line-height:1.15;
   color:#74827B!important;
   font-weight:650!important;
   text-align:right!important;
   white-space:nowrap;
   font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em;
 }
 #ranking .rank-official-sex,
 #ranking .rank-official-rank,
@@ -1519,7 +1520,7 @@ main{padding-top:84px}
 }
 #ranking .rank-official-sep{
   display:block;
-  width:1em;
+  width:.4em;
   text-align:center;
 }
 #ranking .rank-info-line2{
@@ -1527,7 +1528,7 @@ main{padding-top:84px}
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
   align-items:baseline;
-  column-gap:8px;
+  column-gap:5px;
 }
 #ranking .rank-recruitment-name{
   min-width:0;
@@ -1569,11 +1570,17 @@ main{padding-top:84px}
 @media(max-width:390px){
   #ranking .rankheader,
   #ranking .rankrow{
-    grid-template-columns:36px minmax(0,1fr) 52px!important;
-    gap:5px!important;
+    grid-template-columns:34px minmax(0,1fr) 52px!important;
+    gap:4px!important;
   }
-  #ranking .rank-registered-name{font-size:15px!important}
-  #ranking .rank-info-official{font-size:10px!important}
+  #ranking .rank-info-line1{column-gap:4px}
+  #ranking .rank-info-line2{column-gap:4px}
+  #ranking .rank-registered-name{font-size:14.7px!important}
+  #ranking .rank-info-official{
+    grid-template-columns:2.7em .35em 2.5em .35em 2.75em;
+    font-size:9.9px!important;
+  }
+  #ranking .rank-official-sep{width:.35em}
   #ranking .rank-recruitment-name{font-size:11px!important}
   #ranking .rankrow>.score{font-size:16px!important}
 }
