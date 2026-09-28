@@ -1977,6 +1977,55 @@ main{padding-top:84px}
   }
 }
 
+
+/* RC67.11 Ranking/My Page filter toggles — color state, no native checkbox */
+#ranking .rank-filter-toggle{
+  min-height:28px;
+  padding:3px 8px;
+  border:1px solid #ccd8d1;
+  border-radius:8px;
+  background:#fff;
+  color:#51675d;
+  font-size:9.5px;
+  font-weight:850;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.15s;
+}
+#ranking .rank-filter-toggle input,
+#mypage .base-filter-row .base-filter-toggle input.base-filter{
+  position:absolute!important;
+  opacity:0!important;
+  width:1px!important;
+  height:1px!important;
+  pointer-events:none!important;
+}
+#ranking .rank-filter-toggle.selected,
+#mypage .base-filter-row .base-filter-toggle.selected{
+  background:#0F4A35!important;
+  color:#fff!important;
+  border-color:#0F4A35!important;
+}
+#ranking .rank-filter-toggle:not(.selected),
+#mypage .base-filter-row .base-filter-toggle:not(.selected){
+  background:#fff!important;
+  color:#51675d!important;
+  border-color:#ccd8d1!important;
+}
+#mypage .base-filter-row .base-filter-toggle .toggle-main{
+  gap:0!important;
+}
+@media(max-width:390px){
+  #ranking .rank-filter-toggle{
+    min-height:27px;
+    padding:3px 7px;
+    font-size:9px;
+  }
+}
+
 </style></head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
@@ -2002,8 +2051,8 @@ main{padding-top:84px}
     <div class="rank-title-row">
       <div class="section-title">ランキング</div>
       <div style="display:flex;align-items:center;gap:6px">
-        <label class="slim-filter"><input id="favoritesOnly" type="checkbox"> ☆のみ</label>
-        <label class="slim-filter"><input id="excludeFull" type="checkbox"> 満口除外</label>
+        <label class="slim-filter rank-filter-toggle"><input id="favoritesOnly" type="checkbox"><span>お気に入り</span></label>
+        <label class="slim-filter rank-filter-toggle"><input id="excludeFull" type="checkbox"><span>募集中のみ</span></label>
         <button id="resetRankFilters" class="rank-reset-btn" type="button">↻</button>
       </div>
     </div>
@@ -2979,11 +3028,18 @@ async function restoreBackupFile(file){
 function saveState(){
  if(!localStorage.getItem("rarPersistAsked")){localStorage.setItem("rarPersistAsked","1");requestPersistentStorage();}persistState(); updateMyPage();}
 function selectedCats(){return [...document.querySelectorAll(".cat:checked")].map(x=>x.value)}
+function syncRankFilterVisuals(){
+ const fav=document.getElementById("favoritesOnly");
+ const open=document.getElementById("excludeFull");
+ fav?.closest(".rank-filter-toggle")?.classList.toggle("selected",!!fav.checked);
+ open?.closest(".rank-filter-toggle")?.classList.toggle("selected",!!open.checked);
+}
 function applyRankBase(){
  const rules=planRules();
  document.querySelectorAll(".cat").forEach(x=>{x.checked=rules.canCategoryToggle ? !!state.rankBase[x.value] : true});
  document.getElementById("favoritesOnly").checked=rules.canFavoriteFilter && !!state.filterBase.favoritesOnly;
  document.getElementById("excludeFull").checked=rules.canOpenFilter && !!state.filterBase.excludeFull;
+ syncRankFilterVisuals();
  dreamScenario=normalizeScenarioMode(state.rankBaseScenario?.dream);
  ivScenario=normalizeScenarioMode(state.rankBaseScenario?.iv);
  syncCategoryStyles();
@@ -3159,11 +3215,13 @@ document.querySelectorAll(".cat").forEach(x=>x.addEventListener("change",()=>{
 }));
 syncCategoryStyles();
 document.getElementById("excludeFull").addEventListener("change",()=>{
- if(!planRules().canOpenFilter){document.getElementById("excludeFull").checked=false;return}
+ if(!planRules().canOpenFilter){document.getElementById("excludeFull").checked=false;syncRankFilterVisuals();return}
+ syncRankFilterVisuals();
  renderRanking();
 });
 document.getElementById("favoritesOnly").addEventListener("change",()=>{
- if(!planRules().canFavoriteFilter){document.getElementById("favoritesOnly").checked=false;return}
+ if(!planRules().canFavoriteFilter){document.getElementById("favoritesOnly").checked=false;syncRankFilterVisuals();return}
+ syncRankFilterVisuals();
  renderRanking();
 });
 document.getElementById("resetRankFilters").addEventListener("click",()=>{
