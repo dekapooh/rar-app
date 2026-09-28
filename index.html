@@ -2607,12 +2607,15 @@ let dreamScenario="official";
 let ivScenario="official";
 function scenarioButtonOn(mode,side){return mode==="official" || mode===side}
 function nextScenarioMode(current,clicked){
- if(current==="official")return clicked==="middle"?"high":"middle";
- if(current===clicked)return current;
+ const mode=normalizeScenarioMode(current);
+ const side=clicked==="high"?"high":"middle";
+ if(mode==="none")return side;
+ if(mode==="official")return side==="middle"?"high":"middle";
+ if(mode===side)return "none";
  return "official";
 }
-function normalizeScenarioMode(value){return value==="middle"||value==="high"||value==="official"?value:"official"}
-function scenarioLabel(value){return value==="official"?"Official":(value==="high"?"High":"Middle")}
+function normalizeScenarioMode(value){return value==="none"||value==="middle"||value==="high"||value==="official"?value:"official"}
+function scenarioLabel(value){return value==="none"?"未選択":(value==="official"?"Official":(value==="high"?"High":"Middle"))}
 function syncScenarioButtons(){
  const ids=[
    ["dreamScenarioMiddle",scenarioButtonOn(dreamScenario,"middle")],["dreamScenarioHigh",scenarioButtonOn(dreamScenario,"high")],
@@ -2642,8 +2645,8 @@ function syncBaseScenarioButtons(){
 }
 function setDreamScenario(value){
  const cat=document.querySelector('.cat[value="dream"]');
- if(cat && !cat.checked)cat.checked=true;
  dreamScenario=nextScenarioMode(dreamScenario,value==="high"?"high":"middle");
+ if(cat)cat.checked=dreamScenario!=="none";
  syncCategoryStyles();
  syncScenarioButtons();
  renderScenarioSelectors();
@@ -2651,8 +2654,8 @@ function setDreamScenario(value){
 }
 function setIvScenario(value){
  const cat=document.querySelector('.cat[value="roi"]');
- if(cat && !cat.checked)cat.checked=true;
  ivScenario=nextScenarioMode(ivScenario,value==="high"?"high":"middle");
+ if(cat)cat.checked=ivScenario!=="none";
  syncCategoryStyles();
  syncScenarioButtons();
  renderScenarioSelectors();
@@ -2660,18 +2663,18 @@ function setIvScenario(value){
 }
 function setBaseDreamScenario(value){
  if(!state.rankBaseScenario)state.rankBaseScenario={dream:"official",iv:"official"};
- state.rankBase.dream=true;
  const clicked=value==="high"?"high":"middle";
  state.rankBaseScenario.dream=nextScenarioMode(normalizeScenarioMode(state.rankBaseScenario.dream),clicked);
+ state.rankBase.dream=state.rankBaseScenario.dream!=="none";
  dreamScenario=state.rankBaseScenario.dream;
  saveState();
  syncBaseControls();applyRankBase();syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
 }
 function setBaseIvScenario(value){
  if(!state.rankBaseScenario)state.rankBaseScenario={dream:"official",iv:"official"};
- state.rankBase.roi=true;
  const clicked=value==="high"?"high":"middle";
  state.rankBaseScenario.iv=nextScenarioMode(normalizeScenarioMode(state.rankBaseScenario.iv),clicked);
+ state.rankBase.roi=state.rankBaseScenario.iv!=="none";
  ivScenario=state.rankBaseScenario.iv;
  saveState();
  syncBaseControls();applyRankBase();syncBaseScenarioButtons();syncScenarioButtons();renderScenarioSelectors();renderRanking();
@@ -2679,11 +2682,14 @@ function setBaseIvScenario(value){
 function renderScenarioSelectors(){
  syncScenarioButtons();
  if(!currentHorse)return;
- const dreamValue=dreamScenario==="official"?currentHorse.dream:(dreamScenario==="high"?currentHorse.dreamHigh:currentHorse.dreamMiddle);
+ const dreamValue=dreamScenario==="none"?0:(dreamScenario==="official"?currentHorse.dream:(dreamScenario==="high"?currentHorse.dreamHigh:currentHorse.dreamMiddle));
  const dreamOut=document.getElementById("dDreamScenario");
- if(dreamOut)dreamOut.textContent=`${scenarioLabel(dreamScenario)} ${fmt1(dreamValue)}/20`;
+ if(dreamOut)dreamOut.textContent=dreamScenario==="none"?"未選択 0.0/20":`${scenarioLabel(dreamScenario)} ${fmt1(dreamValue)}/20`;
  let roiValue,ivValue;
- if(ivScenario==="official"){
+ if(ivScenario==="none"){
+   roiValue=0;
+   ivValue=0;
+ }else if(ivScenario==="official"){
    roiValue=currentHorse.roiOfficialPct;
    ivValue=currentHorse.ivOfficial;
  }else{
@@ -2691,7 +2697,7 @@ function renderScenarioSelectors(){
    ivValue=ivFromRoiPct(roiValue);
  }
  const ivOut=document.getElementById("dIvScenario");
- if(ivOut)ivOut.textContent=`${scenarioLabel(ivScenario)} ${fmt1(ivValue)}/30｜ROI ${fmt1(roiValue)}%`;
+ if(ivOut)ivOut.textContent=ivScenario==="none"?"未選択 0.0/30":`${scenarioLabel(ivScenario)} ${fmt1(ivValue)}/30｜ROI ${fmt1(roiValue)}%`;
 }
 const MAX={potential:30,pedigree:20,dream:20,roi:30};
 let currentHorse=null, previousScreen="mypage";
@@ -2731,6 +2737,10 @@ if(!state.rankBaseScenario || typeof state.rankBaseScenario!=="object"){
 }
 state.rankBaseScenario.dream=normalizeScenarioMode(state.rankBaseScenario.dream);
 state.rankBaseScenario.iv=normalizeScenarioMode(state.rankBaseScenario.iv);
+if(state.rankBase.dream===false)state.rankBaseScenario.dream="none";
+if(state.rankBase.roi===false)state.rankBaseScenario.iv="none";
+if(state.rankBaseScenario.dream==="none")state.rankBase.dream=false;
+if(state.rankBaseScenario.iv==="none")state.rankBase.roi=false;
 dreamScenario=state.rankBaseScenario.dream;
 ivScenario=state.rankBaseScenario.iv;
 delete state.dreamScenario;
@@ -3073,6 +3083,16 @@ function applyRankBase(){
  syncRankFilterVisuals();
  dreamScenario=normalizeScenarioMode(state.rankBaseScenario?.dream);
  ivScenario=normalizeScenarioMode(state.rankBaseScenario?.iv);
+ if(dreamScenario==="none"){
+   state.rankBase.dream=false;
+   const dreamCat=document.querySelector('.cat[value="dream"]');
+   if(dreamCat)dreamCat.checked=false;
+ }
+ if(ivScenario==="none"){
+   state.rankBase.roi=false;
+   const ivCat=document.querySelector('.cat[value="roi"]');
+   if(ivCat)ivCat.checked=false;
+ }
  syncCategoryStyles();
  syncScenarioButtons();
  syncBaseScenarioButtons();
@@ -3155,10 +3175,12 @@ function rankingPersonalPoint(no,cats){
 function categoryScoreForRanking(h,key,useScenario=true){
  if(!useScenario)return Number(h[key]||0);
  if(key==="dream"){
+   if(dreamScenario==="none")return 0;
    if(dreamScenario==="official")return Number(h.dream);
    return Number(dreamScenario==="high"?h.dreamHigh:h.dreamMiddle);
  }
  if(key==="roi"){
+   if(ivScenario==="none")return 0;
    if(ivScenario==="official")return Number(h.ivOfficial);
    const roiPct=Number(ivScenario==="high"?h.roiHighPct:h.roiMiddlePct);
    return ivFromRoiPct(roiPct);
@@ -3179,7 +3201,7 @@ function renderRanking(){
  const cats=selectedCats(); const list=document.getElementById("rankList");
  if(!cats.length){list.innerHTML='<div class="empty">1項目以上選択してください</div>';document.getElementById("maxScore").textContent="0";document.getElementById("selectionText").textContent="";return}
  const max=cats.reduce((a,k)=>a+MAX[k],0); document.getElementById("maxScore").textContent=max;
- const labels={potential:"潜在",pedigree:"血統",dream:`夢(${dreamScenario==="official"?"Official":(dreamScenario==="high"?"High":"Middle")})`,roi:`IV(${ivScenario==="official"?"Official":(ivScenario==="high"?"High":"Middle")})`};
+ const labels={potential:"潜在",pedigree:"血統",dream:`夢(${scenarioLabel(dreamScenario)})`,roi:`IV(${scenarioLabel(ivScenario)})`};
  document.getElementById("selectionText").textContent=cats.map(k=>labels[k]).join("＋");
  syncScenarioButtons();
  const rules=planRules();
