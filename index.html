@@ -1942,6 +1942,41 @@ main{padding-top:84px}
   #mypage #baseControls .base-inline-scenario button{height:23px!important}
 }
 
+
+/* RC67.10 My Page base filters — compact content-width controls */
+#mypage .base-filter-row{
+  display:flex!important;
+  grid-template-columns:none!important;
+  justify-content:flex-start!important;
+  align-items:center!important;
+  gap:5px!important;
+  margin-top:5px!important;
+  margin-bottom:0!important;
+}
+#mypage .base-filter-row .base-filter-toggle{
+  width:auto!important;
+  min-width:0!important;
+  min-height:26px!important;
+  padding:2px 7px!important;
+  border-radius:8px!important;
+  display:inline-flex!important;
+  grid-template-columns:none!important;
+  flex:0 0 auto!important;
+}
+#mypage .base-filter-row .base-filter-toggle .toggle-main{
+  gap:4px!important;
+  white-space:nowrap!important;
+  font-size:9.5px!important;
+}
+#mypage .base-filter-row .base-filter-toggle .toggle-max{display:none!important}
+@media(max-width:390px){
+  #mypage .base-filter-row{gap:4px!important;margin-top:4px!important}
+  #mypage .base-filter-row .base-filter-toggle{
+    min-height:25px!important;
+    padding:2px 6px!important;
+  }
+}
+
 </style></head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
@@ -2075,7 +2110,7 @@ main{padding-top:84px}
         <button id="baseIvHigh" type="button" onclick="setBaseIvScenario('high')">High</button>
       </div>
     </div>
-    <div class="controls base-filter-row" style="grid-template-columns:repeat(2,1fr);margin-top:6px">
+    <div class="controls base-filter-row">
       <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="favoritesOnly"><span>お気に入り</span></span><span class="toggle-max"></span></label>
       <label class="toggle base-filter-toggle"><span class="toggle-main"><input class="base-filter" type="checkbox" value="excludeFull"><span>募集中のみ</span></span><span class="toggle-max"></span></label>
     </div>
