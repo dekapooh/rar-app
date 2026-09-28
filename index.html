@@ -2741,6 +2741,33 @@ const DATASET_PERSONAL_KEYS=[
  "invested","registeredNames","categoryPoints","smallPoints"
 ];
 let activePersonalDatasetKey="2026:silk";
+function activeRecruitmentYear(){
+ const m=String(activePersonalDatasetKey||"").match(/^(\d{4}):/);
+ return m?Number(m[1]):null;
+}
+function isHistoricalRecruitmentClosed(){
+ const y=activeRecruitmentYear();
+ return y===2024 || y===2025;
+}
+function isHorseRecruitmentOpen(h){
+ if(!h || h.recruitmentStatus==="cancelled")return false;
+ if(isHistoricalRecruitmentClosed())return false;
+ return !h.full;
+}
+function recruitmentStatusLabel(h){
+ if(h?.recruitmentStatus==="cancelled")return "募集取消";
+ if(isHistoricalRecruitmentClosed())return "募集終了";
+ return h?.full?"満口":"募集中";
+}
+function closedRecruitmentFilterLabel(){
+ return isHistoricalRecruitmentClosed()?"募集終了":"満口";
+}
+function syncRecruitmentStatusUI(){
+ const select=document.getElementById("searchStatus");
+ if(!select)return;
+ const closed=[...select.options].find(o=>o.value==="full");
+ if(closed)closed.textContent=closedRecruitmentFilterLabel();
+}
 function clonePersonalValue(v){
  try{return structuredClone(v)}catch{return JSON.parse(JSON.stringify(v??{}))}
 }
@@ -3158,7 +3185,7 @@ function renderRanking(){
  const rules=planRules();
  let base=planEligibleHorses();
  if(rules.canOpenFilter && document.getElementById("excludeFull").checked){
-   base=base.filter(h=>!h.full);
+   base=base.filter(h=>isHorseRecruitmentOpen(h));
  }
  if(rules.canFavoriteFilter && document.getElementById("favoritesOnly").checked){
    base=base.filter(h=>state.favorites[h.no]);
@@ -3399,6 +3426,7 @@ function surfaceStrength(v){
  return 0;
 }
 function renderSearch(){
+ syncRecruitmentStatusUI();
  const q=(document.getElementById("searchInput").value||"").trim().toLowerCase();
  const sex=document.getElementById("searchSex").value;
  const rules=planRules();
@@ -3411,7 +3439,7 @@ function renderSearch(){
    const textHit=!q || String(h.no)===q || String(h.no).includes(q) ||
      [h.name,h.registeredNameOfficial,h.sire,h.dam].some(v=>String(v||"").toLowerCase().includes(q));
    const sexHit=!sex || sexKind(h.sex)===sex;
-   const statusHit=!status || (status==="open" ? !h.full : h.full);
+   const statusHit=!status || (status==="open" ? isHorseRecruitmentOpen(h) : !isHorseRecruitmentOpen(h));
    const favHit=!favOnly || !!state.favorites[h.no];
 
    const turf=surfaceStrength(h.turf);
@@ -3437,7 +3465,7 @@ function renderSearch(){
  const chips=[];
  if(q) chips.push(`検索：${q}`);
  if(sex) chips.push(sex==="male"?"牡のみ":"メスのみ");
- if(status) chips.push(status==="open"?"募集中":"満口");
+ if(status) chips.push(status==="open"?"募集中":closedRecruitmentFilterLabel());
  if(favOnly) chips.push("お気に入り");
  if(surface) chips.push({turf:"芝向き",dirt:"ダート向き",both:"芝・ダート両方"}[surface]);
  if(priceBand) chips.push({lt8:"8万円未満","8to12":"8〜12万円","12to20":"12〜20万円",gte20:"20万円以上"}[priceBand]);
@@ -3453,7 +3481,7 @@ function renderSearch(){
    <div>
      <div class="hname">${h.name}${state.favorites[h.no]?' ★':''}${state.excluded[h.no]?' <span class="excluded-note">除外</span>':''}</div>
      ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
-     <div class="hmeta">${sexLabel(h.sex)}｜${h.recruitmentStatus==="cancelled"?'募集取消':(h.full?'満口':'募集中')}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
+     <div class="hmeta">${sexLabel(h.sex)}｜${recruitmentStatusLabel(h)}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
    </div>
    <div class="score">${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}<small>${canViewHorseOfficial(h.no)?" Official":" PLAN"}</small></div>
  </div>`).join("") || '<div class="empty">該当する募集馬がありません</div>';
@@ -4136,7 +4164,7 @@ function updateMyPage(){
      const memo=state.memos[no]||"";
      let right=myPageView==="points" ? `${point>0?"+":""}${point} pt` : (canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
      const officialName=datasetRegisteredName(h);
-     const normalSub=`${officialName?`登録名：${escapeHTML(officialName)}｜`:""}${sexLabel(h.sex)}｜${h.recruitmentStatus==="cancelled"?"募集取消":(h.full?"満口":"募集中")}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
+     const normalSub=`${officialName?`登録名：${escapeHTML(officialName)}｜`:""}${sexLabel(h.sex)}｜${recruitmentStatusLabel(h)}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
      const subHtml=myPageView==="memos"
        ? `<div class="memo-preview">${escapeHTML(memo)}</div>`
        : `<div class="myhorse-note">${normalSub}</div>`;
@@ -4398,11 +4426,11 @@ window.addEventListener("rar:dataset-apply-failed",e=>{
  persistState();
 });
 window.addEventListener("rar:dataset-changed",()=>{
- applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();syncScenarioButtons();syncBaseScenarioButtons();
+ applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();syncScenarioButtons();syncBaseScenarioButtons();syncRecruitmentStatusUI();
  renderRanking();renderSearch();updateMyPage();updateAppDiagnostics();
 });
 
-applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syncBaseScenarioButtons(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
+applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syncBaseScenarioButtons(); syncRecruitmentStatusUI(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
