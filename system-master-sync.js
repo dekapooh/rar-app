@@ -59,6 +59,118 @@
     })
   });
 
+  // Official registered-name master for 2025 Silk (2024 crop).
+  // Verified against Silk Horse Club's official horse pages on 2026-09-28.
+  // Empty values mean the official page still has no registered horse name.
+  const REGISTERED_NAME_OVERRIDES = Object.freeze({
+    '2025:silk': Object.freeze({
+      1:'ログポーズ',
+      2:'レジューノワール',
+      3:'エクアトーレ',
+      4:'オプティミスタ',
+      5:'セントベルナール',
+      6:'サウンドスケイプ',
+      7:'フィルダルジャン',
+      8:'インシグニア',
+      9:'ユタライト',
+      10:'コールセレスト',
+      11:'ドライブライン',
+      12:'ムーンキャスト',
+      13:'シーアンドパールズ',
+      14:'プリンシパルギフト',
+      15:'シルクドマルス',
+      16:'タクティシアン',
+      17:'ギルデッドグロス',
+      18:'ヨハンナ',
+      19:'サールナート',
+      20:'スナッチアップ',
+      21:'スカイズザリミット',
+      22:'シルヴレッタ',
+      23:'スイープラディウス',
+      24:'サンタンヌ',
+      25:'リアフレイヤ',
+      26:'スペシャルブレンド',
+      27:'ナイトオブマース',
+      28:'チャランダマルツ',
+      29:'アンミサブル',
+      30:'ファルコシニョーラ',
+      31:'ラエスペーロ',
+      32:'ゼフィール',
+      33:'ブルーフェイブル',
+      34:'ゾディアカルライト',
+      35:'ソフィエール',
+      36:'アルテミスデフォレ',
+      37:'ノヴァルクス',
+      38:'アルコデラルーナ',
+      39:'ロイヤルヴェイズ',
+      40:'ソニックアイル',
+      41:'ダブルスプリング',
+      42:'ラキアーヴェ',
+      43:'ジルファノーガ',
+      44:'ウィクフォード',
+      45:'ネーラビアンカ',
+      46:'エンルートフライト',
+      47:'レニュアージュ',
+      48:'マスターズボンド',
+      49:'キングリア',
+      50:'ウィンザーグレース',
+      51:'エターナルバラード',
+      52:'グラシアレスインク',
+      53:'ベルヴェール',
+      54:'ポエジア',
+      55:'アイオリスパルス',
+      56:'メアグローリア',
+      57:'ブロッサムスピア',
+      58:'ベリルアンヴォル',
+      59:'ムーンベリル',
+      60:'ファルシストラーダ',
+      61:'カッチーニ',
+      62:'アンムート',
+      63:'セレナード',
+      64:'ヌーベルフィズ',
+      65:'サルティリア',
+      66:'ティスールドール',
+      67:'サンティエリュール',
+      68:'オレオール',
+      69:'シュガーハウス',
+      70:'トップチェッカー',
+      71:'インディジャズ',
+      72:'',
+      73:'',
+      74:'アーデルプレミア',
+      75:'アーキミロナリア',
+      76:'アリアニコ',
+      77:'シブレット',
+      78:'エピドゥブレ',
+      79:'ヴァルコイネン',
+      80:'ジュディスクイーン',
+      81:'ジャストグロリアス',
+      82:'クリアストライク',
+      83:'バタフライノット',
+      84:'プリモヴィータ',
+      85:'ガンサルート',
+      86:'ヴィクトリアルール',
+      87:'ミラベルプラム',
+      88:'ガリアルダ',
+      89:'ファーストステイト',
+      90:'エボニーウイング',
+      91:'ベルジャンブ',
+      92:'バードギール',
+      93:'オプレンシア',
+      94:'トップエンドパワー',
+      95:'アンソフィリア'
+    })
+  });
+
+  function applyRegisteredNameOverride(h, datasetKey) {
+    const map = REGISTERED_NAME_OVERRIDES[String(datasetKey || '')];
+    if (!map) return h;
+    const no = Number(h.no);
+    if (!Object.prototype.hasOwnProperty.call(map, no)) return h;
+    h.registeredNameOfficial = String(map[no] || '').trim();
+    return h;
+  }
+
   function applyRecruitmentSnapshot(h, datasetKey) {
     const snapshot = RECRUITMENT_SNAPSHOTS[String(datasetKey || '')];
     if (!snapshot) return h;
@@ -628,6 +740,7 @@
         ? cloneHorse(legacyByNo.get(no))
         : blankHorse(no);
       patchHorse(base, r);
+      applyRegisteredNameOverride(base, data.dataset_key);
       applyRecruitmentSnapshot(base, data.dataset_key);
       if (!base.turf && !base.dirt && r.career?.surface === 'turf') base.turf = '◎';
       if (!base.turf && !base.dirt && r.career?.surface === 'dirt') base.dirt = '◎';
