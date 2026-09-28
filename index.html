@@ -1452,10 +1452,10 @@ main{padding-top:84px}
 }
 #officialAccessNote.compact-note{font-size:9px!important}
 
-/* RC67 compact ranking rows — 2-line horse info */
+/* RC67.1 compact ranking rows — aligned official columns / balanced gutters */
 #ranking .rankheader,
 #ranking .rankrow{
-  grid-template-columns:40px minmax(0,1fr) 56px!important;
+  grid-template-columns:36px minmax(0,1fr) 56px!important;
   gap:6px!important;
   padding-left:0!important;
   padding-right:0!important;
@@ -1497,12 +1497,30 @@ main{padding-top:84px}
 }
 #ranking .rank-info-official{
   margin-left:0!important;
+  display:grid!important;
+  grid-template-columns:3em 1em 3em 1em 3em;
+  align-items:baseline;
+  justify-content:end;
+  column-gap:0;
   font-size:10.5px!important;
   line-height:1.15;
   color:#74827B!important;
   font-weight:650!important;
   text-align:right!important;
   white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+#ranking .rank-official-sex,
+#ranking .rank-official-rank,
+#ranking .rank-official-score{
+  display:block;
+  min-width:0;
+  text-align:right;
+}
+#ranking .rank-official-sep{
+  display:block;
+  width:1em;
+  text-align:center;
 }
 #ranking .rank-info-line2{
   min-width:0;
@@ -1551,7 +1569,7 @@ main{padding-top:84px}
 @media(max-width:390px){
   #ranking .rankheader,
   #ranking .rankrow{
-    grid-template-columns:38px minmax(0,1fr) 52px!important;
+    grid-template-columns:36px minmax(0,1fr) 52px!important;
     gap:5px!important;
   }
   #ranking .rank-registered-name{font-size:15px!important}
@@ -2758,7 +2776,7 @@ function renderRanking(){
    <div class="rank-info-line1">
      <span class="rank-info-no">No.${h.no}</span>
      <span class="rank-registered-name">${escapeHTML(registeredName)}</span>
-     <span class="rank-info-official">${sexLabel(h.sex)}｜${officialRank}位｜${Number(h.total).toFixed(1)}</span>
+     <span class="rank-info-official"><span class="rank-official-sex">${sexLabel(h.sex)}</span><span class="rank-official-sep">｜</span><span class="rank-official-rank">${officialRank}位</span><span class="rank-official-sep">｜</span><span class="rank-official-score">${Number(h.total).toFixed(1)}</span></span>
    </div>
    <div class="rank-info-line2">
      <span class="rank-recruitment-name">${escapeHTML(recruitmentName)}</span>
