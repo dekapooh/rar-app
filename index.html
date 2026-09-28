@@ -3680,6 +3680,8 @@ document.getElementById("dInvested").addEventListener("change",e=>{
  delete state.invested[no];
  saveState();
  syncInvestmentUI();
+ const favBtn=document.getElementById("detailFav");
+ if(favBtn)favBtn.title="お気に入りを切り替え";
  updateMyPage();
 });
 document.getElementById("dRegisteredName").addEventListener("input",e=>{
