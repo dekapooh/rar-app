@@ -2215,6 +2215,17 @@ function syncActivePersonalBucket(){
  store[key]=bucket;
  state.activePersonalDatasetKey=key;
 }
+function ensureInvestedFavorites(){
+ let changed=false;
+ for(const [no,invested] of Object.entries(state.invested||{})){
+   if(!invested)continue;
+   if(!state.favorites[no]){
+     state.favorites[no]=true;
+     changed=true;
+   }
+ }
+ return changed;
+}
 function bindPersonalDataset(datasetKey,{seedCurrent=false}={}){
  const key=String(datasetKey||"").trim().toLowerCase();
  if(!/^\d{4}:[a-z0-9][a-z0-9_-]*$/.test(key))throw new Error("invalid Personal dataset_key");
@@ -2232,8 +2243,10 @@ function bindPersonalDataset(datasetKey,{seedCurrent=false}={}){
    bucket[name]=normalizePersonalObject(bucket[name]);
    state[name]=bucket[name];
  }
+ const investedFavoriteChanged=ensureInvestedFavorites();
  activePersonalDatasetKey=key;
  state.activePersonalDatasetKey=key;
+ return investedFavoriteChanged;
 }
 function persistState(){
  syncActivePersonalBucket();
@@ -2241,7 +2254,8 @@ function persistState(){
 }
 // Existing flat Personal data belongs to the completed legacy dataset.
 // This migrates it once without losing the user's current 2026 settings.
-bindPersonalDataset("2026:silk",{seedCurrent:true});
+const investedFavoriteMigrated=bindPersonalDataset("2026:silk",{seedCurrent:true});
+if(investedFavoriteMigrated)persistState();
 
 const SCORE_ARCHITECTURE="RAR100_30_20_20_30_20260914_R2";
 if(state.scoreArchitecture!==SCORE_ARCHITECTURE){
@@ -3313,7 +3327,17 @@ function openHorse(no,from,options={}){
  const favBtn=document.getElementById("detailFav");
  favBtn.textContent=state.favorites[no]?"★ お気に入り":"☆ お気に入り";
  favBtn.classList.toggle("active",!!state.favorites[no]);
+ favBtn.title=state.invested[no]?"出資確定馬はお気に入りに自動登録されます":"お気に入りを切り替え";
  favBtn.onclick=()=>{
+   if(state.invested[no]){
+     state.favorites[no]=true;
+     saveState();
+     favBtn.textContent="★ お気に入り";
+     favBtn.classList.add("active");
+     favBtn.title="出資確定馬はお気に入りに自動登録されます";
+     alert("出資確定馬はお気に入りに自動登録されます。\n出資馬から外すまではお気に入りを解除できません。");
+     return;
+   }
    state.favorites[no]=!state.favorites[no];
    if(!state.favorites[no]){
      delete state.favorites[no];
@@ -3322,6 +3346,7 @@ function openHorse(no,from,options={}){
    saveState();
    favBtn.textContent=state.favorites[no]?"★ お気に入り":"☆ お気に入り";
    favBtn.classList.toggle("active",!!state.favorites[no]);
+   favBtn.title="お気に入りを切り替え";
    renderRanking();updateMyPage();syncPlanLocks(); if(document.getElementById("compare").classList.contains("active"))renderFavoriteCompare();
  };
  const exBtn=document.getElementById("detailExclude");
@@ -3632,9 +3657,19 @@ document.getElementById("dInvested").addEventListener("change",e=>{
  const no=currentHorse.no;
  if(e.target.checked){
    state.invested[no]=true;
+   state.favorites[no]=true;
    saveState();
    syncInvestmentUI();
+   const favBtn=document.getElementById("detailFav");
+   if(favBtn){
+     favBtn.textContent="★ お気に入り";
+     favBtn.classList.add("active");
+     favBtn.title="出資確定馬はお気に入りに自動登録されます";
+   }
+   renderRanking();
    updateMyPage();
+   syncPlanLocks();
+   if(document.getElementById("compare")?.classList.contains("active"))renderFavoriteCompare();
    return;
  }
  if(!confirm(`${currentHorse.name}を出資馬から外しますか？\n登録済みの正式馬名は消さずに保持します。`)){
