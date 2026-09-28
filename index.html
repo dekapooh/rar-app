@@ -3218,7 +3218,7 @@ function renderRanking(){
  const suffixMatch=recruitmentName.match(/(の\d{2})$/);
  const suffix=suffixMatch?suffixMatch[1]:"";
  const recruitmentBase=suffix?recruitmentName.slice(0,-suffix.length):recruitmentName;
- const registeredName=effectiveRegisteredName(h)||recruitmentBase;
+ const registeredName=effectiveRegisteredName(h)||"未登録";
  const officialRank=officialRankMap.get(h.no);
  return `<div class="rankrow ${i<3?'top':''}" onclick="openHorse(${h.no},'ranking')">
  ${rankEmblemHTML(h.rank,"personal")}
@@ -3480,7 +3480,7 @@ function renderSearch(){
    <div class="ranknum">${h.no}</div>
    <div>
      <div class="hname">${h.name}${state.favorites[h.no]?' ★':''}${state.excluded[h.no]?' <span class="excluded-note">除外</span>':''}</div>
-     ${datasetRegisteredName(h)?`<div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h))}</div>`:""}
+     <div class="hmeta">登録名：${escapeHTML(datasetRegisteredName(h)||"未登録")}</div>
      <div class="hmeta">${sexLabel(h.sex)}｜${recruitmentStatusLabel(h)}｜${h.sire} × ${h.dam}<span class="price-tag">${Number(h.sharePrice||0).toFixed(Number(h.sharePrice||0)%1?1:0)}万円</span></div>
    </div>
    <div class="score">${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}<small>${canViewHorseOfficial(h.no)?" Official":" PLAN"}</small></div>
@@ -3843,7 +3843,7 @@ function openHorse(no,from,options={}){
  document.getElementById("detailName").textContent=currentHorse.name;
  const officialRegistered=datasetRegisteredName(currentHorse);
  const registeredLine=document.getElementById("detailRegisteredName");
- if(registeredLine)registeredLine.textContent=officialRegistered?`登録名：${officialRegistered}`:"";
+ if(registeredLine)registeredLine.textContent=`登録名：${officialRegistered||"未登録"}`;
  document.getElementById("detailBasic").textContent=`${sexLabel(currentHorse.sex)}｜${currentHorse.sire} × ${currentHorse.dam}｜募集総額 ${Number(currentHorse.price).toLocaleString()}万円`;
  const bd=new Date(currentHorse.birth+"T00:00:00");
  document.getElementById("dBirth").textContent=`${bd.getFullYear()}年${bd.getMonth()+1}月${bd.getDate()}日`;
@@ -4146,7 +4146,7 @@ function updateMyPage(){
      const year=horseBirthYear(h);
      const heading=year!==lastYear?`<div class="invested-generation-title"><span>${year}年産</span><span>${nos.filter(n=>{const x=HORSES.find(hh=>hh.no===n);return x&&horseBirthYear(x)===year}).length}頭</span></div>`:"";
      lastYear=year;
-     const registered=officialName?`登録名：${escapeHTML(officialName)}`:`<span class="invested-official-pending">正式馬名 未登録</span>`;
+     const registered=`登録名：${escapeHTML(officialName||"未登録")}`;
      const right=canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒";
      return `${heading}<div class="myhorse-row invested-row" onclick="openHorse(${h.no},'mypage')">
        <div class="ranknum">${h.no}</div>
@@ -4164,7 +4164,7 @@ function updateMyPage(){
      const memo=state.memos[no]||"";
      let right=myPageView==="points" ? `${point>0?"+":""}${point} pt` : (canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒");
      const officialName=datasetRegisteredName(h);
-     const normalSub=`${officialName?`登録名：${escapeHTML(officialName)}｜`:""}${sexLabel(h.sex)}｜${recruitmentStatusLabel(h)}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
+     const normalSub=`登録名：${escapeHTML(officialName||"未登録")}｜${sexLabel(h.sex)}｜${recruitmentStatusLabel(h)}｜総合 ${canViewHorseOfficial(h.no)?Number(h.total).toFixed(1):"🔒"}`;
      const subHtml=myPageView==="memos"
        ? `<div class="memo-preview">${escapeHTML(memo)}</div>`
        : `<div class="myhorse-note">${normalSub}</div>`;
