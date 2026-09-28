@@ -1945,23 +1945,23 @@ main{padding-top:84px}
 
 /* RC67.10 My Page base filters — compact content-width controls */
 #mypage .base-filter-row{
-  display:flex!important;
-  grid-template-columns:none!important;
-  justify-content:flex-start!important;
+  display:grid!important;
+  grid-template-columns:.68fr .68fr 1.32fr 1.32fr!important;
+  justify-content:stretch!important;
   align-items:center!important;
-  gap:5px!important;
+  gap:3px!important;
   margin-top:5px!important;
   margin-bottom:0!important;
 }
 #mypage .base-filter-row .base-filter-toggle{
-  width:auto!important;
+  width:100%!important;
   min-width:0!important;
   min-height:26px!important;
-  padding:2px 7px!important;
+  padding:2px 3px!important;
   border-radius:8px!important;
   display:inline-flex!important;
   grid-template-columns:none!important;
-  flex:0 0 auto!important;
+  justify-content:center!important;
 }
 #mypage .base-filter-row .base-filter-toggle .toggle-main{
   gap:4px!important;
@@ -1970,10 +1970,14 @@ main{padding-top:84px}
 }
 #mypage .base-filter-row .base-filter-toggle .toggle-max{display:none!important}
 @media(max-width:390px){
-  #mypage .base-filter-row{gap:4px!important;margin-top:4px!important}
+  #mypage .base-filter-row{
+    grid-template-columns:.66fr .66fr 1.34fr 1.34fr!important;
+    gap:2px!important;
+    margin-top:4px!important;
+  }
   #mypage .base-filter-row .base-filter-toggle{
     min-height:25px!important;
-    padding:2px 6px!important;
+    padding:2px 3px!important;
   }
 }
 
