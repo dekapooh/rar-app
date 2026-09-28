@@ -1584,6 +1584,37 @@ main{padding-top:84px}
   #ranking .rank-recruitment-name{font-size:11px!important}
   #ranking .rankrow>.score{font-size:16px!important}
 }
+
+/* RC67.5 ranking sticky viewport fix — clear header / full-width slab / cut on rankheader rule */
+#ranking .rank-top-sticky{
+  top:74px!important;
+  z-index:35!important;
+  width:calc(100% + 28px)!important;
+  margin-left:-14px!important;
+  margin-right:-14px!important;
+  padding:6px 14px 0!important;
+  background:#fff!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+#ranking .rankheader{
+  margin-bottom:0!important;
+  padding-bottom:5px!important;
+  border-bottom:1px solid #D8E3DB!important;
+}
+#ranking #rankList{
+  margin-top:0!important;
+}
+@media(max-width:390px){
+  #ranking .rank-top-sticky{
+    top:70px!important;
+    width:calc(100% + 28px)!important;
+    margin-left:-14px!important;
+    margin-right:-14px!important;
+    padding:6px 14px 0!important;
+  }
+}
 </style>
 <style>
 .career-sim{margin-top:10px;padding-top:9px;border-top:1px solid #e4ebe7}
