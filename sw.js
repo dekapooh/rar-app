@@ -140,6 +140,10 @@ self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET") return;
   const req=event.request; const url=new URL(req.url);
 
+  // Standalone RaD demo is not an RAR navigation. Let the browser fetch it normally.
+  // Keep every pre-existing RAR app-shell, admin, cache and offline route unchanged.
+  if(url.origin===self.location.origin && url.pathname.startsWith(new URL("./rad-preview/",self.registration.scope).pathname)) return;
+
   // RAR /100 owner preview: render the preview HTML as-is.
   // Do not apply Public Beta STANDARD transformation or cache it as production index.
   if(url.pathname.endsWith("/rar100-preview.html")){
