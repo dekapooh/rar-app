@@ -4473,4 +4473,64 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+
+<!-- RAR methodology acknowledgement v1: independent of scoring and personal data -->
+<style>
+#rarMethodGate{position:fixed;inset:0;z-index:99999;background:rgba(9,22,38,.80);display:flex;align-items:center;justify-content:center;padding:16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
+#rarMethodGate[hidden]{display:none!important}
+#rarMethodGate .rar-gate-panel{background:#fff;color:#172033;border-radius:18px;width:min(100%,480px);max-height:min(92dvh,850px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px #07152460}
+#rarMethodGate .rar-gate-head{background:#0f2f57;color:white;padding:20px 20px 16px}
+#rarMethodGate h2{font-size:20px;margin:0 0 6px}
+#rarMethodGate .rar-gate-sub{font-size:12px;opacity:.9;margin:0}
+#rarMethodGate .rar-gate-content{padding:17px 20px;overflow:auto;overscroll-behavior:contain;font-size:13px;line-height:1.7}
+#rarMethodGate h3{font-size:14px;color:#0f2f57;margin:0 0 5px}
+#rarMethodGate section{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #e0e6ef}
+#rarMethodGate section:last-of-type{border:0;margin-bottom:0}
+#rarMethodGate p{margin:0}
+#rarMethodGate .rar-gate-foot{padding:13px 20px 18px;border-top:1px solid #e0e6ef;background:#fff}
+#rarMethodGate label{display:flex;gap:9px;align-items:flex-start;font-size:12px;font-weight:700;line-height:1.6}
+#rarMethodGate input{width:18px;height:18px;flex:none;margin-top:1px;accent-color:#0f2f57}
+#rarMethodGate button{margin-top:12px;width:100%;padding:13px;border:0;border-radius:10px;background:#0f2f57;color:#fff;font-size:14px;font-weight:800}
+#rarMethodGate button:disabled{background:#b4becb;cursor:not-allowed}
+#rarMethodGate .rar-gate-minor{font-size:11px;color:#667085;margin-top:7px}
+</style>
+<div id="rarMethodGate" role="dialog" aria-modal="true" aria-labelledby="rarGateTitle">
+ <div class="rar-gate-panel">
+  <div class="rar-gate-head"><h2 id="rarGateTitle">RARの評価方法について</h2><p class="rar-gate-sub">ご利用前に、評価の考え方をご確認ください。</p></div>
+  <div class="rar-gate-content" tabindex="0">
+   <section><h3>01｜RAR Officialの評価</h3><p>RARの評価項目・配点・重み付けは、RAR独自の評価基準です。大項目・小項目は、募集時点で確認できる公式資料・計測値・馬体情報・血統情報などを根拠とし、定められた基準に沿って評価します。評価には観察・解釈や資料の制約が含まれ、将来の競走能力を客観的に証明するものではありません。</p></section>
+   <section><h3>02｜Dream（夢）の算出</h3><p>Potential（潜在）とPedigree（血統）の評価を基礎に、1,000通りの競走キャリアをシミュレーションし、その到達点の分布・段階値からDreamを算出します。Dreamは到達可能性を示すモデル上の評価であり、重賞勝利などの実現を保証するものではありません。</p></section>
+   <section><h3>03｜IV（Investment Value／投資価値）の算出</h3><p>Dreamの基礎となる競走キャリアシミュレーションを用い、Middle（中央値側）とHigh（上限側）それぞれの競走成績・獲得賞金を積み上げ、募集価格等との関係からIVを評価します。単純にDreamの点数を賞金へ換算する方法ではありません。将来の配当・利益を保証するものでもありません。</p></section>
+   <section><h3>04｜評価と利用上の注意</h3><p>RAR Officialは募集時点の情報に基づくモデル評価です。実際の成績には故障、成長、育成・厩舎環境、レース条件など、評価だけでは捉えきれない要因が影響します。点数や順位は出資判断を支援する参考情報であり、購入・出資の推奨や利益保証ではありません。最終的な判断はご自身で行ってください。</p></section>
+  </div>
+  <div class="rar-gate-foot">
+   <label><input id="rarGateCheck" type="checkbox"><span>評価方法と限界を理解し、参考情報としてRARを利用します。</span></label>
+   <button id="rarGateAccept" type="button" disabled>理解してRARを利用する</button>
+   <p class="rar-gate-minor">同意しない場合は、アプリの内容へ進めません。確認内容が改訂された場合は再確認を求めます。</p>
+  </div>
+ </div>
+</div>
+<script>
+(function(){
+ "use strict";
+ const key="rar_methodology_ack_v1";
+ const gate=document.getElementById("rarMethodGate");
+ const check=document.getElementById("rarGateCheck");
+ const accept=document.getElementById("rarGateAccept");
+ let accepted=false;
+ try{accepted=localStorage.getItem(key)==="accepted";}catch(_){}
+ if(accepted){gate.hidden=true;return;}
+ gate.hidden=false;
+ document.body.style.overflow="hidden";
+ check.addEventListener("change",()=>{accept.disabled=!check.checked;});
+ accept.addEventListener("click",()=>{
+   if(!check.checked)return;
+   try{localStorage.setItem(key,"accepted");}catch(_){}
+   gate.hidden=true;
+   document.body.style.overflow="";
+ });
+ gate.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();}});
+})();
+</script>
+
 </body></html>
