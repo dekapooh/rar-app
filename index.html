@@ -2372,6 +2372,7 @@ main{padding-top:84px}
   </div>
   <div id="favList" class="hidden"></div>
   <div id="memoList" class="hidden"></div>
+  <div class="card" style="margin-top:16px;padding:14px"><b style="font-size:13px">RARの評価基準</b><p class="note" style="margin:6px 0 12px">Official・Dream・IVの評価方法と利用上の注意を確認できます。</p><button id="rarMethodReviewBtn" type="button" class="btn secondary" style="width:100%">評価方法を確認する</button></div>
 </section>
 
 <section id="compare" class="screen">
@@ -4506,6 +4507,7 @@ if ("serviceWorker" in navigator) {
   <div class="rar-gate-foot">
    <label><input id="rarGateCheck" type="checkbox"><span>評価方法と限界を理解し、参考情報としてRARを利用します。</span></label>
    <button id="rarGateAccept" type="button" disabled>理解してRARを利用する</button>
+   <button id="rarGateClose" type="button" hidden style="background:#e9eef4;color:#23344c">マイページに戻る</button>
    <p class="rar-gate-minor">同意しない場合は、アプリの内容へ進めません。確認内容が改訂された場合は再確認を求めます。</p>
   </div>
  </div>
@@ -4517,15 +4519,28 @@ if ("serviceWorker" in navigator) {
  const gate=document.getElementById("rarMethodGate");
  const check=document.getElementById("rarGateCheck");
  const accept=document.getElementById("rarGateAccept");
+ const close=document.getElementById("rarGateClose");
+ const review=document.getElementById("rarMethodReviewBtn");
  let accepted=false;
  try{accepted=localStorage.getItem(key)==="accepted";}catch(_){}
- if(accepted){gate.hidden=true;return;}
- gate.hidden=false;
- document.body.style.overflow="hidden";
+ if(accepted){gate.hidden=true;}else{gate.hidden=false;document.body.style.overflow="hidden";}
  check.addEventListener("change",()=>{accept.disabled=!check.checked;});
  accept.addEventListener("click",()=>{
    if(!check.checked)return;
    try{localStorage.setItem(key,"accepted");}catch(_){}
+   gate.hidden=true;
+   document.body.style.overflow="";
+ });
+ review?.addEventListener("click",()=>{
+   if(!accepted)return;
+   gate.hidden=false;
+   check.parentElement.hidden=true;
+   accept.hidden=true;
+   close.hidden=false;
+   document.body.style.overflow="hidden";
+   gate.querySelector(".rar-gate-content").scrollTop=0;
+ });
+ close.addEventListener("click",()=>{
    gate.hidden=true;
    document.body.style.overflow="";
  });
