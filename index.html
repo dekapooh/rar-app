@@ -4502,10 +4502,11 @@ if ("serviceWorker" in navigator) {
    <section><h3>01｜RAR Officialの評価</h3><p>RARの評価項目・配点・重み付けは、RAR独自の評価基準です。大項目・小項目は、募集時点で確認できる公式資料・計測値・馬体情報・血統情報などを根拠とし、定められた基準に沿って評価します。評価には観察・解釈や資料の制約が含まれ、将来の競走能力を客観的に証明するものではありません。</p></section>
    <section><h3>02｜Dream（夢）の算出</h3><p>Potential（潜在）とPedigree（血統）の評価を基礎に、1,000通りの競走キャリアをシミュレーションし、その到達点の分布・段階値からDreamを算出します。Dreamは到達可能性を示すモデル上の評価であり、重賞勝利などの実現を保証するものではありません。</p></section>
    <section><h3>03｜IV（Investment Value／投資価値）の算出</h3><p>Dreamの基礎となる競走キャリアシミュレーションを用い、Middle（中央値側）とHigh（上限側）それぞれの競走成績・獲得賞金を積み上げ、募集価格等との関係からIVを評価します。単純にDreamの点数を賞金へ換算する方法ではありません。将来の配当・利益を保証するものでもありません。</p></section>
-   <section><h3>04｜評価と利用上の注意</h3><p>RAR Officialは募集時点の情報に基づくモデル評価です。実際の成績には故障、成長、育成・厩舎環境、レース条件など、評価だけでは捉えきれない要因が影響します。点数や順位は出資判断を支援する参考情報であり、購入・出資の推奨や利益保証ではありません。最終的な判断はご自身で行ってください。</p></section>
+   <section><h3>04｜年度別データの取り扱いについて</h3><p><strong>2026年募集馬は正規の評価手順に基づく採点です。</strong>一方、<strong>2025年以前の募集馬は、2026年時点で過去の募集時資料を遡って評価したもの</strong>です。募集当時にリアルタイムで採点した記録ではないため、過去年度の点数・順位は参考値としてご利用ください。過去の競走成績を根拠に当時の点数を調整・再学習することは、RARの原則上認めていません。</p></section>
+   <section><h3>05｜評価と利用上の注意</h3><p>RAR Officialは募集時点の情報に基づくモデル評価です。実際の成績には故障、成長、育成・厩舎環境、レース条件など、評価だけでは捉えきれない要因が影響します。点数や順位は出資判断を支援する参考情報であり、購入・出資の推奨や利益保証ではありません。最終的な判断はご自身で行ってください。</p></section>
   </div>
   <div class="rar-gate-foot">
-   <label><input id="rarGateCheck" type="checkbox"><span>評価方法と限界を理解し、参考情報としてRARを利用します。</span></label>
+   <label><input id="rarGateCheck" type="checkbox"><span>評価方法・年度別データの違い・限界を理解し、参考情報としてRARを利用します。</span></label>
    <button id="rarGateAccept" type="button" disabled>理解してRARを利用する</button>
    <button id="rarGateClose" type="button" hidden style="background:#e9eef4;color:#23344c">マイページに戻る</button>
    <p class="rar-gate-minor">同意しない場合は、アプリの内容へ進めません。確認内容が改訂された場合は再確認を求めます。</p>
@@ -4515,7 +4516,7 @@ if ("serviceWorker" in navigator) {
 <script>
 (function(){
  "use strict";
- const key="rar_methodology_ack_v1";
+ const key="rar_methodology_ack_v2";
  const gate=document.getElementById("rarMethodGate");
  const check=document.getElementById("rarGateCheck");
  const accept=document.getElementById("rarGateAccept");
