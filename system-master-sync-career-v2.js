@@ -217,11 +217,12 @@
     if (!auditedCareerDisplayRequest) {
       const controller = new AbortController();
       const deadline = setTimeout(() => controller.abort(),5000);
-      auditedCareerDisplayRequest = fetch('./audit/silk-2026-career-display-v1.json', {cache:'no-store',signal:controller.signal})
+      auditedCareerDisplayRequest = fetch('./audit/silk-2026-career-sources-v2.json', {cache:'no-store',signal:controller.signal})
         .then(response => { if (!response.ok) throw new Error('Career display audit unavailable'); return response.json(); })
         .then(value => {
           if (value.schema_version !== 'rar-audited-career-display-v1' || value.dataset_key !== '2026:silk'
-              || value.status !== 'REPLAY_MATCHED_DISPLAY_ONLY' || value.records?.length !== 82) {
+              || value.status !== 'REPLAY_MATCHED_DISPLAY_ONLY' || value.records?.length !== 82
+              || value.records.some(row=>!row.recorded_suitability || !row.recorded_career)) {
             throw new Error('Career display audit identity mismatch');
           }
           auditedCareerDisplay = value;

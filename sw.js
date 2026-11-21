@@ -1,8 +1,8 @@
-const CACHE_NAME="rar-rc67-career-sources-v55";
+const CACHE_NAME="rar-rc67-career-sources-v56";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v4.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v5.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v4.js"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v5.js"><\/script>';
 function injectSystemMasterSync(html){
   if(/<script\b[^>]*\bsrc=["'][^"']*system-master-sync(?:-career-v[0-9]+)?\.js(?:[?][^"']*)?["']/i.test(html)) return html;
   return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;
