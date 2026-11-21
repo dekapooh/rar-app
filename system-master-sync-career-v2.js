@@ -239,6 +239,7 @@
     if (['dream','investment','rar'].some(group => Object.entries(audit.scenarios_binding[group]).some(([key,value]) => record.scenarios?.[group]?.[key] !== value))) return record;
     if (Object.entries(audit.career_binding).some(([key,value]) => JSON.stringify(record.career?.[key]) !== JSON.stringify(value))) return record;
     return {...record, suitability:audit.suitability,
+      recorded_suitability:audit.recorded_suitability,recorded_career:audit.recorded_career,
       career:{...record.career,...audit.career_details}, display_origin:'AUDITED_CURRENT_CAREER'};
   }
 
@@ -737,7 +738,7 @@
       growth: suitability.growth_display
         || ((suitability.growth_type && suitability.growth_type !== 'unknown') ? suitability.growth_type : '')
         || ((career.growth && career.growth !== 'unknown') ? career.growth : '')
-        || (career.growth_status === 'NOT_INFERRED_OBJECTIVE_V1' ? '未判定（現行仕様は成長推定なし）' : '') || h.growth,
+        || (career.growth_status === 'NOT_INFERRED_OBJECTIVE_V1' ? '未判定（Objective v1では推定なし）' : '') || h.growth,
       targets: Array.isArray(suitability.target_races) && suitability.target_races.length
         ? suitability.target_races.join('・')
         : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・')
@@ -745,6 +746,15 @@
       careerDetails: hasCareerDetails ? career : null,
       suitabilityOrigin: r.display_origin || (hasCareerDetails ? 'PUBLISHED_CAREER' : 'DETAILS_UNAVAILABLE')
     });
+
+    // Keep each horse's recorded aptitude separate from its current score route.
+    // Only the identity/score-bound 82-horse audit can supply original records.
+    h.scoringSuitability = Object.fromEntries(['turf','dirt','distance','growth','category','targets'].map(key=>[key,h[key]||'']));
+    h.recordedCareer = r.recorded_career || null;
+    h.recordedSuitability = r.recorded_suitability || null;
+    if (h.recordedSuitability) {
+      for (const key of ['turf','dirt','distance','growth','category','targets']) h[key]=h.recordedSuitability[key]||'';
+    }
 
     h.small = h.small || {};
     h.smallStatus = {

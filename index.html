@@ -2512,8 +2512,8 @@ main{padding-top:84px}
     </div>
     <div class="rc34-fit-note" id="dFitSourceNote">RAR Official 適性データ</div>
     <details id="legacySuitabilityReference" style="display:none;margin-top:10px">
-      <summary>以前の適性表示（参考）</summary>
-      <p class="note">過去の表示を保存した参考情報です。現在のCareer計算に使われた適性・代表ルートとは区別してください。</p>
+      <summary>現行採点の入力・代表ルート</summary>
+      <p class="note">現在の点数・賞金に対応する計算経路です。上の個体別原記録とは分けて表示します。</p>
       <div id="legacySuitabilityReferenceBody" class="note"></div>
     </details>
     <div id="dFitLock" class="detail-access-lock" style="display:none">🔒 この機能は現在のプランではご利用いただけません。</div>
@@ -2575,20 +2575,23 @@ function renderInvestmentCareerSimulation(h){
  const meta=CAREER_META[h.no];
  if(!meta)return "";
  const surface=careerSurfaceLabel(meta.surface);
- const targets=String(h.targets||"").trim();
+ const scoring=h.scoringSuitability||h;
+ const targets=String(scoring.targets||"").trim();
  const highTarget=targets?`<div class="career-sim-target">主なターゲット：${targets}</div>`:"";
- return `<div class="career-sim">
-   <div class="career-sim-title">競走生活シミュレーション</div>
+ const old=h.recordedCareer;
+ const recorded=old?`<div id="recordedCareer" class="career-sim"><div class="career-sim-title">原記録のCareer：No.${h.no} ${escapeHTML(h.name)}</div><div class="note">2026-09-14保存記録。現在のOfficial点数・賞金とは別の記録です。</div><div>Middle：${old.middle_starts}戦｜${fmtPrizeYen(old.middle_prize_yen)}｜ROI ${fmt1(old.middle_roi_rate)}%</div><div>High：${old.high_starts}戦｜${fmtPrizeYen(old.high_prize_yen)}｜ROI ${fmt1(old.high_roi_rate)}%</div><div>成長傾向：${escapeHTML(h.growth||"－")}</div><div>主要狙い：${escapeHTML(h.targets||"－")}</div></div>`:"";
+ return recorded+`<div class="career-sim">
+   <div class="career-sim-title">現在のOfficialに対応するCareer：No.${h.no} ${escapeHTML(h.name)}</div>
    <div class="career-sim-grid">
      <div class="career-sim-box">
        <div class="career-sim-head"><b>Middle</b><span>${meta.middleStarts}戦想定</span></div>
-       <div class="career-sim-line">${surface}中心｜成長傾向 ${h.growth||"－"}</div>
+       <div class="career-sim-line">${surface}中心｜成長傾向 ${scoring.growth||"－"}</div>
        <div class="career-sim-line">想定獲得賞金 ${fmtPrizeYen(h.prizeMiddleYen)}｜ROI ${fmt1(h.roiMiddlePct)}%</div>
        <div class="career-sim-line">Investment Value ${fmt1(ivFromRoiPct(h.roiMiddlePct))}/30</div>
      </div>
      <div class="career-sim-box">
        <div class="career-sim-head"><b>High</b><span>${meta.highStarts}戦想定</span></div>
-       <div class="career-sim-line">${surface}中心｜成長傾向 ${h.growth||"－"}</div>
+       <div class="career-sim-line">${surface}中心｜成長傾向 ${scoring.growth||"－"}</div>
        <div class="career-sim-line">想定獲得賞金 ${fmtPrizeYen(h.prizeHighYen)}｜ROI ${fmt1(h.roiHighPct)}%</div>
        <div class="career-sim-line">Investment Value ${fmt1(ivFromRoiPct(h.roiHighPct))}/30</div>
        ${highTarget}
@@ -3909,12 +3912,14 @@ function openHorse(no,from,options={}){
  document.getElementById("dGrowth").textContent=canFit?(currentHorse.growth||"－"):"";
  document.getElementById("dTargets").textContent=canFit?(currentHorse.targets||"－"):"";
  const fitSource=document.getElementById("dFitSourceNote");
- if(fitSource)fitSource.textContent=currentHorse.careerDetails
-   ? "現在のCareer計算と一致する適性・High代表ルートを表示。成長型は現行仕様で未判定。主適性外は不向きの断定ではありません。"
+ if(fitSource)fitSource.textContent=currentHorse.recordedSuitability
+   ? `No.${currentHorse.no} ${currentHorse.name}の保存済み原記録。現在の点数に対応する計算経路は下の確認欄に表示します。`
+   : currentHorse.careerDetails
+   ? "この馬の採点時入力とCareer代表ルートを表示。Objective v1では成長型を推定しません。主適性外は不向きの断定ではありません。"
    : (currentHorse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
  const legacyFit=document.getElementById("legacySuitabilityReference");
  if(legacyFit){
-   const legacy=currentHorse.legacySuitability;
+   const legacy=currentHorse.recordedSuitability?currentHorse.scoringSuitability:null;
    legacyFit.style.display=canFit && legacy?"block":"none";
    const body=document.getElementById("legacySuitabilityReferenceBody");
    if(body)body.innerHTML=legacy?[["芝適性",legacy.turf],["ダート適性",legacy.dirt],["距離",legacy.distance],["成長傾向",legacy.growth],["カテゴリ",legacy.category],["主要狙い",legacy.targets]].map(([label,value])=>`<div>${escapeHTML(label)}：${escapeHTML(value||"－")}</div>`).join(""):"";
@@ -4473,7 +4478,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v3.js" defer></script>
+<script src="./system-master-sync-career-v4.js" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

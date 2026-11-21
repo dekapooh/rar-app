@@ -23,6 +23,10 @@ from builder_runtime.incremental_frozen_record_builder import _SIRE_ALIASES,_can
 live=json.loads(args.dataset_json.read_text())
 assert live['dataset_key']=='2026:silk'
 rows=[]
+recorded_suit=json.loads((args.rar_root/'builder_app/web/silk_2026_suitability_v1.json').read_text())
+recorded_by_no={r['no']:r for r in recorded_suit['records']}
+archive=json.loads((args.rar_root/'specs/frozen/RAR_ROI_IV_82_FROZEN_20260914.json').read_text())
+archive_by_no={r['no']:r for r in archive['records']}
 for r in live['records']:
     if r['no']>82: continue
     suit=score_sire_for_dataset(sire=_SIRE_ALIASES.get(r['sire'],r['sire']),dataset_key='2026:silk')
@@ -42,12 +46,21 @@ for r in live['records']:
     details=from_auto_score(score,suit)
     details['replayed_event_sha256']=_canonical_digest({
         'middle':details.pop('events_middle'),'high':details.pop('events_high')})
+    original=recorded_by_no[r['no']]
+    old=archive_by_no[r['no']]
+    names={original['name'],old['name'],r['name']}
+    assert len(names)==1 or (r['no']==82 and names <= {'セサの25','外セサの25'}),r['no']
     rows.append({'no':r['no'],'horse_id':r['horse_id'],
         'source_submission_id':r['source_submission_id'],'name':r['name'],
         'sire':r['sire'],'sex':r['sex'],
         'score_binding':{k:r[k] for k in ('potential','pedigree','dream','investment','total')},
         'scenarios_binding':r['scenarios'],'career_binding':r['career'],
-        'suitability':suit,'career_details':details})
+        'suitability':suit,'career_details':details,
+        'recorded_suitability':{**original['legacy_raw'],'growth':original['growth_type']},
+        'recorded_career':{'no':old['no'],'name':old['name'],
+            'source_spec':archive['spec_id'],
+            'source_commit':'496727e589d571b9232f29316857d4c9b9c50f27',
+            **{key:old[key] for key in ('middle_starts','high_starts','middle_prize_yen','high_prize_yen','middle_roi_rate','high_roi_rate')}}})
 assert len(rows)==82 and {r['no'] for r in rows}==set(range(1,83))
 manifest={'schema_version':'rar-audited-career-display-v1','dataset_key':'2026:silk',
     'status':'REPLAY_MATCHED_DISPLAY_ONLY',
