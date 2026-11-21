@@ -1,6 +1,10 @@
 (() => {
   'use strict';
 
+  // A service-worker HTML transform must not create a second sync runtime.
+  if (window.__RAR_CAREER_SYNC_STARTED__) return;
+  window.__RAR_CAREER_SYNC_STARTED__ = true;
+
   const API_URL = 'https://rar-project-5a27e.web.app/v1/consumer-data/current';
   const DATASET_API_BASE = 'https://rar-project-5a27e.web.app/v1/consumer-data/dataset/';
   const EXPECTED_SCHEMA = 'rar-app-data-v3';
@@ -786,7 +790,7 @@
         ? cloneHorse(legacyByNo.get(no))
         : blankHorse(no);
       if (data.dataset_key === LEGACY_DATASET.dataset_key && legacyByNo.has(no)) {
-        base.legacySuitability = Object.fromEntries(['turf','dirt','distance','growth','category','targets'].map(key => [key,base[key] || '']));
+        base.legacySuitability = base.legacySuitability || Object.fromEntries(['turf','dirt','distance','growth','category','targets'].map(key => [key,base[key] || '']));
         // A successful API sync must not mix current scores with legacy aptitude.
         for (const key of ['turf','dirt','distance','growth','category','targets']) base[key] = '';
       }

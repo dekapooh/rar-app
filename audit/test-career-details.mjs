@@ -31,12 +31,15 @@ const transforms=sw.slice(0,sw.indexOf('self.addEventListener("install"'));
 const swContext=vm.createContext({});vm.runInContext(transforms,swContext);
 const index=fs.readFileSync('index.html','utf8');
 const publicHtml=swContext.makeRC66(index), adminHtml=swContext.makeAdminRC66(index);
+for(const html of [publicHtml,adminHtml])assert.equal((html.match(/<script\b[^>]*src=["'][^"']*system-master-sync[^"']*["']/g)||[]).length,1,'SW must not inject a second runtime');
+const initContext=vm.createContext({window:{__RAR_CAREER_SYNC_STARTED__:true}});
+vm.runInContext(sync,initContext); // duplicate loads must exit before DOM/fetch work
 assert.ok(publicHtml.includes('state.plan="standard"; // PUBLIC BETA'));
 assert.ok(adminHtml.includes('state.plan="premium"; // BETA'));
 assert.ok(adminHtml.includes('id="premiumSmallOfficial"'));
 assert.ok(adminHtml.includes('ADMIN / INTERNAL'));
 assert.ok(!adminHtml.includes('state.plan="standard"; // PUBLIC BETA'));
-assert.equal(fs.readFileSync('system-master-sync-career-v2.js','utf8'),sync,'versioned and canonical sync code must match');
+assert.equal(fs.readFileSync('system-master-sync-career-v3.js','utf8'),sync,'versioned and canonical sync code must match');
 const manifest=JSON.parse(fs.readFileSync('audit/silk-2026-career-display-v1.json','utf8'));
 assert.equal(manifest.records.length,82);
 const overlay=sync.slice(sync.indexOf('  function auditedDisplayRecord('),sync.indexOf('  function loadLastDatasetKey('));
@@ -62,4 +65,15 @@ for(const audit of manifest.records){
 const step=manifest.records.find(r=>r.no===59);
 assert.equal(step.suitability.distance_min_m,1400);assert.equal(step.suitability.distance_max_m,1800);
 assert.deepEqual(step.career_details.representative_targets,['フェブラリーS']);
-console.log('CAREER_UI_MAPPING_AND_EXISTING_PREMIUM_ADMIN=PASS (6 groups, 82 audited records, cross-source rejection)');
+// Preserve the original static reference across dataset switches/repeated apply.
+const applySource=sync.slice(sync.indexOf('  function applyDataset('),sync.indexOf('    HORSES.splice(',sync.indexOf('  function applyDataset(')));
+const staticStep=JSON.parse(index.match(/const HORSES=(\[.*?\]);\n/s)[1]).find(h=>h.no===59);
+const applyContext=vm.createContext({HORSES:[staticStep],staticHorseSnapshot:null,LEGACY_DATASET:{dataset_key:'2026:silk'},cloneHorse:v=>JSON.parse(JSON.stringify(v)),blankHorse:()=>({}),patchHorse:(h)=>Object.assign(h,{growth:'unknown',distance:'ダ1400～1800m'}),auditedDisplayRecord:r=>r,applyRegisteredNameOverride:()=>{},applyRecruitmentSnapshot:()=>{}});
+vm.runInContext(applySource+'return nextHorses;} this.apply=applyDataset;',applyContext);
+const once=applyContext.apply({dataset_key:'2026:silk',records:[{no:59}]});
+assert.equal(once[0].legacySuitability.growth,'持続成長');
+applyContext.staticHorseSnapshot=once;
+const twice=applyContext.apply({dataset_key:'2026:silk',records:[{no:59}]});
+assert.equal(twice[0].legacySuitability.growth,'持続成長');
+assert.equal(twice[0].legacySuitability.distance,'ダ1600～2000m');
+console.log('CAREER_UI_MAPPING_AND_EXISTING_PREMIUM_ADMIN=PASS (8 groups, 82 audited records, cross-source rejection, single runtime, original reference preservation)');
