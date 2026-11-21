@@ -1,0 +1,89 @@
+{
+  "verified_date_jst": "2026-11-22",
+  "source_correction_commit": "f3fb5aef2e1afbf0139c5ce7ccecaefa29da1b40",
+  "cache_correction_commit": "509dc81b347850b6ddbeff0fa7324285f84a6e08",
+  "ci": {
+    "id": 44962205389,
+    "conclusion": "success"
+  },
+  "deployment": {
+    "id": 44962204935,
+    "conclusion": "success"
+  },
+  "tests": {
+    "groups": 10,
+    "current_score_replay_records": 82
+  },
+  "live_ui": {
+    "url": "https://dekapooh.github.io/rar-app/admin.html",
+    "script": "./system-master-sync-career-v5.js",
+    "No59": {
+      "name": "ステップオブダンスの25",
+      "total": "61.0",
+      "recorded": {
+        "distance": "ダ1600～2000m",
+        "growth": "持続成長",
+        "targets": [
+          "羽田盃",
+          "東京ダービー",
+          "JDC",
+          "チャンピオンズC",
+          "フェブラリーS"
+        ],
+        "starts": [
+          14,
+          23
+        ],
+        "prizes_man": [
+          3196.8,
+          54230.5
+        ]
+      },
+      "current_scoring_route": {
+        "distance": "ダ1400～1800m",
+        "growth": "未判定（Objective v1では推定なし）",
+        "targets": [
+          "フェブラリーS"
+        ],
+        "starts": [
+          13,
+          22
+        ]
+      },
+      "current_and_recorded_separately_labelled": true
+    },
+    "No85": {
+      "name": "パーフェクトフルートの25",
+      "total": "60.4",
+      "distance": "ダ1400～1800m",
+      "growth": "未判定（Objective v1では推定なし）",
+      "targets": [
+        "フェブラリーS"
+      ],
+      "starts": [
+        13,
+        22
+      ],
+      "no_No59_archive_or_targets": true,
+      "premium_small_items_visible": true
+    }
+  },
+  "consumer": {
+    "version_id": "a5da6a7ac96feb7305155f8d5ec2e9276b9daa0c69f372dac5375e5389220caf",
+    "record_count": 85,
+    "all_records_unchanged": true
+  },
+  "writes": {
+    "score": 0,
+    "Firestore": 0,
+    "transfer": 0
+  },
+  "acceptance": {
+    "scope": "horse-specific original versus current display correction",
+    "completed": 4,
+    "total": 4
+  },
+  "limits": [
+    "Original No.59 Career and current Official scoring route differ; no numerical rollback or scoring-policy unification performed."
+  ]
+}

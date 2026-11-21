@@ -17,4 +17,10 @@ Original 82-horse recorded suitability is retained in each horse's main aptitude
 
 No score, prize, API record, Firestore or transfer write. No growth model or FROZEN coefficient changes. Growth unknown applies to Objective v1 only; it is not a statement that all historical FROZEN assets lack growth. The existing v2 candidate was inspected and not silently activated.
 
-Tests: 10 groups including No.59 original/current separation, No.85 no inherited Triple Crown, all82 score/identity bindings, cross-source rejection, cache single-runtime and reference retention. Inline/external JS syntax PASS; all82 current replays PASS. Deployment/live comparison pending, acceptance3/4.
+Tests: 10 groups including No.59 original/current separation, No.85 no inherited Triple Crown, all82 score/identity bindings, cross-source rejection, cache single-runtime and reference retention. Inline/external JS syntax PASS; all82 current replays PASS. CI44962205389 and Pages44962204935 succeeded. Live No.59/No.85 comparison passed. Acceptance4/4 for this horse-specific display correction.
+
+The first live attempt exposed a cached pre-correction sidecar. Commit 509dc81b347850b6ddbeff0fa7324285f84a6e08 moves it to audit/silk-2026-career-sources-v2.json and requires original fields. The deployed browser now loads a single v5 runtime and shows the correct separate records.
+
+Original No.59 Career has not been adopted as a new numeric score. This correction restores provenance and display, not unification of historical and current scoring policies.
+
+Final evidence: audit/HORSE_CAREER_SOURCE_LIVE_PROOF_20261122.json.

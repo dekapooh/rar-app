@@ -1,3 +1,5 @@
+> SUPERSEDED: The owner identified separate No.59 and No.85 screenshots. See audit/HORSE_CAREER_SOURCE_CORRECTION_20261122.md; the earlier acceptance conclusion does not establish permission to replace recorded aptitude.
+
 # Current Career versus legacy aptitude display — 2026-11-21
 
 Owner screenshots 1000004664/4665 exposed mixed sources on No.59:

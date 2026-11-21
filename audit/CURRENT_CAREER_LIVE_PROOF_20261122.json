@@ -60,5 +60,7 @@
   "acceptance_gates": {
     "completed": 4,
     "total": 4
-  }
+  },
+  "acceptance_superseded_by": "audit/HORSE_CAREER_SOURCE_CORRECTION_20261122.md",
+  "acceptance_scope_correction": "Prior current-replay consistency checks did not establish that replacement of each horse's original aptitude was appropriate."
 }
