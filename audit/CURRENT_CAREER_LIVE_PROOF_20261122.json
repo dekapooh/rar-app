@@ -1,0 +1,64 @@
+{
+  "verified_at": "2026-11-21T23:17:18.283842+00:00",
+  "implementation_commit": "8a8624dec3a152a8f21aae188b6280b01eb6f9e7",
+  "initial_implementation_commit": "3ffdebedd2820c6fecfe0772cf0523877a73cf55",
+  "ci": {
+    "run_id": 44960828596,
+    "conclusion": "success"
+  },
+  "pages": {
+    "run_id": 44960828588,
+    "conclusion": "success"
+  },
+  "unit_test_groups": 8,
+  "canonical_replay_records": 82,
+  "published_audit_equals_replay": true,
+  "consumer_api": {
+    "dataset_key": "2026:silk",
+    "version_id": "a5da6a7ac96feb7305155f8d5ec2e9276b9daa0c69f372dac5375e5389220caf",
+    "record_count": 85,
+    "all_85_records_equal_before_after": true,
+    "records_sha256": "0016cba7289533818ebb0f5105e292d1fb767ea4296ec2f02a9cc94ddd9ba481"
+  },
+  "live_ui": {
+    "url": "https://dekapooh.github.io/rar-app/admin.html",
+    "method": "visible DOM after native/Playwright search and detail navigation",
+    "nos": [
+      59,
+      83,
+      84,
+      85
+    ],
+    "registered_names_all": "未登録",
+    "current_distance_all": "ダ1400～1800m",
+    "current_growth_all": "未判定（現行仕様は成長推定なし）",
+    "current_targets_all": "フェブラリーS",
+    "premium_small_items_visible_all": true,
+    "totals": {
+      "59": "61.0",
+      "83": "51.4",
+      "84": "55.2",
+      "85": "60.4"
+    },
+    "step_legacy_reference_visible": {
+      "turf": "○",
+      "dirt": "◎",
+      "distance": "ダ1600～2000m",
+      "growth": "持続成長",
+      "category": "ダート三冠～古馬ダートGⅠ/JpnⅠ",
+      "targets": "羽田盃・東京ダービー・JDC・チャンピオンズC・フェブラリーS"
+    },
+    "single_sync_script": "./system-master-sync-career-v3.js",
+    "cache_migration": "old v53 worker injected cached v2 on first reload; next reload used v54 and a single v3 runtime"
+  },
+  "writes": {
+    "consumer_transfer": 0,
+    "firestore": 0,
+    "potential_inference": 0,
+    "score_changes": 0
+  },
+  "acceptance_gates": {
+    "completed": 4,
+    "total": 4
+  }
+}

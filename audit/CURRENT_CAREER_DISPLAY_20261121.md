@@ -39,17 +39,44 @@ change those bands, targets, prizes or coefficients.
   cards and suitability use the same current metadata. No old text is deleted.
 - Sidecar request is bounded to 5 seconds. If unavailable, current details stay
   unavailable and old text remains explicitly reference-only.
-- New script pathname system-master-sync-career-v2.js avoids older service
+- New script pathname system-master-sync-career-v3.js avoids older service
   workers that ignore query-string versions. Canonical and versioned JS bytes
-  are checked equal. SW cache version advances to v53. No Personal storage reset.
+  are checked equal. SW cache version advances to v54. No Personal storage reset.
 
 Reproducible read-only generator: audit/build-current-career-display.py.
 Audited supplement: audit/silk-2026-career-display-v1.json.
-Mapping/cache/Admin tests: 6 groups plus all 82 bindings and rejection of modified
+Mapping/cache/Admin tests: 8 groups plus all 82 bindings and rejection of modified
 scores, identity, submission, scenario, Career counts and cross-dataset reuse PASS.
-All JS syntax checks PASS. Deployment and live comparison verification pending.
+All JS syntax checks PASS. CI 44960828596 and Pages 44960828588 succeeded.
+Live comparison completed on the deployed Premium/Admin screen for Nos.59/83/84/85.
 
 Follow-up acceptance gates fixed at 4: diagnose/canonical comparison; implementation;
 regressions/deployment; live Step/new-horse comparison and score preservation.
-Current 2/4 before deployment.
+Current 4/4 complete.
+
+## Final live verification — 2026-11-22 JST
+
+Implementation commits: 3ffdebedd2820c6fecfe0772cf0523877a73cf55 and
+8a8624dec3a152a8f21aae188b6280b01eb6f9e7.
+
+The live test found an additional duplicate-script injection in the old service
+worker. Fixed the versioned-script detection and added a singleton runtime guard,
+plus preservation of an already captured original reference. Regression tests
+exercise both single-script HTML transforms and repeated reference capture.
+Cache migration from old v53 needed two reloads; v54 serves one v3 sync script.
+
+Verified four live detail pages: names unregistered; Premium small items visible;
+current Career and aptitude show the same surface, distance, growth and targets.
+For No.59 the expanded old reference retains turf ○, dirt ◎, 1600–2000m,
+持続成長, and the original five targets, clearly separate from current metadata.
+Totals remain 61.0 / 51.4 / 55.2 / 60.4 in UI. API full-precision scores unchanged.
+
+Published 85-horse API records and immutable version are exactly equal before and
+after this frontend release. All 82 existing Career replays equal the committed
+read-only supplement. No Firestore write, score update, or transfer was performed.
+
+Machine-readable evidence: audit/CURRENT_CAREER_LIVE_PROOF_20261122.json.
+The UI checks cover four horses, while the automated bindings/replays cover all82.
+This verifies consistency with existing FROZEN rules; it does not validate
+individual predictive accuracy or introduce a growth model.
 
