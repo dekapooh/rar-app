@@ -78,7 +78,7 @@ const perfect={};context.patchHorse(perfect,{...row,no:85,name:'パーフェク�
 assert.equal(perfect.recordedCareer,null);assert.equal(perfect.recordedSuitability,null);
 assert.ok(!perfect.targets.includes('羽田盃'),'No.85 cannot inherit No.59 route');
 const renderSource=index.slice(index.indexOf('function renderInvestmentCareerSimulation('),index.indexOf('const fmt1=',index.indexOf('function renderInvestmentCareerSimulation(')));
-const renderContext=vm.createContext({CAREER_META:{59:{surface:'dirt',middleStarts:13,highStarts:22},85:{surface:'dirt',middleStarts:13,highStarts:22}},careerSurfaceLabel:()=> 'ダート',fmtPrizeYen:v=>String(v),fmt1:v=>Number(v).toFixed(1),ivFromRoiPct:v=>v,escapeHTML:s=>s});
+const renderContext=vm.createContext({CAREER_META:{59:{surface:'dirt',middleStarts:13,highStarts:22},85:{surface:'dirt',middleStarts:13,highStarts:22}},careerSurfaceLabel:()=> 'ダート',fmtPrizeYen:v=>String(v),fmt1:v=>Number(v).toFixed(1),ivFromRoiPct:v=>v,escapeHTML:s=>s,renderCareerEventDetails:()=>''});
 vm.runInContext(renderSource+'this.render=renderInvestmentCareerSimulation;',renderContext);
 const renderedStep=renderContext.render({...restored,no:59});const renderedPerfect=renderContext.render({...perfect,no:85});
 assert.ok(renderedStep.includes('原記録のCareer：No.59 ステップオブダンスの25'));

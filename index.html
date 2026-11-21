@@ -2571,6 +2571,26 @@ function fmtPrizeYen(value){
  const man=Number(value||0)/10000;
  return man.toLocaleString("ja-JP",{minimumFractionDigits:1,maximumFractionDigits:1})+"万円";
 }
+function renderCareerEventDetails(h,scenario){
+ const career=h.careerDetails;
+ const events=career?.['events_'+scenario];
+ if(!Array.isArray(events))return '';
+ const count=Number(career[scenario+'_starts']);
+ const total=Number(career[scenario+'_prize_yen']);
+ if(events.length!==count || !Number.isFinite(total) || events.some(e=>!Number.isFinite(Number(e.gross_prize_yen)) || Number(e.gross_prize_yen)<0))return '<div class="note">保存明細の件数・賞金を検証できません。</div>';
+ const sum=events.reduce((v,e)=>v+Number(e.gross_prize_yen),0);
+ if(Math.abs(sum-total)>0.00001)return '<div class="note">保存明細と賞金合計が一致しません。</div>';
+ const yen=v=>Math.round(v).toLocaleString('ja-JP')+'円';
+ let cumulative=0;
+ const rows=events.map((e,i)=>{
+   cumulative+=Number(e.gross_prize_yen);
+   const position=Number.isInteger(e.finish_position) && e.finish_position>0 ? e.finish_position+'着'
+     : (Number.isFinite(e.performance_position)?'整数着順なし（賞金補間 '+Number(e.performance_position).toFixed(1)+'）':'未記録');
+   const role={PROGRESSION:'進級',TARGET:'指定目標',INFERRED_TARGET:'自動選択目標',FILLER:'一般戦の補充'}[e.route_role]||e.route_role||'未記録';
+   return `<tr><td>${i+1}</td><td>${escapeHTML(String(e.age??'未記録'))}歳</td><td>${escapeHTML(e.race_name||'未記録')}<br><small>${escapeHTML(role)}</small></td><td>${escapeHTML(e.surface==='dirt'?'ダート':e.surface==='turf'?'芝':e.surface||'未記録')} ${escapeHTML(String(e.distance_m??'未記録'))}m</td><td>${escapeHTML(position)}</td><td>${yen(e.gross_prize_yen)}</td><td>${yen(cumulative)}</td></tr>`;
+ }).join('');
+ return `<details class="career-event-details" data-career-events="${scenario}" style="margin-top:10px"><summary>全${events.length}件の保存明細を開く（No.${h.no} ${escapeHTML(h.name)}）</summary><p class="note">Middle・Highの代表経路です。1000回分の全レース履歴ではありません。保存順をそのまま表示しており、開催日順ではありません。小数の補間値は賞金計算用で、実際の着順ではありません。</p><div style="overflow-x:auto"><table style="min-width:680px;width:100%;font-size:12px"><thead><tr><th>保存順</th><th>年齢</th><th>レース・区分</th><th>馬場・距離</th><th>着順／賞金補間</th><th>賞金</th><th>累計</th></tr></thead><tbody>${rows}</tbody></table></div><div class="note">${events.length}件の合計 ${yen(sum)}：保存されたシナリオ賞金と一致</div></details>`;
+}
 function renderInvestmentCareerSimulation(h){
  const meta=CAREER_META[h.no];
  if(!meta)return "";
@@ -2588,6 +2608,7 @@ function renderInvestmentCareerSimulation(h){
        <div class="career-sim-line">${surface}中心｜成長傾向 ${scoring.growth||"－"}</div>
        <div class="career-sim-line">想定獲得賞金 ${fmtPrizeYen(h.prizeMiddleYen)}｜ROI ${fmt1(h.roiMiddlePct)}%</div>
        <div class="career-sim-line">Investment Value ${fmt1(ivFromRoiPct(h.roiMiddlePct))}/30</div>
+       ${renderCareerEventDetails(h,'middle')}
      </div>
      <div class="career-sim-box">
        <div class="career-sim-head"><b>High</b><span>${meta.highStarts}戦想定</span></div>
@@ -2595,6 +2616,7 @@ function renderInvestmentCareerSimulation(h){
        <div class="career-sim-line">想定獲得賞金 ${fmtPrizeYen(h.prizeHighYen)}｜ROI ${fmt1(h.roiHighPct)}%</div>
        <div class="career-sim-line">Investment Value ${fmt1(ivFromRoiPct(h.roiHighPct))}/30</div>
        ${highTarget}
+       ${renderCareerEventDetails(h,'high')}
      </div>
    </div>
  </div>`;

@@ -185,3 +185,6 @@ jobs:
       - name: Career mapping and Public Beta versus Premium Admin regression
         run: node audit/test-career-details.mjs
 
+
+      - name: Stored Career event totals and full-detail rendering
+        run: node audit/test-career-event-details.mjs

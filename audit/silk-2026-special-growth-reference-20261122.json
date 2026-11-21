@@ -1,0 +1,171 @@
+{
+  "model": {
+    "k": 7,
+    "sire_weight": 0.5,
+    "loo_exact_rate": 0.5121951219512195,
+    "loo_within_one_rate": 0.9146341463414634,
+    "loo_mae": 0.573170731707317,
+    "teacher_count": 82,
+    "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+  },
+  "target_cohort_size": 3,
+  "target_features": [
+    {
+      "no": 83,
+      "sire": "ナダル",
+      "sex": "牝",
+      "birth": "2025-03-21",
+      "height": 154.0,
+      "girth": 177.0,
+      "cannon": 19.5,
+      "weight": 430,
+      "subitems": {
+        "scale_frame": 2.0,
+        "rear": 6.0,
+        "trunk": 5.0,
+        "front": 4.0
+      }
+    },
+    {
+      "no": 84,
+      "sire": "パレスマリス",
+      "sex": "牝",
+      "birth": "2025-04-03",
+      "height": 153.0,
+      "girth": 180.0,
+      "cannon": 19.5,
+      "weight": 426,
+      "subitems": {
+        "scale_frame": 1.5,
+        "rear": 5.0,
+        "trunk": 5.0,
+        "front": 2.0
+      }
+    },
+    {
+      "no": 85,
+      "sire": "Yaupon",
+      "sex": "牡",
+      "birth": "2025-04-15",
+      "height": 156.5,
+      "girth": 184.0,
+      "cannon": 20.0,
+      "weight": 463,
+      "subitems": {
+        "scale_frame": 3.0,
+        "rear": 9.0,
+        "trunk": 6.0,
+        "front": 4.0
+      }
+    }
+  ],
+  "predictions": {
+    "83": {
+      "growth_index": 1,
+      "growth_display": "持続成長",
+      "raw_index": 0.991555,
+      "sire_prior_index": 1.345528,
+      "maturity_residual": 0.0,
+      "nearest_teacher": [
+        {
+          "teacher_no": 4,
+          "distance": 0.779341,
+          "teacher_growth_index": 0
+        },
+        {
+          "teacher_no": 32,
+          "distance": 1.386624,
+          "teacher_growth_index": 0
+        },
+        {
+          "teacher_no": 11,
+          "distance": 1.406188,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 14,
+          "distance": 1.604111,
+          "teacher_growth_index": 3
+        },
+        {
+          "teacher_no": 45,
+          "distance": 1.610013,
+          "teacher_growth_index": 1
+        }
+      ],
+      "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+    },
+    "84": {
+      "growth_index": 1,
+      "growth_display": "持続成長",
+      "raw_index": 1.097941,
+      "sire_prior_index": 1.268293,
+      "maturity_residual": 0.0,
+      "nearest_teacher": [
+        {
+          "teacher_no": 5,
+          "distance": 1.304901,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 28,
+          "distance": 1.35956,
+          "teacher_growth_index": 3
+        },
+        {
+          "teacher_no": 46,
+          "distance": 1.397669,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 56,
+          "distance": 1.650181,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 43,
+          "distance": 1.73345,
+          "teacher_growth_index": 1
+        }
+      ],
+      "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+    },
+    "85": {
+      "growth_index": 1,
+      "growth_display": "持続成長",
+      "raw_index": 0.999253,
+      "sire_prior_index": 1.268293,
+      "maturity_residual": 0.0,
+      "nearest_teacher": [
+        {
+          "teacher_no": 62,
+          "distance": 1.437354,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 69,
+          "distance": 1.766811,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 19,
+          "distance": 1.769829,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 16,
+          "distance": 1.961887,
+          "teacher_growth_index": 1
+        },
+        {
+          "teacher_no": 50,
+          "distance": 2.029145,
+          "teacher_growth_index": 0
+        }
+      ],
+      "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+    }
+  },
+  "status": "EXISTING_V2_REFERENCE_PREVIEW_NOT_APPLIED_TO_SCORES",
+  "policy_commit": "d0693a2c2001b23617c2c678cb5a9f150b86df2e"
+}

@@ -1,0 +1,2016 @@
+{
+  "schema_version": "rar-stored-special-career-audit-v1",
+  "dataset_key": "2026:silk",
+  "version_id": "a5da6a7ac96feb7305155f8d5ec2e9276b9daa0c69f372dac5375e5389220caf",
+  "source_api": "https://rar-project-5a27e.web.app/v1/consumer-data/dataset/2026:silk",
+  "records": [
+    {
+      "scenarios": {
+        "rar": {
+          "middle": 38.6508,
+          "high": 61.74660000000001,
+          "official": 51.39676
+        },
+        "dream": {
+          "middle": 3.9,
+          "high": 17.1,
+          "official": 10.5
+        },
+        "investment": {
+          "middle": 11.2508,
+          "high": 21.146600000000007,
+          "official": 17.396760000000004
+        }
+      },
+      "height": 154.0,
+      "birth": "2025-03-21",
+      "provenance": {
+        "dream_baseline": "RAR_HISTORICAL_CAREER_BASELINE_FROZEN_20260914.json",
+        "engine_version": "RAR_BUILDER_AUTO_SCORE_V1",
+        "prize_generator_version": "2026-09-14",
+        "rar_version": "RAR_100_FROZEN_20260914",
+        "prize_generator": "RAR_ROI_PRIZE_GENERATOR_2026_ROUTE_V1"
+      },
+      "color": "栗毛",
+      "trainer": "田島俊明",
+      "cannon": 19.5,
+      "horse_id": "SILK_2026_083",
+      "dam": "エイシンシルダリア",
+      "sire": "ナダル",
+      "registered_name": "",
+      "small_status": {
+        "pedigree": "AVAILABLE",
+        "potential": "AVAILABLE"
+      },
+      "total_price_yen": 25000000,
+      "name": "エイシンシルダリアの25",
+      "price": 2500.0,
+      "total": 51.39676,
+      "suitability": {
+        "growth_type": "unknown",
+        "target_races": [],
+        "preferred_surfaces": [
+          "dirt"
+        ],
+        "distance_min_m": 1400,
+        "category": "",
+        "distance_max_m": 1800
+      },
+      "pedigree": 6.5,
+      "share_price_yen": 50000,
+      "recruitment_status": "UNKNOWN",
+      "manager_status": "FROZEN_FINAL",
+      "career": {
+        "growth_status": "NOT_INFERRED_OBJECTIVE_V1",
+        "growth": "unknown",
+        "surface": "dirt",
+        "roi_official_pct": 319.83800000000025,
+        "high_profile": "G1_JPN1",
+        "distance_max_m": 1800,
+        "preferred_surfaces": [
+          "dirt"
+        ],
+        "category_code": "G1_JPN1",
+        "official_prize_yen": 79959500.00000006,
+        "representative_targets_source": "Career TARGET/INFERRED_TARGET events",
+        "distance_min_m": 1400,
+        "middle_prize_yen": 31254000.0,
+        "details_version": "CAREER_CONSUMER_DETAILS_V1_20261121",
+        "high_starts": 22,
+        "target_races": [],
+        "evidence_hash": "fe0878aada20805cae7c1fd7484e164b20df6c73761e85545034c3ae4e7e87ad",
+        "representative_targets": [
+          "フェブラリーS"
+        ],
+        "events_high": [
+          {
+            "age": 2,
+            "achievement_anchor": 3,
+            "route_role": "PROGRESSION",
+            "event_id": "HIGH_CAREER:route:1",
+            "race_class": "age_2.maiden",
+            "race_name": "未勝利（一般）",
+            "gross_prize_yen": 5900000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "PROGRESSION",
+            "event_id": "HIGH_CAREER:route:2",
+            "race_class": "age_2.one_win_general",
+            "race_name": "1勝クラス（一般）",
+            "gross_prize_yen": 8200000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 18,
+            "route_role": "INFERRED_TARGET",
+            "event_id": "HIGH_CAREER:route:3",
+            "race_class": null,
+            "race_name": "フェブラリーS",
+            "gross_prize_yen": 69000000.00000013,
+            "finish_position": null,
+            "performance_position": 1.8999999999999986,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:4",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1875000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:5",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1000000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:6",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 870000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:7",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1015000.0000000001,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:8",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 580000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:9",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 5800000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:10",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3625000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:11",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 2000000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:12",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3000000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:13",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1600000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:14",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1200000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:15",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1400000.0000000002,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:16",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 800000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:17",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 8000000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:18",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 5000000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:19",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 2000000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:20",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3000000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 6,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:21",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1600000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 6,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:22",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1200000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          }
+        ],
+        "middle_profile": "CENTRAL_WINNER",
+        "events_middle": [
+          {
+            "age": 2,
+            "achievement_anchor": 3,
+            "route_role": "PROGRESSION",
+            "event_id": "MIDDLE:route:1",
+            "race_class": "age_2.maiden",
+            "race_name": "未勝利（一般）",
+            "gross_prize_yen": 5900000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "PROGRESSION",
+            "event_id": "MIDDLE:route:2",
+            "race_class": "age_2.one_win_general",
+            "race_name": "1勝クラス（一般）",
+            "gross_prize_yen": 8200000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:3",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1250000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:4",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1875000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:5",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1000000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:6",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 666000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:7",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 777000.0000000001,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:8",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 444000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:9",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 4440000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:10",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 2775000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:11",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 1190000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:12",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 1785000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:13",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 952000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          }
+        ],
+        "middle_starts": 13,
+        "roi_middle_pct": 125.01599999999999,
+        "high_prize_yen": 128665000.00000013,
+        "roi_high_pct": 514.6600000000005
+      },
+      "no": 83,
+      "sex": "牝",
+      "weight": 430,
+      "recruitment_name": "エイシンシルダリアの25",
+      "breeder": "ノーザンファーム",
+      "officialRank": 39,
+      "source_submission_id": "special1-d6446c2daaf00beee0c678872e8961f9fc703cf9c5f2e426cc70f16bb9ed0b5a",
+      "investment": 17.396760000000004,
+      "dream": 10.5,
+      "small": {
+        "nicks": 6.5,
+        "rear": 6.0,
+        "scale_frame": 2.0,
+        "trunk": 5.0,
+        "mother": 0.0,
+        "front": 4.0,
+        "sibling": 0.0,
+        "sibling_winup": 0.0
+      },
+      "chest": 177.0,
+      "sharePrice": 5.0,
+      "potential": 17.0
+    },
+    {
+      "scenarios": {
+        "rar": {
+          "middle": 42.781666666666666,
+          "high": 65.14805555555556,
+          "official": 55.18438888888889
+        },
+        "dream": {
+          "middle": 3.6,
+          "high": 17.0,
+          "official": 10.3
+        },
+        "investment": {
+          "middle": 13.681666666666667,
+          "high": 22.648055555555555,
+          "official": 19.38438888888889
+        }
+      },
+      "height": 153.0,
+      "birth": "2025-04-03",
+      "provenance": {
+        "dream_baseline": "RAR_HISTORICAL_CAREER_BASELINE_FROZEN_20260914.json",
+        "engine_version": "RAR_BUILDER_AUTO_SCORE_V1",
+        "prize_generator_version": "2026-09-14",
+        "rar_version": "RAR_100_FROZEN_20260914",
+        "prize_generator": "RAR_ROI_PRIZE_GENERATOR_2026_ROUTE_V1"
+      },
+      "color": "栗毛",
+      "trainer": "新谷功一",
+      "cannon": 19.5,
+      "horse_id": "SILK_2026_084",
+      "dam": "ローズファラオ",
+      "sire": "パレスマリス",
+      "registered_name": "",
+      "small_status": {
+        "pedigree": "AVAILABLE",
+        "potential": "AVAILABLE"
+      },
+      "total_price_yen": 18000000,
+      "name": "ローズファラオの25",
+      "price": 1800.0,
+      "total": 55.18438888888889,
+      "suitability": {
+        "growth_type": "unknown",
+        "target_races": [],
+        "preferred_surfaces": [
+          "dirt"
+        ],
+        "distance_min_m": 1400,
+        "category": "",
+        "distance_max_m": 1800
+      },
+      "pedigree": 12.0,
+      "share_price_yen": 36000,
+      "recruitment_status": "UNKNOWN",
+      "manager_status": "FROZEN_FINAL",
+      "career": {
+        "growth_status": "NOT_INFERRED_OBJECTIVE_V1",
+        "growth": "unknown",
+        "surface": "dirt",
+        "roi_official_pct": 419.21944444444443,
+        "high_profile": "G1_JPN1",
+        "distance_max_m": 1800,
+        "preferred_surfaces": [
+          "dirt"
+        ],
+        "category_code": "G1_JPN1",
+        "official_prize_yen": 75459500.0,
+        "representative_targets_source": "Career TARGET/INFERRED_TARGET events",
+        "distance_min_m": 1400,
+        "middle_prize_yen": 31254000.0,
+        "details_version": "CAREER_CONSUMER_DETAILS_V1_20261121",
+        "high_starts": 22,
+        "target_races": [],
+        "evidence_hash": "aaee81542792a5a9ba684e0d8b48015d18ebaa841a8fc2cc2e63e6d113a200c8",
+        "representative_targets": [
+          "フェブラリーS"
+        ],
+        "events_high": [
+          {
+            "age": 2,
+            "achievement_anchor": 3,
+            "route_role": "PROGRESSION",
+            "event_id": "HIGH_CAREER:route:1",
+            "race_class": "age_2.maiden",
+            "race_name": "未勝利（一般）",
+            "gross_prize_yen": 5900000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "PROGRESSION",
+            "event_id": "HIGH_CAREER:route:2",
+            "race_class": "age_2.one_win_general",
+            "race_name": "1勝クラス（一般）",
+            "gross_prize_yen": 8200000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 18,
+            "route_role": "INFERRED_TARGET",
+            "event_id": "HIGH_CAREER:route:3",
+            "race_class": null,
+            "race_name": "フェブラリーS",
+            "gross_prize_yen": 60000000.0,
+            "finish_position": 2,
+            "performance_position": 2.0,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:4",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1875000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:5",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1000000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:6",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 870000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:7",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1015000.0000000001,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:8",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 580000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:9",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 5800000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:10",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3625000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:11",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 2000000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:12",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3000000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:13",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1600000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:14",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1200000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:15",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1400000.0000000002,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:16",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 800000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:17",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 8000000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:18",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 5000000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:19",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 2000000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:20",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3000000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 6,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:21",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1600000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 6,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:22",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1200000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          }
+        ],
+        "middle_profile": "CENTRAL_WINNER",
+        "events_middle": [
+          {
+            "age": 2,
+            "achievement_anchor": 3,
+            "route_role": "PROGRESSION",
+            "event_id": "MIDDLE:route:1",
+            "race_class": "age_2.maiden",
+            "race_name": "未勝利（一般）",
+            "gross_prize_yen": 5900000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "PROGRESSION",
+            "event_id": "MIDDLE:route:2",
+            "race_class": "age_2.one_win_general",
+            "race_name": "1勝クラス（一般）",
+            "gross_prize_yen": 8200000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:3",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1250000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:4",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1875000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:5",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1000000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:6",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 666000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:7",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 777000.0000000001,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:8",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 444000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:9",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 4440000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:10",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 2775000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:11",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 1190000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:12",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 1785000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:13",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 952000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          }
+        ],
+        "middle_starts": 13,
+        "roi_middle_pct": 173.63333333333333,
+        "high_prize_yen": 119665000.0,
+        "roi_high_pct": 664.8055555555555
+      },
+      "no": 84,
+      "sex": "牝",
+      "weight": 426,
+      "recruitment_name": "ローズファラオの25",
+      "breeder": "チャンピオンズファーム",
+      "officialRank": 23,
+      "source_submission_id": "special1-d6446c2daaf00beee0c678872e8961f9fc703cf9c5f2e426cc70f16bb9ed0b5a",
+      "investment": 19.38438888888889,
+      "dream": 10.3,
+      "small": {
+        "nicks": 10.0,
+        "rear": 5.0,
+        "scale_frame": 1.5,
+        "trunk": 5.0,
+        "mother": 0.0,
+        "front": 2.0,
+        "sibling": 1.0,
+        "sibling_winup": 1.0
+      },
+      "chest": 180.0,
+      "sharePrice": 3.6,
+      "potential": 13.5
+    },
+    {
+      "scenarios": {
+        "rar": {
+          "middle": 46.32971428571429,
+          "high": 70.52371428571429,
+          "official": 60.35482857142857
+        },
+        "dream": {
+          "middle": 5.4,
+          "high": 17.6,
+          "official": 11.5
+        },
+        "investment": {
+          "middle": 8.929714285714287,
+          "high": 20.923714285714293,
+          "official": 16.854828571428573
+        }
+      },
+      "height": 156.5,
+      "birth": "2025-04-15",
+      "provenance": {
+        "dream_baseline": "RAR_HISTORICAL_CAREER_BASELINE_FROZEN_20260914.json",
+        "engine_version": "RAR_BUILDER_AUTO_SCORE_V1",
+        "prize_generator_version": "2026-09-14",
+        "rar_version": "RAR_100_FROZEN_20260914",
+        "prize_generator": "RAR_ROI_PRIZE_GENERATOR_2026_ROUTE_V1"
+      },
+      "color": "黒鹿毛",
+      "trainer": "池江泰寿",
+      "cannon": 20.0,
+      "horse_id": "SILK_2026_085",
+      "dam": "Perfect Flute",
+      "sire": "Yaupon",
+      "registered_name": "",
+      "small_status": {
+        "pedigree": "AVAILABLE",
+        "potential": "AVAILABLE"
+      },
+      "total_price_yen": 35000000,
+      "name": "パーフェクトフルートの25",
+      "price": 3500.0,
+      "total": 60.35482857142857,
+      "suitability": {
+        "growth_type": "unknown",
+        "target_races": [],
+        "preferred_surfaces": [
+          "dirt"
+        ],
+        "distance_min_m": 1400,
+        "category": "",
+        "distance_max_m": 1800
+      },
+      "pedigree": 10.0,
+      "share_price_yen": 70000,
+      "recruitment_status": "UNKNOWN",
+      "manager_status": "FROZEN_FINAL",
+      "career": {
+        "growth_status": "NOT_INFERRED_OBJECTIVE_V1",
+        "growth": "unknown",
+        "surface": "dirt",
+        "roi_official_pct": 292.74142857142874,
+        "high_profile": "G1_JPN1",
+        "distance_max_m": 1800,
+        "preferred_surfaces": [
+          "dirt"
+        ],
+        "category_code": "G1_JPN1",
+        "official_prize_yen": 102459500.00000007,
+        "representative_targets_source": "Career TARGET/INFERRED_TARGET events",
+        "distance_min_m": 1400,
+        "middle_prize_yen": 31254000.0,
+        "details_version": "CAREER_CONSUMER_DETAILS_V1_20261121",
+        "high_starts": 22,
+        "target_races": [],
+        "evidence_hash": "ac527ce4556b9de2c5d02e282eebc6b42dc15bb771e03da5ed755d3a9903e68f",
+        "representative_targets": [
+          "フェブラリーS"
+        ],
+        "events_high": [
+          {
+            "age": 2,
+            "achievement_anchor": 3,
+            "route_role": "PROGRESSION",
+            "event_id": "HIGH_CAREER:route:1",
+            "race_class": "age_2.maiden",
+            "race_name": "未勝利（一般）",
+            "gross_prize_yen": 5900000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "PROGRESSION",
+            "event_id": "HIGH_CAREER:route:2",
+            "race_class": "age_2.one_win_general",
+            "race_name": "1勝クラス（一般）",
+            "gross_prize_yen": 8200000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 18,
+            "route_role": "INFERRED_TARGET",
+            "event_id": "HIGH_CAREER:route:3",
+            "race_class": null,
+            "race_name": "フェブラリーS",
+            "gross_prize_yen": 114000000.00000013,
+            "finish_position": null,
+            "performance_position": 1.3999999999999986,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:4",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1875000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:5",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1000000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:6",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 870000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:7",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1015000.0000000001,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:8",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 580000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:9",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 5800000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:10",
+            "race_class": "age_3.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3625000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:11",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 2000000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:12",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3000000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:13",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1600000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:14",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1200000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:15",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1400000.0000000002,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:16",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 800000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:17",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 8000000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:18",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 5000000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:19",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 2000000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 5,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:20",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 3000000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 6,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:21",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1600000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 6,
+            "achievement_anchor": 14,
+            "route_role": "FILLER",
+            "event_id": "HIGH_CAREER:route:22",
+            "race_class": "age_3_or_4_plus.open_nonlisted_dirt_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1200000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          }
+        ],
+        "middle_profile": "CENTRAL_WINNER",
+        "events_middle": [
+          {
+            "age": 2,
+            "achievement_anchor": 3,
+            "route_role": "PROGRESSION",
+            "event_id": "MIDDLE:route:1",
+            "race_class": "age_2.maiden",
+            "race_name": "未勝利（一般）",
+            "gross_prize_yen": 5900000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "PROGRESSION",
+            "event_id": "MIDDLE:route:2",
+            "race_class": "age_2.one_win_general",
+            "race_name": "1勝クラス（一般）",
+            "gross_prize_yen": 8200000.0,
+            "finish_position": 1,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:3",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1250000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:4",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1875000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 2,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:5",
+            "race_class": "age_2.open_nonlisted_general",
+            "race_name": "オープン（一般）",
+            "gross_prize_yen": 1000000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:6",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 666000.0,
+            "finish_position": 8,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:7",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 777000.0000000001,
+            "finish_position": 7,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:8",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 444000.0,
+            "finish_position": 9,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:9",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 4440000.0,
+            "finish_position": 2,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 3,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:10",
+            "race_class": "age_3.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 2775000.0,
+            "finish_position": 3,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:11",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 1190000.0,
+            "finish_position": 5,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:12",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 1785000.0,
+            "finish_position": 4,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          },
+          {
+            "age": 4,
+            "achievement_anchor": 6,
+            "route_role": "FILLER",
+            "event_id": "MIDDLE:route:13",
+            "race_class": "age_3_or_4_plus.two_win_general",
+            "race_name": "2勝クラス（一般）",
+            "gross_prize_yen": 952000.0,
+            "finish_position": 6,
+            "performance_position": null,
+            "distance_m": 1600,
+            "surface": "dirt"
+          }
+        ],
+        "middle_starts": 13,
+        "roi_middle_pct": 89.29714285714286,
+        "high_prize_yen": 173665000.00000015,
+        "roi_high_pct": 496.18571428571465
+      },
+      "no": 85,
+      "sex": "牡",
+      "weight": 463,
+      "recruitment_name": "パーフェクトフルートの25",
+      "breeder": "米国産",
+      "officialRank": 6,
+      "source_submission_id": "special1-d6446c2daaf00beee0c678872e8961f9fc703cf9c5f2e426cc70f16bb9ed0b5a",
+      "investment": 16.854828571428573,
+      "dream": 11.5,
+      "small": {
+        "nicks": 5.0,
+        "rear": 9.0,
+        "scale_frame": 3.0,
+        "trunk": 6.0,
+        "mother": 0.5,
+        "front": 4.0,
+        "sibling": 0.5,
+        "sibling_winup": 4.0
+      },
+      "chest": 184.0,
+      "sharePrice": 7.0,
+      "potential": 22.0
+    }
+  ],
+  "checks": [
+    {
+      "no": 83,
+      "mode": "middle",
+      "count": 13,
+      "sum_yen": 31254000.0,
+      "saved_yen": 31254000.0,
+      "match": true
+    },
+    {
+      "no": 83,
+      "mode": "high",
+      "count": 22,
+      "sum_yen": 128665000.00000013,
+      "saved_yen": 128665000.00000013,
+      "match": true
+    },
+    {
+      "no": 84,
+      "mode": "middle",
+      "count": 13,
+      "sum_yen": 31254000.0,
+      "saved_yen": 31254000.0,
+      "match": true
+    },
+    {
+      "no": 84,
+      "mode": "high",
+      "count": 22,
+      "sum_yen": 119665000.0,
+      "saved_yen": 119665000.0,
+      "match": true
+    },
+    {
+      "no": 85,
+      "mode": "middle",
+      "count": 13,
+      "sum_yen": 31254000.0,
+      "saved_yen": 31254000.0,
+      "match": true
+    },
+    {
+      "no": 85,
+      "mode": "high",
+      "count": 22,
+      "sum_yen": 173665000.00000015,
+      "saved_yen": 173665000.00000015,
+      "match": true
+    }
+  ],
+  "suitability_inputs": {
+    "83": {
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "distance_min_m": 1400,
+      "distance_max_m": 1800,
+      "growth_type": "unknown",
+      "target_races": [],
+      "evidence_source_type": "SIRE_PROGENY_YEAR",
+      "evidence_year": 2025,
+      "evidence_sire": "ナダル",
+      "evidence_total_starts": 399,
+      "evidence_dirt_share": 0.934837,
+      "evidence_distance_center_m": 1624.5,
+      "distance_center_rounded_m": 1600,
+      "minimum_sire_starts": 20,
+      "source_url": "https://github.com/dekapooh/RAR/blob/496727e589d571b9232f29316857d4c9b9c50f27/data/confirmed/suitability_sire_year_evidence_v1.json",
+      "name": "エイシンシルダリアの25",
+      "sire": "ナダル"
+    },
+    "84": {
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "distance_min_m": 1400,
+      "distance_max_m": 1800,
+      "growth_type": "unknown",
+      "target_races": [],
+      "evidence_source_type": "SIRE_PROGENY_YEAR",
+      "evidence_year": 2025,
+      "evidence_sire": "パレスマリス",
+      "evidence_total_starts": 33,
+      "evidence_dirt_share": 0.818182,
+      "evidence_distance_center_m": 1500.0,
+      "distance_center_rounded_m": 1600,
+      "minimum_sire_starts": 20,
+      "source_url": "https://db.netkeiba.com/horse/sire/000a014a1a/",
+      "name": "ローズファラオの25",
+      "sire": "パレスマリス"
+    },
+    "85": {
+      "preferred_surfaces": [
+        "dirt"
+      ],
+      "distance_min_m": 1400,
+      "distance_max_m": 1800,
+      "growth_type": "unknown",
+      "target_races": [],
+      "evidence_source_type": "SIRE_SELF_SURFACE_FALLBACK",
+      "evidence_year": 2025,
+      "evidence_sire": "Yaupon",
+      "evidence_total_starts": 7,
+      "evidence_dirt_share": null,
+      "evidence_distance_center_m": 1599.9,
+      "distance_center_rounded_m": 1600,
+      "minimum_sire_starts": 20,
+      "source_url": "https://db.netkeiba.com/horse/sire/000a01a9d3/",
+      "name": "パーフェクトフルートの25",
+      "sire": "Yaupon",
+      "source_annual_evidence": {
+        "year": 2025,
+        "turf_starts": 2,
+        "dirt_starts": 5,
+        "turf_wins": 0,
+        "dirt_wins": 2,
+        "avg_turf_distance_m": 0,
+        "avg_dirt_distance_m": 1300,
+        "source_url": "https://db.netkeiba.com/horse/sire/000a01a9d3/",
+        "self_surface": "dirt",
+        "self_surface_source": "official supplement p8 Yaupon career D7F/D6F",
+        "frozen_pool": "unchanged base 48; 7-start lookup row excluded by >=20 rule"
+      }
+    }
+  },
+  "comparison": {
+    "middle_identical_records": 13,
+    "high_identical_records": 21,
+    "high_differing_saved_positions": [
+      3
+    ]
+  },
+  "growth_reference": {
+    "model": {
+      "k": 7,
+      "sire_weight": 0.5,
+      "loo_exact_rate": 0.5121951219512195,
+      "loo_within_one_rate": 0.9146341463414634,
+      "loo_mae": 0.573170731707317,
+      "teacher_count": 82,
+      "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+    },
+    "target_cohort_size": 3,
+    "target_features": [
+      {
+        "no": 83,
+        "sire": "ナダル",
+        "sex": "牝",
+        "birth": "2025-03-21",
+        "height": 154.0,
+        "girth": 177.0,
+        "cannon": 19.5,
+        "weight": 430,
+        "subitems": {
+          "scale_frame": 2.0,
+          "rear": 6.0,
+          "trunk": 5.0,
+          "front": 4.0
+        }
+      },
+      {
+        "no": 84,
+        "sire": "パレスマリス",
+        "sex": "牝",
+        "birth": "2025-04-03",
+        "height": 153.0,
+        "girth": 180.0,
+        "cannon": 19.5,
+        "weight": 426,
+        "subitems": {
+          "scale_frame": 1.5,
+          "rear": 5.0,
+          "trunk": 5.0,
+          "front": 2.0
+        }
+      },
+      {
+        "no": 85,
+        "sire": "Yaupon",
+        "sex": "牡",
+        "birth": "2025-04-15",
+        "height": 156.5,
+        "girth": 184.0,
+        "cannon": 20.0,
+        "weight": 463,
+        "subitems": {
+          "scale_frame": 3.0,
+          "rear": 9.0,
+          "trunk": 6.0,
+          "front": 4.0
+        }
+      }
+    ],
+    "predictions": {
+      "83": {
+        "growth_index": 1,
+        "growth_display": "持続成長",
+        "raw_index": 0.991555,
+        "sire_prior_index": 1.345528,
+        "maturity_residual": 0.0,
+        "nearest_teacher": [
+          {
+            "teacher_no": 4,
+            "distance": 0.779341,
+            "teacher_growth_index": 0
+          },
+          {
+            "teacher_no": 32,
+            "distance": 1.386624,
+            "teacher_growth_index": 0
+          },
+          {
+            "teacher_no": 11,
+            "distance": 1.406188,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 14,
+            "distance": 1.604111,
+            "teacher_growth_index": 3
+          },
+          {
+            "teacher_no": 45,
+            "distance": 1.610013,
+            "teacher_growth_index": 1
+          }
+        ],
+        "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+      },
+      "84": {
+        "growth_index": 1,
+        "growth_display": "持続成長",
+        "raw_index": 1.097941,
+        "sire_prior_index": 1.268293,
+        "maturity_residual": 0.0,
+        "nearest_teacher": [
+          {
+            "teacher_no": 5,
+            "distance": 1.304901,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 28,
+            "distance": 1.35956,
+            "teacher_growth_index": 3
+          },
+          {
+            "teacher_no": 46,
+            "distance": 1.397669,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 56,
+            "distance": 1.650181,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 43,
+            "distance": 1.73345,
+            "teacher_growth_index": 1
+          }
+        ],
+        "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+      },
+      "85": {
+        "growth_index": 1,
+        "growth_display": "持続成長",
+        "raw_index": 0.999253,
+        "sire_prior_index": 1.268293,
+        "maturity_residual": 0.0,
+        "nearest_teacher": [
+          {
+            "teacher_no": 62,
+            "distance": 1.437354,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 69,
+            "distance": 1.766811,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 19,
+            "distance": 1.769829,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 16,
+            "distance": 1.961887,
+            "teacher_growth_index": 1
+          },
+          {
+            "teacher_no": 50,
+            "distance": 2.029145,
+            "teacher_growth_index": 0
+          }
+        ],
+        "rule_id": "RAR-SUITABILITY-FROZEN-V2-GROWTH-20260925"
+      }
+    },
+    "status": "EXISTING_V2_REFERENCE_PREVIEW_NOT_APPLIED_TO_SCORES",
+    "policy_commit": "d0693a2c2001b23617c2c678cb5a9f150b86df2e"
+  },
+  "score_write_performed": false,
+  "limits": [
+    "Only Middle/High representative routes are stored here, not 1000 detailed lifetime histories.",
+    "Saved order is not chronological; race dates and venues are absent.",
+    "Noninteger performance_position is a prize interpolation input, not a realized finish.",
+    "Existing growth v2 reference is not applied to current scores; its 3-horse measurement normalization is degenerate."
+  ]
+}
