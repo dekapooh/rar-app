@@ -169,8 +169,12 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           s=Path("sw.js").read_text(encoding="utf-8")
-          assert 'rar-rc66-public-beta-v29-sex-label' in s
-          assert 'system-master-sync.js?v=pwa-startup-recovery-20260927' in s
+          import re
+          cache=re.search(r'const CACHE_NAME="([^"]+)";',s)
+          assert cache and re.fullmatch(r'rar-rc[0-9]+-[a-z0-9-]+-v[0-9]+',cache.group(1)), "versioned RAR cache missing"
+          index=Path("index.html").read_text(encoding="utf-8")
+          sync=re.search(r'<script src="(\./system-master-sync\.js[^"]*)"',index)
+          assert sync and sync.group(1) in s, "index and SW fallback must load the same versioned sync asset"
           assert './assets/header-silks/silk.webp' in s
           assert './assets/header-silks/tokyo-tc.webp' in s
           assert './assets/header-silks/carrot.webp' in s
@@ -178,3 +182,6 @@ jobs:
           PY
       - name: Service worker syntax audit
         run: node --check sw.js
+      - name: Career mapping and Public Beta versus Premium Admin regression
+        run: node audit/test-career-details.mjs
+
