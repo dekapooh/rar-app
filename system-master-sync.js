@@ -633,6 +633,16 @@
     const small = r.small || {};
     const smallStatus = r.small_status || {};
     const suitability = r.suitability || {};
+    // A recruitment label is not an official registered horse name.
+    const rawRegistered = String(r.registered_name ?? h.registeredNameOfficial ?? '').trim();
+    const recruitmentLabel = String(r.recruitment_name || r.name || '').trim();
+    const registeredName = rawRegistered === recruitmentLabel ? '' : rawRegistered;
+    const hasCareerDetails = career.details_version === 'CAREER_CONSUMER_DETAILS_V1_20261121';
+    const careerCategories = {
+      NON_WINNER:'未勝利', CENTRAL_WINNER:'中央勝ち上がり',
+      ONE_WIN_CLASS_WINNER:'1勝クラス', TWO_WIN_CLASS_WINNER:'2勝クラス',
+      THREE_WIN_TO_OPEN:'3勝クラス～オープン', G3_G2:'GⅢ～GⅡ', G1_JPN1:'GⅠ／JpnⅠ'
+    };
     const preferredSurfaces = Array.isArray(suitability.preferred_surfaces)
       ? suitability.preferred_surfaces.map(x => String(x || '').toLowerCase())
       : (Array.isArray(career.preferred_surfaces) ? career.preferred_surfaces.map(x => String(x || '').toLowerCase()) : []);
@@ -650,7 +660,7 @@
 
     Object.assign(h, {
       name: r.name ?? h.name,
-      registeredNameOfficial: String(r.registered_name ?? h.registeredNameOfficial ?? '').trim(),
+      registeredNameOfficial: registeredName,
       sex: r.sex ?? h.sex,
       sire: r.sire ?? h.sire,
       dam: r.dam ?? h.dam,
@@ -683,17 +693,20 @@
       expectedPrize: Number.isFinite(Number(career.official_prize_yen)) ? Number(career.official_prize_yen) / 10000 : h.expectedPrize,
       returnRate: Number.isFinite(Number(career.roi_official_pct)) ? Number(career.roi_official_pct) / 100 : h.returnRate,
       rarStatus: r.manager_status || h.rarStatus,
-      turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? '◎' : '') : h.turf,
-      dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? '◎' : '') : h.dirt,
+      turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? '◎' : (hasCareerDetails ? '主適性外' : '')) : h.turf,
+      dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? '◎' : (hasCareerDetails ? '主適性外' : '')) : h.dirt,
       distance: hasDistance ? `${surfacePrefix}${distanceMin}～${distanceMax}m` : h.distance,
-      category: suitability.category || career.category || r.category || h.category,
+      category: suitability.category || career.category || r.category
+        || (hasCareerDetails && careerCategories[career.category_code] ? `${surfacePrefix}・${careerCategories[career.category_code]}（High）` : '') || h.category,
       growth: suitability.growth_display
         || ((suitability.growth_type && suitability.growth_type !== 'unknown') ? suitability.growth_type : '')
         || ((career.growth && career.growth !== 'unknown') ? career.growth : '')
-        || h.growth,
+        || (career.growth_status === 'NOT_INFERRED_OBJECTIVE_V1' ? '未判定（現行仕様は成長推定なし）' : '') || h.growth,
       targets: Array.isArray(suitability.target_races) && suitability.target_races.length
         ? suitability.target_races.join('・')
-        : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・') : h.targets)
+        : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・')
+          : (hasCareerDetails && Array.isArray(career.representative_targets) ? career.representative_targets.join('・') : h.targets)),
+      careerDetails: hasCareerDetails ? career : null
     });
 
     h.small = h.small || {};
@@ -890,3 +903,4 @@
     queueMicrotask(sync);
   }
 })();
+

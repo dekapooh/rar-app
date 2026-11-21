@@ -2510,7 +2510,7 @@ main{padding-top:84px}
       <span>◆ 主要狙い</span>
       <b id="dTargets"></b>
     </div>
-    <div class="rc34-fit-note">RAR Official 適性データ</div>
+    <div class="rc34-fit-note" id="dFitSourceNote">RAR Official 適性データ</div>
     <div id="dFitLock" class="detail-access-lock" style="display:none">🔒 この機能は現在のプランではご利用いただけません。</div>
   </div>
   <div class="card" id="detailCommentCard">
@@ -3903,6 +3903,10 @@ function openHorse(no,from,options={}){
  document.getElementById("dCategory").textContent=canFit?(currentHorse.category||"－"):"";
  document.getElementById("dGrowth").textContent=canFit?(currentHorse.growth||"－"):"";
  document.getElementById("dTargets").textContent=canFit?(currentHorse.targets||"－"):"";
+ const fitSource=document.getElementById("dFitSourceNote");
+ if(fitSource)fitSource.textContent=currentHorse.careerDetails
+   ? "馬場・距離：FROZEN適性入力。カテゴリ・主要狙い：Career Highの代表ルート。主適性外は不向きの断定ではありません。"
+   : "RAR Official 適性データ";
 
  const canManaged=canUseHorseManagedFeatures(currentHorse.no);
  const comment=document.getElementById("dComment");
@@ -4457,7 +4461,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync.js?v=pwa-startup-recovery-20260927" defer></script>
+<script src="./system-master-sync.js?v=career-details-20261121" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {
