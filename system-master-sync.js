@@ -205,6 +205,38 @@
   let availableDatasets = [LEGACY_DATASET];
   let activeDatasetKey = LEGACY_DATASET.dataset_key;
   let staticHorseSnapshot = null;
+  let auditedCareerDisplay = null;
+  let auditedCareerDisplayRequest = null;
+
+  async function loadAuditedCareerDisplay(data) {
+    if (data.dataset_key !== '2026:silk') return;
+    if (!auditedCareerDisplayRequest) {
+      const controller = new AbortController();
+      const deadline = setTimeout(() => controller.abort(),5000);
+      auditedCareerDisplayRequest = fetch('./audit/silk-2026-career-display-v1.json', {cache:'no-store',signal:controller.signal})
+        .then(response => { if (!response.ok) throw new Error('Career display audit unavailable'); return response.json(); })
+        .then(value => {
+          if (value.schema_version !== 'rar-audited-career-display-v1' || value.dataset_key !== '2026:silk'
+              || value.status !== 'REPLAY_MATCHED_DISPLAY_ONLY' || value.records?.length !== 82) {
+            throw new Error('Career display audit identity mismatch');
+          }
+          auditedCareerDisplay = value;
+        }).catch(error => { console.warn('[RAR] audited Career display unavailable', error); })
+        .finally(() => clearTimeout(deadline));
+    }
+    await auditedCareerDisplayRequest;
+  }
+
+  function auditedDisplayRecord(record, datasetKey) {
+    if (datasetKey !== '2026:silk' || record.career?.details_version || !auditedCareerDisplay) return record;
+    const audit = auditedCareerDisplay.records.find(item => item.no === record.no);
+    if (!audit || ['horse_id','source_submission_id','name','sire','sex'].some(key => audit[key] !== record[key])) return record;
+    if (Object.entries(audit.score_binding).some(([key,value]) => record[key] !== value)) return record;
+    if (['dream','investment','rar'].some(group => Object.entries(audit.scenarios_binding[group]).some(([key,value]) => record.scenarios?.[group]?.[key] !== value))) return record;
+    if (Object.entries(audit.career_binding).some(([key,value]) => JSON.stringify(record.career?.[key]) !== JSON.stringify(value))) return record;
+    return {...record, suitability:audit.suitability,
+      career:{...record.career,...audit.career_details}, display_origin:'AUDITED_CURRENT_CAREER'};
+  }
 
   function loadLastDatasetKey() {
     try {
@@ -706,7 +738,8 @@
         ? suitability.target_races.join('・')
         : (Array.isArray(career.target_races) && career.target_races.length ? career.target_races.join('・')
           : (hasCareerDetails && Array.isArray(career.representative_targets) ? career.representative_targets.join('・') : h.targets)),
-      careerDetails: hasCareerDetails ? career : null
+      careerDetails: hasCareerDetails ? career : null,
+      suitabilityOrigin: r.display_origin || (hasCareerDetails ? 'PUBLISHED_CAREER' : 'DETAILS_UNAVAILABLE')
     });
 
     h.small = h.small || {};
@@ -752,7 +785,12 @@
       const base = data.dataset_key === LEGACY_DATASET.dataset_key && legacyByNo.has(no)
         ? cloneHorse(legacyByNo.get(no))
         : blankHorse(no);
-      patchHorse(base, r);
+      if (data.dataset_key === LEGACY_DATASET.dataset_key && legacyByNo.has(no)) {
+        base.legacySuitability = Object.fromEntries(['turf','dirt','distance','growth','category','targets'].map(key => [key,base[key] || '']));
+        // A successful API sync must not mix current scores with legacy aptitude.
+        for (const key of ['turf','dirt','distance','growth','category','targets']) base[key] = '';
+      }
+      patchHorse(base, auditedDisplayRecord(r,data.dataset_key));
       applyRegisteredNameOverride(base, data.dataset_key);
       applyRecruitmentSnapshot(base, data.dataset_key);
       if (!base.turf && !base.dirt && r.career?.surface === 'turf') base.turf = '◎';
@@ -820,6 +858,7 @@
       const res = await fetch(`${DATASET_API_BASE}${encodeURIComponent(requested)}`, { cache: 'no-store', mode: 'cors' });
       if (!res.ok) throw new Error(`consumer dataset API HTTP ${res.status}`);
       const data = validateDataset(await res.json());
+      await loadAuditedCareerDisplay(data);
       if (data.dataset_key !== requested) throw new Error(`dataset response mismatch: ${data.dataset_key}`);
       window.dispatchEvent(new CustomEvent('rar:dataset-before-apply', { detail: {
         season_year: data.season_year,
@@ -858,6 +897,7 @@
       const res = await fetch(API_URL, { cache: 'no-store', mode: 'cors' });
       if (!res.ok) throw new Error(`consumer API HTTP ${res.status}`);
       const data = validateDataset(await res.json());
+      await loadAuditedCareerDisplay(data);
       window.dispatchEvent(new CustomEvent('rar:dataset-before-apply', { detail: {
         season_year: data.season_year,
         club_id: data.club_id,

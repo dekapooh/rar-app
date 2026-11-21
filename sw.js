@@ -1,8 +1,8 @@
-const CACHE_NAME="rar-rc67-career-details-v52";
+const CACHE_NAME="rar-rc67-career-sources-v53";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v2.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync.js?v=career-details-20261121"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v2.js"><\/script>';
 function injectSystemMasterSync(html){
   if(html.includes('system-master-sync.js')) return html;
   return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;

@@ -36,4 +36,30 @@ assert.ok(adminHtml.includes('state.plan="premium"; // BETA'));
 assert.ok(adminHtml.includes('id="premiumSmallOfficial"'));
 assert.ok(adminHtml.includes('ADMIN / INTERNAL'));
 assert.ok(!adminHtml.includes('state.plan="standard"; // PUBLIC BETA'));
-console.log('CAREER_UI_MAPPING_AND_EXISTING_PREMIUM_ADMIN=PASS (4 groups)');
+assert.equal(fs.readFileSync('system-master-sync-career-v2.js','utf8'),sync,'versioned and canonical sync code must match');
+const manifest=JSON.parse(fs.readFileSync('audit/silk-2026-career-display-v1.json','utf8'));
+assert.equal(manifest.records.length,82);
+const overlay=sync.slice(sync.indexOf('  function auditedDisplayRecord('),sync.indexOf('  function loadLastDatasetKey('));
+const overlayContext=vm.createContext({manifest});
+vm.runInContext('let auditedCareerDisplay=this.manifest;\n'+overlay+'\nthis.overlay=auditedDisplayRecord;',overlayContext);
+for(const audit of manifest.records){
+  const source={no:audit.no,horse_id:audit.horse_id,source_submission_id:audit.source_submission_id,
+    name:audit.name,sire:audit.sire,sex:audit.sex,...audit.score_binding,scenarios:audit.scenarios_binding,career:audit.career_binding};
+  const before=JSON.stringify(source);
+  const display=overlayContext.overlay(source,'2026:silk');
+  for(const key of ['potential','pedigree','dream','investment','total'])assert.equal(display[key],source[key]);
+  assert.equal(display.display_origin,'AUDITED_CURRENT_CAREER');
+  assert.equal(display.suitability.growth_type,'unknown');
+  assert.equal(JSON.stringify(source),before,'overlay must not mutate published records');
+  for(const changed of [{...source,total:source.total+1},{...source,horse_id:'other'},
+    {...source,source_submission_id:'other'},
+    {...source,scenarios:{...source.scenarios,dream:{...source.scenarios.dream,high:0}}},
+    {...source,career:{...source.career,middle_starts:999}}]){
+    assert.equal(overlayContext.overlay(changed,'2026:silk'),changed,'changed source cannot reuse audit');
+  }
+  assert.equal(overlayContext.overlay(source,'2025:silk'),source,'never cross dataset');
+}
+const step=manifest.records.find(r=>r.no===59);
+assert.equal(step.suitability.distance_min_m,1400);assert.equal(step.suitability.distance_max_m,1800);
+assert.deepEqual(step.career_details.representative_targets,['フェブラリーS']);
+console.log('CAREER_UI_MAPPING_AND_EXISTING_PREMIUM_ADMIN=PASS (6 groups, 82 audited records, cross-source rejection)');

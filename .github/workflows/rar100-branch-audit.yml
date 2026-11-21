@@ -73,7 +73,7 @@ jobs:
           assert 'currentHorse.dream+"/25"' not in s
           assert 'currentHorse.roi+"/25"' not in s
           index_s=pathlib.Path("index.html").read_text(encoding="utf-8")
-          assert '<script src="./system-master-sync.js' in index_s, "SYSTEM MASTER sync is not loaded by index.html"
+          assert '<script src="./system-master-sync-career-v2.js' in index_s, "versioned SYSTEM MASTER sync is not loaded by index.html"
           assert 'standard:{rankLimit:Infinity' in index_s and 'premium:{rankLimit:Infinity' in index_s
           assert 'const DATASET_PERSONAL_KEYS=[' in index_s
           assert 'window.addEventListener("rar:dataset-before-apply"' in index_s
@@ -173,7 +173,7 @@ jobs:
           cache=re.search(r'const CACHE_NAME="([^"]+)";',s)
           assert cache and re.fullmatch(r'rar-rc[0-9]+-[a-z0-9-]+-v[0-9]+',cache.group(1)), "versioned RAR cache missing"
           index=Path("index.html").read_text(encoding="utf-8")
-          sync=re.search(r'<script src="(\./system-master-sync\.js[^"]*)"',index)
+          sync=re.search(r'<script src="(\./system-master-sync-career-v2\.js[^"]*)"',index)
           assert sync and sync.group(1) in s, "index and SW fallback must load the same versioned sync asset"
           assert './assets/header-silks/silk.webp' in s
           assert './assets/header-silks/tokyo-tc.webp' in s

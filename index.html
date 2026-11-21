@@ -2511,6 +2511,11 @@ main{padding-top:84px}
       <b id="dTargets"></b>
     </div>
     <div class="rc34-fit-note" id="dFitSourceNote">RAR Official 適性データ</div>
+    <details id="legacySuitabilityReference" style="display:none;margin-top:10px">
+      <summary>以前の適性表示（参考）</summary>
+      <p class="note">過去の表示を保存した参考情報です。現在のCareer計算に使われた適性・代表ルートとは区別してください。</p>
+      <div id="legacySuitabilityReferenceBody" class="note"></div>
+    </details>
     <div id="dFitLock" class="detail-access-lock" style="display:none">🔒 この機能は現在のプランではご利用いただけません。</div>
   </div>
   <div class="card" id="detailCommentCard">
@@ -3905,8 +3910,15 @@ function openHorse(no,from,options={}){
  document.getElementById("dTargets").textContent=canFit?(currentHorse.targets||"－"):"";
  const fitSource=document.getElementById("dFitSourceNote");
  if(fitSource)fitSource.textContent=currentHorse.careerDetails
-   ? "馬場・距離：FROZEN適性入力。カテゴリ・主要狙い：Career Highの代表ルート。主適性外は不向きの断定ではありません。"
-   : "RAR Official 適性データ";
+   ? "現在のCareer計算と一致する適性・High代表ルートを表示。成長型は現行仕様で未判定。主適性外は不向きの断定ではありません。"
+   : (currentHorse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
+ const legacyFit=document.getElementById("legacySuitabilityReference");
+ if(legacyFit){
+   const legacy=currentHorse.legacySuitability;
+   legacyFit.style.display=canFit && legacy?"block":"none";
+   const body=document.getElementById("legacySuitabilityReferenceBody");
+   if(body)body.innerHTML=legacy?[["芝適性",legacy.turf],["ダート適性",legacy.dirt],["距離",legacy.distance],["成長傾向",legacy.growth],["カテゴリ",legacy.category],["主要狙い",legacy.targets]].map(([label,value])=>`<div>${escapeHTML(label)}：${escapeHTML(value||"－")}</div>`).join(""):"";
+ }
 
  const canManaged=canUseHorseManagedFeatures(currentHorse.no);
  const comment=document.getElementById("dComment");
@@ -4461,7 +4473,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync.js?v=career-details-20261121" defer></script>
+<script src="./system-master-sync-career-v2.js" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {
