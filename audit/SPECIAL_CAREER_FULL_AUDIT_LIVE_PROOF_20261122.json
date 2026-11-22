@@ -1,0 +1,80 @@
+{
+  "verified_at": "2026-11-22T00:01:11.242372+00:00",
+  "implementation_commit": "69c6a98588bfcdb536a0126243b5a3788286c15f",
+  "ci": {
+    "id": 44964290454,
+    "conclusion": "success"
+  },
+  "pages": {
+    "id": 44964289896,
+    "conclusion": "success"
+  },
+  "live_urls": [
+    "https://dekapooh.github.io/rar-app/admin.html",
+    "https://dekapooh.github.io/rar-app/career-audit-20261122.html"
+  ],
+  "live_checks": {
+    "nos": [
+      83,
+      84,
+      85
+    ],
+    "all_six_details_expanded": true,
+    "row_counts_per_horse": [
+      13,
+      22
+    ],
+    "report_rows_total": 105,
+    "source_names_and_no_match": true,
+    "sum_messages_all_six_match": true,
+    "fractional_positions_disclosed": [
+      1.9,
+      1.4
+    ],
+    "middle_totals_yen": [
+      31254000,
+      31254000,
+      31254000
+    ],
+    "high_totals_yen": [
+      128665000,
+      119665000,
+      173665000
+    ],
+    "ui_totals": [
+      "51.4",
+      "55.2",
+      "60.4"
+    ]
+  },
+  "api": {
+    "version_id": "a5da6a7ac96feb7305155f8d5ec2e9276b9daa0c69f372dac5375e5389220caf",
+    "record_count": 85,
+    "records_before_after_exact_match": true,
+    "sha256": "0016cba7289533818ebb0f5105e292d1fb767ea4296ec2f02a9cc94ddd9ba481"
+  },
+  "writes": {
+    "score": 0,
+    "consumer_transfer": 0,
+    "Firestore": 0
+  },
+  "progress": {
+    "completed": 5,
+    "total": 6,
+    "completed_gates": [
+      1,
+      2,
+      3,
+      4,
+      6
+    ],
+    "partial_gate": 5,
+    "unresolved": "Formal growth integration: existing 3-horse cohort residuals collapse to zero; no new normalization rule or score change approved/adopted."
+  },
+  "findings": [
+    "Middle13 records identical across all three; High21 identical; only FebS event differs.",
+    "1000 diagnostic achievement samples are not 1000 stored race-by-race lifetime paths.",
+    "Same distance bands arise from sire-year rounding; Yaupon uses pooled fallback.",
+    "Existing v2 growth model is absent from active special-recruitment scoring; reference outputs not adopted."
+  ]
+}
