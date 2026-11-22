@@ -2598,9 +2598,12 @@ function renderInvestmentCareerSimulation(h){
  const scoring=h.scoringSuitability||h;
  const targets=String(scoring.targets||"").trim();
  const highTarget=targets?`<div class="career-sim-target">主なターゲット：${targets}</div>`:"";
+ const traceBindings={"83":{"name":"エイシンシルダリアの25","hash":"fe0878aada20805cae7c1fd7484e164b20df6c73761e85545034c3ae4e7e87ad"},"84":{"name":"ローズファラオの25","hash":"aaee81542792a5a9ba684e0d8b48015d18ebaa841a8fc2cc2e63e6d113a200c8"},"85":{"name":"パーフェクトフルートの25","hash":"ac527ce4556b9de2c5d02e282eebc6b42dc15bb771e03da5ed755d3a9903e68f"}};
+ const traceBinding=traceBindings[h.no];
+ const traceLink=traceBinding&&h.name===traceBinding.name&&h.careerDetails?.evidence_hash===traceBinding.hash?`<div class="career-sim"><a href="https://rar-project-5a27e.web.app/career1000-review.html?no=${h.no}" target="_blank" rel="noopener noreferrer">この馬の1000本全履歴・成長型・小項目を比較（検証版）</a><div class="note">新しい推定値は未反映。共通経路と到達クラスの不一致も表示します。</div></div>`:"";
  const old=h.recordedCareer;
  const recorded=old?`<div id="recordedCareer" class="career-sim"><div class="career-sim-title">原記録のCareer：No.${h.no} ${escapeHTML(h.name)}</div><div class="note">2026-09-14保存記録。現在のOfficial点数・賞金とは別の記録です。</div><div>Middle：${old.middle_starts}戦｜${fmtPrizeYen(old.middle_prize_yen)}｜ROI ${fmt1(old.middle_roi_rate)}%</div><div>High：${old.high_starts}戦｜${fmtPrizeYen(old.high_prize_yen)}｜ROI ${fmt1(old.high_roi_rate)}%</div><div>成長傾向：${escapeHTML(h.growth||"－")}</div><div>主要狙い：${escapeHTML(h.targets||"－")}</div></div>`:"";
- return recorded+`<div class="career-sim">
+ return recorded+traceLink+`<div class="career-sim">
    <div class="career-sim-title">現在のOfficialに対応するCareer：No.${h.no} ${escapeHTML(h.name)}</div>
    <div class="career-sim-grid">
      <div class="career-sim-box">

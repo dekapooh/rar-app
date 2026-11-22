@@ -97,3 +97,10 @@ const twice=applyContext.apply({dataset_key:'2026:silk',records:[{no:59}]});
 assert.equal(twice[0].legacySuitability.growth,'持続成長');
 assert.equal(twice[0].legacySuitability.distance,'ダ1600～2000m');
 console.log('CAREER_UI_MAPPING_AND_EXISTING_PREMIUM_ADMIN=PASS (10 groups, 82 audited records, separate No.59/85 sources and current/recorded Career rendering)');
+
+const actualTrace=JSON.parse(fs.readFileSync("audit/silk-2026-special-career-20261122.json","utf8")).records.find(r=>r.no===85);
+const actualTraceHtml=renderContext.render({...perfect,...actualTrace,careerDetails:actualTrace.career});
+assert.ok(actualTraceHtml.includes("career1000-review.html?no=85"));
+assert.ok(!renderContext.render({...perfect,...actualTrace,careerDetails:{...actualTrace.career,evidence_hash:"other"}}).includes("career1000-review.html"));
+assert.ok(!renderedStep.includes("career1000-review.html"));
+console.log("CAREER1000_LINK_SOURCE_BINDING_PASS");
