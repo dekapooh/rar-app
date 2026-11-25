@@ -1,0 +1,43 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import {gzipSync} from 'node:zlib';
+import {createHash,webcrypto} from 'node:crypto';
+const sync=fs.readFileSync('system-master-sync-career-v5.js','utf8'),index=fs.readFileSync('index.html','utf8');
+const patch=sync.slice(sync.indexOf('  function patchHorse('),sync.indexOf('  function cloneHorse('));
+const context=vm.createContext({});vm.runInContext('function n(v){return Number(v);}\n'+patch+'this.patch=patchHorse;',context);
+const a={schema_version:'rar-cohort85-reference-estimate-v2',no:59,horse_id:'SILK_2026_059',profile_count:1000,
+ sample_counts:{surface:{turf:421,dirt:579},distance:{1400:100,1600:800,2000:100},distance_by_surface:{turf:{1400:100,1600:321},dirt:{1600:479,2000:100}}}};
+const row={no:59,horse_id:'SILK_2026_059',name:'TEST',potential:10,pedigree:5,dream:4,investment:3,total:22,
+ suitability:{preferred_surfaces:['dirt'],distance_min_m:1500,distance_max_m:1900,growth_type:'持続成長',growth_display:'持続成長（参照推定）',individual_assessment:a},career:{}};
+const horse={};context.patch(horse,row);
+assert.equal(horse.distance,'1400～1600m（分布の中央80%）');
+assert.equal(horse.scoringDistance,'ダ1500～1900m');assert.equal(horse.turf,'参照分布 421／1000');assert.equal(horse.total,22);
+assert.equal(horse.distanceSummary.p50_m,1600);
+const alternate=JSON.parse(JSON.stringify(row));alternate.suitability.individual_assessment.sample_counts.distance={1600:100,2000:800,2400:100};
+const other={};context.patch(other,alternate);
+assert.notEqual(other.distance,horse.distance,'same scoring representative must not flatten different distance profiles');
+const source=index.slice(index.indexOf('function renderDistanceDistribution('),index.indexOf('function renderCareerEventDetails('));
+const render=vm.createContext({escapeHTML:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;')});
+vm.runInContext(source+'this.render=renderDistanceDistribution;',render);
+assert.match(render.render(horse),/芝・ダート別の距離分布/);assert.match(render.render(horse),/採点用の代表範囲：ダ1500～1900m/);
+const expand=sync.slice(sync.indexOf('  async function expandStoredCareerDetails('),sync.indexOf('  function patchHorse('));
+const inflater=vm.createContext({Blob,DecompressionStream,Uint8Array,TextDecoder,atob,crypto:webcrypto});
+vm.runInContext(expand+'this.expand=expandStoredCareerDetails;',inflater);
+const details={events_middle:[{gross_prize_yen:10}],events_high:[{gross_prize_yen:20}],inferred_rotation:{status:'TEST'}};
+const raw=Buffer.from(JSON.stringify(details)),blob={schema_version:'rar-career-details-gzip-v1',gzip_base64:gzipSync(raw).toString('base64'),raw_bytes:raw.length,raw_sha256:createHash('sha256').update(raw).digest('hex')};
+const dataset=()=>({records:[{no:59,career:{middle_starts:1,high_starts:1,middle_prize_yen:10,high_prize_yen:20,stored_details:structuredClone(blob)}}]});
+const decoded=await inflater.expand(dataset());assert.equal(decoded.records[0].career.events_high[0].gross_prize_yen,20);
+assert.equal(decoded.records[0].career.stored_details,undefined);
+const broken=dataset();broken.records[0].career.stored_details.raw_sha256='0'.repeat(64);
+await assert.rejects(inflater.expand(broken),/照合に失敗/);
+const wrongLedger=dataset();wrongLedger.records[0].career.high_prize_yen=21;
+await assert.rejects(inflater.expand(wrongLedger),/出走数・賞金が一致しません/);
+assert.equal((sync.match(/await expandStoredCareerDetails\(data\);/g)||[]).length,2,'startup and dataset switching both decode before rendering');
+console.log('COHORT_DISTANCE_DISTRIBUTIONS_AND_CHECKSUMMED_CAREER_DISPLAY_PASS');
+
+const strength=index.slice(index.indexOf('function surfaceStrength('),index.indexOf('function renderSearch('));
+vm.runInContext(strength+'this.strength=surfaceStrength;',render);
+assert.equal(render.strength('参照分布 421／1000'),.421);
+assert.equal(render.strength('◎'),2);
+assert.equal(render.strength('参照分布 579／1000'),.579);

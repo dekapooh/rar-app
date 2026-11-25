@@ -663,6 +663,35 @@
     return data;
   }
 
+  async function expandStoredCareerDetails(data) {
+    for (const row of data.records) {
+      const stored=row.career?.stored_details;
+      if (!stored) continue;
+      if(stored.schema_version!=='rar-career-details-gzip-v1'
+        || !Number.isInteger(stored.raw_bytes) || stored.raw_bytes<=0 || stored.raw_bytes>250000
+        || typeof stored.gzip_base64!=='string' || stored.gzip_base64.length>140000)
+        throw new Error('No.'+row.no+' Career詳細の保存形式を確認できません');
+      const bytes=Uint8Array.from(atob(stored.gzip_base64),c=>c.charCodeAt(0));
+      const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();
+      const chunks=[];let length=0;
+      for(;;){const {done,value}=await reader.read();if(done)break;length+=value.length;
+        if(length>250000){await reader.cancel();throw new Error('Career詳細が上限を超えました');}chunks.push(value);}
+      const raw=new Uint8Array(length);let offset=0;
+      for(const chunk of chunks){raw.set(chunk,offset);offset+=chunk.length;}
+      const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),v=>v.toString(16).padStart(2,'0')).join('');
+      if(length!==stored.raw_bytes||hash!==stored.raw_sha256)throw new Error('No.'+row.no+' Career詳細の照合に失敗しました');
+      const details=JSON.parse(new TextDecoder().decode(raw));
+      for(const mode of ['middle','high']){
+        const events=details['events_'+mode];
+        if(!Array.isArray(events)||events.length!==row.career[mode+'_starts']
+          ||Math.abs(events.reduce((v,e)=>v+Number(e.gross_prize_yen),0)-row.career[mode+'_prize_yen'])>0.00001)
+          throw new Error('No.'+row.no+' Career詳細と出走数・賞金が一致しません');
+      }
+      row.career={...row.career,...details};delete row.career.stored_details;
+    }
+    return data;
+  }
+
   function patchHorse(h, r) {
     const career = r.career || {};
     const scenarios = r.scenarios || {};
@@ -748,8 +777,9 @@
       suitabilityOrigin: r.display_origin || (hasCareerDetails ? 'PUBLISHED_CAREER' : 'DETAILS_UNAVAILABLE')
     });
 
+    h.distanceSummary=null;h.distanceHistogramBySurface=null;h.scoringDistance='';
     const individual = suitability.individual_assessment;
-    h.individualAssessment = individual?.schema_version === 'rar-reference82-individual-input-estimate-v1'
+    h.individualAssessment = ['rar-reference82-individual-input-estimate-v1','rar-cohort85-reference-estimate-v2'].includes(individual?.schema_version)
       && Number(individual.no) === Number(r.no) && individual.horse_id === r.horse_id
       && individual.profile_count === 1000
       && individual.sample_counts?.surface?.turf + individual.sample_counts?.surface?.dirt === 1000
@@ -757,6 +787,21 @@
     if (h.individualAssessment) {
       h.turf = '参照分布 ' + individual.sample_counts.surface.turf + '／1000';
       h.dirt = '参照分布 ' + individual.sample_counts.surface.dirt + '／1000';
+      const histogram=individual.sample_counts.distance || {};
+      const values=Object.entries(histogram).map(([d,n])=>[Number(d),Number(n)]).sort((a,b)=>a[0]-b[0]);
+      if(values.length && values.every(([d,n])=>Number.isInteger(d)&&d>0&&Number.isInteger(n)&&n>=0)
+        && values.reduce((v,[,n])=>v+n,0)===1000){
+        const quantile=p=>{let sum=0;for(const [d,n] of values){sum+=n;if(sum>=Math.ceil(1000*p))return d;}};
+        h.distanceSummary={p10_m:quantile(.1),p50_m:quantile(.5),p90_m:quantile(.9)};
+        h.distance=quantile(.1)+'～'+quantile(.9)+'m（分布の中央80%）';
+        h.distanceHistogramBySurface=individual.sample_counts.distance_by_surface || {turf:{},dirt:{}};
+        if(!individual.sample_counts.distance_by_surface){
+          for(const r of individual.sample_counts.joint||[]){const bucket=h.distanceHistogramBySurface[r.surface];
+            if(bucket)bucket[r.distance_m]=(bucket[r.distance_m]||0)+r.count;}
+        }
+        h.scoringDistance=hasDistance?surfacePrefix+distanceMin+'～'+distanceMax+'m':'';
+      }
+
     }
 
     // Keep each horse's recorded aptitude separate from its current score route.
@@ -884,6 +929,7 @@
       const res = await fetch(`${DATASET_API_BASE}${encodeURIComponent(requested)}`, { cache: 'no-store', mode: 'cors' });
       if (!res.ok) throw new Error(`consumer dataset API HTTP ${res.status}`);
       const data = validateDataset(await res.json());
+      await expandStoredCareerDetails(data);
       await loadAuditedCareerDisplay(data);
       if (data.dataset_key !== requested) throw new Error(`dataset response mismatch: ${data.dataset_key}`);
       window.dispatchEvent(new CustomEvent('rar:dataset-before-apply', { detail: {
@@ -923,6 +969,7 @@
       const res = await fetch(API_URL, { cache: 'no-store', mode: 'cors' });
       if (!res.ok) throw new Error(`consumer API HTTP ${res.status}`);
       const data = validateDataset(await res.json());
+      await expandStoredCareerDetails(data);
       await loadAuditedCareerDisplay(data);
       window.dispatchEvent(new CustomEvent('rar:dataset-before-apply', { detail: {
         season_year: data.season_year,
