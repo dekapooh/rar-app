@@ -1,8 +1,8 @@
-const CACHE_NAME="rar-rc67-individual-reference-v59";
+const CACHE_NAME="rar-rc67-individual-reference-v60";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v5.js","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v5.js?v=individual-20261125","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v5.js"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v5.js?v=individual-20261125"><\/script>';
 function injectSystemMasterSync(html){
   if(/<script\b[^>]*\bsrc=["'][^"']*system-master-sync(?:-career-v[0-9]+)?\.js(?:[?][^"']*)?["']/i.test(html)) return html;
   return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;
@@ -254,3 +254,4 @@ self.addEventListener("fetch",event=>{
   }
   if(url.origin===self.location.origin){event.respondWith((async()=>{const cached=await caches.match(req,{ignoreSearch:true});if(cached) return cached;try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),5000);const response=await fetch(req,{signal:controller.signal});clearTimeout(timer);if(response && response.ok){const cache=await caches.open(CACHE_NAME);cache.put(req,response.clone()).catch(()=>{});}return response;}catch{return new Response("",{status:504});}})());}
 });
+
