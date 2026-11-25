@@ -3939,6 +3939,8 @@ function openHorse(no,from,options={}){
  const fitSource=document.getElementById("dFitSourceNote");
  if(fitSource)fitSource.textContent=currentHorse.recordedSuitability
    ? `No.${currentHorse.no} ${currentHorse.name}の保存済み原記録。現在の点数に対応する計算経路は下の確認欄に表示します。`
+   : currentHorse.individualAssessment
+   ? "実測・馬体評価・父母系と既存82頭による個体別の参照推定。分布は勝率ではありません。追加3頭は11月、参照82頭は7月の測尺です。"
    : currentHorse.careerDetails
    ? "この馬の採点時入力とCareer代表ルートを表示。Objective v1では成長型を推定しません。主適性外は不向きの断定ではありません。"
    : (currentHorse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
@@ -4503,7 +4505,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v5.js" defer></script>
+<script src="./system-master-sync-career-v5.js?v=individual-20261125" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

@@ -748,6 +748,17 @@
       suitabilityOrigin: r.display_origin || (hasCareerDetails ? 'PUBLISHED_CAREER' : 'DETAILS_UNAVAILABLE')
     });
 
+    const individual = suitability.individual_assessment;
+    h.individualAssessment = individual?.schema_version === 'rar-reference82-individual-input-estimate-v1'
+      && Number(individual.no) === Number(r.no) && individual.horse_id === r.horse_id
+      && individual.profile_count === 1000
+      && individual.sample_counts?.surface?.turf + individual.sample_counts?.surface?.dirt === 1000
+      ? individual : null;
+    if (h.individualAssessment) {
+      h.turf = '参照分布 ' + individual.sample_counts.surface.turf + '／1000';
+      h.dirt = '参照分布 ' + individual.sample_counts.surface.dirt + '／1000';
+    }
+
     // Keep each horse's recorded aptitude separate from its current score route.
     // Only the identity/score-bound 82-horse audit can supply original records.
     h.scoringSuitability = Object.fromEntries(['turf','dirt','distance','growth','category','targets'].map(key=>[key,h[key]||'']));

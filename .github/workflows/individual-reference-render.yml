@@ -1,0 +1,22 @@
+name: Individual reference display preservation
+on:
+  push:
+    branches: [main]
+    paths: ['index.html','sw.js','system-master-sync.js','system-master-sync-career-v5.js','audit/test-individual-assessment.mjs','.github/workflows/individual-reference-render.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node --check system-master-sync.js
+          node --check system-master-sync-career-v5.js
+          node --check sw.js
+          node audit/test-individual-assessment.mjs
