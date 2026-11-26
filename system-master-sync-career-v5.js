@@ -805,6 +805,16 @@
           for(const r of individual.sample_counts.joint||[]){const bucket=h.distanceHistogramBySurface[r.surface];
             if(bucket)bucket[r.distance_m]=(bucket[r.distance_m]||0)+r.count;}
         }
+        if(valid){
+          const active=['turf','dirt'].filter(k=>counts[k]>=334);
+          const labels=active.map(k=>{
+            const bins=Object.entries(h.distanceHistogramBySurface[k]||{}).map(([d,n])=>[Number(d),Number(n)]).sort((a,b)=>a[0]-b[0]);
+            if(!bins.length||!bins.every(([d,n])=>Number.isInteger(d)&&d>0&&Number.isInteger(n)&&n>=0)||bins.reduce((a,[,n])=>a+n,0)!==counts[k])return null;
+            const q=p=>{let sum=0;for(const [d,n] of bins){sum+=n;if(sum>=Math.ceil(counts[k]*p))return d;}};
+            return (k==='turf'?'芝':'ダート')+q(.1)+'～'+q(.9)+'m';
+          });
+          if(labels.length&&labels.every(Boolean))h.distance=labels.join('／')+'（参照分布）';
+        }
         h.scoringDistance=hasDistance?surfacePrefix+distanceMin+'～'+distanceMax+'m':'';
       }
 
