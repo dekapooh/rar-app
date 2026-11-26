@@ -786,7 +786,7 @@
       ? individual : null;
     if (h.individualAssessment) {
       const counts=individual.sample_counts.surface;
-      const grade=n=>n>=501?'◎':n>=300?'○':'△';
+      const grade=n=>n>=667?'◎':n>=334?'○':'△';
       const valid=['turf','dirt'].every(k=>Number.isInteger(counts[k])&&counts[k]>=0&&counts[k]<=1000);
       const supplied=individual.surface_display;
       const verified=individual.surface_display_rule==='RAR_SURFACE_DISPLAY_FROZEN_20261126_V1'
