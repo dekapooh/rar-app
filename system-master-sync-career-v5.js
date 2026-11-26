@@ -785,8 +785,14 @@
       && individual.sample_counts?.surface?.turf + individual.sample_counts?.surface?.dirt === 1000
       ? individual : null;
     if (h.individualAssessment) {
-      h.turf = '参照分布 ' + individual.sample_counts.surface.turf + '／1000';
-      h.dirt = '参照分布 ' + individual.sample_counts.surface.dirt + '／1000';
+      const counts=individual.sample_counts.surface;
+      const grade=n=>n>=501?'◎':n>=300?'○':'△';
+      const valid=['turf','dirt'].every(k=>Number.isInteger(counts[k])&&counts[k]>=0&&counts[k]<=1000);
+      const supplied=individual.surface_display;
+      const verified=individual.surface_display_rule==='RAR_SURFACE_DISPLAY_FROZEN_20261126_V1'
+        && valid && ['turf','dirt'].every(k=>supplied?.[k]===grade(counts[k]));
+      // Legacy published assessments retain raw counts; derive display only.
+      for(const k of ['turf','dirt']) h[k]=verified?supplied[k]:valid?grade(counts[k]):'参照分布 '+counts[k]+'／1000';
       const histogram=individual.sample_counts.distance || {};
       const values=Object.entries(histogram).map(([d,n])=>[Number(d),Number(n)]).sort((a,b)=>a[0]-b[0]);
       if(values.length && values.every(([d,n])=>Number.isInteger(d)&&d>0&&Number.isInteger(n)&&n>=0)
