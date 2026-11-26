@@ -2030,7 +2030,8 @@ main{padding-top:84px}
   }
 }
 
-</style></head>
+</style><style>.compare-value.surface-dominant{font-weight:800}</style>
+</head>
 <body><div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:sticky;top:0;z-index:9999;padding:7px 12px;text-align:center;font-size:10px;font-weight:900;background:#fff4d6;color:#684f00;border-bottom:1px solid #ead18b">オフラインです。端末に保存済みの機能は利用できます。</div>
 <div id="app">
 <header><div class="brand">RAR</div><div class="sub">Racehorse Analysis Rating｜β Ver.1.0 RC64</div></header>
@@ -3380,8 +3381,8 @@ function renderFavoriteCompare(){
    ["Official総合", h=>Number(h.total).toFixed(1), h=>""],
    ["Personal反映", h=>(Number(h.total)+effectivePersonalPoint(h.no)).toFixed(1), h=>effectivePersonalPoint(h.no)>0?"positive":(effectivePersonalPoint(h.no)<0?"negative":"")],
    ["一口価格", h=>`${Number(h.sharePrice).toFixed(1).replace(".0","")}万円`, h=>""],
-   ["芝適性", h=>h.turf||"－", h=>""],
-   ["ダート適性", h=>h.dirt||"－", h=>""],
+   ["芝適性", h=>h.turf||"－", h=>dominantSurface(h,"turf")?"surface-dominant":""],
+   ["ダート適性", h=>h.dirt||"－", h=>dominantSurface(h,"dirt")?"surface-dominant":""],
    ["距離適性", h=>h.distance||"－", h=>""],
    ["成長傾向", h=>h.growth||"－", h=>""],
    ["狙いレース", h=>h.targets||"－", h=>""],
@@ -3400,6 +3401,10 @@ function renderFavoriteCompare(){
        <div class="compare-value ${getClass(h)}">${getValue(h)}</div>
      </td>`).join("")}</tr>`).join("")}</tbody>
  </table>`;
+}
+function dominantSurface(h,k){
+ const c=h?.individualAssessment?.sample_counts?.surface;
+ return !h?.recordedSuitability && Number.isInteger(c?.turf) && Number.isInteger(c?.dirt) && c.turf+c.dirt===1000 && c[k]>c[k==='turf'?'dirt':'turf'];
 }
 function datasetRegisteredName(h){
  return String(h?.registeredNameOfficial||"").trim();
@@ -3942,6 +3947,7 @@ function openHorse(no,from,options={}){
  if(fitLock)fitLock.style.display=canFit?"none":"block";
  document.getElementById("dTurf").textContent=canFit?(currentHorse.turf||"－"):"";
  document.getElementById("dDirt").textContent=canFit?(currentHorse.dirt||"－"):"";
+ for(const [id,k] of [["dTurf","turf"],["dDirt","dirt"]]) document.getElementById(id).style.fontWeight=dominantSurface(currentHorse,k)?"800":"400";
  document.getElementById("dDistance").textContent=canFit?(currentHorse.distance||"－"):"";
  document.getElementById("dCategory").textContent=canFit?(currentHorse.category||"－"):"";
  document.getElementById("dGrowth").textContent=canFit?(currentHorse.growth||"－"):"";
