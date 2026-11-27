@@ -73,7 +73,7 @@ jobs:
           assert 'currentHorse.dream+"/25"' not in s
           assert 'currentHorse.roi+"/25"' not in s
           index_s=pathlib.Path("index.html").read_text(encoding="utf-8")
-          assert '<script src="./system-master-sync-career-v5.js' in index_s, "versioned SYSTEM MASTER sync is not loaded by index.html"
+          assert '<script src="./system-master-sync-career-v6.js' in index_s, "versioned SYSTEM MASTER sync is not loaded by index.html"
           assert 'standard:{rankLimit:Infinity' in index_s and 'premium:{rankLimit:Infinity' in index_s
           assert 'const DATASET_PERSONAL_KEYS=[' in index_s
           assert 'window.addEventListener("rar:dataset-before-apply"' in index_s
