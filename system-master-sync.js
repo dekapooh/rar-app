@@ -779,14 +779,20 @@
 
     h.distanceSummary=null;h.distanceHistogramBySurface=null;h.scoringDistance='';
     const individual = suitability.individual_assessment;
-    h.individualAssessment = ['rar-reference82-individual-input-estimate-v1','rar-cohort85-reference-estimate-v2'].includes(individual?.schema_version)
+    h.individualAssessment = ['rar-reference82-individual-input-estimate-v1','rar-cohort85-reference-estimate-v2','rar-cohort85-source-estimate-v3'].includes(individual?.schema_version)
       && Number(individual.no) === Number(r.no) && individual.horse_id === r.horse_id
       && individual.profile_count === 1000
       && individual.sample_counts?.surface?.turf + individual.sample_counts?.surface?.dirt === 1000
       ? individual : null;
     if (h.individualAssessment) {
-      h.turf = '参照分布 ' + individual.sample_counts.surface.turf + '／1000';
-      h.dirt = '参照分布 ' + individual.sample_counts.surface.dirt + '／1000';
+      const counts=individual.sample_counts.surface;
+      const grade=n=>n>=667?'◎':n>=334?'○':'△';
+      const valid=['turf','dirt'].every(k=>Number.isInteger(counts[k])&&counts[k]>=0&&counts[k]<=1000);
+      const supplied=individual.surface_display;
+      const verified=individual.surface_display_rule==='RAR_SURFACE_DISPLAY_FROZEN_20261126_V1'
+        && valid && ['turf','dirt'].every(k=>supplied?.[k]===grade(counts[k]));
+      // Legacy published assessments retain raw counts; derive display only.
+      for(const k of ['turf','dirt']) h[k]=verified?supplied[k]:valid?grade(counts[k]):'参照分布 '+counts[k]+'／1000';
       const histogram=individual.sample_counts.distance || {};
       const values=Object.entries(histogram).map(([d,n])=>[Number(d),Number(n)]).sort((a,b)=>a[0]-b[0]);
       if(values.length && values.every(([d,n])=>Number.isInteger(d)&&d>0&&Number.isInteger(n)&&n>=0)
@@ -799,10 +805,32 @@
           for(const r of individual.sample_counts.joint||[]){const bucket=h.distanceHistogramBySurface[r.surface];
             if(bucket)bucket[r.distance_m]=(bucket[r.distance_m]||0)+r.count;}
         }
+        if(valid){
+          const active=['turf','dirt'].filter(k=>counts[k]>=334);
+          const labels=active.map(k=>{
+            const bins=Object.entries(h.distanceHistogramBySurface[k]||{}).map(([d,n])=>[Number(d),Number(n)]).sort((a,b)=>a[0]-b[0]);
+            if(!bins.length||!bins.every(([d,n])=>Number.isInteger(d)&&d>0&&Number.isInteger(n)&&n>=0)||bins.reduce((a,[,n])=>a+n,0)!==counts[k])return null;
+            const q=p=>{let sum=0;for(const [d,n] of bins){sum+=n;if(sum>=Math.ceil(counts[k]*p))return d;}};
+            return (k==='turf'?'芝':'ダート')+q(.1)+'～'+q(.9)+'m';
+          });
+          if(labels.length&&labels.every(Boolean))h.distance=labels.join('／')+'（参照分布）';
+        }
         h.scoringDistance=hasDistance?surfacePrefix+distanceMin+'～'+distanceMax+'m':'';
       }
 
     }
+
+
+      if(h.individualAssessment&&individual.schema_version==='rar-cohort85-source-estimate-v3'){
+        const counts=individual.sample_counts.surface;
+        const active=['turf','dirt'].filter(k=>counts[k]>=334);
+        const intervals=individual.source_distance_intervals||{};
+        const labels=active.map(k=>{const b=intervals[k],lo=b?.lower_m,hi=b?.upper_m;
+          if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<=0||hi<lo||lo%100||hi%100)return null;
+          const low=Math.floor(lo/200)*200,high=Math.ceil(hi/200)*200;
+          return (k==='turf'?'芝':'ダート')+(high<=1200?'〜'+high+'m':high>2400?low+'m〜':low+'〜'+high+'m');});
+        if(labels.length&&labels.every(Boolean))h.distance=labels.join('／');
+      }
 
     // Keep each horse's recorded aptitude separate from its current score route.
     // Only the identity/score-bound 82-horse audit can supply original records.

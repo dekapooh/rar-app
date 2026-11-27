@@ -779,7 +779,7 @@
 
     h.distanceSummary=null;h.distanceHistogramBySurface=null;h.scoringDistance='';
     const individual = suitability.individual_assessment;
-    h.individualAssessment = ['rar-reference82-individual-input-estimate-v1','rar-cohort85-reference-estimate-v2'].includes(individual?.schema_version)
+    h.individualAssessment = ['rar-reference82-individual-input-estimate-v1','rar-cohort85-reference-estimate-v2','rar-cohort85-source-estimate-v3'].includes(individual?.schema_version)
       && Number(individual.no) === Number(r.no) && individual.horse_id === r.horse_id
       && individual.profile_count === 1000
       && individual.sample_counts?.surface?.turf + individual.sample_counts?.surface?.dirt === 1000
@@ -819,6 +819,18 @@
       }
 
     }
+
+
+      if(h.individualAssessment&&individual.schema_version==='rar-cohort85-source-estimate-v3'){
+        const counts=individual.sample_counts.surface;
+        const active=['turf','dirt'].filter(k=>counts[k]>=334);
+        const intervals=individual.source_distance_intervals||{};
+        const labels=active.map(k=>{const b=intervals[k],lo=b?.lower_m,hi=b?.upper_m;
+          if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<=0||hi<lo||lo%100||hi%100)return null;
+          const low=Math.floor(lo/200)*200,high=Math.ceil(hi/200)*200;
+          return (k==='turf'?'芝':'ダート')+(high<=1200?'〜'+high+'m':high>2400?low+'m〜':low+'〜'+high+'m');});
+        if(labels.length&&labels.every(Boolean))h.distance=labels.join('／');
+      }
 
     // Keep each horse's recorded aptitude separate from its current score route.
     // Only the identity/score-bound 82-horse audit can supply original records.

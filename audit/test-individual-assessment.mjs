@@ -113,8 +113,8 @@ estimated.suitability.individual_assessment={
   profile_count:1000,sample_counts:{surface:{turf:421,dirt:579}}
 };
 const individual={};context.patchHorse(individual,estimated);
-assert.equal(individual.turf,'参照分布 421／1000');
-assert.equal(individual.dirt,'参照分布 579／1000');
+assert.equal(individual.turf,'○');
+assert.equal(individual.dirt,'○');
 assert.equal(individual.growth,'持続成長（参照推定）');
 assert.equal(individual.total,row.total);
 estimated.suitability.individual_assessment.no=83;
@@ -123,6 +123,6 @@ assert.equal(swapped.individualAssessment,null);
 assert.equal(swapped.turf,'主適性外');
 assert.ok(index.includes('currentHorse.individualAssessment'));
 assert.ok(index.includes('分布は勝率ではありません'));
-assert.ok(index.includes('system-master-sync-career-v5.js?v=cohort-20261125'));
-assert.ok(fs.readFileSync('sw.js','utf8').includes('rar-rc67-cohort-reference-v61'));
+assert.ok(index.includes('system-master-sync-career-v5.js?v=source-career-20261127'));
+assert.ok(fs.readFileSync('sw.js','utf8').includes('rar-source-career-20261127-v62'));
 console.log('INDIVIDUAL_ESTIMATE_RENDER_AND_LEGACY_PRESERVATION_PASS');

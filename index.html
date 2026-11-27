@@ -2577,7 +2577,7 @@ function renderDistanceDistribution(h){
  const bins=h.distanceHistogramBySurface;if(!bins||!h.individualAssessment)return '';
  const distances=[...new Set([...Object.keys(bins.turf||{}),...Object.keys(bins.dirt||{})])].map(Number).sort((a,b)=>a-b);
  const rows=distances.map(d=>'<tr><td>'+d+'m</td><td>'+Number(bins.turf?.[d]||0)+'</td><td>'+Number(bins.dirt?.[d]||0)+'</td></tr>').join('');
- return '<details><summary>芝・ダート別の距離分布を開く</summary><p class="note">1000通りの参照プロフィールを距離別に集計。上の範囲は芝・ダート合算の中央80%で、適性の限界や勝率を示しません。</p><div style="max-height:320px;overflow:auto"><table class="scenario-table"><thead><tr><th>距離</th><th>芝</th><th>ダート</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="note">採点用の代表範囲：'+escapeHTML(h.scoringDistance||'－')+'。分布の範囲とは別に表示しています。</p></details>';
+ return '<details><summary>芝・ダート別の距離分布を開く</summary><p class="note">1000通りの参照プロフィールを距離別に集計。新方式の上の範囲はカタログと血統適性の基準を200m刻みで表示しています。分布は適性の限界や勝率を示しません。</p><div style="max-height:320px;overflow:auto"><table class="scenario-table"><thead><tr><th>距離</th><th>芝</th><th>ダート</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="note">採点用の代表範囲：'+escapeHTML(h.scoringDistance||'－')+'。分布の範囲とは別に表示しています。</p></details>';
 }
 
 function renderCareerEventDetails(h,scenario){
@@ -3958,7 +3958,7 @@ function openHorse(no,from,options={}){
  if(fitSource)fitSource.textContent=currentHorse.recordedSuitability
    ? `No.${currentHorse.no} ${currentHorse.name}の旧方式の保存済み原記録。85頭の統一再計算はまだ未反映です。`
    : currentHorse.individualAssessment
-   ? `実測・馬体評価・父母系による個体別の参照推定。距離は分布の中央80%を表示。分布は勝率ではありません。測尺：${currentHorse.individualAssessment.measurement_period?.label||currentHorse.individualAssessment.measurement_context?.label||"参照時点を根拠に保存"}。`
+   ? `カタログ・実測・血統資料による個体別の参照推定。新方式の距離は200m刻みで表示。分布は勝率ではありません。測尺：${currentHorse.individualAssessment.measurement_period?.label||currentHorse.individualAssessment.measurement_context?.label||"参照時点を根拠に保存"}。`
    : currentHorse.careerDetails
    ? "この馬の採点時入力とCareer代表ルートを表示。Objective v1では成長型を推定しません。主適性外は不向きの断定ではありません。"
    : (currentHorse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
@@ -4523,7 +4523,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v5.js?v=cohort-20261125" defer></script>
+<script src="./system-master-sync-career-v5.js?v=source-career-20261127" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

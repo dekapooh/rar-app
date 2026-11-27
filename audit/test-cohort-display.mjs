@@ -11,10 +11,10 @@ const a={schema_version:'rar-cohort85-reference-estimate-v2',no:59,horse_id:'SIL
 const row={no:59,horse_id:'SILK_2026_059',name:'TEST',potential:10,pedigree:5,dream:4,investment:3,total:22,
  suitability:{preferred_surfaces:['dirt'],distance_min_m:1500,distance_max_m:1900,growth_type:'持続成長',growth_display:'持続成長（参照推定）',individual_assessment:a},career:{}};
 const horse={};context.patch(horse,row);
-assert.equal(horse.distance,'1400～1600m（分布の中央80%）');
-assert.equal(horse.scoringDistance,'ダ1500～1900m');assert.equal(horse.turf,'参照分布 421／1000');assert.equal(horse.total,22);
+assert.equal(horse.distance,'芝1400～1600m／ダート1600～2000m（参照分布）');
+assert.equal(horse.scoringDistance,'ダ1500～1900m');assert.equal(horse.turf,'○');assert.equal(horse.total,22);
 assert.equal(horse.distanceSummary.p50_m,1600);
-const alternate=JSON.parse(JSON.stringify(row));alternate.suitability.individual_assessment.sample_counts.distance={1600:100,2000:800,2400:100};
+const alternate=JSON.parse(JSON.stringify(row));alternate.suitability.individual_assessment.sample_counts.distance={1600:100,2000:800,2400:100};alternate.suitability.individual_assessment.sample_counts.distance_by_surface={turf:{1600:100,2000:321},dirt:{2000:479,2400:100}};
 const other={};context.patch(other,alternate);
 assert.notEqual(other.distance,horse.distance,'same scoring representative must not flatten different distance profiles');
 const source=index.slice(index.indexOf('function renderDistanceDistribution('),index.indexOf('function renderCareerEventDetails('));
