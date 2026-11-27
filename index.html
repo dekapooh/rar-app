@@ -2608,7 +2608,7 @@ function renderInvestmentCareerSimulation(h){
  const surface=careerSurfaceLabel(meta.surface);
  const scoring=h.scoringSuitability||h;
  const targets=String(scoring.targets||"").trim();
- const highTarget=targets?`<div class="career-sim-target">主なターゲット：${targets}</div>`:"";
+ const highTarget=targets?`<div class="career-sim-target">Highシナリオの挑戦例：${targets}</div>`:"";
  const traceBindings={"83":{"name":"エイシンシルダリアの25","hash":"fe0878aada20805cae7c1fd7484e164b20df6c73761e85545034c3ae4e7e87ad"},"84":{"name":"ローズファラオの25","hash":"aaee81542792a5a9ba684e0d8b48015d18ebaa841a8fc2cc2e63e6d113a200c8"},"85":{"name":"パーフェクトフルートの25","hash":"ac527ce4556b9de2c5d02e282eebc6b42dc15bb771e03da5ed755d3a9903e68f"}};
  const traceBinding=traceBindings[h.no];
  const traceLink=traceBinding&&h.name===traceBinding.name&&h.careerDetails?.evidence_hash===traceBinding.hash?`<div class="career-sim"><a href="https://rar-project-5a27e.web.app/career1000-review.html?no=${h.no}" target="_blank" rel="noopener noreferrer">この馬の1000本全履歴・成長型・小項目を比較（検証版）</a><div class="note">新しい推定値は未反映。共通経路と到達クラスの不一致も表示します。</div></div>`:"";
@@ -3960,7 +3960,7 @@ function openHorse(no,from,options={}){
  if(fitSource)fitSource.textContent=currentHorse.recordedSuitability
    ? `No.${currentHorse.no} ${currentHorse.name}の旧方式の保存済み原記録。85頭の統一再計算はまだ未反映です。`
    : currentHorse.individualAssessment
-   ? `カタログ・実測・血統資料による個体別の参照推定。新方式の距離は200m刻みで表示。分布は勝率ではありません。測尺：${currentHorse.individualAssessment.measurement_period?.label||currentHorse.individualAssessment.measurement_context?.label||"参照時点を根拠に保存"}。`
+   ? `カタログ・実測・血統資料による個体別の参照推定。距離適性は200m刻みで表示。主要狙いは馬場・距離・性別に合うレースから選定。分布は勝率ではありません。測尺：${currentHorse.individualAssessment.measurement_period?.label||currentHorse.individualAssessment.measurement_context?.label||"参照時点を根拠に保存"}。`
    : currentHorse.careerDetails
    ? "この馬の採点時入力とCareer代表ルートを表示。Objective v1では成長型を推定しません。主適性外は不向きの断定ではありません。"
    : (currentHorse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
@@ -4525,7 +4525,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v5.js?v=sprint-display-20261128" defer></script>
+<script src="./system-master-sync-career-v6.js?v=aptitude-five-20261128" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

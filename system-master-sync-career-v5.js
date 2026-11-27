@@ -693,6 +693,47 @@
   }
 
   function patchHorse(h, r) {
+// Owner-approved aptitude presentation, 2026-11-28. No score/history writes.
+function distanceIntervalLabel(band) {
+  let lo=band?.lower_m,hi=band?.upper_m;
+  if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<=0||hi<lo){const m=String(band?.display||'').match(/^(\d+)[〜～](\d+)m$/);if(!m)return band?.display||'—';lo=Number(m[1]);hi=Number(m[2]);if(lo<=0||hi<lo)return '—';}
+  const low=Math.floor(lo/200)*200,high=Math.ceil(hi/200)*200;
+  if(low<=1000||high<=1200)return '〜'+high+'m';
+  if(high>2400)return (low>2400?(lo>=3000?3000:2400):low)+'m〜';
+  return low+'〜'+high+'m';
+}
+function surfaceSymbols(counts){
+  if(!counts||!['turf','dirt'].every(k=>Number.isInteger(counts[k])&&counts[k]>=0&&counts[k]<=1000)||counts.turf+counts.dirt!==1000)return null;
+  return Object.fromEntries(['turf','dirt'].map(k=>[k,counts[k]>=601?'◎':counts[k]>=334?'○':'△']));
+}
+function aptitudePresentation(record){
+  const a=record.suitability?.individual_assessment;
+  if(a?.schema_version!=='rar-cohort85-source-estimate-v3'||a.no!==record.no||a.horse_id!==record.horse_id)return null;
+  const counts=a.sample_counts?.surface,symbols=surfaceSymbols(counts);if(!symbols)return null;
+  const active=['turf','dirt'].filter(k=>counts[k]>=334).sort((a,b)=>counts[b]-counts[a]);
+  const intervals=a.source_distance_intervals||{},labels=active.map(k=>(k==='turf'?'芝':'ダート')+distanceIntervalLabel(intervals[k]));
+  const female=['牝','メス','牝馬','female','filly'].includes(String(record.sex).trim());
+  const races=[{"race_name":"プロキオンS","aliases":["プロキオンステークス"],"surface":"dirt","distance_m":1800,"grade":"G2","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"根岸S","aliases":["根岸ステークス"],"surface":"dirt","distance_m":1400,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"クイーンC","aliases":["クイーンカップ"],"surface":"turf","distance_m":1600,"grade":"G3","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"共同通信杯","aliases":[],"surface":"turf","distance_m":1800,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"フェブラリーS","aliases":["フェブラリーステークス"],"surface":"dirt","distance_m":1600,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"チューリップ賞","aliases":[],"surface":"turf","distance_m":1600,"grade":"G2","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"スプリングS","aliases":["スプリングステークス"],"surface":"turf","distance_m":1800,"grade":"G2","sex_restriction":null,"allowed_sexes":["牡","牝"],"country":null},{"race_name":"ファルコンS","aliases":["ファルコンステークス"],"surface":"turf","distance_m":1400,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"毎日杯","aliases":[],"surface":"turf","distance_m":1800,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"大阪杯","aliases":[],"surface":"turf","distance_m":2000,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"阪神牝馬S","aliases":["阪神牝馬ステークス"],"surface":"turf","distance_m":1600,"grade":"G2","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"桜花賞","aliases":[],"surface":"turf","distance_m":1600,"grade":"G1","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"皐月賞","aliases":[],"surface":"turf","distance_m":2000,"grade":"G1","sex_restriction":null,"allowed_sexes":["牡","牝"],"country":null},{"race_name":"青葉賞","aliases":[],"surface":"turf","distance_m":2400,"grade":"G2","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"フローラS","aliases":["フローラステークス"],"surface":"turf","distance_m":2000,"grade":"G2","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"ユニコーンS","aliases":["ユニコーンステークス"],"surface":"dirt","distance_m":1900,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"京王杯SC","aliases":["京王杯Sカップ","京王杯スプリングC"],"surface":"turf","distance_m":1400,"grade":"G2","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"天皇賞（春）","aliases":[],"surface":"turf","distance_m":3200,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"エプソムC","aliases":["エプソムカップ"],"surface":"turf","distance_m":1800,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"NHKマイルC","aliases":["NHKマイルカップ"],"surface":"turf","distance_m":1600,"grade":"G1","sex_restriction":null,"allowed_sexes":["牡","牝"],"country":null},{"race_name":"ヴィクトリアマイル","aliases":[],"surface":"turf","distance_m":1600,"grade":"G1","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"オークス","aliases":[],"surface":"turf","distance_m":2400,"grade":"G1","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"日本ダービー","aliases":[],"surface":"turf","distance_m":2400,"grade":"G1","sex_restriction":null,"allowed_sexes":["牡","牝"],"country":null},{"race_name":"安田記念","aliases":[],"surface":"turf","distance_m":1600,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"宝塚記念","aliases":[],"surface":"turf","distance_m":2200,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"ラジオNIKKEI賞","aliases":[],"surface":"turf","distance_m":1800,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"関屋記念","aliases":[],"surface":"turf","distance_m":1600,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"ローズS","aliases":["ローズステークス"],"surface":"turf","distance_m":1800,"grade":"G2","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"富士S","aliases":["富士ステークス"],"surface":"turf","distance_m":1600,"grade":"G2","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"秋華賞","aliases":[],"surface":"turf","distance_m":2000,"grade":"G1","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"菊花賞","aliases":[],"surface":"turf","distance_m":3000,"grade":"G1","sex_restriction":null,"allowed_sexes":["牡","牝"],"country":null},{"race_name":"天皇賞（秋）","aliases":[],"surface":"turf","distance_m":2000,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"武蔵野S","aliases":["武蔵野ステークス"],"surface":"dirt","distance_m":1600,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"エリザベス女王杯","aliases":[],"surface":"turf","distance_m":2200,"grade":"G1","sex_restriction":"牝","allowed_sexes":null,"country":null},{"race_name":"マイルCS","aliases":["マイルCステークス","マイルチャンピオンシップ"],"surface":"turf","distance_m":1600,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"ジャパンC","aliases":["ジャパンカップ"],"surface":"turf","distance_m":2400,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"チャンピオンズC","aliases":["チャンピオンズカップ"],"surface":"dirt","distance_m":1800,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"有馬記念","aliases":[],"surface":"turf","distance_m":2500,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"シルクロードS","aliases":[],"surface":"turf","distance_m":1200,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"阪神大賞典","aliases":[],"surface":"turf","distance_m":3000,"grade":"G2","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"阪神C","aliases":[],"surface":"turf","distance_m":1400,"grade":"G2","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"カペラS","aliases":[],"surface":"dirt","distance_m":1200,"grade":"G3","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"高松宮記念","aliases":[],"surface":"turf","distance_m":1200,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"JBCスプリント","aliases":[],"surface":"dirt","distance_m":1400,"grade":"Jpn1","sex_restriction":null,"allowed_sexes":null,"country":null},{"race_name":"アルクオーツスプリント","aliases":[],"surface":"turf","distance_m":1200,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":"UAE"},{"race_name":"ドバイゴールデンシャヒーン","aliases":[],"surface":"dirt","distance_m":1200,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":"UAE"},{"race_name":"ドバイターフ","aliases":[],"surface":"turf","distance_m":1800,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":"UAE"},{"race_name":"ドバイシーマクラシック","aliases":[],"surface":"turf","distance_m":2410,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":"UAE"},{"race_name":"ドバイワールドカップ","aliases":[],"surface":"dirt","distance_m":2000,"grade":"G1","sex_restriction":null,"allowed_sexes":null,"country":"UAE"}];
+  const existing=record.suitability?.target_races?.length?record.suitability.target_races:record.career?.representative_targets||[];
+  const selected=[];
+  for(const surface of active){
+    const band=intervals[surface];if(!band||!Number.isFinite(band.lower_m)||!Number.isFinite(band.upper_m))continue;
+    const long=band.upper_m>2400;
+    const lower=long&&band.lower_m>2400?(band.lower_m>=3000?3000:2400):band.lower_m;
+    const upper=band.upper_m;
+    const eligible=races.filter(r=>r.surface===surface&&r.distance_m>=lower&&r.distance_m<=upper&&(!r.sex_restriction||r.sex_restriction===(female?'牝':'牡'))&&(!r.allowed_sexes||r.allowed_sexes.includes(female?'牝':'牡')));
+    const classics=female&&surface==='turf'?['桜花賞','オークス','秋華賞'].filter(name=>eligible.some(r=>r.race_name===name)):[];
+    if(classics.length){selected.push(...classics.slice(0,2));continue;}
+    const matched=existing.map(name=>eligible.find(r=>r.race_name===name||r.aliases?.includes(name))).filter(Boolean);
+    if(matched.length){selected.push(matched[0].race_name);continue;}
+    const order=['G1','Jpn1','G2','G3'];
+    eligible.sort((a,b)=>(a.country==='UAE')-(b.country==='UAE')||order.indexOf(a.grade)-order.indexOf(b.grade)||Math.abs(a.distance_m-(lower+upper)/2)-Math.abs(b.distance_m-(lower+upper)/2)||a.race_name.localeCompare(b.race_name,'ja'));
+    if(eligible.length)selected.push(eligible[0].race_name);
+  }
+  return {distance:labels.join('／'),turf:symbols.turf,dirt:symbols.dirt,targets:[...new Set(selected)].join('・')||'適性内の主要重賞を確認中',rule:'RAR_APTITUDE_PRESENTATION_20261128_V3'};
+}
+
+
     const career = r.career || {};
     const scenarios = r.scenarios || {};
     const dreamSc = scenarios.dream || {};
@@ -760,8 +801,8 @@
       expectedPrize: Number.isFinite(Number(career.official_prize_yen)) ? Number(career.official_prize_yen) / 10000 : h.expectedPrize,
       returnRate: Number.isFinite(Number(career.roi_official_pct)) ? Number(career.roi_official_pct) / 100 : h.returnRate,
       rarStatus: r.manager_status || h.rarStatus,
-      turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? '◎' : (hasCareerDetails ? '主適性外' : '')) : h.turf,
-      dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? '◎' : (hasCareerDetails ? '主適性外' : '')) : h.dirt,
+      turf: preferredSurfaces.length ? (preferredSurfaces.includes('turf') ? (preferredSurfaces.length>1?'○':'◎') : (hasCareerDetails ? '主適性外' : '')) : h.turf,
+      dirt: preferredSurfaces.length ? (preferredSurfaces.includes('dirt') ? (preferredSurfaces.length>1?'○':'◎') : (hasCareerDetails ? '主適性外' : '')) : h.dirt,
       distance: hasDistance ? `${surfacePrefix}${distanceMin}～${distanceMax}m` : h.distance,
       category: suitability.category || career.category || r.category
         || (hasCareerDetails && careerCategories[career.category_code] ? `${surfacePrefix}・${careerCategories[career.category_code]}（High）` : '') || h.category,
@@ -786,7 +827,7 @@
       ? individual : null;
     if (h.individualAssessment) {
       const counts=individual.sample_counts.surface;
-      const grade=n=>n>=667?'◎':n>=334?'○':'△';
+      const grade=n=>n>=601?'◎':n>=334?'○':'△';
       const valid=['turf','dirt'].every(k=>Number.isInteger(counts[k])&&counts[k]>=0&&counts[k]<=1000);
       const supplied=individual.surface_display;
       const verified=individual.surface_display_rule==='RAR_SURFACE_DISPLAY_FROZEN_20261126_V1'
@@ -852,6 +893,9 @@
     if (Number.isFinite(Number(dreamSc.middle))) h.small.dream_middle = Number(dreamSc.middle);
     if (Number.isFinite(Number(dreamSc.high))) h.small.dream_high = Number(dreamSc.high);
     if (Number.isFinite(Number(invSc.official))) h.ivOfficial = Number(invSc.official);
+    const presentation=aptitudePresentation(r);
+    if(presentation){Object.assign(h,presentation);h.scoringDistance=presentation.distance;h.scoringSuitability=Object.fromEntries(['turf','dirt','distance','growth','category','targets'].map(k=>[k,h[k]||'']));}
+    if(h.turf==='◎'&&h.dirt==='◎'){h.turf='○';h.dirt='○';}
   }
 
   function cloneHorse(value) {

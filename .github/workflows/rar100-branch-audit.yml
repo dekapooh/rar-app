@@ -173,7 +173,7 @@ jobs:
           cache=re.search(r'const CACHE_NAME="([^"]+)";',s)
           assert cache and re.fullmatch(r'rar-rc[0-9]+-[a-z0-9-]+-v[0-9]+',cache.group(1)), "versioned RAR cache missing"
           index=Path("index.html").read_text(encoding="utf-8")
-          sync=re.search(r'<script src="(\./system-master-sync-career-v5\.js[^"]*)"',index)
+          sync=re.search(r'<script src="(\./system-master-sync-career-v6\.js[^"]*)"',index)
           assert sync and sync.group(1) in s, "index and SW fallback must load the same versioned sync asset"
           assert './assets/header-silks/silk.webp' in s
           assert './assets/header-silks/tokyo-tc.webp' in s

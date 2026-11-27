@@ -1,10 +1,11 @@
-const CACHE_NAME="rar-rc67-sprint-display-20261128-v63";
+const CACHE_NAME="rar-rc67-aptitude-five-20261128-v64";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v5.js?v=sprint-display-20261128","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v6.js?v=aptitude-five-20261128","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v5.js?v=sprint-display-20261128"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v6.js?v=aptitude-five-20261128"><\/script>';
 function injectSystemMasterSync(html){
-  if(/<script\b[^>]*\bsrc=["'][^"']*system-master-sync(?:-career-v[0-9]+)?\.js(?:[?][^"']*)?["']/i.test(html)) return html;
+  const existing=/<script\b[^>]*\bsrc=["'][^"']*system-master-sync(?:-career-v[0-9]+)?\.js(?:[?][^"']*)?["'][^>]*>\s*<\/script>/gi;
+  if(existing.test(html))return html.replace(existing,SYSTEM_MASTER_SCRIPT);
   return html.includes('</body>') ? html.replace('</body>',SYSTEM_MASTER_SCRIPT+'</body>') : html+SYSTEM_MASTER_SCRIPT;
 }
 const RC66_BRAND_CSS=`
