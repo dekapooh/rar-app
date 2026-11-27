@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-source-career-20261127-v62";
+const CACHE_NAME="rar-rc67-source-career-20261127-v62";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v5.js?v=source-career-20261127","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
