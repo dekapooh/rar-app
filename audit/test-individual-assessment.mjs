@@ -123,6 +123,6 @@ assert.equal(swapped.individualAssessment,null);
 assert.equal(swapped.turf,'主適性外');
 assert.ok(index.includes('currentHorse.individualAssessment'));
 assert.ok(index.includes('分布は勝率ではありません'));
-assert.ok(index.includes('system-master-sync-career-v5.js?v=source-career-20261127'));
-assert.ok(fs.readFileSync('sw.js','utf8').includes('rar-rc67-source-career-20261127-v62'));
+assert.ok(index.includes('system-master-sync-career-v5.js?v=sprint-display-20261128'));
+assert.ok(fs.readFileSync('sw.js','utf8').includes('rar-rc67-sprint-display-20261128-v63'));
 console.log('INDIVIDUAL_ESTIMATE_RENDER_AND_LEGACY_PRESERVATION_PASS');
