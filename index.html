@@ -2574,10 +2574,12 @@ function fmtPrizeYen(value){
  return man.toLocaleString("ja-JP",{minimumFractionDigits:1,maximumFractionDigits:1})+"万円";
 }
 function renderDistanceDistribution(h){
- const bins=h.distanceHistogramBySurface;if(!bins||!h.individualAssessment)return '';
+ const sourceBins=h.distanceHistogramBySurface;if(!sourceBins||!h.individualAssessment)return '';
+ const bins={turf:{},dirt:{}};
+ for(const surface of ['turf','dirt'])for(const [distance,count] of Object.entries(sourceBins[surface]||{})){const d=Math.max(1000,Number(distance));if(Number.isFinite(d)&&Number.isFinite(Number(count)))bins[surface][d]=(bins[surface][d]||0)+Number(count);}
  const distances=[...new Set([...Object.keys(bins.turf||{}),...Object.keys(bins.dirt||{})])].map(Number).sort((a,b)=>a-b);
- const rows=distances.map(d=>'<tr><td>'+d+'m</td><td>'+Number(bins.turf?.[d]||0)+'</td><td>'+Number(bins.dirt?.[d]||0)+'</td></tr>').join('');
- return '<details><summary>芝・ダート別の距離分布を開く</summary><p class="note">1000通りの参照プロフィールを距離別に集計。新方式の上の範囲はカタログと血統適性の基準を200m刻みで表示しています。分布は適性の限界や勝率を示しません。</p><div style="max-height:320px;overflow:auto"><table class="scenario-table"><thead><tr><th>距離</th><th>芝</th><th>ダート</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="note">採点用の代表範囲：'+escapeHTML(h.scoringDistance||'－')+'。分布の範囲とは別に表示しています。</p></details>';
+ const rows=distances.map(d=>'<tr><td>'+(d===1000?'〜1000':d)+'m</td><td>'+Number(bins.turf?.[d]||0)+'</td><td>'+Number(bins.dirt?.[d]||0)+'</td></tr>').join('');
+ return '<details><summary>芝・ダート別の距離分布を開く</summary><p class="note">1000通りの参照プロフィールを距離別に集計。新方式の上の範囲はカタログと血統適性の基準を200m刻みで表示しています。1000m以下の入力分布はまとめて表示します。分布は適性の限界や勝率を示しません。</p><div style="max-height:320px;overflow:auto"><table class="scenario-table"><thead><tr><th>距離</th><th>芝</th><th>ダート</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="note">採点用の代表範囲：'+escapeHTML(h.scoringDistance||'－')+'。分布の範囲とは別に表示しています。</p></details>';
 }
 
 function renderCareerEventDetails(h,scenario){
@@ -4523,7 +4525,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v5.js?v=source-career-20261127" defer></script>
+<script src="./system-master-sync-career-v5.js?v=sprint-display-20261128" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

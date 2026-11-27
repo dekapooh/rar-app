@@ -828,8 +828,8 @@
         const labels=active.map(k=>{const b=intervals[k],lo=b?.lower_m,hi=b?.upper_m;
           if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<=0||hi<lo||lo%100||hi%100)return null;
           const low=Math.floor(lo/200)*200,high=Math.ceil(hi/200)*200;
-          return (k==='turf'?'芝':'ダート')+(high<=1200?'〜'+high+'m':high>2400?low+'m〜':low+'〜'+high+'m');});
-        if(labels.length&&labels.every(Boolean))h.distance=labels.join('／');
+          return (k==='turf'?'芝':'ダート')+(low<=1000||high<=1200?'〜'+high+'m':high>2400?low+'m〜':low+'〜'+high+'m');});
+        if(labels.length&&labels.every(Boolean)){h.distance=labels.join('／');h.scoringDistance=h.distance;}
       }
 
     // Keep each horse's recorded aptitude separate from its current score route.
