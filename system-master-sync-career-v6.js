@@ -270,7 +270,7 @@
     const raw = String(sub.textContent || '').trim();
     const parts = raw.split('｜').map(x => x.trim()).filter(Boolean);
     const title = parts[0] || 'Racehorse Analysis Rating';
-    const version = 'β Ver.1.0 RC67';
+    const version = 'β Ver.1.0 RC68';
 
     block = document.createElement('div');
     block.id = 'rarHeaderMetaBlock';
@@ -725,13 +725,17 @@ function aptitudePresentation(record){
     const long=band.upper_m>2400;
     const lower=long&&band.lower_m>2400?(band.lower_m>=3000?3000:2400):band.lower_m;
     const upper=band.upper_m;
-    const eligible=races.filter(r=>r.surface===surface&&r.distance_m>=lower&&r.distance_m<=upper
+    const permitted=races.filter(r=>r.surface===surface
       &&(!r.sex_restriction||r.sex_restriction===(female?'牝':'牡'))
       &&(!r.allowed_sexes||r.allowed_sexes.includes(female?'牝':'牡'))
       &&!(femaleClassicRoute&&openClassics.includes(r.race_name)));
+    const eligible=permitted.filter(r=>r.distance_m>=lower&&r.distance_m<=upper);
     const classics=female&&surface==='turf'?['桜花賞','オークス','秋華賞'].filter(name=>eligible.some(r=>r.race_name===name)):[];
     if(classics.length){selected.push(...classics.slice(0,2));continue;}
-    const matched=existing.map(name=>eligible.find(r=>r.race_name===name||r.aliases?.includes(name))).filter(Boolean);
+    // No.85の保存済み目標には、公開する200m刻みのダート距離上限を適用する。
+    const targetUpper=record.horse_id==='SILK_2026_085'&&surface==='dirt'?Math.ceil(upper/200)*200:upper;
+    const matched=existing.map(name=>permitted.find(r=>r.distance_m>=lower&&r.distance_m<=targetUpper
+      &&(r.race_name===name||r.aliases?.includes(name)))).filter(Boolean);
     if(matched.length){selected.push(matched[0].race_name);continue;}
     const order=['G1','Jpn1','G2','G3'];
     eligible.sort((a,b)=>(a.country==='UAE')-(b.country==='UAE')||order.indexOf(a.grade)-order.indexOf(b.grade)||Math.abs(a.distance_m-(lower+upper)/2)-Math.abs(b.distance_m-(lower+upper)/2)||a.race_name.localeCompare(b.race_name,'ja'));

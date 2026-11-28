@@ -20,6 +20,16 @@ console.log('SHORT_DISTANCE_HISTOGRAM_GROUPS_PRESERVE_COUNTS_AND_ORIGINAL_BINS_P
 
 let female=row({lower_m:1500,upper_m:2100},{lower_m:1100,upper_m:1700},801);female.sex='牝';female.career.representative_targets=['皐月賞'];h={};c.patch(h,female);assert.equal(h.distance,'芝1400〜2200m');assert.equal(h.targets,'桜花賞・秋華賞');assert.ok(!h.targets.includes('皐月賞'));
 let sprinter=row({lower_m:1400,upper_m:1900},{lower_m:1000,upper_m:1500},108);sprinter.sex='牡';sprinter.career.representative_targets=['フェブラリーS'];h={};c.patch(h,sprinter);assert.equal(h.targets,'JBCスプリント');assert.equal(h.distance,'ダート〜1600m');
+const perfectFlute = {...sprinter, no:85, horse_id:'SILK_2026_085', suitability:structuredClone(sprinter.suitability)};
+const perfectFluteAssessment = perfectFlute.suitability.individual_assessment;
+Object.assign(perfectFluteAssessment, {no:85, horse_id:perfectFlute.horse_id});
+h = {}; c.patch(h, perfectFlute);
+assert.equal(h.distance, 'ダート〜1600m');
+assert.equal(h.targets, 'フェブラリーS');
+perfectFluteAssessment.source_distance_intervals.dirt.upper_m = 1400;
+h = {}; c.patch(h, perfectFlute);
+assert.equal(h.distance, 'ダート〜1400m');
+assert.equal(h.targets, 'JBCスプリント');
 let stayer=row({lower_m:2700,upper_m:3500},{lower_m:1700,upper_m:2500},1000);stayer.sex='牡';stayer.career.representative_targets=['菊花賞'];h={};c.patch(h,stayer);assert.equal(h.distance,'芝2400m〜');assert.equal(h.targets,'菊花賞');
 for(const count of [0,333,334,399,400,500,600,601,666,667,1000]){h={};c.patch(h,row({lower_m:1400,upper_m:1800},{lower_m:1200,upper_m:1600},count));const grade=n=>n>=601?'◎':n>=334?'○':'△';assert.equal(h.turf,grade(count));assert.equal(h.dirt,grade(1000-count));assert.ok(!(h.turf==='◎'&&h.dirt==='◎'));}
 let conflict=row({lower_m:2700,upper_m:3500},{lower_m:1000,upper_m:1500},1000);conflict.recorded_suitability={distance:'芝2700〜3500m',turf:'◎',dirt:'◎',targets:'フェブラリーS'};h={};c.patch(h,conflict);assert.equal(h.distance,'芝2400m〜');assert.equal(h.turf,'◎');assert.equal(h.dirt,'△');
@@ -62,7 +72,7 @@ vm.runInNewContext(worker, {
     return new Response('updated script');
   },
 });
-const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=aptitude-lines-20261128`;
+const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=february-target-20261128`;
 let response;
 handlers.fetch({request:{url:scriptUrl,method:'GET'},respondWith(value){response=value;}});
 assert.equal(await (await response).text(), 'updated script');
