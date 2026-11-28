@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc71-suitability-labels-20261128";
+const CACHE_NAME="rar-rc71-suitability-labels-20261128-v68";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v6.js?v=suitability-labels-20261128","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
