@@ -57,6 +57,20 @@ c.patch(longHorse, longFemale);
 assert.equal(longHorse.targets, 'オークス');
 console.log('DEPLOYED_SYNC_DUAL_SURFACE_NEWLINES_AND_FEMALE_TARGETS_PASS');
 
+const localTargetCode=html.slice(html.indexOf('const LOCAL_DIRT_GRADE_2026 ='),html.indexOf('function renderHorseSuitability('));
+vm.runInContext(localTargetCode+'this.localCandidates=localDirtTargetCandidates;this.localSchedule=LOCAL_DIRT_GRADE_2026;',display);
+const candidates=(distance,sex='牡',dirt='◎',turf='△')=>display.localCandidates({distance,sex,dirt,turf});
+assert.equal(display.localSchedule.length,46);
+assert.equal(new Set(display.localSchedule.map(race=>race.name)).size,46);
+assert.ok(candidates('ダート〜1600m').some(race=>race.name==='かしわ記念'&&race.distance===1600));
+assert.ok(!candidates('ダート〜1600m').some(race=>race.name==='JBCレディスクラシック'));
+assert.ok(candidates('ダート〜1600m','牝').some(race=>race.name==='JBCレディスクラシック'&&race.distance===1500));
+assert.ok(candidates('芝1400〜1800m／ダート〜1400m','牡','○','○').every(race=>race.distance<=1400));
+assert.ok(candidates('ダート2000〜2400m').some(race=>race.name==='ダイオライト記念'&&race.distance===2400));
+assert.ok(candidates('ダート2100〜2400m').every(race=>race.distance>=2100));
+assert.equal(candidates('芝1800〜2000m','牝','△','◎').length,0);
+console.log('LOCAL_DIRT_GRADES_DISTANCE_AND_ELIGIBILITY_PASS');
+
 const handlers = {};
 const origin = 'https://rar.example';
 const requests = [];
@@ -72,7 +86,7 @@ vm.runInNewContext(worker, {
     return new Response('updated script');
   },
 });
-const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=february-target-20261128`;
+const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=local-dirt-targets-20261128`;
 let response;
 handlers.fetch({request:{url:scriptUrl,method:'GET'},respondWith(value){response=value;}});
 assert.equal(await (await response).text(), 'updated script');
