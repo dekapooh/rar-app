@@ -1164,6 +1164,11 @@ main{padding-top:84px}
 .rc34-target{margin-top:8px;padding:11px 12px;border-radius:14px;border:1px solid #c8ded2;background:linear-gradient(135deg,#f8fcf9,#eaf5ee)}
 .rc34-target span{display:block;font-size:9px;font-weight:900;color:#6b7558;margin-bottom:4px}
 .rc34-target b{display:block;font-size:14px;line-height:1.4;font-weight:950;color:#0f4a35;overflow-wrap:anywhere}
+.rc34-local-targets{margin:10px 0 0;font-size:12px;line-height:1.55}
+.rc34-local-targets summary{cursor:pointer;color:#194c38;font-weight:800}
+.rc34-local-targets ul{margin:6px 0 10px;padding:0 0 0 18px}
+.rc34-local-targets li{padding:3px 0}
+.rc34-local-targets small{display:block;color:var(--muted)}
 .rc34-fit-note{text-align:right;margin-top:6px;font-size:8px;color:#95a199}
 @media(max-width:390px){.rc34-fit-grid{gap:6px!important}.rc34-fit-grid .fit-item{padding:9px!important}.rc34-fit-grid .fit-item b{font-size:12px!important}.rc34-target b{font-size:13px}}
 
@@ -2512,6 +2517,12 @@ main{padding-top:84px}
       <span>◆ 主要狙い</span>
       <b id="dTargets"></b>
     </div>
+    <details id="dLocalDirtTargets" class="rc34-local-targets" hidden>
+      <summary id="dLocalDirtTargetsTitle">地方ダートグレード競走の候補</summary>
+      <p class="note">2026年の開催条件を参照。出走には各競走の年齢・性別条件と選定があります。</p>
+      <ul id="dLocalDirtTargetList"></ul>
+      <a href="https://www.keiba.go.jp/dirtgraderace/2026/racelist/index.html" target="_blank" rel="noopener noreferrer">地方競馬全国協会の年間レース一覧</a>
+    </details>
     <div id="dDistanceDistribution" hidden></div>
     <div class="rc34-fit-note" id="dFitSourceNote">RAR Official 適性データ</div>
     <details id="legacySuitabilityReference" style="display:none;margin-top:10px">
@@ -3933,6 +3944,69 @@ function syncDetailBrowseButtons(){
  prev.onclick=()=>browseHorse(-1);
  next.onclick=()=>browseHorse(1);
 }
+// NAR 2026 annual calendar and race conditions.
+const LOCAL_DIRT_GRADE_2026 = [
+ {"name":"ブルーバードカップ","track":"船橋","distance":1800,"grade":"JpnⅢ","conditions":"3歳"},
+ {"name":"クイーン賞","track":"船橋","distance":1800,"grade":"JpnⅢ","conditions":"4歳以上牝馬"},
+ {"name":"佐賀記念","track":"佐賀","distance":2000,"grade":"JpnⅢ","conditions":"4歳以上"},
+ {"name":"雲取賞","track":"大井","distance":1800,"grade":"JpnⅢ","conditions":"3歳"},
+ {"name":"かきつばた記念","track":"名古屋","distance":1500,"grade":"JpnⅢ","conditions":"4歳以上"},
+ {"name":"ダイオライト記念","track":"船橋","distance":2400,"grade":"JpnⅡ","conditions":"4歳以上"},
+ {"name":"黒船賞","track":"高知","distance":1400,"grade":"JpnⅢ","conditions":"4歳以上"},
+ {"name":"京浜盃","track":"大井","distance":1700,"grade":"JpnⅡ","conditions":"3歳"},
+ {"name":"兵庫女王盃","track":"園田","distance":1870,"grade":"JpnⅢ","conditions":"4歳以上牝馬"},
+ {"name":"川崎記念","track":"川崎","distance":2100,"grade":"JpnⅠ","conditions":"4歳以上"},
+ {"name":"東京スプリント","track":"大井","distance":1200,"grade":"JpnⅢ","conditions":"4歳以上"},
+ {"name":"羽田盃","track":"大井","distance":1800,"grade":"JpnⅠ","conditions":"3歳牡馬・牝馬"},
+ {"name":"名古屋グランプリ","track":"名古屋","distance":2100,"grade":"JpnⅡ","conditions":"4歳以上"},
+ {"name":"かしわ記念","track":"船橋","distance":1600,"grade":"JpnⅠ","conditions":"4歳以上"},
+ {"name":"兵庫チャンピオンシップ","track":"園田","distance":1400,"grade":"JpnⅡ","conditions":"3歳"},
+ {"name":"エンプレス杯","track":"川崎","distance":2100,"grade":"JpnⅡ","conditions":"4歳以上牝馬"},
+ {"name":"東京ダービー","track":"大井","distance":2000,"grade":"JpnⅠ","conditions":"3歳牡馬・牝馬"},
+ {"name":"関東オークス","track":"川崎","distance":2100,"grade":"JpnⅡ","conditions":"3歳牝馬"},
+ {"name":"さきたま杯","track":"浦和","distance":1400,"grade":"JpnⅠ","conditions":"3歳以上"},
+ {"name":"帝王賞","track":"大井","distance":2000,"grade":"JpnⅠ","conditions":"4歳以上"},
+ {"name":"スパーキングレディーカップ","track":"川崎","distance":1600,"grade":"JpnⅢ","conditions":"3歳以上牝馬"},
+ {"name":"マーキュリーカップ","track":"盛岡","distance":2000,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"クラスターカップ","track":"盛岡","distance":1200,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"北海道スプリントカップ","track":"門別","distance":1200,"grade":"JpnⅢ","conditions":"3歳"},
+ {"name":"ブリーダーズゴールドカップ","track":"門別","distance":2000,"grade":"JpnⅢ","conditions":"3歳以上牝馬"},
+ {"name":"不来方賞","track":"盛岡","distance":2000,"grade":"JpnⅡ","conditions":"3歳"},
+ {"name":"サマーチャンピオン","track":"佐賀","distance":1400,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"白山大賞典","track":"金沢","distance":2100,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"オーバルスプリント","track":"浦和","distance":1400,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"日本テレビ盃","track":"船橋","distance":1800,"grade":"JpnⅡ","conditions":"3歳以上"},
+ {"name":"マリーンカップ","track":"船橋","distance":1800,"grade":"JpnⅢ","conditions":"3歳牝馬"},
+ {"name":"レディスプレリュード","track":"大井","distance":1800,"grade":"JpnⅡ","conditions":"3歳以上牝馬"},
+ {"name":"ジャパンダートクラシック","track":"大井","distance":2000,"grade":"JpnⅠ","conditions":"3歳牡馬・牝馬"},
+ {"name":"東京盃","track":"大井","distance":1200,"grade":"JpnⅡ","conditions":"3歳以上"},
+ {"name":"マイルチャンピオンシップ南部杯","track":"盛岡","distance":1600,"grade":"JpnⅠ","conditions":"3歳以上"},
+ {"name":"エーデルワイス賞","track":"門別","distance":1200,"grade":"JpnⅢ","conditions":"2歳牝馬"},
+ {"name":"JBC2歳優駿","track":"門別","distance":1800,"grade":"JpnⅢ","conditions":"2歳"},
+ {"name":"JBCレディスクラシック","track":"金沢","distance":1500,"grade":"JpnⅠ","conditions":"3歳以上牝馬"},
+ {"name":"JBCスプリント","track":"金沢","distance":1400,"grade":"JpnⅠ","conditions":"3歳以上"},
+ {"name":"JBCクラシック","track":"金沢","distance":2100,"grade":"JpnⅠ","conditions":"3歳以上"},
+ {"name":"浦和記念","track":"浦和","distance":2000,"grade":"JpnⅡ","conditions":"3歳以上"},
+ {"name":"兵庫ジュニアグランプリ","track":"園田","distance":1400,"grade":"JpnⅡ","conditions":"2歳"},
+ {"name":"全日本2歳優駿","track":"川崎","distance":1600,"grade":"JpnⅠ","conditions":"2歳"},
+ {"name":"名古屋大賞典","track":"名古屋","distance":2000,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"兵庫ゴールドトロフィー","track":"園田","distance":1400,"grade":"JpnⅢ","conditions":"3歳以上"},
+ {"name":"東京大賞典","track":"大井","distance":2000,"grade":"GⅠ","conditions":"3歳以上"}
+];
+function localDirtTargetCandidates(horse){
+ if(!["○","◯","◎"].includes(horse.dirt))return [];
+ const dirt=suitabilityDistanceText(horse).split(/[／/\n]/).find(line=>/^ダ(?:ート)?\s*[\d〜～]/.test(line));
+ if(!dirt)return [];
+ const interval=dirt.match(/^ダ(?:ート)?\s*(?:(\d+)[〜～](\d+)m|[〜～](\d+)m|(\d+)m([〜～])?)/);
+ if(!interval)return [];
+ const [, lower, upper, upperOnly, metres, openEnd]=interval;
+ const min=Number(lower??metres??0);
+ const max=Number(upper??upperOnly??(openEnd?Infinity:metres));
+ const sex=sexKind(horse.sex);
+ return LOCAL_DIRT_GRADE_2026.filter(race=>race.distance>=min&&race.distance<=max
+   &&(!race.conditions.includes("牝馬")||sex==="female"||race.conditions.includes("牡馬・牝馬"))
+   &&(!race.conditions.includes("牡馬・牝馬")||sex==="male"||sex==="female"));
+}
 function renderHorseSuitability(horse){
  const canFit=canViewHorseSuitability(horse.no);
  const fitCard=document.getElementById("detailFitCard");
@@ -3948,6 +4022,18 @@ function renderHorseSuitability(horse){
  document.getElementById("dCategory").textContent=canFit?(horse.category||"－"):"";
  document.getElementById("dGrowth").textContent=canFit?(horse.growth||"－"):"";
  document.getElementById("dTargets").textContent=canFit?suitabilityTargetsText(horse):"";
+ const localTargets=document.getElementById("dLocalDirtTargets");
+ const localCandidates=canFit?localDirtTargetCandidates(horse):[];
+ localTargets.hidden=localCandidates.length===0;
+ document.getElementById("dLocalDirtTargetsTitle").textContent=`地方ダートグレード競走の候補（${localCandidates.length}）`;
+ document.getElementById("dLocalDirtTargetList").replaceChildren(...localCandidates.map(race=>{
+   const row=document.createElement("li");
+   row.textContent=`${race.name}（${race.grade}）`;
+   const conditions=document.createElement("small");
+   conditions.textContent=`${race.track} ${race.distance}m｜${race.conditions}`;
+   row.append(conditions);
+   return row;
+ }));
  const distanceDistribution=document.getElementById("dDistanceDistribution");
  if(distanceDistribution){distanceDistribution.hidden=!(canFit&&horse.individualAssessment);distanceDistribution.innerHTML=canFit?renderDistanceDistribution(horse):'';}
  const fitSource=document.getElementById("dFitSourceNote");
@@ -4558,7 +4644,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v6.js?v=february-target-20261128" defer></script>
+<script src="./system-master-sync-career-v6.js?v=local-dirt-targets-20261128" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

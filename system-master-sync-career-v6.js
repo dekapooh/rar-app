@@ -270,7 +270,7 @@
     const raw = String(sub.textContent || '').trim();
     const parts = raw.split('｜').map(x => x.trim()).filter(Boolean);
     const title = parts[0] || 'Racehorse Analysis Rating';
-    const version = 'β Ver.1.0 RC68';
+    const version = 'β Ver.1.0 RC69';
 
     block = document.createElement('div');
     block.id = 'rarHeaderMetaBlock';
