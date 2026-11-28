@@ -1,8 +1,8 @@
-const CACHE_NAME="rar-rc67-aptitude-five-20261128-v65";
+const CACHE_NAME="rar-rc67-aptitude-lines-20261128-v66";
 const APP_SHELL=[
-  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v6.js?v=aptitude-five-20261128","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
+  "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v6.js?v=aptitude-lines-20261128","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
-const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v6.js?v=aptitude-five-20261128"><\/script>';
+const SYSTEM_MASTER_SCRIPT='<script src="./system-master-sync-career-v6.js?v=aptitude-lines-20261128" defer><\/script>';
 function injectSystemMasterSync(html){
   const existing=/<script\b[^>]*\bsrc=["'][^"']*system-master-sync(?:-career-v[0-9]+)?\.js(?:[?][^"']*)?["'][^>]*>\s*<\/script>/gi;
   if(existing.test(html))return html.replace(existing,SYSTEM_MASTER_SCRIPT);
@@ -253,6 +253,26 @@ self.addEventListener("fetch",event=>{
       }
     })());return;
   }
-  if(url.origin===self.location.origin){event.respondWith((async()=>{const cached=await caches.match(req,{ignoreSearch:true});if(cached) return cached;try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),5000);const response=await fetch(req,{signal:controller.signal});clearTimeout(timer);if(response && response.ok){const cache=await caches.open(CACHE_NAME);cache.put(req,response.clone()).catch(()=>{});}return response;}catch{return new Response("",{status:504});}})());}
+  if(url.origin===self.location.origin){
+    event.respondWith((async()=>{
+      const versionedSync=/\/system-master-sync-career-v\d+\.js$/.test(url.pathname)&&url.searchParams.has("v");
+      const cached=await caches.match(req,{ignoreSearch:!versionedSync});
+      if(cached)return cached;
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),5000);
+      try{
+        const response=await fetch(req,{signal:controller.signal,cache:versionedSync?"no-store":"default"});
+        if(response.ok){
+          const cache=await caches.open(CACHE_NAME);
+          cache.put(req,response.clone()).catch(()=>{});
+        }
+        return response;
+      }catch{
+        return new Response("",{status:504});
+      }finally{
+        clearTimeout(timer);
+      }
+    })());
+  }
 });
 
