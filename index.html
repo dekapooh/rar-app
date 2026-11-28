@@ -1159,6 +1159,7 @@ main{padding-top:84px}
 .rc34-fit-grid .fit-item{min-width:0;padding:10px 11px!important;border-radius:13px!important;background:linear-gradient(145deg,#fff,#f7fbf8)!important;border:1px solid #dce8e1!important}
 .rc34-fit-grid .fit-item span{font-size:9px!important;color:#78877f!important;font-weight:850!important}
 .rc34-fit-grid .fit-item b{display:block;margin-top:4px;font-size:13px!important;line-height:1.35;color:#173e30!important;overflow-wrap:anywhere}
+.suitability-distance{white-space:pre-line}
 .rc34-category{grid-column:1/-1!important}
 .rc34-target{margin-top:8px;padding:11px 12px;border-radius:14px;border:1px solid #c8ded2;background:linear-gradient(135deg,#f8fcf9,#eaf5ee)}
 .rc34-target span{display:block;font-size:9px;font-weight:900;color:#6b7558;margin-bottom:4px}
@@ -2503,7 +2504,7 @@ main{padding-top:84px}
     <div class="fit-grid rc34-fit-grid">
       <div class="fit-item"><span>芝適性</span><b id="dTurf"></b></div>
       <div class="fit-item"><span>ダート適性</span><b id="dDirt"></b></div>
-      <div class="fit-item"><span>距離適性</span><b id="dDistance"></b></div>
+      <div class="fit-item"><span>距離適性</span><b id="dDistance" class="suitability-distance"></b></div>
       <div class="fit-item"><span>成長傾向</span><b id="dGrowth"></b></div>
       <div class="fit-item rc34-category"><span>カテゴリ</span><b id="dCategory"></b></div>
     </div>
@@ -3385,9 +3386,9 @@ function renderFavoriteCompare(){
    ["一口価格", h=>`${Number(h.sharePrice).toFixed(1).replace(".0","")}万円`, h=>""],
    ["芝適性", h=>h.turf||"－", h=>dominantSurface(h,"turf")?"surface-dominant":""],
    ["ダート適性", h=>h.dirt||"－", h=>dominantSurface(h,"dirt")?"surface-dominant":""],
-   ["距離適性", h=>h.distance||"－", h=>""],
+   ["距離適性", h=>escapeHTML(suitabilityDistanceText(h)), h=>"suitability-distance"],
    ["成長傾向", h=>h.growth||"－", h=>""],
-   ["狙いレース", h=>h.targets||"－", h=>""],
+   ["狙いレース", h=>escapeHTML(suitabilityTargetsText(h)), h=>""],
    ["入厩予定厩舎", h=>h.trainer||"－", h=>""],
    ["生年月日", h=>String(h.birth||"").replace(/^(\d{4})-(\d{2})-(\d{2})$/,"$1/$2/$3"), h=>""]
  ];
@@ -3408,12 +3409,34 @@ function dominantSurface(h,k){
  const c=h?.individualAssessment?.sample_counts?.surface;
  return !h?.recordedSuitability && Number.isInteger(c?.turf) && Number.isInteger(c?.dirt) && c.turf+c.dirt===1000 && c[k]>c[k==='turf'?'dirt':'turf'];
 }
+function suitabilityDistanceText(horse){
+ const distance=horse.distance||"－";
+ const eligible=value=>["○","◯","◎"].includes(value);
+ if(!eligible(horse.turf)||!eligible(horse.dirt))return distance;
+ const shared=distance.match(/^芝[・／]ダ(?:ート)?\s*([〜～\d].*)$/);
+ if(shared)return `芝${shared[1]}\nダート${shared[1]}`;
+ return distance.replace(/\s*[／/]\s*(?=(?:芝|ダート|ダ)\s*[〜～\d])/g,"\n");
+}
+function suitabilityTargetsText(horse){
+ const targets=horse.targets||"－";
+ if(sexKind(horse.sex)!=="female"||!String(horse.category||"").includes("牝馬クラシック"))return targets;
+ const mixedClassics=["皐月賞","日本ダービー","東京優駿","菊花賞"];
+ const entries=targets.split("・").map(name=>name.trim());
+ if(!entries.some(name=>mixedClassics.includes(name)))return targets;
+ const turfBand=horse.individualAssessment?.source_distance_intervals?.turf;
+ const savedDistance=String(horse.distance||"").match(/芝(?:[・／]ダ(?:ート)?)?\s*(\d+)[〜～](\d+)m/);
+ const lower=turfBand?.lower_m??Number(savedDistance?.[1]);
+ const upper=turfBand?.upper_m??Number(savedDistance?.[2]);
+ const classics=[["桜花賞",1600],["オークス",2400],["秋華賞",2000]]
+   .filter(([, metres])=>metres>=lower&&metres<=upper).map(([name])=>name);
+ return [...new Set([...classics,...entries.filter(name=>!mixedClassics.includes(name))])].join("・")||"適性内の主要重賞を確認中";
+}
 function datasetRegisteredName(h){
  return String(h?.registeredNameOfficial||"").trim();
 }
 function sexKind(value){
  const v=String(value??"").trim().toLowerCase();
- if(["牝","メス","♀","female","filly","mare"].includes(v))return "female";
+ if(["牝","牝馬","メス","♀","female","filly","mare"].includes(v))return "female";
  if(["牡","オス","♂","male","colt","stallion"].includes(v))return "male";
  return v;
 }
@@ -3910,6 +3933,39 @@ function syncDetailBrowseButtons(){
  prev.onclick=()=>browseHorse(-1);
  next.onclick=()=>browseHorse(1);
 }
+function renderHorseSuitability(horse){
+ const canFit=canViewHorseSuitability(horse.no);
+ const fitCard=document.getElementById("detailFitCard");
+ const fitLock=document.getElementById("dFitLock");
+ fitCard?.querySelector(".rc34-fit-grid")?.classList.toggle("detail-locked-content",!canFit);
+ fitCard?.querySelector(".rc34-target")?.classList.toggle("detail-locked-content",!canFit);
+ fitCard?.querySelector(".rc34-fit-note")?.classList.toggle("detail-locked-content",!canFit);
+ if(fitLock)fitLock.style.display=canFit?"none":"block";
+ document.getElementById("dTurf").textContent=canFit?(horse.turf||"－"):"";
+ document.getElementById("dDirt").textContent=canFit?(horse.dirt||"－"):"";
+ for(const [id,k] of [["dTurf","turf"],["dDirt","dirt"]]) document.getElementById(id).style.fontWeight=dominantSurface(horse,k)?"800":"400";
+ document.getElementById("dDistance").textContent=canFit?suitabilityDistanceText(horse):"";
+ document.getElementById("dCategory").textContent=canFit?(horse.category||"－"):"";
+ document.getElementById("dGrowth").textContent=canFit?(horse.growth||"－"):"";
+ document.getElementById("dTargets").textContent=canFit?suitabilityTargetsText(horse):"";
+ const distanceDistribution=document.getElementById("dDistanceDistribution");
+ if(distanceDistribution){distanceDistribution.hidden=!(canFit&&horse.individualAssessment);distanceDistribution.innerHTML=canFit?renderDistanceDistribution(horse):'';}
+ const fitSource=document.getElementById("dFitSourceNote");
+ if(fitSource)fitSource.textContent=horse.recordedSuitability
+   ? `No.${horse.no} ${horse.name}の旧方式の保存済み原記録。85頭の統一再計算はまだ未反映です。`
+   : horse.individualAssessment
+   ? `カタログ・実測・血統資料による個体別の参照推定。距離適性は200m刻みで表示。主要狙いは馬場・距離・性別に合うレースから選定。分布は勝率ではありません。測尺：${horse.individualAssessment.measurement_period?.label||horse.individualAssessment.measurement_context?.label||"参照時点を根拠に保存"}。`
+   : horse.careerDetails
+   ? "この馬の採点時入力とCareer代表ルートを表示。Objective v1では成長型を推定しません。主適性外は不向きの断定ではありません。"
+   : (horse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
+ const legacyFit=document.getElementById("legacySuitabilityReference");
+ if(legacyFit){
+   const legacy=horse.recordedSuitability?horse.scoringSuitability:null;
+   legacyFit.style.display=canFit && legacy?"block":"none";
+   const body=document.getElementById("legacySuitabilityReferenceBody");
+   if(body)body.innerHTML=legacy?[["芝適性",legacy.turf],["ダート適性",legacy.dirt],["距離",legacy.distance],["成長傾向",legacy.growth],["カテゴリ",legacy.category],["主要狙い",legacy.targets]].map(([label,value])=>`<div>${escapeHTML(label)}：${escapeHTML(value||"－")}</div>`).join(""):"";
+ }
+}
 function openHorse(no,from,options={}){
  previousScreen=from||"ranking"; currentHorse=HORSES.find(h=>h.no===no); if(!currentHorse)return;
  document.getElementById("detailNo").textContent="No."+currentHorse.no;
@@ -3940,37 +3996,7 @@ function openHorse(no,from,options={}){
  if(canOfficial && !planRules().canCategoryScores){oan.style.display="inline-block";oan.textContent="総合のみ";oan.classList.add("compact-note");}
  else if(!canOfficial){oan.style.display="inline-block";oan.textContent="🔒 この機能は現在のプランではご利用いただけません。";oan.classList.remove("compact-note");}
  else {oan.style.display="none";oan.textContent="";oan.classList.remove("compact-note");}
- const canFit=canViewHorseSuitability(currentHorse.no);
- const fitCard=document.getElementById("detailFitCard");
- const fitLock=document.getElementById("dFitLock");
- fitCard?.querySelector(".rc34-fit-grid")?.classList.toggle("detail-locked-content",!canFit);
- fitCard?.querySelector(".rc34-target")?.classList.toggle("detail-locked-content",!canFit);
- fitCard?.querySelector(".rc34-fit-note")?.classList.toggle("detail-locked-content",!canFit);
- if(fitLock)fitLock.style.display=canFit?"none":"block";
- document.getElementById("dTurf").textContent=canFit?(currentHorse.turf||"－"):"";
- document.getElementById("dDirt").textContent=canFit?(currentHorse.dirt||"－"):"";
- for(const [id,k] of [["dTurf","turf"],["dDirt","dirt"]]) document.getElementById(id).style.fontWeight=dominantSurface(currentHorse,k)?"800":"400";
- document.getElementById("dDistance").textContent=canFit?(currentHorse.distance||"－"):"";
- document.getElementById("dCategory").textContent=canFit?(currentHorse.category||"－"):"";
- document.getElementById("dGrowth").textContent=canFit?(currentHorse.growth||"－"):"";
- document.getElementById("dTargets").textContent=canFit?(currentHorse.targets||"－"):"";
- const distanceDistribution=document.getElementById("dDistanceDistribution");
- if(distanceDistribution){distanceDistribution.hidden=!(canFit&&currentHorse.individualAssessment);distanceDistribution.innerHTML=canFit?renderDistanceDistribution(currentHorse):'';}
- const fitSource=document.getElementById("dFitSourceNote");
- if(fitSource)fitSource.textContent=currentHorse.recordedSuitability
-   ? `No.${currentHorse.no} ${currentHorse.name}の旧方式の保存済み原記録。85頭の統一再計算はまだ未反映です。`
-   : currentHorse.individualAssessment
-   ? `カタログ・実測・血統資料による個体別の参照推定。距離適性は200m刻みで表示。主要狙いは馬場・距離・性別に合うレースから選定。分布は勝率ではありません。測尺：${currentHorse.individualAssessment.measurement_period?.label||currentHorse.individualAssessment.measurement_context?.label||"参照時点を根拠に保存"}。`
-   : currentHorse.careerDetails
-   ? "この馬の採点時入力とCareer代表ルートを表示。Objective v1では成長型を推定しません。主適性外は不向きの断定ではありません。"
-   : (currentHorse.legacySuitability ? "現在のCareer詳細は未保存です。以前の表示は参考欄で確認できます。" : "RAR Official 適性データ");
- const legacyFit=document.getElementById("legacySuitabilityReference");
- if(legacyFit){
-   const legacy=currentHorse.recordedSuitability?currentHorse.scoringSuitability:null;
-   legacyFit.style.display=canFit && legacy?"block":"none";
-   const body=document.getElementById("legacySuitabilityReferenceBody");
-   if(body)body.innerHTML=legacy?[["芝適性",legacy.turf],["ダート適性",legacy.dirt],["距離",legacy.distance],["成長傾向",legacy.growth],["カテゴリ",legacy.category],["主要狙い",legacy.targets]].map(([label,value])=>`<div>${escapeHTML(label)}：${escapeHTML(value||"－")}</div>`).join(""):"";
- }
+ renderHorseSuitability(currentHorse);
 
  const canManaged=canUseHorseManagedFeatures(currentHorse.no);
  const comment=document.getElementById("dComment");
@@ -4519,13 +4545,20 @@ window.addEventListener("rar:dataset-apply-failed",e=>{
 window.addEventListener("rar:dataset-changed",()=>{
  applyRankBase();syncBaseControls();syncPlanLocks();syncPriceFilterUI();syncScenarioButtons();syncBaseScenarioButtons();syncRecruitmentStatusUI();
  renderRanking();renderSearch();updateMyPage();updateAppDiagnostics();
+ if(currentHorse&&document.getElementById("detail").classList.contains("active")){
+   const updatedHorse=HORSES.find(horse=>horse.no===currentHorse.no);
+   if(updatedHorse){
+     currentHorse=updatedHorse;
+     renderHorseSuitability(currentHorse);
+   }
+ }
 });
 
 applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syncBaseScenarioButtons(); syncRecruitmentStatusUI(); renderRanking(); renderSearch(); updateMyPage(); updateAppDiagnostics(); renderLocalProfileId(); syncUndoRestoreButton();
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v6.js?v=aptitude-five-20261128" defer></script>
+<script src="./system-master-sync-career-v6.js?v=aptitude-lines-20261128" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {
