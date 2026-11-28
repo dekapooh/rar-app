@@ -17,7 +17,7 @@ assert.equal(horse.distanceSummary.p50_m,1600);
 const alternate=JSON.parse(JSON.stringify(row));alternate.suitability.individual_assessment.sample_counts.distance={1600:100,2000:800,2400:100};alternate.suitability.individual_assessment.sample_counts.distance_by_surface={turf:{1600:100,2000:321},dirt:{2000:479,2400:100}};
 const other={};context.patch(other,alternate);
 assert.notEqual(other.distance,horse.distance,'same scoring representative must not flatten different distance profiles');
-const source=index.slice(index.indexOf('function renderDistanceDistribution('),index.indexOf('function renderCareerEventDetails('));
+const source=index.slice(index.indexOf('function formatSuitabilityDistance('),index.indexOf('function renderCareerEventDetails('));
 const render=vm.createContext({escapeHTML:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;')});
 vm.runInContext(source+'this.render=renderDistanceDistribution;',render);
 assert.match(render.render(horse),/芝・ダート別の距離分布/);assert.match(render.render(horse),/採点用の代表範囲 ダ1500～1900m/);

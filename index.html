@@ -1160,7 +1160,6 @@ main{padding-top:84px}
 .rc34-fit-grid .fit-item span{font-size:9px!important;color:#78877f!important;font-weight:850!important}
 .rc34-fit-grid .fit-item b{display:block;margin-top:4px;font-size:13px!important;line-height:1.35;color:#173e30!important;overflow-wrap:anywhere}
 .suitability-distance{white-space:pre-line}
-.rc34-category{grid-column:1/-1!important}
 .rc34-target{margin-top:8px;padding:11px 12px;border-radius:14px;border:1px solid #c8ded2;background:linear-gradient(135deg,#f8fcf9,#eaf5ee)}
 .rc34-target span{display:block;font-size:9px;font-weight:900;color:#6b7558;margin-bottom:4px}
 .rc34-target b{display:block;font-size:14px;line-height:1.4;font-weight:950;color:#0f4a35;overflow-wrap:anywhere}
@@ -2518,7 +2517,6 @@ main{padding-top:84px}
       <div class="fit-item"><span>ダート適性</span><b id="dDirt"></b></div>
       <div class="fit-item"><span>距離適性</span><b id="dDistance" class="suitability-distance"></b></div>
       <div class="fit-item"><span>成長傾向</span><b id="dGrowth"></b></div>
-      <div class="fit-item rc34-category"><span>カテゴリ</span><b id="dCategory"></b></div>
     </div>
     <div class="rc34-target">
       <span>◆ 主要狙い</span>
@@ -2592,6 +2590,9 @@ function fmtPrizeYen(value){
  const man=Number(value||0)/10000;
  return man.toLocaleString("ja-JP",{minimumFractionDigits:1,maximumFractionDigits:1})+"万円";
 }
+function formatSuitabilityDistance(distance){
+ return distance.replace(/ダート[ \t　]*(?=[\d０-９〜～])/g,"ダート ");
+}
 function renderDistanceDistribution(h){
  const sourceBins=h.distanceHistogramBySurface;
  if(!sourceBins||!h.individualAssessment)return '';
@@ -2611,15 +2612,16 @@ function renderDistanceDistribution(h){
    if(!counts.size)return '';
    const rows=[...counts].sort(([a],[b])=>a-b).map(([band,samples])=>{
      let distanceLabel=`${band-199}〜${band}m`;
-     if(band===1200)distanceLabel='1000〜1200m（スプリント）';
+     if(band===1200)distanceLabel='1000〜1200m';
      if(band===longDistanceBand)distanceLabel=`${lastRegularDistance}m超（長距離）`;
      return `<tr><td>${distanceLabel}</td><td>${samples}</td></tr>`;
    }).join('');
    return `<table><caption>${label}</caption><thead><tr><th scope="col">距離帯</th><th scope="col">件数</th></tr></thead><tbody>${rows}</tbody></table>`;
  }).filter(Boolean).join('');
  if(!tables)return '';
- const sprintNote=hasBelowMinimum?'1000m未満の参照値はスプリント帯に合算。':'';
- return `<details class="distance-distribution"><summary>芝・ダート別の距離分布</summary><p class="note">1000通りの参照プロフィールを距離帯別に集計。${sprintNote}</p><div class="distance-distribution-tables">${tables}</div><p class="note">採点用の代表範囲 ${escapeHTML(h.scoringDistance||'－')}</p></details>`;
+ const shortDistanceNote=hasBelowMinimum?'1000m未満の参照値は1000〜1200mに合算。':'';
+ const scoringDistance=escapeHTML(formatSuitabilityDistance(h.scoringDistance||'－'));
+ return `<details class="distance-distribution"><summary>芝・ダート別の距離分布</summary><p class="note">1000通りの参照プロフィールを距離帯別に集計。${shortDistanceNote}</p><div class="distance-distribution-tables">${tables}</div><p class="note">採点用の代表範囲 ${scoringDistance}</p></details>`;
 }
 
 function renderCareerEventDetails(h,scenario){
@@ -3449,11 +3451,11 @@ function dominantSurface(h,k){
  return !h?.recordedSuitability && Number.isInteger(c?.turf) && Number.isInteger(c?.dirt) && c.turf+c.dirt===1000 && c[k]>c[k==='turf'?'dirt':'turf'];
 }
 function suitabilityDistanceText(horse){
- const distance=horse.distance||"－";
+ const distance=formatSuitabilityDistance(horse.distance||"－");
  const eligible=value=>["○","◯","◎"].includes(value);
  if(!eligible(horse.turf)||!eligible(horse.dirt))return distance;
  const shared=distance.match(/^芝[・／]ダ(?:ート)?\s*([〜～\d].*)$/);
- if(shared)return `芝${shared[1]}\nダート${shared[1]}`;
+ if(shared)return `芝${shared[1]}\nダート ${shared[1]}`;
  return distance.replace(/\s*[／/]\s*(?=(?:芝|ダート|ダ)\s*[〜～\d])/g,"\n");
 }
 function suitabilityTargetsText(horse){
@@ -4047,7 +4049,6 @@ function renderHorseSuitability(horse){
  document.getElementById("dDirt").textContent=canFit?(horse.dirt||"－"):"";
  for(const [id,k] of [["dTurf","turf"],["dDirt","dirt"]]) document.getElementById(id).style.fontWeight=dominantSurface(horse,k)?"800":"400";
  document.getElementById("dDistance").textContent=canFit?suitabilityDistanceText(horse):"";
- document.getElementById("dCategory").textContent=canFit?(horse.category||"－"):"";
  document.getElementById("dGrowth").textContent=canFit?(horse.growth||"－"):"";
  document.getElementById("dTargets").textContent=canFit?suitabilityTargetsText(horse):"";
  const localTargets=document.getElementById("dLocalDirtTargets");
@@ -4672,7 +4673,7 @@ applyRankBase(); syncBaseControls(); syncPlanLocks(); syncScenarioButtons(); syn
 window.addEventListener("online",()=>{updateAppDiagnostics();updateConnectivityUI();}); window.addEventListener("offline",()=>{updateAppDiagnostics();updateConnectivityUI();});
 </script>
 
-<script src="./system-master-sync-career-v6.js?v=distance-bands-20261128" defer></script>
+<script src="./system-master-sync-career-v6.js?v=suitability-labels-20261128" defer></script>
 
 <script>
 if ("serviceWorker" in navigator) {

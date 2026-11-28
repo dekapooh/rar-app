@@ -12,7 +12,7 @@ h={};c.patch(h,row({lower_m:1400,upper_m:2000},{lower_m:1000,upper_m:1500},0));a
 h={};c.patch(h,row({lower_m:1200,upper_m:1600},{lower_m:1400,upper_m:2000},1000));assert.equal(h.distance,'芝1200〜1600m');
 console.log('JRA1000_LOWER_ENDPOINT_HIDDEN_SPRINT_DISPLAY_AND_RAW_DATA_PRESERVED_PASS');
 
-const html=fs.readFileSync('index.html','utf8');const distribution=html.slice(html.indexOf('function renderDistanceDistribution('),html.indexOf('function renderCareerEventDetails(',html.indexOf('function renderDistanceDistribution(')));
+const html=fs.readFileSync('index.html','utf8');const distribution=html.slice(html.indexOf('function formatSuitabilityDistance('),html.indexOf('function renderCareerEventDetails('));
 vm.runInContext('function escapeHTML(v){return String(v);};'+distribution+'this.distribution=renderDistanceDistribution;',c);
 const distributionInputs={
   individualAssessment:{profile_count:1000},
@@ -25,7 +25,7 @@ const distributionInputs={
 const inputSnapshot=JSON.stringify(distributionInputs);
 const output=c.distribution(distributionInputs);
 const [turfRows,dirtRows]=output.split('<caption>ダート</caption>');
-assert.match(turfRows,/<td>1000〜1200m（スプリント）<\/td><td>70<\/td>/);
+assert.match(turfRows,/<td>1000〜1200m<\/td><td>70<\/td>/);
 assert.match(turfRows,/<td>1201〜1400m<\/td><td>30<\/td>/);
 assert.match(turfRows,/<td>1401〜1600m<\/td><td>40<\/td>/);
 assert.match(turfRows,/<td>2201〜2400m<\/td><td>42<\/td>/);
@@ -33,7 +33,10 @@ assert.match(turfRows,/<td>2400m超（長距離）<\/td><td>48<\/td>/);
 assert.match(dirtRows,/<td>1801〜2000m<\/td><td>275<\/td>/);
 assert.match(dirtRows,/<td>2000m超（長距離）<\/td><td>430<\/td>/);
 assert.doesNotMatch(output,/<td>(800|900|2300|2900)m/);
-assert.match(output,/1000m未満の参照値はスプリント帯に合算/);
+assert.match(output,/1000m未満の参照値は1000〜1200mに合算/);
+assert.match(output,/採点用の代表範囲 ダート 〜1600m/);
+assert.doesNotMatch(output,/スプリント/);
+assert.doesNotMatch(html,/dCategory|rc34-category/);
 assert.equal([...output.matchAll(/<td>(\d+)<\/td>/g)].reduce((total,match)=>total+Number(match[1]),0),1000);
 assert.equal(JSON.stringify(distributionInputs),inputSnapshot);
 assert.equal(c.distribution({individualAssessment:{},distanceHistogramBySurface:{turf:{1600:0}}}),'');
@@ -59,13 +62,14 @@ console.log('FIVE_FIXES_FEMALE_CLASSICS_BAND_MATCH_601_BOUNDARY_LONG_DISPLAY_CAC
 
 const display = vm.createContext({});
 const helpers = html.slice(html.indexOf('function suitabilityDistanceText('), html.indexOf('function effectiveRegisteredName('));
-vm.runInContext(helpers + 'this.distanceText=suitabilityDistanceText;this.targetsText=suitabilityTargetsText;', display);
+vm.runInContext(distribution + helpers + 'this.distanceText=suitabilityDistanceText;this.targetsText=suitabilityTargetsText;', display);
 const dualSurface = row({lower_m:1400,upper_m:1800},{lower_m:1000,upper_m:1400},445);
 const dualHorse = {};
 c.patch(dualHorse, dualSurface);
-assert.equal(display.distanceText(dualHorse), '芝1400〜1800m\nダート〜1400m');
-assert.equal(display.distanceText({turf:'◯',dirt:'◎',distance:'芝・ダ1400〜1800m'}), '芝1400〜1800m\nダート1400〜1800m');
-assert.equal(display.distanceText({turf:'△',dirt:'◎',distance:'ダート〜1600m'}), 'ダート〜1600m');
+assert.equal(display.distanceText(dualHorse), '芝1400〜1800m\nダート 〜1400m');
+assert.equal(display.distanceText({turf:'◯',dirt:'◎',distance:'芝・ダ1400〜1800m'}), '芝1400〜1800m\nダート 1400〜1800m');
+assert.equal(display.distanceText({turf:'△',dirt:'◎',distance:'ダート〜1600m'}), 'ダート 〜1600m');
+assert.equal(display.distanceText({turf:'△',dirt:'◎',distance:'ダート 1400〜1800m'}), 'ダート 1400〜1800m');
 assert.equal(display.targetsText({sex:'牝馬',category:'牝馬クラシック～中距離',distance:'芝1500〜2100m',targets:'皐月賞'}), '桜花賞・秋華賞');
 assert.equal(display.targetsText({sex:'牡',category:'クラシック～中距離',distance:'芝1500〜2100m',targets:'皐月賞'}), '皐月賞');
 
@@ -107,7 +111,7 @@ vm.runInNewContext(worker, {
     return new Response('updated script');
   },
 });
-const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=distance-bands-20261128`;
+const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=suitability-labels-20261128`;
 let response;
 handlers.fetch({request:{url:scriptUrl,method:'GET'},respondWith(value){response=value;}});
 assert.equal(await (await response).text(), 'updated script');

@@ -123,6 +123,6 @@ assert.equal(swapped.individualAssessment,null);
 assert.equal(swapped.turf,'主適性外');
 assert.ok(index.includes('renderHorseSuitability(currentHorse)'));
 assert.ok(index.includes('分布は勝率ではありません'));
-assert.ok(index.includes('system-master-sync-career-v6.js?v=distance-bands-20261128'));
-assert.ok(fs.readFileSync('sw.js','utf8').includes('rar-rc70-distance-bands-20261128-v68'));
+assert.ok(index.includes('system-master-sync-career-v6.js?v=suitability-labels-20261128'));
+assert.ok(fs.readFileSync('sw.js','utf8').includes('rar-rc71-suitability-labels-20261128'));
 console.log('INDIVIDUAL_ESTIMATE_RENDER_AND_LEGACY_PRESERVATION_PASS');
