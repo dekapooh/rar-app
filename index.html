@@ -4574,10 +4574,12 @@ if ("serviceWorker" in navigator) {
    <section><h3>05｜評価と利用上の注意</h3><p>RAR Officialは募集時点の情報に基づくモデル評価です。実際の成績には故障、成長、育成・厩舎環境、レース条件など、評価だけでは捉えきれない要因が影響します。点数や順位は出資判断を支援する参考情報であり、購入・出資の推奨や利益保証ではありません。最終的な判断はご自身で行ってください。</p></section>
   </div>
   <div class="rar-gate-foot">
-   <label><input id="rarGateCheck" type="checkbox"><span>評価方法・年度別データの違い・限界を理解し、参考情報としてRARを利用します。</span></label>
-   <button id="rarGateAccept" type="button" disabled>理解してRARを利用する</button>
+   <div id="rarGateAcknowledgement">
+    <label><input id="rarGateCheck" type="checkbox"><span>評価方法・年度別データの違い・限界を理解し、参考情報としてRARを利用します。</span></label>
+    <button id="rarGateAccept" type="button" disabled>理解してRARを利用する</button>
+    <p class="rar-gate-minor">同意しない場合は、アプリの内容へ進めません。確認内容が改訂された場合は再確認を求めます。</p>
+   </div>
    <button id="rarGateClose" type="button" hidden style="background:#e9eef4;color:#23344c">マイページに戻る</button>
-   <p class="rar-gate-minor">同意しない場合は、アプリの内容へ進めません。確認内容が改訂された場合は再確認を求めます。</p>
   </div>
  </div>
 </div>
@@ -4585,33 +4587,44 @@ if ("serviceWorker" in navigator) {
 (function(){
  "use strict";
  const key="rar_methodology_ack_v2";
+ const app=document.getElementById("app");
  const gate=document.getElementById("rarMethodGate");
+ const content=gate.querySelector(".rar-gate-content");
+ const acknowledgement=document.getElementById("rarGateAcknowledgement");
  const check=document.getElementById("rarGateCheck");
  const accept=document.getElementById("rarGateAccept");
  const close=document.getElementById("rarGateClose");
  const review=document.getElementById("rarMethodReviewBtn");
  let accepted=false;
  try{accepted=localStorage.getItem(key)==="accepted";}catch(_){}
- if(accepted){gate.hidden=true;}else{gate.hidden=false;document.body.style.overflow="hidden";}
+
+ function setGateOpen(open){
+   gate.hidden=!open;
+   app.inert=open;
+   document.body.style.overflow=open ? "hidden" : "";
+   if(open){
+     content.scrollTop=0;
+     content.focus();
+   }
+ }
+
+ setGateOpen(!accepted);
  check.addEventListener("change",()=>{accept.disabled=!check.checked;});
  accept.addEventListener("click",()=>{
    if(!check.checked)return;
+   accepted=true;
    try{localStorage.setItem(key,"accepted");}catch(_){}
-   gate.hidden=true;
-   document.body.style.overflow="";
+   setGateOpen(false);
  });
  review?.addEventListener("click",()=>{
    if(!accepted)return;
-   gate.hidden=false;
-   check.parentElement.hidden=true;
-   accept.hidden=true;
+   acknowledgement.hidden=true;
    close.hidden=false;
-   document.body.style.overflow="hidden";
-   gate.querySelector(".rar-gate-content").scrollTop=0;
+   setGateOpen(true);
  });
  close.addEventListener("click",()=>{
-   gate.hidden=true;
-   document.body.style.overflow="";
+   setGateOpen(false);
+   review?.focus();
  });
  gate.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();}});
 })();

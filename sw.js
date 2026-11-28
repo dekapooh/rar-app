@@ -1,4 +1,4 @@
-const CACHE_NAME="rar-rc67-aptitude-five-20261128-v64";
+const CACHE_NAME="rar-rc67-aptitude-five-20261128-v65";
 const APP_SHELL=[
   "./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./hero-rc65.png","./brand-horse-rc65.png","./system-master-sync.js","./system-master-sync-career-v6.js?v=aptitude-five-20261128","./assets/header-silks/silk.webp","./assets/header-silks/tokyo-tc.webp","./assets/header-silks/carrot.webp"
 ];
