@@ -14,9 +14,30 @@ console.log('JRA1000_LOWER_ENDPOINT_HIDDEN_SPRINT_DISPLAY_AND_RAW_DATA_PRESERVED
 
 const html=fs.readFileSync('index.html','utf8');const distribution=html.slice(html.indexOf('function renderDistanceDistribution('),html.indexOf('function renderCareerEventDetails(',html.indexOf('function renderDistanceDistribution(')));
 vm.runInContext('function escapeHTML(v){return String(v);};'+distribution+'this.distribution=renderDistanceDistribution;',c);
-const inputs={individualAssessment:{profile_count:1000},distanceHistogramBySurface:{turf:{800:5,900:15,1000:20,1200:30},dirt:{800:8,1000:22,1400:35}},scoringDistance:'ダート〜1600m'};const raw=JSON.stringify(inputs);const rendered=c.distribution(inputs);
-assert.match(rendered,/<td>〜1000m<\/td><td>40<\/td><td>30<\/td>/);assert.doesNotMatch(rendered,/<td>(800|900)m/);assert.equal(JSON.stringify(inputs),raw);
-console.log('SHORT_DISTANCE_HISTOGRAM_GROUPS_PRESERVE_COUNTS_AND_ORIGINAL_BINS_PASS');
+const distributionInputs={
+  individualAssessment:{profile_count:1000},
+  distanceHistogramBySurface:{
+    turf:{800:5,900:15,1000:20,1200:30,1201:10,1400:20,1401:40,2300:30,2400:12,2401:20,2900:28},
+    dirt:{800:8,1000:22,1400:35,1801:100,2000:175,2001:150,2400:280},
+  },
+  scoringDistance:'ダート〜1600m',
+};
+const inputSnapshot=JSON.stringify(distributionInputs);
+const output=c.distribution(distributionInputs);
+const [turfRows,dirtRows]=output.split('<caption>ダート</caption>');
+assert.match(turfRows,/<td>1000〜1200m（スプリント）<\/td><td>70<\/td>/);
+assert.match(turfRows,/<td>1201〜1400m<\/td><td>30<\/td>/);
+assert.match(turfRows,/<td>1401〜1600m<\/td><td>40<\/td>/);
+assert.match(turfRows,/<td>2201〜2400m<\/td><td>42<\/td>/);
+assert.match(turfRows,/<td>2400m超（長距離）<\/td><td>48<\/td>/);
+assert.match(dirtRows,/<td>1801〜2000m<\/td><td>275<\/td>/);
+assert.match(dirtRows,/<td>2000m超（長距離）<\/td><td>430<\/td>/);
+assert.doesNotMatch(output,/<td>(800|900|2300|2900)m/);
+assert.match(output,/1000m未満の参照値はスプリント帯に合算/);
+assert.equal([...output.matchAll(/<td>(\d+)<\/td>/g)].reduce((total,match)=>total+Number(match[1]),0),1000);
+assert.equal(JSON.stringify(distributionInputs),inputSnapshot);
+assert.equal(c.distribution({individualAssessment:{},distanceHistogramBySurface:{turf:{1600:0}}}),'');
+console.log('SURFACE_DISTANCE_BANDS_PRESERVE_COUNTS_AND_ORIGINAL_BINS_PASS');
 
 let female=row({lower_m:1500,upper_m:2100},{lower_m:1100,upper_m:1700},801);female.sex='牝';female.career.representative_targets=['皐月賞'];h={};c.patch(h,female);assert.equal(h.distance,'芝1400〜2200m');assert.equal(h.targets,'桜花賞・秋華賞');assert.ok(!h.targets.includes('皐月賞'));
 let sprinter=row({lower_m:1400,upper_m:1900},{lower_m:1000,upper_m:1500},108);sprinter.sex='牡';sprinter.career.representative_targets=['フェブラリーS'];h={};c.patch(h,sprinter);assert.equal(h.targets,'JBCスプリント');assert.equal(h.distance,'ダート〜1600m');
@@ -86,7 +107,7 @@ vm.runInNewContext(worker, {
     return new Response('updated script');
   },
 });
-const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=local-dirt-targets-20261128`;
+const scriptUrl = `${origin}/system-master-sync-career-v6.js?v=distance-bands-20261128`;
 let response;
 handlers.fetch({request:{url:scriptUrl,method:'GET'},respondWith(value){response=value;}});
 assert.equal(await (await response).text(), 'updated script');

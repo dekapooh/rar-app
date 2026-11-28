@@ -20,7 +20,7 @@ assert.notEqual(other.distance,horse.distance,'same scoring representative must 
 const source=index.slice(index.indexOf('function renderDistanceDistribution('),index.indexOf('function renderCareerEventDetails('));
 const render=vm.createContext({escapeHTML:s=>String(s).replaceAll('<','&lt;').replaceAll('>','&gt;')});
 vm.runInContext(source+'this.render=renderDistanceDistribution;',render);
-assert.match(render.render(horse),/芝・ダート別の距離分布/);assert.match(render.render(horse),/採点用の代表範囲：ダ1500～1900m/);
+assert.match(render.render(horse),/芝・ダート別の距離分布/);assert.match(render.render(horse),/採点用の代表範囲 ダ1500～1900m/);
 const expand=sync.slice(sync.indexOf('  async function expandStoredCareerDetails('),sync.indexOf('  function patchHorse('));
 const inflater=vm.createContext({Blob,DecompressionStream,Uint8Array,TextDecoder,atob,crypto:webcrypto});
 vm.runInContext(expand+'this.expand=expandStoredCareerDetails;',inflater);
