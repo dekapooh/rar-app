@@ -2,7 +2,7 @@ name: Individual reference display preservation
 on:
   push:
     branches: [main]
-    paths: ['index.html','sw.js','system-master-sync.js','system-master-sync-career-v5.js','system-master-sync-career-v6.js','audit/test-individual-assessment.mjs','audit/test-cohort-display.mjs','audit/test-source-career-display.mjs','.github/workflows/individual-reference-render.yml']
+    paths: ['index.html','sw.js','system-master-sync.js','system-master-sync-career-v5.js','system-master-sync-career-v6.js','audit/test-individual-assessment.mjs','audit/test-cohort-display.mjs','audit/test-source-career-display.mjs','audit/test-methodology-gate.mjs','.github/workflows/individual-reference-render.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,3 +23,4 @@ jobs:
           node audit/test-individual-assessment.mjs
           node audit/test-cohort-display.mjs
           node audit/test-source-career-display.mjs
+          node audit/test-methodology-gate.mjs
